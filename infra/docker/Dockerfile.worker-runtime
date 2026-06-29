@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt requirements-runtime.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-runtime.txt
+
+COPY . .
+
+ENV AI_GRADER_ENV=production \
+    AI_GRADER_ENABLE_L4=1 \
+    AI_GRADER_CELERY_ENABLED=1
+
+CMD ["celery", "-A", "app.tasks.celery_app:celery_app", "worker", "-Q", "runtime_jobs,unity_build_jobs", "--loglevel=info", "--concurrency=2"]

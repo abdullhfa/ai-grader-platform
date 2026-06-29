@@ -1,0 +1,2 @@
+{"timestamp": 1782646415.6642475, "type": "session_created", "severity": "info", "source": "runtime", "payload": {"engine": "gamemaker", "root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\cohort_fixtures\\web_static"}}
+{"timestamp": 1782646423.9045534, "type": "gamemaker_artifact_analysis", "severity": "info", "source": "runtime", "payload": {"gml_files": 0, "yyp": false, "static_only": true}}

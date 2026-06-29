@@ -1,0 +1,2 @@
+# Optional schema validation for institutional contracts
+jsonschema>=4.21.0

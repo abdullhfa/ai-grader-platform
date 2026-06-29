@@ -1,0 +1,5003 @@
+{
+  "corpus_id": "runtime_evidence_calibration_v1",
+  "freeze": "GOVERNANCE_FREEZE_v1",
+  "mode": "governance_invariants_only_not_accuracy",
+  "cases_run": 80,
+  "cases_all_passed": 80,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "case_id": "l0_doc_only_001",
+      "archetype": "l0_doc_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=3"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 0,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 1,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l0_doc_only_002",
+      "archetype": "l0_doc_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=3"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 0,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 1,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l0_doc_only_003",
+      "archetype": "l0_doc_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=3"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 0,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 1,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l0_doc_only_004",
+      "archetype": "l0_doc_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=3"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 0,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 1,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l0_doc_only_005",
+      "archetype": "l0_doc_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=3"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 0,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 1,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l0_doc_only_006",
+      "archetype": "l0_doc_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=3"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L0"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 0,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 1,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_001",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_002",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_003",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_004",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_005",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_006",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_007",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_exe_only_008",
+      "archetype": "l1_exe_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=7"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_001",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_002",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_003",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_004",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_005",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_006",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_007",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_godot_export_008",
+      "archetype": "l1_godot_export",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L1"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 1,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "executable_present_runtime_unverified",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 5,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_001",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_002",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_003",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_004",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_005",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_006",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_007",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_008",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_009",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_010",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_011",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_012",
+      "archetype": "l2_screenshot_folder",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=10"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 9,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_001",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_002",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_003",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_004",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_005",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_006",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_007",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_008",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_009",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_010",
+      "archetype": "l2_mixed_with_exe",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=4"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=15"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 10,
+      "total": 10,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 13,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l3_video_only_001",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_video_only_002",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_video_only_003",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_video_only_004",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_video_only_005",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_video_only_006",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_video_only_007",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_video_only_008",
+      "archetype": "l3_video_only",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_001",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_002",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_003",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_004",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_005",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_006",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_007",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_008",
+      "archetype": "l3_orphan_video",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=1"
+        },
+        {
+          "check": "orphan_video_flag",
+          "passed": true,
+          "detail": "[{'flag': 'video_present_but_no_frames_extracted'}]"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=6"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 0,
+        "ambiguity_flags": [
+          "video_detected_not_decoded"
+        ],
+        "registry_claims": 4,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_001",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_002",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_003",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_004",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_005",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_006",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_007",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_008",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_009",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_010",
+      "archetype": "l1_l2_l3_full",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "ambiguity_flags_min",
+          "passed": true,
+          "detail": "flags=5"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "replay_shows_contradiction",
+          "passed": true,
+          "detail": "steps=19"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L3"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "drift_detected"
+        }
+      ],
+      "passed": 9,
+      "total": 9,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 3,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing",
+          "executable_present_runtime_unverified",
+          "video_detected_not_decoded",
+          "visual_and_executable_without_sandbox",
+          "cross_artifact_ambiguity"
+        ],
+        "registry_claims": 15,
+        "drift_status": "drift_detected"
+      }
+    },
+    {
+      "case_id": "godot_assets_only_001",
+      "archetype": "godot_assets_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=11"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 10,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "godot_assets_only_002",
+      "archetype": "godot_assets_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=11"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 10,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "godot_assets_only_003",
+      "archetype": "godot_assets_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=11"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 10,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "godot_assets_only_004",
+      "archetype": "godot_assets_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=11"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 10,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "godot_assets_only_005",
+      "archetype": "godot_assets_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=11"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 10,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "godot_assets_only_006",
+      "archetype": "godot_assets_only",
+      "checks": [
+        {
+          "check": "runtime_level_max",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_max",
+          "passed": true,
+          "detail": "l2=0"
+        },
+        {
+          "check": "godot_assets_excluded_from_l2",
+          "passed": true,
+          "detail": "l2_paths=0"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=11"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 0,
+        "ambiguity_flags": [],
+        "registry_claims": 10,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_001",
+      "archetype": "l2_screenshots_path_markers",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 7,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_002",
+      "archetype": "l2_screenshots_path_markers",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 7,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_003",
+      "archetype": "l2_screenshots_path_markers",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 7,
+        "drift_status": "clean"
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_004",
+      "archetype": "l2_screenshots_path_markers",
+      "checks": [
+        {
+          "check": "runtime_level_min",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "l2_count_min",
+          "passed": true,
+          "detail": "l2=2"
+        },
+        {
+          "check": "authority_auto_inferred_false",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "check": "claims_registry_complete",
+          "passed": true,
+          "detail": "[]"
+        },
+        {
+          "check": "replay_has_claim_boundary",
+          "passed": true,
+          "detail": "steps=8"
+        },
+        {
+          "check": "runtime_level_within_l0_l3",
+          "passed": true,
+          "detail": "L2"
+        },
+        {
+          "check": "no_critical_drift",
+          "passed": true,
+          "detail": "clean"
+        }
+      ],
+      "passed": 7,
+      "total": 7,
+      "all_passed": true,
+      "observed": {
+        "runtime_level": 2,
+        "l2_count": 2,
+        "ambiguity_flags": [
+          "l2_visual_without_structured_testing"
+        ],
+        "registry_claims": 7,
+        "drift_status": "clean"
+      }
+    }
+  ],
+  "summary_ar": "اختبار governability: 80/80 cases passed invariants. presence ≠ authority — contradictions must remain visible."
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "api_contracts_v1",
+  "status": "frozen",
+  "base_path": "/api",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/governance/review/{session_ref}",
+      "contract": "replay_inspection_bundle",
+      "auth": "examiner_rbac",
+      "response_schema": "replay.schema.json"
+    },
+    {
+      "method": "POST",
+      "path": "/governance/override",
+      "contract": "grade_override",
+      "auth": "examiner_rbac",
+      "audit": "governance_audit_log"
+    },
+    {
+      "method": "POST",
+      "path": "/governance/signoff",
+      "contract": "institutional_signoff",
+      "auth": "senior_examiner_rbac",
+      "response_schema": "governance.schema.json"
+    },
+    {
+      "method": "GET",
+      "path": "/governance/export/{session_ref}/replay.zip",
+      "contract": "replay_archive_export",
+      "auth": "examiner_rbac",
+      "security_audit": true
+    },
+    {
+      "method": "GET",
+      "path": "/governance/export/{session_ref}/signed-report.pdf",
+      "contract": "signed_audit_pdf",
+      "auth": "examiner_rbac",
+      "tamper_hash": true
+    },
+    {
+      "method": "POST",
+      "path": "/appeals/submit",
+      "contract": "appeal_submission",
+      "auth": "student",
+      "requires_replay_snapshot": true
+    },
+    {
+      "method": "GET",
+      "path": "/security/tamper/replay/{submission_key}/{session_id}",
+      "contract": "tamper_verification",
+      "auth": "admin"
+    },
+    {
+      "method": "GET",
+      "path": "/contracts/freeze",
+      "contract": "platform_contract_manifest",
+      "auth": "public"
+    },
+    {
+      "method": "GET",
+      "path": "/ops/dashboard",
+      "contract": "operational_metrics",
+      "auth": "admin"
+    }
+  ]
+}

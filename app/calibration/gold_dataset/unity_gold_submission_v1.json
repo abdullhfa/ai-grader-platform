@@ -1,0 +1,48 @@
+{
+  "schema": "unity_calibration_gold_v1",
+  "description": "Replace placeholder rows with real teacher labels. One object per (submission_id × criterion). Keep submission_id aligned with exports from the grader. Optional: teacher_evidence_strength (weak|moderate|strong), review_complexity (easy|moderate|ambiguous), reviewer_taxonomy (string tags after human review).",
+  "records": [
+    {
+      "submission_id": "EXEMPLAR_replace_with_real_id",
+      "unit": "EXEMPLAR_L3_Unit_GameDev",
+      "criterion": "P3",
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.92
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "collision system works correctly",
+        "testing evidence weak"
+      ],
+      "accepted_evidence": [
+        "collision callbacks",
+        "gameplay video"
+      ],
+      "rejected_evidence": [
+        "empty trigger method"
+      ]
+    },
+    {
+      "submission_id": "EXEMPLAR_replace_with_real_id_2",
+      "unit": "EXEMPLAR_L3_Unit_GameDev",
+      "criterion": "M1",
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "claims testing but no test matrix or results in evidence"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "screenshots only generic menu"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Replay Investigation — {{ investigation.submission_key }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/governance-ui/static/css/examiner.css">
+<script src="/governance-ui/static/js/timeline.js" defer></script>
+<main class="container mx-auto px-6 py-10">
+  <div class="max-w-6xl mx-auto">
+    <a href="/governance/examiner" class="text-primary text-sm font-semibold mb-4 inline-block">
+      <i class="fa-solid fa-arrow-right ml-1"></i> Dashboard
+    </a>
+
+    <div class="flex flex-wrap justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-3xl font-extrabold text-gray-900">Replay Investigation</h2>
+        <p class="text-gray-600 font-medium">{{ investigation.submission_key }}</p>
+        <p class="text-xs font-mono text-gray-400">session: {{ investigation.session_id }}</p>
+      </div>
+      <div class="flex flex-wrap gap-2 items-start">
+        <span class="gov-badge badge-replay">REPLAY-FIRST</span>
+        {% if investigation.deterministic_hash %}
+        <span class="gov-badge badge-hash" title="Replay hash">{{ investigation.deterministic_hash[:16] }}…</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if investigation.policy_evaluation.mandatory_manual_review %}
+    <div class="gov-panel border-amber-300 bg-amber-50 text-amber-950 mb-4">
+      <p class="font-bold text-sm">Policy: mandatory manual review</p>
+      <p class="text-xs mt-1">{{ investigation.policy_evaluation.required_actions | join(', ') }}</p>
+    </div>
+    {% endif %}
+
+    <div class="grid lg:grid-cols-4 gap-6">
+      <nav class="lg:col-span-1 space-y-2">
+        {% for sec in investigation.sections %}
+        <a href="#sec-{{ sec.key }}" class="block gov-panel py-2 text-sm font-semibold {% if not sec.available %}opacity-50{% endif %}">
+          {{ sec.title }}{% if not sec.available %} (—){% endif %}
+        </a>
+        {% endfor %}
+        <a href="#sec-actions" class="block gov-panel py-2 text-sm font-semibold text-primary">Decision / Override</a>
+      </nav>
+
+      <div class="lg:col-span-3 space-y-6">
+        {% include "timeline_viewer.html" %}
+        {% include "evidence_graph.html" %}
+
+        <section id="sec-runtime" class="gov-panel">
+          <h3 class="font-bold mb-3">Runtime</h3>
+          <pre class="text-xs bg-slate-50 p-3 rounded overflow-x-auto">{{ investigation.runtime | tojson(indent=2) }}</pre>
+        </section>
+
+        <section id="sec-screenshots" class="gov-panel">
+          <h3 class="font-bold mb-3">Screenshots</h3>
+          <div class="screenshot-grid">
+            {% for shot in investigation.screenshots %}
+            <a id="screenshot-{{ shot.index }}" href="{{ shot.url }}" target="_blank">
+              <img src="{{ shot.url }}" alt="{{ shot.name }}" loading="lazy">
+              <p class="text-[10px] text-center mt-1 truncate">{{ shot.name }}</p>
+            </a>
+            {% else %}
+            <p class="text-sm text-gray-500">No screenshots in replay bundle.</p>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section id="sec-reasoning" class="gov-panel">
+          <h3 class="font-bold mb-3">Agent Reasoning</h3>
+          {% for op in investigation.reasoning.agent_opinions %}
+          <div class="border-b py-2 text-sm">
+            <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded">{{ op.agent or op.get('agent_id', 'agent') }}</span>
+            <span class="mr-2">{{ op.decision or op.get('verdict') }}</span>
+            {% if op.confidence %}<span class="text-gray-500">({{ (op.confidence * 100) | int }}%)</span>{% endif %}
+          </div>
+          {% else %}
+          <p class="text-sm text-gray-500">No agent opinions recorded.</p>
+          {% endfor %}
+        </section>
+
+        <section id="sec-integrity" class="gov-panel">
+          <h3 class="font-bold mb-3">Integrity</h3>
+          {% if investigation.integrity.hallucination_flags %}
+          <p class="text-sm text-red-700 font-semibold mb-2">Hallucination flags</p>
+          <ul class="text-xs list-disc mr-4">{% for f in investigation.integrity.hallucination_flags %}<li>{{ f }}</li>{% endfor %}</ul>
+          {% endif %}
+          {% if investigation.integrity.contradictions %}
+          <p class="text-sm text-violet-800 font-semibold mt-3 mb-2">Contradictions</p>
+          <pre class="text-xs bg-violet-50 p-2 rounded">{{ investigation.integrity.contradictions | tojson(indent=2) }}</pre>
+          {% endif %}
+        </section>
+
+        <section id="sec-final" class="gov-panel">
+          <h3 class="font-bold mb-3">Final Arbitration</h3>
+          <pre class="text-xs bg-slate-50 p-3 rounded">{{ investigation.final_decision | tojson(indent=2) }}</pre>
+        </section>
+
+        <section id="sec-actions" class="gov-panel border-primary">
+          <h3 class="font-bold mb-3">Decision / Override</h3>
+          <p class="text-xs text-gray-500 mb-4">Use API or links below — all actions append immutable audit log.</p>
+          <div class="flex flex-wrap gap-2 text-sm">
+            <a href="/api/governance/export/{{ investigation.session_ref }}/replay.zip"
+               class="px-3 py-2 bg-slate-100 rounded-lg font-semibold">Download Replay ZIP</a>
+            <a href="/api/governance/export/{{ investigation.session_ref }}/signed-report.pdf"
+               class="px-3 py-2 bg-slate-100 rounded-lg font-semibold">Signed PDF</a>
+            <a href="/governance/examiner/audit/{{ investigation.session_ref }}"
+               class="px-3 py-2 bg-slate-100 rounded-lg font-semibold">Audit Trail</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

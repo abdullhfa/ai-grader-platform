@@ -1,0 +1,22 @@
+{
+  "cohort_layer": "clear_pass_cases",
+  "governance_rehearsal": true,
+  "not_ai_benchmark": true,
+  "expected_ambiguity": "low",
+  "intended_disagreement": false,
+  "evidence_completeness": "high",
+  "fake_confidence_risk": "low",
+  "expected_governance_behaviour": [
+    "no_spurious_hold",
+    "no_invented_evidence",
+    "moderate_or_low_review"
+  ],
+  "assessor_split_note": "",
+  "evaluate": [
+    "uncertainty_visible",
+    "hold_when_expected",
+    "corroboration_pressure",
+    "advisory_stays_advisory",
+    "explanation_auditable"
+  ]
+}

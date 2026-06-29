@@ -1,0 +1,323 @@
+[
+  {
+    "criterion": "8/C.P5",
+    "criterion_level": "8/C.P5",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected",
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.85,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  },
+  {
+    "criterion": "C.P5",
+    "criterion_level": "C.P5",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected",
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.85,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  },
+  {
+    "criterion": "C.P6",
+    "criterion_level": "C.P6",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected",
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.85,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  },
+  {
+    "criterion": "P5",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected",
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.85,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  },
+  {
+    "criterion": "game_launch",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.9,
+    "corroboration_strength": "moderate",
+    "node_count": 3
+  },
+  {
+    "criterion": "gameplay_loop",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.825,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  },
+  {
+    "criterion": "lose_health",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected",
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.85,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  },
+  {
+    "criterion": "testing_evidence",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected",
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.85,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  },
+  {
+    "criterion": "win_lose_state",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "det:motion_detector:movement_detected",
+        "source": "gameplay",
+        "label": "movement_detected",
+        "confidence": 0.85,
+        "payload": {}
+      },
+      {
+        "node_id": "evt:movement_detected:1.0",
+        "source": "timeline",
+        "label": "movement_detected",
+        "confidence": 0.8,
+        "payload": {}
+      },
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      }
+    ],
+    "supporting_events": [
+      "movement_detected",
+      "movement_detected",
+      "runtime_observed"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.85,
+    "corroboration_strength": "strong",
+    "node_count": 3
+  }
+]

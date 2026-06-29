@@ -1,0 +1,64 @@
+{
+  "archive_id": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "archive_version": "v1",
+  "archived_at": "2026-05-25T00:35:00Z",
+  "designation": "reference_governance_cohort",
+  "batch_id": 4,
+  "facilitator": "Eng.Abdulah",
+  "freeze_epoch_id": "epoch_1",
+  "freeze_id": "GOVERNANCE_FREEZE_v1",
+  "not": "pilot grading batch · readiness score · L4 activation license",
+  "purpose_ar": "baseline epistemic/historical — مرجع لـ replay discipline · semantic containment · future L4 audit",
+  "institutional_axiom_ar": "النظام لم يفشل لأنه شكّ؛ بل كان سينجح زائفًا لو توقف عن الشك.",
+  "phase2_pipeline": {
+    "observations": "21/21",
+    "workshop_completed_at": "2026-05-25T00:14:09.243790Z",
+    "epistemic_synthesis_generated_at": "2026-05-25T00:14:09.243790Z",
+    "ritual_reading_completed_at": "2026-05-25T00:19:53.827957Z",
+    "semantic_memory_entry_id": "ism_27544be77f0a",
+    "epoch_workshop_verdict": "not_yet_requires_mitigation",
+    "signed_artifact_id": "art_396d6d2036154ced"
+  },
+  "proven_findings_ar": [
+    "AI والمراجع ينجذبان للسرد الجيد/GDD حتى عند غياب runtime authority",
+    "خلط adequacy of explanation ↔ executable reality (14/21 L3 confusion)",
+    "contradictions visible + no silent S5 — governance قابلة للمراجعة",
+    "HOLD universal = اعتراف بعدم اليقين لا إخفاء",
+    "replay procedural أكثر من trusted provenance",
+    "النظام observable — لكن ليس containment-stable بعد"
+  ],
+  "epoch_verdict_summary": {
+    "phase2_transition_verdict": "not_yet_requires_mitigation",
+    "path_a_rereview_verdict": "mitigation_containment_progress_accepted",
+    "path_a_rereview_packet": "app/calibration/EPOCH_REREVIEW_PACKET_PATH_A_v1.json",
+    "meaning_ar": "Phase 2: قدرة على التوقف قبل الادعاء الزائف. Path A: containment progress — not authority readiness.",
+    "l4_sandbox_permitted": false,
+    "governance_freeze_v2_active": false,
+    "phase_4_design_only_eligible": true
+  },
+  "artifact_chain": {
+    "observations": "app/calibration/human_cohort_workshop/observations.jsonl",
+    "ritual_reading": "app/calibration/human_cohort_workshop/phase2_ritual_reading_4.json",
+    "semantic_memory": "app/calibration/human_cohort_workshop/institutional_semantic_memory.jsonl",
+    "epoch_review": "app/calibration/human_cohort_workshop/epoch_workshop_reviews.jsonl",
+    "epoch_rereview_packet": "app/calibration/EPOCH_REREVIEW_PACKET_PATH_A_v1.json",
+    "phase4_observational_sandbox_rfc": "app/calibration/PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.json",
+    "exit_criteria_tracking": "app/calibration/EXIT_CRITERIA_TRACKING_WORKSHOP_v1.json",
+    "trusted_replay_pilot": "app/calibration/TRUSTED_REPLAY_DISCIPLINE_PILOT_v1.json",
+    "signed_verdict": "app/calibration/institutional_artifacts/art_396d6d2036154ced.json",
+    "path_a_mitigation_workshop": "app/calibration/human_cohort_workshop/replay_gate_mitigation_workshop.json",
+    "cohort_state": "app/calibration/human_cohort_workshop/phase2_cohort_state.json"
+  },
+  "reference_use_cases_ar": [
+    "replay-before-judgment discipline baseline",
+    "semantic leakage containment audit",
+    "observation vs representation vs executable authority comparisons",
+    "future L4 observational sandbox design-only review",
+    "epoch transition RFC evidence — not automation justification"
+  ],
+  "roadmap_ordered": [
+    {"path": "C", "status": "complete", "label_ar": "Archive — reference governance cohort"},
+    {"path": "A", "status": "epoch_rereview_complete", "label_ar": "Path A mitigation — epoch re-review complete", "artifact": "app/calibration/EPOCH_REREVIEW_PACKET_PATH_A_v1.md"},
+    {"path": "B", "status": "rfc_complete_no_activation", "label_ar": "Phase 4 observational sandbox RFC — design only", "artifact": "app/calibration/PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.md"}
+  ]
+}

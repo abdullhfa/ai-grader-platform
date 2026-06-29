@@ -1,0 +1,34 @@
+{
+  "phase_id": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "phase_name_en": "Constitutional Maintenance",
+  "phase_name_not_en": "Feature Development",
+  "status": "active",
+  "mode": "maintaining_restraint_reducing_weight",
+  "started_at": "2026-05-25T21:00:00Z",
+  "follows": "ARCHITECTURAL_HARDENING_v1",
+  "not": [
+    "feature_development",
+    "governance_expansion",
+    "runtime_escalation",
+    "step_6_activation"
+  ],
+  "goal_en": "Maintaining epistemic restraint while reducing structural weight.",
+  "goal_ar": "الحفاظ على epistemic restraint مع تقليل الوزن الهيكلي.",
+  "supreme_success_en": "We still refuse to declare ourselves justified.",
+  "supreme_risk_en": "People trusting the doctrine instead of observing the restraint directly.",
+  "gate_review_central_question_en": "Does the architecture now require less belief to trust its restraint?",
+  "maintenance_invariant_en": "Restraint must remain stronger than institutional self-legitimation.",
+  "tools": [
+    "explanation_burden_check",
+    "hardening_gate_review",
+    "CONSTITUTIONAL_CORE_INVARIANTS_v1",
+    "empty_ledger_discipline"
+  ],
+  "hardening_gate_review_artifact": "app/calibration/HARDENING_GATE_REVIEW_v1.json",
+  "state_file": "app/calibration/human_cohort_workshop/constitutional_maintenance_state.json",
+  "companions": [
+    "ARCHITECTURAL_HARDENING_v1.json",
+    "CONSTITUTIONAL_CORE_INVARIANTS_v1.json",
+    "human_cohort_workshop/HARDENING_MERGE_1.json"
+  ]
+}

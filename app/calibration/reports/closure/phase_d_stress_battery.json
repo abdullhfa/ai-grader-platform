@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "returncode": 0,
+  "stdout_tail": "2026-05-27 02:02:51,522 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:02:51.522980Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:02:51,522 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=False\n2026-05-27 02:02:51,582 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:02:51.582632Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:02:51,582 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\n2026-05-27 02:02:56,600 [INFO] ai_grader.runtime.validation: runtime_validation status=timeout smoke=False\n2026-05-27 02:02:56,832 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:02:56.832957Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:02:56,832 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\nStress battery: 12/12 scenarios handled\n"
+}

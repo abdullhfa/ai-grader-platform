@@ -1,0 +1,167 @@
+{
+  "schema": "governance_intelligence_review_v1",
+  "generated_at": "2026-05-27T19:25:16Z",
+  "run_id": "institutional_closure_2026-05-26T230244Z",
+  "status": "awaiting_pilot_wave",
+  "description_ar": "حزمة اجتماع moderation review — قرارات المؤسسة تُملأ في الاجتماع",
+  "attendees_required": [
+    {
+      "role": "teacher",
+      "name": null,
+      "present": null
+    },
+    {
+      "role": "supervisor",
+      "name": null,
+      "present": null
+    },
+    {
+      "role": "quality_officer",
+      "name": null,
+      "present": null
+    }
+  ],
+  "pilot_wave_checklist": {
+    "abdullah_complete": false,
+    "top5_complete": false,
+    "bottom5_complete": false,
+    "pilot_ready": false,
+    "pilot_fully_complete": 0,
+    "pilot_cohort_size": 11
+  },
+  "reference_governance_case": {
+    "submission_id": 1,
+    "label": "Abdullah — First Fully Traceable Governance Case",
+    "pending_criteria": [
+      {
+        "criterion": "P3",
+        "ai_system_achieved": null,
+        "status": "PENDING_TEACHER"
+      },
+      {
+        "criterion": "P4",
+        "ai_system_achieved": null,
+        "status": "PENDING_TEACHER"
+      },
+      {
+        "criterion": "P7",
+        "ai_system_achieved": null,
+        "status": "PENDING_TEACHER"
+      },
+      {
+        "criterion": "M2",
+        "ai_system_achieved": null,
+        "status": "PENDING_TEACHER"
+      },
+      {
+        "criterion": "D2",
+        "ai_system_achieved": null,
+        "status": "PENDING_TEACHER"
+      },
+      {
+        "criterion": "D3",
+        "ai_system_achieved": null,
+        "status": "PENDING_TEACHER"
+      }
+    ],
+    "authority_chain_ar": [
+      "runtime → operational proof",
+      "replay → evidence / auditability",
+      "governance → policy",
+      "AI → recommendation",
+      "human moderator → final authority"
+    ]
+  },
+  "calibration_metrics": {
+    "gold_rows_used": 3,
+    "cohens_kappa": 0.0,
+    "agreement_rate": 0.6666666666666666,
+    "false_positives": 0,
+    "false_negatives": 1,
+    "criterion_mismatch_count": 2,
+    "note_ar": "Kappa مؤشر — taxonomy = القيمة المؤسسية"
+  },
+  "taxonomy_review": [
+    {
+      "taxonomy_type": "no_runtime_build",
+      "count": 1,
+      "governance_decision_proposed": "submission policy",
+      "discussion_questions_ar": [
+        "هل submission policy واضحة للطلاب؟",
+        "هل conservative grading صحيح بدون build؟"
+      ],
+      "institutional_decision": null,
+      "institutional_decision_notes_ar": null,
+      "signed_off_by": null
+    },
+    {
+      "taxonomy_type": "overall_grade_mismatch",
+      "count": 1,
+      "governance_decision_proposed": "moderation review",
+      "discussion_questions_ar": [
+        "هل المعلم استخدم contextual judgment؟",
+        "هل replay تدعم overall grade؟"
+      ],
+      "institutional_decision": null,
+      "institutional_decision_notes_ar": null,
+      "signed_off_by": null
+    }
+  ],
+  "case_discussions": [
+    {
+      "submission_id": "1",
+      "criterion": "M3",
+      "taxonomy_type": "no_runtime_build",
+      "teacher_vs_system": {
+        "teacher": true,
+        "system": false
+      },
+      "replay_verified": true,
+      "runtime_status": "gated",
+      "defensibility_question_ar": "هل replay/evidence تدعم قرار المعلم؟",
+      "rationale_ar": "المعلم Achieved والنظام Not — لا build قابل للتشغيل",
+      "meeting_verdict_ar": null
+    },
+    {
+      "submission_id": "1",
+      "criterion": "__overall_grade__",
+      "taxonomy_type": "overall_grade_mismatch",
+      "teacher_vs_system": {
+        "teacher": "M",
+        "system": "U"
+      },
+      "replay_verified": null,
+      "runtime_status": null,
+      "defensibility_question_ar": "هل replay/evidence تدعم قرار المعلم؟",
+      "rationale_ar": "اختلاف overall grade — مراجعة moderation",
+      "meeting_verdict_ar": null
+    }
+  ],
+  "governance_evolution_decisions": [
+    {
+      "area": "submission_policy",
+      "trigger": "no_runtime_build",
+      "decision_ar": null,
+      "owner": null
+    },
+    {
+      "area": "moderation_consistency",
+      "trigger": "overall_grade_mismatch",
+      "decision_ar": null,
+      "owner": null
+    },
+    {
+      "area": "rubric_clarification",
+      "trigger": "rubric_ambiguity",
+      "decision_ar": null,
+      "owner": null
+    },
+    {
+      "area": "threshold_tuning",
+      "trigger": "ai_conservative",
+      "decision_ar": null,
+      "owner": null
+    }
+  ],
+  "core_question_ar": "عند الاختلاف — هل القرار defensible؟"
+}

@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Main Content -->
+<main class="container mx-auto px-6 py-10">
+    <div class="max-w-4xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <a href="/dashboard"
+                class="text-secondary hover:text-blue-700 flex items-center gap-2 mb-3 text-sm font-semibold transition">
+                <i class="fa-solid fa-arrow-right"></i>
+                العودة للوحة التحكم
+            </a>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">تصحيح واجب فردي</h2>
+            <p class="text-gray-500 text-lg">
+                أدخل بيانات الطالب والنص المراد تصحيحه للحصول على تقييم فوري.
+            </p>
+        </div>
+
+        <form id="gradeForm" class="space-y-8">
+            <!-- Student Information -->
+            <div class="glass-card rounded-2xl p-8 border border-gray-100">
+                <div class="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                    <div class="bg-primary/10 text-primary rounded-lg p-2">
+                        <i class="fa-solid fa-id-card text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">بيانات الطالب</h3>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">اسم الطالب <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="studentName" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition bg-gray-50 focus:bg-white"
+                            placeholder="الاسم الثلاثي">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">البريد الإلكتروني <span
+                                class="text-gray-400 font-normal">(اختياري)</span></label>
+                        <input type="email" id="studentEmail"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition bg-gray-50 focus:bg-white"
+                            placeholder="student@example.com">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grading Criteria -->
+            <div class="glass-card rounded-2xl p-8 border border-gray-100">
+                <div class="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                    <div class="bg-secondary/10 text-secondary rounded-lg p-2">
+                        <i class="fa-solid fa-list-check text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">معايير التقييم</h3>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- P1 -->
+                    <label
+                        class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 hover:border-secondary hover:bg-blue-50/30 transition cursor-pointer group">
+                        <div class="mt-1">
+                            <input type="checkbox" id="p1" value="P1" checked
+                                class="w-5 h-5 text-secondary rounded border-gray-300 focus:ring-secondary">
+                        </div>
+                        <div>
+                            <span class="block font-bold text-gray-800 group-hover:text-secondary transition">P1:
+                                الوصف</span>
+                            <span class="text-sm text-gray-500">وصف المفاهيم الأساسية وتوضيحها بشكل دقيق.</span>
+                        </div>
+                    </label>
+
+                    <!-- P2 -->
+                    <label
+                        class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 hover:border-secondary hover:bg-blue-50/30 transition cursor-pointer group">
+                        <div class="mt-1">
+                            <input type="checkbox" id="p2" value="P2" checked
+                                class="w-5 h-5 text-secondary rounded border-gray-300 focus:ring-secondary">
+                        </div>
+                        <div>
+                            <span class="block font-bold text-gray-800 group-hover:text-secondary transition">P2:
+                                الشرح</span>
+                            <span class="text-sm text-gray-500">شرح الفوائد، المخاطر، والعيوب بالتفصيل.</span>
+                        </div>
+                    </label>
+
+                    <!-- M1 -->
+                    <label
+                        class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 hover:border-primary hover:bg-green-50/30 transition cursor-pointer group">
+                        <div class="mt-1">
+                            <input type="checkbox" id="m1" value="M1" checked
+                                class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary">
+                        </div>
+                        <div>
+                            <span class="block font-bold text-gray-800 group-hover:text-primary transition">M1:
+                                التحليل</span>
+                            <span class="text-sm text-gray-500">تحليل العلاقات والتأثيرات بين العناصر المختلفة.</span>
+                        </div>
+                    </label>
+
+                    <!-- D1 -->
+                    <label
+                        class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 hover:border-primary hover:bg-green-50/30 transition cursor-pointer group">
+                        <div class="mt-1">
+                            <input type="checkbox" id="d1" value="D1" checked
+                                class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary">
+                        </div>
+                        <div>
+                            <span class="block font-bold text-gray-800 group-hover:text-primary transition">D1:
+                                التقييم</span>
+                            <span class="text-sm text-gray-500">تقييم نقدي شامل وتقديم توصيات مبررة.</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submission Text -->
+            <div class="glass-card rounded-2xl p-8 border border-gray-100">
+                <div class="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                    <div class="bg-gray-100 text-gray-600 rounded-lg p-2">
+                        <i class="fa-solid fa-align-left text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">إجابة الطالب</h3>
+                </div>
+
+                <div class="relative">
+                    <textarea id="submissionText" required
+                        class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition bg-gray-50 focus:bg-white font-mono text-sm leading-relaxed resize-y min-h-[300px]"
+                        placeholder="قم بلصق نص الإجابة هنا..."></textarea>
+                    <div
+                        class="absolute bottom-4 left-4 text-xs text-text-muted bg-white/80 px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
+                        يدعم تنسيق النصوص البسيط
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end pt-4">
+                <button type="submit" id="submitBtn"
+                    class="bg-gradient-to-r from-secondary to-blue-600 text-white px-10 py-4 rounded-xl text-lg hover:shadow-xl transition transform hover:-translate-y-1 flex items-center gap-3 font-bold group">
+                    <span>بدء التصحيح الفوري</span>
+                    <i class="fa-solid fa-wand-magic-sparkles group-hover:animate-pulse"></i>
+                </button>
+            </div>
+        </form>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay"
+            class="hidden fixed inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-[200]">
+            <div class="bg-white rounded-2xl p-8 text-center max-w-sm w-full mx-6 shadow-2xl relative">
+                <div class="w-20 h-20 mx-auto mb-6 relative">
+                    <div class="absolute inset-0 bg-secondary/20 rounded-full animate-ping"></div>
+                    <div
+                        class="relative bg-white p-4 rounded-full shadow-md flex items-center justify-center h-full w-full">
+                        <i class="fa-solid fa-robot text-3xl text-secondary animate-bounce"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">جاري تحليل الإجابة...</h3>
+                <p class="text-gray-500 text-sm">يقوم الذكاء الاصطناعي بمراجعة المعايير الآن.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.getElementById('gradeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const studentName = document.getElementById('studentName').value;
+        const studentEmail = document.getElementById('studentEmail').value;
+        const submissionText = document.getElementById('submissionText').value;
+
+        // Get selected criteria
+        const selectedCriteria = [];
+        ['p1', 'p2', 'm1', 'd1'].forEach(id => {
+            const checkbox = document.getElementById(id);
+            if (checkbox.checked) {
+                selectedCriteria.push(checkbox.value);
+            }
+        });
+
+        if (selectedCriteria.length === 0) {
+            alert('⚠️ يرجى اختيار معيار واحد على الأقل للتصحيح.');
+            return;
+        }
+
+        // Show UI Loading
+        const btn = document.getElementById('submitBtn');
+        const overlay = document.getElementById('loadingOverlay');
+
+        overlay.classList.remove('hidden');
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+        try {
+            // Create submission
+            const submissionResponse = await fetch('/api/submissions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    student_name: studentName,
+                    student_email: studentEmail || null,
+                    submission_text: submissionText,
+                    assignment_id: 1 // Default assignment ID for single grading
+                })
+            });
+
+            const submissionData = await submissionResponse.json();
+            if (!submissionData.success) throw new Error('فشل في إنشاء سجل الإجابة');
+
+            // Grade submission
+            const gradeResponse = await fetch(`/api/submissions/${submissionData.id}/grade`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    submission_id: submissionData.id,
+                    selected_criteria: selectedCriteria
+                })
+            });
+
+            const gradeData = await gradeResponse.json();
+            if (!gradeData.success) throw new Error('فشل في عملية التصحيح');
+
+            // Redirect
+            window.location.href = `/results/${submissionData.id}`;
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ حدث خطأ: ' + error.message);
+            overlay.classList.add('hidden');
+            btn.disabled = false;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        }
+    });
+</script>
+{% endblock %}

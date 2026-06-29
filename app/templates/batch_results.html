@@ -1,0 +1,1240 @@
+{% extends "base.html" %}
+{% from 'partials/expected_runtime_disclaimer.html' import render_expected_disclaimer, render_pro_upgrade_link, PRO_UPGRADE_STATUSES, PRO_UPGRADE_STATUS_AR %}
+
+{% block extra_head %}
+<style>
+    /* ======= PREMIUM DARK RESULTS THEME ======= */
+    .bg-page {
+        background: linear-gradient(160deg, #0f2027, #203a43, #2c5364);
+        min-height: calc(100vh - 80px);
+        position: relative;
+        overflow: hidden;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .bg-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.30;
+        z-index: 0;
+        animation: blobFloat 18s ease-in-out infinite alternate;
+    }
+    .bg-blob-1 { width: 500px; height: 500px; background: radial-gradient(circle, #00b09b, #96c93d); top: -120px; right: -80px; }
+    .bg-blob-2 { width: 400px; height: 400px; background: radial-gradient(circle, #2d5f6e, #00d2ff); bottom: -150px; left: -100px; animation-delay: -6s; }
+    .bg-blob-3 { width: 300px; height: 300px; background: radial-gradient(circle, #11998e, #38ef7d); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -12s; opacity: 0.12; }
+    @keyframes blobFloat {
+        0% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(40px, -30px) scale(1.08); }
+        66% { transform: translate(-30px, 40px) scale(0.95); }
+        100% { transform: translate(20px, 20px) scale(1.05); }
+    }
+
+    .gcard {
+        background: rgba(255, 255, 255, 0.06);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 20px;
+        padding: 28px;
+        transition: all 0.35s ease;
+    }
+    .gcard:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(56, 239, 125, 0.2);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #38ef7d;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.25s;
+        margin-bottom: 14px;
+    }
+    .back-link:hover { color: #96c93d; transform: translateX(5px); }
+
+    .sec-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.06);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 18px;
+        padding: 20px 24px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        min-height: 148px;
+        transition: all 0.35s ease;
+    }
+    .stat-card:hover {
+        background: rgba(255, 255, 255, 0.09);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+    .stat-card .stat-label {
+        font-size: 15px;
+        font-weight: 700;
+        color: #ffffff;
+        width: 100%;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    .stat-card .stat-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 0;
+    }
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: 900;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+    .stat-card .stat-note {
+        width: 100%;
+        margin-top: 8px;
+        text-align: center;
+    }
+
+    .gbtn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 22px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .gbtn-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(56, 239, 125, 0.4);
+        color: #38ef7d;
+    }
+
+    /* Table styling */
+    .results-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .results-table thead th {
+        padding: 14px 20px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: none;
+        letter-spacing: 0;
+        color: #ffffff !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .results-table thead th,
+    .results-table thead th .th-sub {
+        color: #ffffff !important;
+    }
+    .results-table thead th .th-sub {
+        display: block;
+        margin-top: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: none;
+        letter-spacing: 0;
+    }
+    .results-table tbody tr {
+        transition: all 0.25s;
+    }
+    .results-table tbody tr:hover {
+        background: rgba(56, 239, 125, 0.06);
+    }
+    .results-table tbody td {
+        padding: 16px 20px;
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.75);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .grade-col-label {
+        font-size: 12px;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.45);
+        line-height: 1.35;
+    }
+    .grade-col-label-official {
+        color: #ffffff;
+        margin-top: 4px;
+    }
+    .grade-col-disclaimer {
+        max-width: 220px;
+        margin-top: 4px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: rgba(45, 95, 110, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: center;
+    }
+    .metric-pct {
+        font-weight: 800;
+        font-size: 15px;
+    }
+
+    .grade-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+    .grade-d { background: rgba(56, 239, 125, 0.15); color: #38ef7d; border: 1px solid rgba(56, 239, 125, 0.3); }
+    .grade-m { background: rgba(96, 165, 250, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+    .grade-p { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+    .grade-u { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.5);
+        transition: all 0.25s;
+        text-decoration: none;
+        font-size: 16px;
+    }
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .action-btn.pdf:hover { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+    .action-btn.word:hover { background: rgba(96, 165, 250, 0.15); border-color: rgba(96, 165, 250, 0.3); color: #60a5fa; }
+    .action-btn.view:hover { background: rgba(56, 239, 125, 0.15); border-color: rgba(56, 239, 125, 0.3); color: #38ef7d; }
+
+    .reports-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        transform: translateX(-12px);
+    }
+
+    .student-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        background: linear-gradient(135deg, rgba(56, 239, 125, 0.2), rgba(17, 153, 142, 0.2));
+        color: #38ef7d;
+        border: 1px solid rgba(56, 239, 125, 0.2);
+        flex-shrink: 0;
+    }
+
+    .diag-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        margin-top: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        table-layout: fixed;
+    }
+    .diag-table thead th {
+        background: rgba(15, 23, 42, 0.65);
+        color: rgba(255, 255, 255, 0.75);
+        font-weight: 800;
+        font-size: 14px;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .diag-table tbody td {
+        padding: 10px 12px;
+        font-size: 14px;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        line-height: 1.55;
+    }
+    .diag-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    .diag-table tbody tr:nth-child(even) {
+        background: rgba(15, 23, 42, 0.28);
+    }
+    .diag-table .diag-req {
+        width: 38%;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 700;
+    }
+    .diag-table .diag-status {
+        width: 62%;
+        text-align: center;
+        font-weight: 700;
+    }
+    .diag-table .diag-status-ok { color: #86efac; }
+    .diag-table .diag-status-bad { color: #f87171; }
+    .diag-table .diag-status-pro {
+        color: #fbbf24;
+        text-decoration: none;
+    }
+    .diag-table .diag-status-pro:hover { color: #fde68a; }
+    .diag-table .diag-confidence,
+    .diag-table .diag-grade {
+        text-align: center;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    /* Student accordion list */
+    .students-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .student-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .student-item:last-child {
+        border-bottom: none;
+    }
+    .student-item-header {
+        display: grid;
+        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 120px 90px 90px 1fr;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 20px;
+        transition: background 0.25s;
+    }
+    .student-item-header:hover {
+        background: rgba(56, 239, 125, 0.06);
+    }
+    .student-item.is-expanded .student-item-header {
+        background: rgba(56, 239, 125, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .student-item--has-diag .student-item-header {
+        cursor: pointer;
+    }
+    .student-index {
+        color: rgba(255, 255, 255, 0.35);
+        font-weight: 700;
+        font-size: 15px;
+        text-align: center;
+    }
+    .student-name-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 8px 10px;
+        margin: -8px -10px;
+        background: transparent;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        text-align: right;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: #fff;
+        transition: background 0.2s;
+    }
+    .student-name-toggle:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+    .student-name-toggle .toggle-chevron {
+        flex-shrink: 0;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.45);
+        transition: transform 0.25s, color 0.25s;
+    }
+    .student-item.is-expanded .student-name-toggle .toggle-chevron {
+        transform: rotate(-90deg);
+        color: #38ef7d;
+    }
+    .student-name-static {
+        display: block;
+        font-weight: 700;
+        font-size: 15px;
+        color: #fff;
+        text-align: right;
+        padding: 8px 10px;
+    }
+    .student-col {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+    }
+    .student-diag-panel {
+        padding: 0 20px 16px 20px;
+        animation: diagSlideIn 0.25s ease;
+    }
+    @keyframes diagSlideIn {
+        from { opacity: 0; transform: translateY(-6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .student-diag-inner {
+        border-radius: 12px;
+        border: 1px solid rgba(251, 191, 36, 0.25);
+        background: rgba(251, 191, 36, 0.06);
+        padding: 14px 16px;
+        text-align: right;
+        direction: rtl;
+    }
+    .student-diag-title {
+        font-weight: 800;
+        color: #fbbf24;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    .students-list-head {
+        display: grid;
+        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 120px 90px 90px 1fr;
+        gap: 8px;
+        padding: 14px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .students-list-head span {
+        font-size: 13px;
+        font-weight: 800;
+        color: #ffffff;
+        text-align: center;
+    }
+    .students-list-head span:first-child {
+        text-align: center;
+    }
+    .students-list-head .head-name {
+        text-align: right;
+    }
+    .batch-results--pro .students-list-head,
+    .batch-results--pro .student-item-header {
+        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 90px 90px 1fr;
+    }
+    .batch-results--pro .col-expected {
+        display: none !important;
+    }
+    .batch-results--pro .students-list-wrap {
+        min-width: 740px;
+    }
+    .batch-results--basic .students-list-wrap {
+        min-width: 860px;
+    }
+
+    .br-page-inner {
+        position: relative;
+        z-index: 5;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 48px 20px 60px;
+    }
+    .br-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 36px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .br-page-title {
+        font-size: 28px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 0;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+    .gbtn-outline--offset {
+        margin-top: 4px;
+    }
+    .icon-pdf-red {
+        color: #ef4444;
+        font-size: 18px;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+    .stat-value--blue { color: #60a5fa; }
+    .stat-value--red { color: #f87171; }
+    .stat-value--green { color: #38ef7d; }
+    .stat-value--amber { color: #fbbf24; }
+    .stat-value--status {
+        font-size: 1.2rem;
+    }
+    .text-placeholder {
+        color: rgba(255, 255, 255, 0.25);
+    }
+    .text-placeholder-dim {
+        color: rgba(255, 255, 255, 0.35);
+    }
+    .grade-letter-d { color: #38ef7d; }
+    .grade-letter-m { color: #60a5fa; }
+    .grade-letter-p { color: #fbbf24; }
+    .grade-letter-u { color: #f87171; }
+    .gcard--flush {
+        padding: 0;
+        overflow: hidden;
+    }
+    .gcard-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gcard-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #fff;
+        margin: 0;
+    }
+    .table-scroll {
+        overflow-x: auto;
+    }
+    .student-failure-msg {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #f87171;
+        font-weight: 600;
+        line-height: 1.6;
+        text-align: right;
+        padding-right: 10px;
+    }
+    .grade-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: center;
+    }
+    .metric-pct--high { color: #f87171; }
+    .metric-pct--mid { color: #fb923c; }
+    .metric-pct--low { color: #38ef7d; }
+    .plag-pct {
+        font-weight: 800;
+        font-size: 15px;
+    }
+    .plag-pct--50 { color: #f87171; }
+    .plag-pct--30 { color: #fb923c; }
+    .plag-pct--20 { color: #f59e0b; }
+    .plag-pct--16 { color: #fbbf24; }
+    .plag-pct--13 { color: #a3e635; }
+    .plag-pct--10 { color: #2dd4bf; }
+    .plag-pct--low { color: #38ef7d; }
+    .action-btn.view {
+        background: rgba(56, 239, 125, 0.12);
+        border-color: rgba(56, 239, 125, 0.25);
+        color: #38ef7d;
+    }
+    .action-btn.word {
+        background: rgba(96, 165, 250, 0.12);
+        border-color: rgba(96, 165, 250, 0.25);
+        color: #60a5fa;
+    }
+    .action-btn.pdf {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: rgba(239, 68, 68, 0.25);
+        color: #ef4444;
+    }
+    .action-btn.plagiarism {
+        background: rgba(251, 191, 36, 0.14);
+        border-color: rgba(251, 191, 36, 0.35);
+        color: #fbbf24;
+    }
+    .report-pending {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.3);
+    }
+    .diag-table--spaced {
+        margin-bottom: 12px;
+    }
+    .student-diag-title--spaced-sm {
+        margin-top: 8px;
+    }
+    .student-diag-title--spaced-md {
+        margin-top: 16px;
+    }
+    .runtime-shots-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .runtime-shot-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+    .runtime-shot-img {
+        max-width: 160px;
+        max-height: 120px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .runtime-shot-label {
+        font-size: 11px;
+        text-align: center;
+        margin-top: 4px;
+        color: rgba(255, 255, 255, 0.55);
+    }
+    .diag-coverage-note {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.55);
+        margin: 0 0 10px 0;
+        line-height: 1.6;
+        text-align: right;
+    }
+    .diag-coverage-strong {
+        color: rgba(255, 255, 255, 0.75);
+    }
+    .coverage-pct--warn {
+        color: #fbbf24;
+        font-weight: 700;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        color: rgba(255, 255, 255, 0.25);
+        font-size: 24px;
+    }
+    .empty-state-title--fail {
+        color: #f87171;
+        font-weight: 800;
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+    .empty-state-msg {
+        color: rgba(255, 255, 255, 0.55);
+        font-weight: 600;
+        max-width: 640px;
+        margin: 0 auto 20px;
+        line-height: 1.8;
+    }
+    .empty-state-empty-msg {
+        color: rgba(255, 255, 255, 0.45);
+        font-weight: 600;
+    }
+    .gbtn-outline--inline {
+        display: inline-flex;
+    }
+    .batch-failure-bar {
+        padding: 16px 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(239, 68, 68, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .batch-failure-msg {
+        color: rgba(255, 255, 255, 0.72);
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.7;
+    }
+    .icon-warning {
+        color: #f87171;
+        margin-left: 8px;
+    }
+
+    @media (max-width: 900px) {
+        .students-list-head,
+        .student-item-header {
+            grid-template-columns: 36px 1fr;
+            grid-template-rows: auto auto;
+        }
+        .students-list-head span:not(:nth-child(1)):not(:nth-child(2)),
+        .student-item-header .student-col,
+        .student-item-header .reports-actions {
+            grid-column: 2;
+        }
+    }
+
+    @media print {
+        .bg-page { background: #fff !important; }
+        .bg-blob { display: none !important; }
+        .back-link, .action-btn, .gbtn-outline { display: none !important; }
+        .gcard, .stat-card { background: #fff !important; border-color: #eee !important; color: #333 !important; }
+        .results-table thead th { color: #666 !important; }
+        .results-table tbody td { color: #333 !important; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% macro render_grade_badge(grade_short) %}
+{% if grade_short == 'D' %}
+<span class="grade-badge grade-d">D</span>
+{% elif grade_short == 'M' %}
+<span class="grade-badge grade-m">M</span>
+{% elif grade_short == 'P' %}
+<span class="grade-badge grade-p">P</span>
+{% elif grade_short == 'U' %}
+<span class="grade-badge grade-u">U</span>
+{% else %}
+<span class="text-placeholder">-</span>
+{% endif %}
+{% endmacro %}
+
+{% set batch_mode_ns = namespace(is_basic=false) %}
+{% for result in results %}
+{% if result.grade_display_metrics and result.grade_display_metrics.execution_mode == 'BASIC' %}
+{% set batch_mode_ns.is_basic = true %}
+{% endif %}
+{% endfor %}
+
+<div class="bg-page{% if batch_mode_ns.is_basic %} batch-results--basic{% else %} batch-results--pro{% endif %}">
+    <!-- Blobs -->
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+
+    <div class="br-page-inner">
+
+        <!-- Header -->
+        <a href="/" class="back-link">
+            <i class="fa-solid fa-arrow-right"></i>
+            العودة للصفحة الرئيسية
+        </a>
+
+        <div class="br-header-row">
+            <div>
+                <h1 class="br-page-title">
+                    النتائج
+                </h1>
+            </div>
+
+            <a href="/uploads/reports/batch_summary_{{ batch.id }}.pdf" download class="gbtn-outline gbtn-outline--offset">
+                <i class="fa-solid fa-file-pdf icon-pdf-red"></i>
+                <span>تحميل التقرير الشامل (PDF)</span>
+            </a>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <!-- Total Students -->
+            <div class="stat-card">
+                <div class="stat-label">إجمالي الطلاب</div>
+                <div class="stat-body">
+                    <div class="stat-value stat-value--blue">{{ batch.total_students }}</div>
+                </div>
+            </div>
+
+            <!-- Official Grade (dominant) -->
+            <div class="stat-card">
+                <div class="stat-label">التقدير المعتمد</div>
+                <div class="stat-body">
+                <div class="stat-value stat-value--red">
+                    {% set official_counts = {'U': 0, 'P': 0, 'M': 0, 'D': 0} %}
+                    {% for result in results %}
+                    {% if result.summary %}
+                    {% set inst_gl = (result.explainability.institutional_resolution or {}) if result.explainability else {} %}
+                    {% set gl = inst_gl.btec_grade or (result.summary.grade_level or '') %}
+                    {% set gl_short = gl.split(' ')[0] if gl else 'U' %}
+                    {% if gl_short not in ['D','M','P','U'] %}{% set gl_short = 'U' %}{% endif %}
+                    {% if gl_short == 'D' %}{% if official_counts.update({'D': official_counts['D'] + 1}) %}{% endif %}
+                    {% elif gl_short == 'M' %}{% if official_counts.update({'M': official_counts['M'] + 1}) %}{% endif %}
+                    {% elif gl_short == 'P' %}{% if official_counts.update({'P': official_counts['P'] + 1}) %}{% endif %}
+                    {% else %}{% if official_counts.update({'U': official_counts['U'] + 1}) %}{% endif %}
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                    {% if official_counts['D'] >= official_counts['M'] and official_counts['D'] >= official_counts['P'] and official_counts['D'] >= official_counts['U'] and official_counts['D'] > 0 %}
+                    {% set official_dominant = 'D' %}
+                    {% elif official_counts['M'] >= official_counts['P'] and official_counts['M'] >= official_counts['U'] and official_counts['M'] > 0 %}
+                    {% set official_dominant = 'M' %}
+                    {% elif official_counts['P'] >= official_counts['U'] and official_counts['P'] > 0 %}
+                    {% set official_dominant = 'P' %}
+                    {% else %}
+                    {% set official_dominant = 'U' %}
+                    {% endif %}
+                    {% if batch.total_students > 1 %}
+                    <span class="text-placeholder-dim">-</span>
+                    {% elif official_dominant == 'D' %}
+                    <span class="grade-letter-d">D</span>
+                    {% elif official_dominant == 'M' %}
+                    <span class="grade-letter-m">M</span>
+                    {% elif official_dominant == 'P' %}
+                    <span class="grade-letter-p">P</span>
+                    {% else %}
+                    <span class="grade-letter-u">U</span>
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+
+            {% if batch_mode_ns.is_basic %}
+            <!-- Expected Grade (BASIC advisory only) -->
+            <div class="stat-card">
+                <div class="stat-label">التقدير المتوقع</div>
+                <div class="stat-body">
+                <div class="stat-value">
+                    {% set expected_counts = {'U': 0, 'P': 0, 'M': 0, 'D': 0} %}
+                    {% set expected_advisory = namespace(active=false) %}
+                    {% for result in results %}
+                    {% if result.summary %}
+                    {% set erg = (result.grade_display_metrics.expected_runtime_grade or {}) if result.grade_display_metrics else {} %}
+                    {% set exp_gl = erg.expected_btec_grade %}
+                    {% if exp_gl %}
+                    {% set expected_advisory.active = true %}
+                    {% if exp_gl not in ['D','M','P','U'] %}{% set exp_gl = none %}{% endif %}
+                    {% if exp_gl == 'D' %}{% if expected_counts.update({'D': expected_counts['D'] + 1}) %}{% endif %}
+                    {% elif exp_gl == 'M' %}{% if expected_counts.update({'M': expected_counts['M'] + 1}) %}{% endif %}
+                    {% elif exp_gl == 'P' %}{% if expected_counts.update({'P': expected_counts['P'] + 1}) %}{% endif %}
+                    {% elif exp_gl == 'U' %}{% if expected_counts.update({'U': expected_counts['U'] + 1}) %}{% endif %}
+                    {% endif %}
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                    {% if expected_counts['D'] >= expected_counts['M'] and expected_counts['D'] >= expected_counts['P'] and expected_counts['D'] >= expected_counts['U'] and expected_counts['D'] > 0 %}
+                    {% set expected_dominant = 'D' %}
+                    {% elif expected_counts['M'] >= expected_counts['P'] and expected_counts['M'] >= expected_counts['U'] and expected_counts['M'] > 0 %}
+                    {% set expected_dominant = 'M' %}
+                    {% elif expected_counts['P'] >= expected_counts['U'] and expected_counts['P'] > 0 %}
+                    {% set expected_dominant = 'P' %}
+                    {% elif expected_counts['U'] > 0 %}
+                    {% set expected_dominant = 'U' %}
+                    {% else %}
+                    {% set expected_dominant = none %}
+                    {% endif %}
+                    {% if not expected_advisory.active or not expected_dominant %}
+                    <span class="text-placeholder-dim">-</span>
+                    {% elif batch.total_students > 1 %}
+                    <span class="text-placeholder-dim">-</span>
+                    {% elif expected_dominant == 'D' %}
+                    <span class="grade-letter-d">D</span>
+                    {% elif expected_dominant == 'M' %}
+                    <span class="grade-letter-m">M</span>
+                    {% elif expected_dominant == 'P' %}
+                    <span class="grade-letter-p">P</span>
+                    {% else %}
+                    <span class="grade-letter-u">U</span>
+                    {% endif %}
+                </div>
+                {% if batch.total_students <= 1 and expected_advisory.active %}
+                <div class="stat-note">
+                    {{ render_expected_disclaimer('md', 'dark', true) }}
+                </div>
+                {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Status -->
+            <div class="stat-card">
+                <div class="stat-label">حالة الدفعة</div>
+                <div class="stat-body">
+                {% if batch.status and batch.status.value == 'failed' %}
+                <div class="stat-value stat-value--status stat-value--red">
+                    <i class="fa-solid fa-circle-xmark"></i> فشل
+                </div>
+                {% elif batch.status and batch.status.value == 'processing' %}
+                <div class="stat-value stat-value--status stat-value--amber">
+                    <i class="fa-solid fa-spinner fa-spin"></i> جاري
+                </div>
+                {% else %}
+                <div class="stat-value stat-value--status stat-value--green">
+                    مكتمل
+                </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="gcard gcard--flush">
+            <div class="gcard-header">
+                <h3 class="gcard-title">قائمة نتائج الطلاب</h3>
+            </div>
+
+            <div class="table-scroll">
+            <div class="students-list-wrap">
+
+            <div class="students-list-head">
+                <span>#</span>
+                <span class="head-name">اسم الملف / الطالب</span>
+                <span>التقدير المعتمد</span>
+                <span class="col-expected">التقدير المتوقع</span>
+                <span>نسبة الذكاء الإصطناعي</span>
+                <span title="تشابه النص مع زملاء نفس الدفعة — اللون يتدرج حسب النسبة">نسبة التشابة</span>
+                <span>التقارير</span>
+            </div>
+
+            <div class="students-list">
+                {% for result in results %}
+                {% set has_diag = (result.explainability and result.explainability.missing_evidence_diagnostics and (result.explainability.missing_evidence_diagnostics.rows or [])) or (result.explainability and result.explainability.evidence_coverage_by_criterion) or (result.explainability and result.explainability.runtime_evidence_package and result.explainability.runtime_evidence_package.requirement_confidence) or (result.pearson_criteria_rows or []) %}
+                {% set student_label = result.submission.file_path.split('\\')[-1].split('/')[-1] if result.submission.file_path else result.submission.student_name %}
+                <div class="student-item{% if has_diag %} student-item--has-diag{% endif %}" data-student-id="{{ result.submission.id }}">
+                    <div class="student-item-header">
+                        <span class="student-index">{{ loop.index }}</span>
+                        <div>
+                            {% if has_diag %}
+                            <button type="button" class="student-name-toggle" data-diag-target="diag-{{ result.submission.id }}" aria-expanded="false" aria-controls="diag-{{ result.submission.id }}">
+                                <i class="fa-solid fa-chevron-left toggle-chevron"></i>
+                                <span>{{ student_label }}</span>
+                            </button>
+                            {% else %}
+                            <span class="student-name-static">{{ student_label }}</span>
+                            {% endif %}
+                            {% if result.submission.status and result.submission.status.value == 'failed' %}
+                            <div class="student-failure-msg">
+                                {{ result.failure_error or batch.failure_message or 'فشل تصحيح هذا الطالب' }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="student-col">
+                                {% if result.submission.status and result.submission.status.value == 'failed' %}
+                                <span class="grade-badge grade-u">فشل</span>
+                                {% elif result.summary %}
+                                {% set inst = (result.explainability.institutional_resolution or {}) if result.explainability else {} %}
+                                {% set btec = inst.btec_grade or (result.summary.grade_level or 'U') %}
+                                {% set btec_short = btec.split(' ')[0] if btec else 'U' %}
+                                {% if not inst.btec_grade and btec_short not in ['D', 'M', 'P', 'U'] %}
+                                {% set btec_short = 'U' %}
+                                {% endif %}
+                                <div class="grade-stack">
+                                    {{ render_grade_badge(btec_short) }}
+                                </div>
+                                {% else %}
+                                <span class="text-placeholder">-</span>
+                                {% endif %}
+                        </div>
+                        <div class="student-col col-expected">
+                                {% if result.submission.status and result.submission.status.value == 'failed' %}
+                                <span class="text-placeholder">-</span>
+                                {% elif result.summary %}
+                                {% set erg = (result.grade_display_metrics.expected_runtime_grade or {}) if result.grade_display_metrics else {} %}
+                                {% set exp_grade = erg.expected_btec_grade if erg else none %}
+                                {% if exp_grade and exp_grade not in ['D', 'M', 'P', 'U'] %}{% set exp_grade = none %}{% endif %}
+                                {% if exp_grade %}
+                                {{ render_grade_badge(exp_grade) }}
+                                <div class="grade-col-disclaimer">
+                                    {{ render_expected_disclaimer('sm', 'dark', true) }}
+                                </div>
+                                {% else %}
+                                <span class="text-placeholder">-</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="text-placeholder">-</span>
+                                {% endif %}
+                        </div>
+                        <div class="student-col">
+                                {% if result.summary %}
+                                {% set ai = result.summary.ai_likelihood or 0 %}
+                                {% if ai >= 80 %}
+                                <span class="metric-pct metric-pct--high">{{ ai }}%</span>
+                                {% elif ai >= 40 %}
+                                <span class="metric-pct metric-pct--mid">{{ ai }}%</span>
+                                {% else %}
+                                <span class="metric-pct metric-pct--low">{{ ai }}%</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="text-placeholder">-</span>
+                                {% endif %}
+                        </div>
+                        <div class="student-col">
+                                {% if result.summary %}
+                                {% set plag = result.summary.plagiarism_max_similarity or 0 %}
+                                {% if plag >= 50 %}
+                                <span class="plag-pct plag-pct--50" title="مرتفع جداً (≥50%)">{{ "%.1f"|format(plag) }}%</span>
+                                {% elif plag >= 30 %}
+                                <span class="plag-pct plag-pct--30" title="مرتفع (30–49%)">{{ "%.1f"|format(plag) }}%</span>
+                                {% elif plag >= 20 %}
+                                <span class="plag-pct plag-pct--20" title="يحتاج مراجعة (20–29%)">{{ "%.1f"|format(plag) }}%</span>
+                                {% elif plag >= 16 %}
+                                <span class="plag-pct plag-pct--16" title="ملحوظ (16–19%)">{{ "%.1f"|format(plag) }}%</span>
+                                {% elif plag >= 13 %}
+                                <span class="plag-pct plag-pct--13" title="متوسط (13–15%)">{{ "%.1f"|format(plag) }}%</span>
+                                {% elif plag >= 10 %}
+                                <span class="plag-pct plag-pct--10" title="منخفض–متوسط (10–12%)">{{ "%.1f"|format(plag) }}%</span>
+                                {% else %}
+                                <span class="plag-pct plag-pct--low" title="منخفض (&lt;10%)">{{ "%.1f"|format(plag) }}%</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="text-placeholder">-</span>
+                                {% endif %}
+                        </div>
+                        <div class="student-col">
+                                {% if result.report %}
+                                <div class="reports-actions">
+                                    <a href="/results/{{ result.submission.id }}" class="action-btn view" title="عرض التفاصيل">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    <a href="/api/download-report-word/{{ result.submission.id }}" onclick="event.preventDefault(); aiGrader.downloadReportFile(this.href, 'report_{{ result.submission.id }}.docx');" class="action-btn word" title="تحميل Word">
+                                        <i class="fa-solid fa-file-word"></i>
+                                    </a>
+                                    <a href="/api/download-report/{{ result.submission.id }}" onclick="event.preventDefault(); aiGrader.downloadReportFile(this.href, 'report_{{ result.submission.id }}.pdf');" class="action-btn pdf" title="تحميل PDF">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                    </a>
+                                    {% if result.submission.status and result.submission.status.value != 'failed' %}
+                                    <a href="/plagiarism-highlight/{{ result.submission.id }}" target="_blank" rel="noopener" class="action-btn plagiarism" title="تقرير التشابه — مقاطع ملوّنة حسب مصدر الاقتباس">
+                                        <i class="fa-solid fa-highlighter"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                <span class="report-pending">جاري التجهيز...</span>
+                                {% endif %}
+                        </div>
+                    </div>
+                    {% if has_diag %}
+                    <div class="student-diag-panel" id="diag-{{ result.submission.id }}" hidden>
+                        <div class="student-diag-inner">
+                            <div class="student-diag-title">تشخيص أكاديمي — لماذا هذه الدرجة؟</div>
+                            {% set diag = result.explainability.missing_evidence_diagnostics or {} %}
+                            {% if diag.rows %}
+                            <table class="diag-table">
+                                <thead>
+                                    <tr>
+                                        <th>المطلوب</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in diag.rows %}
+                                    <tr>
+                                        <td class="diag-req">{{ row.requirement_ar }}</td>
+                                        <td class="diag-status">
+                                            {% if row.pro_upgrade_label or row.status_ar in PRO_UPGRADE_STATUSES %}
+                                            {{ render_pro_upgrade_link(row.status_ar if row.status_ar in PRO_UPGRADE_STATUSES else PRO_UPGRADE_STATUS_AR, link_class='diag-status-pro', title='عرض الباقات') }}
+                                            {% elif row.present and not (row.status_ar or '').startswith('⚠') %}
+                                            <span class="diag-status-ok">{{ row.status_ar }}</span>
+                                            {% else %}
+                                            <span class="diag-status-bad">{{ row.status_ar }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                            {% if result.explainability and result.explainability.runtime_evidence_package and result.explainability.runtime_evidence_package.requirement_confidence %}
+                            {% set rep = result.explainability.runtime_evidence_package %}
+                            {% if rep.requirement_confidence %}
+                            <table class="diag-table diag-table--spaced">
+                                <thead><tr><th>المتطلب</th><th>ثقة الأدلة</th></tr></thead>
+                                <tbody>
+                                    {% for rc in rep.requirement_confidence %}
+                                    <tr>
+                                        <td class="diag-req">{{ rc.label_ar or rc.requirement }}</td>
+                                        <td class="diag-confidence">{{ rc.confidence_pct }}%</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                            {% if rep.screenshots %}
+                            <div class="student-diag-title student-diag-title--spaced-sm">لقطات التشغيل (مرصودة — لا تثبت gameplay)</div>
+                            <div class="runtime-shots-grid">
+                                {% for shot in rep.screenshots %}
+                                {% if shot.url or shot.path %}
+                                <a href="{{ shot.url or shot.path }}" target="_blank" rel="noopener" class="runtime-shot-link">
+                                    <img src="{{ shot.url or shot.path }}" alt="{{ shot.label or shot.slot or 'screenshot' }}" class="runtime-shot-img">
+                                    <div class="runtime-shot-label">{{ shot.label or shot.slot }}</div>
+                                </a>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                            {% if result.explainability and result.explainability.evidence_coverage_by_criterion %}
+                            <div class="student-diag-title student-diag-title--spaced-sm">تغطية الأدلة حسب المعيار</div>
+                            <p class="diag-coverage-note">
+                                نسبة التغطية = وجود أدلة محتملة من ملفات الطالب فقط — <strong class="diag-coverage-strong">لا تعني تحقق المعيار</strong>.
+                                للقرار الأكاديمي راجع «معايير BTEC — تحقق / منح» أدناه.
+                            </p>
+                            <table class="diag-table">
+                                <thead>
+                                    <tr>
+                                        <th>المعيار</th>
+                                        <th>التغطية</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cr in result.explainability.evidence_coverage_by_criterion %}
+                                    <tr>
+                                        <td class="diag-req">{{ cr.criteria_level }}</td>
+                                        <td class="diag-status">
+                                            {% if cr.coverage_pct >= 70 %}
+                                            <span class="diag-status-ok">{{ cr.coverage_pct }}%</span>
+                                            {% elif cr.coverage_pct >= 40 %}
+                                            <span class="coverage-pct--warn">{{ cr.coverage_pct }}%</span>
+                                            {% else %}
+                                            <span class="diag-status-bad">{{ cr.coverage_pct }}%</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                            {% if result.pearson_criteria_rows %}
+                            <div class="student-diag-title student-diag-title--spaced-md">معايير BTEC — تحقق / منح</div>
+                            <table class="diag-table">
+                                <thead>
+                                    <tr>
+                                        <th>المعيار</th>
+                                        <th>تحقق</th>
+                                        <th>قابل للمنح</th>
+                                        <th>الدرجة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cr in result.pearson_criteria_rows %}
+                                    <tr>
+                                        <td class="diag-req">{{ cr.criteria_level }}</td>
+                                        <td class="diag-status">{% if cr.achieved %}<span class="diag-status-ok">نعم</span>{% else %}<span class="diag-status-bad">لا</span>{% endif %}</td>
+                                        <td class="diag-status">{% if cr.awardable %}<span class="diag-status-ok">نعم</span>{% else %}<span class="diag-status-bad">لا</span>{% endif %}</td>
+                                        <td class="diag-grade">{{ cr.score }}{% if cr.evidence_weighted_score is not none %} / {{ cr.evidence_weighted_score }}{% endif %}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            </div>
+            </div>
+
+            {% if results|length == 0 %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+                {% if batch.status and batch.status.value == 'failed' %}
+                <p class="empty-state-title--fail">فشل التصحيح</p>
+                <p class="empty-state-msg">
+                    {{ batch.failure_message or 'تعذّر إكمال التصحيح. تحقق من إعدادات مزود الذكاء الاصطناعي أو حاول مجدداً.' }}
+                </p>
+                <a href="/batch-grade/{{ assignment_id }}" class="gbtn-outline gbtn-outline--inline">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    إعادة المحاولة
+                </a>
+                {% else %}
+                <p class="empty-state-empty-msg">لا توجد نتائج لعرضها لهذه الدفعة.</p>
+                {% endif %}
+            </div>
+            {% elif batch.status and batch.status.value == 'failed' and batch.failure_message %}
+            <div class="batch-failure-bar">
+                <p class="batch-failure-msg">
+                    <i class="fa-solid fa-triangle-exclamation icon-warning"></i>
+                    {{ batch.failure_message }}
+                </p>
+                <a href="/batch-grade/{{ assignment_id }}" class="gbtn-outline">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    إعادة المحاولة
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+    function closeAllStudentDiags() {
+        document.querySelectorAll('.student-diag-panel').forEach(function (panel) {
+            panel.hidden = true;
+        });
+        document.querySelectorAll('.student-item').forEach(function (item) {
+            item.classList.remove('is-expanded');
+        });
+        document.querySelectorAll('.student-name-toggle').forEach(function (btn) {
+            btn.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    document.querySelectorAll('.student-name-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggleStudentDiag(btn);
+        });
+    });
+
+    document.querySelectorAll('.student-item--has-diag .student-item-header').forEach(function (header) {
+        header.addEventListener('click', function (e) {
+            if (e.target.closest('a.action-btn')) return;
+            var btn = header.querySelector('.student-name-toggle');
+            if (btn) toggleStudentDiag(btn);
+        });
+    });
+
+    function toggleStudentDiag(btn) {
+        var targetId = btn.getAttribute('data-diag-target');
+        var panel = document.getElementById(targetId);
+        var item = btn.closest('.student-item');
+        if (!panel || !item) return;
+
+        var willOpen = panel.hidden;
+        closeAllStudentDiags();
+        if (willOpen) {
+            panel.hidden = false;
+            item.classList.add('is-expanded');
+            btn.setAttribute('aria-expanded', 'true');
+        }
+    }
+})();
+</script>
+{% endblock %}

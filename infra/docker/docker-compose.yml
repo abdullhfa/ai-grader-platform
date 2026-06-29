@@ -1,0 +1,114 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  api:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    environment:
+      AI_GRADER_REDIS_URL: redis://redis:6379/0
+      AI_GRADER_CELERY_ENABLED: "1"
+      AI_GRADER_ASYNC_REASONING: "1"
+      AI_GRADER_OBJECT_STORE: s3
+      AI_GRADER_S3_ENDPOINT: http://minio:9000
+      AI_GRADER_S3_ACCESS_KEY: minioadmin
+      AI_GRADER_S3_SECRET_KEY: minioadmin
+      AI_GRADER_S3_BUCKET: ai-grader
+      AI_GRADER_DOCKER_SANDBOX: "0"
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    volumes:
+      - uploads_data:/app/uploads
+
+  worker-runtime:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.worker-runtime
+    environment:
+      AI_GRADER_REDIS_URL: redis://redis:6379/0
+      AI_GRADER_CELERY_ENABLED: "1"
+      AI_GRADER_RUNTIME_CPU_LIMIT: "2"
+      AI_GRADER_RUNTIME_MEMORY_MB: "2048"
+      AI_GRADER_RUNTIME_TIMEOUT: "120"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  worker-cv:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.worker-cv
+    environment:
+      AI_GRADER_REDIS_URL: redis://redis:6379/0
+      AI_GRADER_CELERY_ENABLED: "1"
+      AI_GRADER_GAMEPLAY_AI: "1"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+
+  worker-reasoning:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.worker-reasoning
+    environment:
+      AI_GRADER_REDIS_URL: redis://redis:6379/0
+      AI_GRADER_CELERY_ENABLED: "1"
+      AI_GRADER_EVIDENCE_REASONING: "1"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    volumes:
+      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "9091:9090"
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+
+volumes:
+  minio_data:
+  uploads_data:

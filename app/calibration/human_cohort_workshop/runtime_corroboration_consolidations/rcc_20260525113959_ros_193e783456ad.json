@@ -1,0 +1,128 @@
+{
+  "consolidation_id": "rcc_20260525113959",
+  "spec_id": "RUNTIME_CORROBORATION_CONSOLIDATION_v1",
+  "logged_at": "2026-05-25T11:39:59.451928Z",
+  "mode": "runtime_corroboration_consolidation",
+  "not_mode": "grading_legitimacy_session",
+  "student_label": "abdullah_al_utoum",
+  "runtime_session_id": "ros_193e783456ad",
+  "evidence_layers": {
+    "code_hypotheses": "present",
+    "smoke_runtime_phenomenology": "present",
+    "assisted_interaction": "absent",
+    "visual_corroboration": "present",
+    "contradiction_corroboration": "partial_or_complete",
+    "semantic_restraint": "preserved"
+  },
+  "unresolved_runtime_opacity": [
+    "gameplay_meaning_opaque"
+  ],
+  "contradiction_registry": {
+    "spec_id": "RUNTIME_CORROBORATION_UPDATE_v1",
+    "pass_id": "mpp_45c99b47de48",
+    "updates": [
+      {
+        "contradiction_id": "scene_name_mismatch_level2",
+        "corroboration_state": "corroborated",
+        "note_en": "Runtime visual observation aligned with code hypothesis (level_transition_failed).",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      },
+      {
+        "contradiction_id": "timer_not_wired_to_game_over",
+        "corroboration_state": "corroborated",
+        "note_en": "Runtime visual observation aligned with code hypothesis (timer_expired_no_consequence_observed).",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      },
+      {
+        "contradiction_id": "space_key_dual_use",
+        "corroboration_state": "inconclusive",
+        "note_en": "Partial signal (jump_response_observed) — hypothesis not fully resolved.",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      },
+      {
+        "contradiction_id": "timescale_start_conflict",
+        "corroboration_state": "inconclusive",
+        "note_en": "Partial signal (start_state_transition_observed) — hypothesis not fully resolved.",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      }
+    ],
+    "legitimacy_blocked": true,
+    "rubric_meaning_blocked": true
+  },
+  "interactive_phenomenology_descriptors": [
+    "start_state_transition_observed",
+    "jump_response_observed",
+    "score_change_observed",
+    "level_transition_failed",
+    "timer_expired_no_consequence_observed",
+    "game_over_panel_observed"
+  ],
+  "provenance_continuity_notes": [
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "start_space",
+      "observed_en": "After Space, gameplay start transition observed (jump/start response visible).",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "jump_after_start",
+      "observed_en": "Jump response observed after game start.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "cup_score",
+      "observed_en": "Score change observed on cup collection.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "third_cup_level",
+      "observed_en": "No scene change observed after third cup.",
+      "classification": "contradiction_observed",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "timer_zero",
+      "observed_en": "Timer reached zero with no observed gameplay event.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "lives_exhausted",
+      "observed_en": "Game over panel shown after lives exhausted.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    }
+  ],
+  "runtime_quarantine_states": [
+    "runtime_observed",
+    "runtime_reproducible",
+    "runtime_provenance_partial",
+    "runtime_epistemically_unverified",
+    "runtime_legitimacy_blocked"
+  ],
+  "quarantine_remains_active": true,
+  "legitimacy_blocked": true,
+  "rubric_meaning_blocked": true,
+  "gameplay_understood": false,
+  "central_question_en": "Can the system retain restraint after accumulating runtime evidence?",
+  "post_consolidation_phase": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "institutional_ledger_appended": false
+}

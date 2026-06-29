@@ -1,0 +1,173 @@
+{
+  "version": 2,
+  "path": "B",
+  "path_note_ar": "Phase 3 design framework complete — deliberation only، بدون scoring تلقائي. Phase 2 gap مسجّلة.",
+  "core_question_en": "what kind of confidence is institutionally legitimate?",
+  "not_the_question_en": "what score should AI give?",
+  "design_framework": {
+    "status": "complete",
+    "completed_at": "2026-05-24T23:00:00Z",
+    "operationalization": "blocked",
+    "institutional_signoff_requires": [
+      "phase2_complete",
+      "epoch_deliberation_signed",
+      "sufficiency_deliberation_workshops_live",
+      "replay_read_only_gate"
+    ]
+  },
+  "phase2_gap": {
+    "human_observations_recorded": 1,
+    "human_observations_target": 20,
+    "ritual_reading_complete": false,
+    "epistemic_synthesis_complete": false,
+    "waiver_accepted_at": "2026-05-24T00:00:00Z",
+    "waiver_rationale_ar": "corpus AI جاهز (21/21) — Phase 3 design framework under Path B before 19 observation متبقية"
+  },
+  "design_artifacts": {
+    "evidence_sufficiency_atlas": "app/calibration/EVIDENCE_SUFFICIENCY_ATLAS_v1.md",
+    "confidence_bands": "app/calibration/INSTITUTIONAL_CONFIDENCE_BANDS_v1.md",
+    "sufficiency_contours": "app/calibration/SUFFICIENCY_CONTOURS_v1.md",
+    "contradiction_modulation": "app/calibration/CONTRADICTION_MODULATION_v1.md",
+    "language_registry": "app/calibration/CONFIDENCE_LANGUAGE_REGISTRY_v1.md",
+    "master_calibration": "app/calibration/EVIDENCE_WEIGHT_CALIBRATION_v1.md"
+  },
+  "build_order_status": {
+    "evidence_sufficiency_atlas": "complete",
+    "confidence_bands": "complete",
+    "sufficiency_contours": "complete",
+    "confidence_language_registry": "complete",
+    "contradiction_modulation": "complete",
+    "sufficiency_deliberation_workshops": "pending_live",
+    "replay_as_deliberation_surface": "pending_gated"
+  },
+  "forbidden_always": [
+    "weights",
+    "hidden_scoring",
+    "probabilistic_authority",
+    "hidden_weight_injection",
+    "automatic_confidence_arithmetic",
+    "band_to_grade_mapping",
+    "confidence_band_vocabulary.py_runtime",
+    "contradiction_modulation_auto_apply"
+  ],
+  "cohorts": {
+    "8": {
+      "phase": "PHASE3_INSTITUTIONAL_EVIDENCE_CALIBRATION_v1",
+      "phase3_mode": "design_only",
+      "batch_id": 8,
+      "assignment_id": 2,
+      "batch_name": "الفصل الاول",
+      "status": "design_framework_complete",
+      "corpus_verified": {
+        "total_submissions": 21,
+        "graded_submissions": 21,
+        "verified_at": "2026-05-24T00:00:00Z"
+      },
+      "activated_at": "2026-05-24T00:00:00Z",
+      "facilitator": "Eng.Abdulah",
+      "results_url": "/batch-results/8",
+      "atlas_drafts_file": "phase3_atlas_drafts_batch8.jsonl",
+      "deliberated_atlas_entries": [
+        "ATLAS-B8-001",
+        "ATLAS-B8-002",
+        "ATLAS-B8-003",
+        "ATLAS-B8-004"
+      ],
+      "first_deliberation_signed_at": "2026-05-24T00:00:00Z",
+      "design_framework_completed_at": "2026-05-24T23:00:00Z",
+      "constitutional_anchors": {
+        "success_contour": "ATLAS-B8-002",
+        "failure_contour": "ATLAS-B8-003",
+        "asymmetry_pair_label": "constitutional_asymmetry_pair",
+        "asymmetry_awareness_en": "institutions are not epistemically symmetric — success confidence and failure confidence form through different psychological and institutional pathways",
+        "B8-002_role": "inflation contour — confidence inflates under high legibility",
+        "B8-003_role": "closure contour — failure stabilizes under degraded interpretive intake",
+        "central_restraint_phrases": [
+          "failure confidence ≠ adequate interpretive encounter",
+          "evidence was interpreted and judged insufficient ≠ evidence ecology never cohered institutionally enough to become fully interpretable",
+          "low confidence must not silently harden into institutionally hardened failure certainty",
+          "confidence stabilization is partly shaped by evidence legibility — not only evidence volume",
+          "protected constitutional reminders of institutional fragility — not heuristics · not classifier seeds"
+        ],
+        "atlas_identity_en": "constitutional memory of how institutions form certainty under partial observability — not evidence sufficiency catalogue",
+        "operationalization": "blocked"
+      }
+    },
+    "4": {
+      "phase": "PHASE3_INSTITUTIONAL_EVIDENCE_CALIBRATION_v1",
+      "phase3_mode": "design_only",
+      "batch_id": 4,
+      "assignment_id": 2,
+      "batch_name": "عكاوي",
+      "status": "design_framework_complete",
+      "corpus_role_en": "institutional surface-selection stress test",
+      "corpus_verified": {
+        "total_submissions": 21,
+        "graded_submissions": 21,
+        "verified_at": "2026-05-24T22:00:00Z"
+      },
+      "activated_at": "2026-05-24T22:00:00Z",
+      "facilitator": "Eng.Abdulah",
+      "results_url": "/batch-results/4",
+      "atlas_drafts_file": "phase3_atlas_drafts_batch4.jsonl",
+      "deliberated_atlas_entries": ["ATLAS-B4-001"],
+      "design_framework_completed_at": "2026-05-24T23:00:00Z",
+      "internal_asymmetry_verdict": "deferred",
+      "internal_asymmetry_note_en": "Laith/Hussein tension illustrative only — asymmetry pair inside B4 not signed",
+      "constitutional_contour": {
+        "id": "ATLAS-B4-001",
+        "label": "surface_capture",
+        "rank_note_en": "Third constitutional contour — epistemically precedes B8-002 and B8-003",
+        "core_insight_en": "institutional certainty may stabilize around the wrong representational surface",
+        "typical_band": "representational_capture_under_noisy_implementation_ecology",
+        "illustrative_anchors": {
+          "substitution": "ليث الشطي — TextMesh Pro PDF as institutionally stabilized surface",
+          "bounded_opacity": "حسين السلامات — M under gated runtime + strong doc"
+        },
+        "central_restraint_phrases": [
+          "the institution may assess what became representationally stable rather than what was evidentially most complete",
+          "the institution may assess the archive it could metabolize, not necessarily the archive that existed",
+          "certainty stabilizes around representational cleanliness rather than implementation ecology",
+          "institutional certainty is partly shaped by which surface becomes metabolically central"
+        ],
+        "constitutional_protection_required": true,
+        "operationalization": "blocked"
+      },
+      "forbidden_until_epoch_signoff": [
+        "_pick_best_file_changes",
+        "runtime_prioritization_hierarchy",
+        "surface_forcing_engine",
+        "hidden_weight_injection",
+        "automatic_confidence_arithmetic",
+        "band_to_grade_mapping"
+      ]
+    }
+  },
+  "constitutional_contour_triad_v1": {
+    "atlas_identity_en": "constitutional memory of institutional epistemic deformation pathways under bounded observability and metabolization pressure",
+    "epistemic_precedence_note_en": "B4-001 (which surface stabilizes) precedes B8-002 (inflation) and B8-003 (closure)",
+    "contours": [
+      {
+        "id": "ATLAS-B4-001",
+        "batch_id": 4,
+        "label": "surface_capture",
+        "doc": "app/calibration/SUFFICIENCY_CONTOURS_v1.md",
+        "operationalization": "blocked"
+      },
+      {
+        "id": "ATLAS-B8-002",
+        "batch_id": 8,
+        "label": "inflation",
+        "doc": "app/calibration/SUFFICIENCY_CONTOURS_v1.md",
+        "operationalization": "blocked"
+      },
+      {
+        "id": "ATLAS-B8-003",
+        "batch_id": 8,
+        "label": "closure",
+        "doc": "app/calibration/SUFFICIENCY_CONTOURS_v1.md",
+        "operationalization": "blocked"
+      }
+    ]
+  }
+}

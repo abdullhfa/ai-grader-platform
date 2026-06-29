@@ -1,0 +1,235 @@
+{
+  "schema": "replay_audit_export_v1",
+  "generated_at": "2026-05-26T23:02:45Z",
+  "trials_per_submission": 3,
+  "total": 25,
+  "stable_count": 25,
+  "stable_rate": 1.0,
+  "entries": [
+    {
+      "submission_id": 1,
+      "student_name": "عبدالله العتوم",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 2,
+      "student_name": "(ج) مهمه الالعاب محمد رمزي",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 3,
+      "student_name": "CAT RUNNER  عمر صبري أبو عاذره",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 4,
+      "student_name": "hashem nawasreh _ lpsc geame worde",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 5,
+      "student_name": "احمد طبوش",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 6,
+      "student_name": "الالعاب سيف سليمان ابو فرده",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 7,
+      "student_name": "العاب حيدر عمر الزعارير",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 8,
+      "student_name": "عبد الرحمن بني مصطفى",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 9,
+      "student_name": "ايمن الشنباري",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 10,
+      "student_name": "أيهم حسن العتوم",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 11,
+      "student_name": "محمد عبد المعطي نوفل",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 12,
+      "student_name": "محمد قاسم نوفل",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 13,
+      "student_name": "حذيفه محمد صبيحي",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 14,
+      "student_name": "(ج) مهمه الالعاب محمد رمزي",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 15,
+      "student_name": "CAT RUNNER  عمر صبري أبو عاذره",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 16,
+      "student_name": "hashem nawasreh _ lpsc geame worde",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 17,
+      "student_name": "احمد طبوش",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 18,
+      "student_name": "الالعاب سيف سليمان ابو فرده",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 19,
+      "student_name": "العاب حيدر عمر الزعارير",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 20,
+      "student_name": "عبد الرحمن بني مصطفى",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 21,
+      "student_name": "ايمن الشنباري",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 22,
+      "student_name": "أيهم حسن العتوم",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 23,
+      "student_name": "محمد عبد المعطي نوفل",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 24,
+      "student_name": "محمد قاسم نوفل",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    },
+    {
+      "submission_id": 25,
+      "student_name": "حذيفه محمد صبيحي",
+      "trials": 3,
+      "hash_stable": true,
+      "verification_stable": true,
+      "unique_state_hashes": 1,
+      "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+    }
+  ]
+}

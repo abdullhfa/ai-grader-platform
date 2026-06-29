@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "cohorts": {
+    "1": {
+      "phase": "PHASE2_INSTITUTIONAL_OBSERVATION_v1",
+      "batch_id": 1,
+      "status": "observation_active",
+      "mode": "observe_only",
+      "activated_at": "2026-05-23T14:41:05.276548Z",
+      "facilitator": "workshop_session_1",
+      "target_submissions": 25,
+      "notes_ar": "Phase 2 live start - batch 1 seed",
+      "workshop_completed_at": null,
+      "cooling_period_started_at": null,
+      "cooling_period_ends_at": null,
+      "epistemic_synthesis_generated_at": null,
+      "ritual_reading_completed_at": null,
+      "semantic_memory_recorded_at": null,
+      "epoch_deliberation_started_at": null,
+      "epoch_deliberation_completed_at": null,
+      "rules_ar": [
+        "observe only — لا training ولا correction ولا intervention ولا semantic steering",
+        "replay first — صمت حتى يُفتح Authority Replay",
+        "Section E قبل Section D — epistemic behaviour precedes trust sentiment",
+        "سجّل language samples حرفياً — حتى العبارات «العادية»",
+        "سجّل absence — contradiction غير مذكورة، replay متأخر، uncertainty اختفت",
+        "لا sandbox · لا v2 · لا L4 expansion · لا constitutional evolution حتى إكمال Phase 2"
+      ]
+    },
+    "8": {
+      "phase": "PHASE2_INSTITUTIONAL_OBSERVATION_v1",
+      "batch_id": 8,
+      "status": "deferred_incomplete",
+      "mode": "observe_only",
+      "corpus_ai_graded": 21,
+      "human_observations_recorded": 1,
+      "notes_ar": "corpus جاهز — observations لم تكتمل — Phase 3 design (path B) بدأ على batch 8",
+      "phase3_design_started": true,
+      "phase3_state_file": "phase3_cohort_state.json"
+    },
+    "4": {
+      "phase": "PHASE2_INSTITUTIONAL_OBSERVATION_v1",
+      "batch_id": 4,
+      "status": "archived_reference_cohort",
+      "archived_at": "2026-05-25T00:35:00Z",
+      "archive_manifest": "app/calibration/human_cohort_workshop/REFERENCE_GOVERNANCE_COHORT_BATCH4.json",
+      "institutional_axiom_ar": "النظام لم يفشل لأنه شكّ؛ بل كان سينجح زائفًا لو توقف عن الشك.",
+      "roadmap_ordered": [
+        {"path": "C", "status": "complete", "label_ar": "Archive — reference governance cohort"},
+        {"path": "A", "status": "epoch_rereview_complete", "label_ar": "Path A mitigation — epoch re-review complete"},
+        {"path": "B", "status": "rfc_complete_no_activation", "label_ar": "Phase 4 observational sandbox RFC — design only"}
+      ],
+      "path_a_mitigation": {
+        "status": "epoch_rereview_complete",
+        "artifact": "app/calibration/REPLAY_GATE_DISCIPLINE_v1.md",
+        "language_artifact": "app/calibration/AUTHORITY_TRIAD_LANGUAGE_v1.md",
+        "quarantine_contract": "app/calibration/EPISTEMIC_QUARANTINE_CONTRACT_v1.md",
+        "epoch_rereview_packet": "app/calibration/EPOCH_REREVIEW_PACKET_PATH_A_v1.md",
+        "epoch_rereview_verdict": "mitigation_containment_progress_accepted",
+        "workshop": "app/calibration/human_cohort_workshop/replay_gate_mitigation_workshop.json",
+        "workshop_curriculum_core": "complete",
+        "mitigation_ledger_entry": "led_d9fe03a80996",
+        "implementation_stubs": [
+          "app/replay_gate_discipline.py",
+          "app/epistemic_quarantine_contract.py"
+        ]
+      },
+      "path_b_phase4_rfc": {
+        "status": "design_complete",
+        "artifact": "app/calibration/PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.md",
+        "activation": false,
+        "accepted_at": "2026-05-25T07:00:00Z",
+        "eligibility_basis": "EPOCH_REREVIEW_PACKET_PATH_A_v1"
+      },
+      "post_rfc_evidence_tracks": {
+        "status": "active",
+        "manifest": "app/calibration/human_cohort_workshop/post_rfc_epistemic_evidence_tracks.json",
+        "exit_criteria_tracking": "app/calibration/EXIT_CRITERIA_TRACKING_WORKSHOP_v1.md",
+        "trusted_replay_pilot": "app/calibration/TRUSTED_REPLAY_DISCIPLINE_PILOT_v1.md",
+        "metrics_ledger": "app/calibration/human_cohort_workshop/exit_criteria_metrics.jsonl",
+        "epistemic_trace_ui": "governance_pilot_observatory Section F",
+        "trace_schema": "app/calibration/EPISTEMIC_TRACE_CAPTURE_SCHEMA_v1.json",
+        "epistemic_trace_dry_run": "app/calibration/human_cohort_workshop/epistemic_trace_dry_run_submission_6.json",
+        "baseline_batch4_recorded": true
+      },
+      "pending_actions_ar": [
+        "LIVE_CONSTITUTIONAL_VALIDATION_v1 — موقوف عمدًا · cohort #1 جاهز دون تفعيل",
+        "ARCHITECTURAL_HARDENING_v1 — clarity under restraint · لا Step 6 · لا features كبيرة",
+        "CONSTITUTIONAL_MAINTENANCE_v1 — gate review passed · path decision pending",
+        "requires less belief to trust restraint — yes after merge 1",
+        "ledger فارغ — We still refuse to declare ourselves justified",
+        "constitutional pilot resume — بعد hardening review أو waiver صريح",
+        "Limited runtime validation — blocked until constitutional pilot resume + live pass"
+      ],
+      "mode": "observe_only",
+      "activated_at": "2026-05-24T22:32:12.948338Z",
+      "facilitator": "Eng.Abdulah",
+      "target_submissions": 21,
+      "designation": "reference_governance_cohort",
+      "designation_note_ar": "ليس pilot batch grading — cohort مرجعي epistemically valuable للـ RFC و Epoch review",
+      "observations_recorded": 21,
+      "observations_target": 21,
+      "pending_submission_ids": [],
+      "semantic_memory_entry_id": "ism_27544be77f0a",
+      "ritual_reading_completed_at": "2026-05-25T00:19:53.827957Z",
+      "cooling_bypassed_at": "2026-05-25T00:18:10.389591Z",
+      "cooling_bypass_note_ar": "facilitator waiver — institutional ritual reading start",
+      "ritual_reading_started_at": "2026-05-25T00:19:31.470727Z",
+      "phase2_findings_ar": [
+        "AI والمراجع ينجذبان للسرد الجيد/GDD حتى عند غياب runtime authority",
+        "خلط متكرر بين adequacy of explanation و executable reality (14/21 L3 confusion)",
+        "طبقة الحوكمة أبقت التناقضات visible — contradictions visible + no silent S5",
+        "HOLD universal = اعتراف بعدم اليقين لا إخفاء",
+        "replay موجود شكلياً أكثر من trusted replay",
+        "L4 observational sandbox — بعد sign-off فقط؛ L4 as grading authority — مبكر"
+      ],
+      "notes_ar": "Phase 2 live — batch 4 corpus (21 graded Gemini) — reference governance cohort",
+      "workshop_completed_at": "2026-05-25T00:14:09.243790Z",
+      "cooling_period_started_at": "2026-05-25T00:14:09.243790Z",
+      "cooling_period_ends_at": "2026-05-24T23:18:10.389591Z",
+      "epistemic_synthesis_generated_at": "2026-05-25T00:14:09.243790Z",
+      "semantic_memory_recorded_at": "2026-05-25T00:20:38.961687Z",
+      "epoch_deliberation_started_at": "2026-05-25T00:28:31.271274Z",
+      "epoch_deliberation_completed_at": "2026-05-25T00:28:31.271274Z",
+      "epoch_workshop_verdict": "not_yet_requires_mitigation",
+      "signed_artifact_id": "art_396d6d2036154ced",
+      "signed_at": "2026-05-25T00:28:31Z",
+      "signatory": "Eng.Abdulah",
+      "rules_ar": [
+        "observe only — لا training ولا correction ولا intervention ولا semantic steering",
+        "replay first — صمت حتى يُفتح Authority Replay",
+        "Section E قبل Section D — epistemic behaviour precedes trust sentiment",
+        "سجّل language samples حرفياً — حتى العبارات «العادية»",
+        "سجّل absence — contradiction غير مذكورة، replay متأخر، uncertainty اختفت",
+        "لا sandbox · لا v2 · لا L4 expansion · لا constitutional evolution حتى إكمال Phase 2"
+      ],
+      "observations_at_completion": 21,
+      "epistemic_synthesis_observation_count": 21
+    }
+  }
+}

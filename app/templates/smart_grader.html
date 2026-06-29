@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}تصحيح الطلبة - المقيم الذكي{% endblock %}
+{% block nav_smart_grader %}active{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── Page ── */
+    .sg-page {
+        background: linear-gradient(160deg, #0f2027, #203a43, #2c5364);
+        min-height: calc(100vh - 80px);
+        position: relative; overflow: hidden;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+
+    /* ── Animated blobs ── */
+    .sg-blob {
+        position: absolute; border-radius: 50%;
+        filter: blur(100px); opacity: 0.35; z-index: 0;
+        animation: sgFloat 18s ease-in-out infinite alternate;
+    }
+    .sg-blob-1 {
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, #f59e0b, #d97706);
+        top: -120px; right: -80px;
+    }
+    .sg-blob-2 {
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, #2d5f6e, #00d2ff);
+        bottom: -150px; left: -100px;
+        animation-delay: -6s;
+    }
+    .sg-blob-3 {
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, #14b8a6, #38ef7d);
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        animation-delay: -12s; opacity: 0.15;
+    }
+    @keyframes sgFloat {
+        0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+        33%  { transform: translate(40px, -30px) scale(1.08) rotate(5deg); }
+        66%  { transform: translate(-30px, 40px) scale(0.95) rotate(-3deg); }
+        100% { transform: translate(20px, 20px) scale(1.05) rotate(2deg); }
+    }
+
+    /* ── Hero ── */
+    .sg-hero {
+        position: relative; z-index: 5;
+        text-align: center;
+        padding: 50px 20px 30px;
+    }
+    .sg-hero-icon {
+        width: 80px; height: 80px; margin: 0 auto 20px;
+        background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(20,184,166,0.15));
+        border: 1px solid rgba(245,158,11,0.2);
+        border-radius: 24px; display: flex; align-items: center; justify-content: center;
+        font-size: 36px; color: #fbbf24;
+        box-shadow: 0 12px 40px rgba(245,158,11,0.15);
+    }
+    .sg-hero h1 {
+        font-size: 36px; font-weight: 900; color: #fff;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .sg-hero p {
+        color: rgba(255,255,255,0.6); font-size: 16px; font-weight: 500;
+    }
+
+    /* ── Stats ── */
+    .sg-stats {
+        position: relative; z-index: 5;
+        max-width: 600px; margin: 0 auto 35px;
+        display: flex; justify-content: center; gap: 50px;
+        padding: 0 20px;
+    }
+    .sg-stat { text-align: center; }
+    .sg-stat-num {
+        font-size: 32px; font-weight: 900;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .sg-stat-label { font-size: 13px; color: #94a3b8; font-weight: 600; margin-top: 4px; }
+
+    /* ── Cards Grid ── */
+    .sg-grid {
+        position: relative; z-index: 5;
+        max-width: 1100px; margin: 0 auto;
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 24px; padding: 0 20px 60px;
+    }
+
+    /* ── Card ── */
+    .sg-card {
+        background: linear-gradient(160deg, rgba(8,28,28,0.92) 0%, rgba(4,16,18,0.88) 100%);
+        border: 1px solid rgba(245,158,11,0.12);
+        border-radius: 24px; padding: 0; overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+    .sg-card::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(to right, #f59e0b, #14b8a6, #fbbf24);
+        opacity: 0; transition: opacity 0.3s;
+    }
+    .sg-card:hover::before { opacity: 1; }
+    .sg-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(245,158,11,0.3);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(245,158,11,0.1);
+    }
+
+    .sg-card-header {
+        padding: 28px 28px 0;
+        display: flex; align-items: flex-start; gap: 16px;
+    }
+    .sg-card-icon {
+        width: 52px; height: 52px; flex-shrink: 0;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(20,184,166,0.12));
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px; color: #fbbf24;
+        border: 1px solid rgba(245,158,11,0.15);
+    }
+    .sg-card-info { flex: 1; text-align: right; min-width: 0; }
+    .sg-card-title {
+        font-size: 18px; font-weight: 800; color: #e2e8f0;
+        margin-bottom: 6px; word-break: break-word;
+    }
+    .sg-card-unit {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 14px; border-radius: 12px;
+        background: rgba(245,158,11,0.1);
+        border: 1px solid rgba(245,158,11,0.15);
+        color: #fcd34d; font-size: 12px; font-weight: 600;
+        word-break: break-word;
+    }
+    .sg-card-unit-wrap { margin-top: 4px; }
+    .sg-card-unit i { color: #fbbf24; font-size: 11px; }
+
+    .sg-card-meta {
+        padding: 18px 28px;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 10px; flex-wrap: wrap;
+    }
+    .sg-meta-item {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 12px; font-weight: 600; color: #64748b;
+    }
+    .sg-meta-item i { font-size: 11px; }
+    .sg-meta-item.ready i { color: #2dd4bf; }
+    .sg-meta-item.criteria i { color: #818cf8; }
+    .sg-meta-item.date i { color: #64748b; }
+
+    .sg-card-actions {
+        padding: 0 28px 28px;
+        display: flex; gap: 10px;
+    }
+    .sg-btn {
+        flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 12px 16px; border-radius: 14px;
+        font-weight: 700; font-size: 13px;
+        text-decoration: none; border: none;
+        transition: all 0.3s ease; cursor: pointer;
+        white-space: nowrap;
+    }
+    .sg-btn-grade {
+        background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.1));
+        color: #fbbf24;
+        border: 1px solid rgba(245,158,11,0.25);
+    }
+    .sg-btn-grade:hover {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(245,158,11,0.3);
+        transform: translateY(-2px);
+    }
+    .sg-btn-word {
+        background: rgba(20,184,166,0.1);
+        color: #5eead4;
+        border: 1px solid rgba(20,184,166,0.2);
+    }
+    .sg-btn-word:hover {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(20,184,166,0.3);
+        transform: translateY(-2px);
+    }
+    .sg-btn-pdf {
+        background: rgba(239,68,68,0.1);
+        color: #fca5a5;
+        border: 1px solid rgba(239,68,68,0.2);
+    }
+    .sg-btn-pdf:hover {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(239,68,68,0.3);
+        transform: translateY(-2px);
+    }
+
+    /* ── Empty State ── */
+    .sg-empty {
+        position: relative; z-index: 5;
+        max-width: 700px; margin: 20px auto 60px;
+        text-align: center; padding: 0 20px;
+    }
+    .sg-empty-card {
+        background: linear-gradient(180deg, rgba(8,30,30,0.9) 0%, rgba(4,13,18,0.95) 100%);
+        -webkit-backdrop-filter: blur(30px);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(245,158,11,0.15);
+        border-radius: 32px; padding: 70px 50px;
+        position: relative; overflow: hidden;
+        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5);
+    }
+    .sg-empty-card::before {
+        content: ''; position: absolute;
+        top: -80px; left: 50%; transform: translateX(-50%);
+        width: 400px; height: 200px;
+        background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+        z-index: 0;
+    }
+    .sg-empty-icon {
+        width: 100px; height: 100px; margin: 0 auto 30px;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 40px; position: relative; z-index: 1;
+        box-shadow: 0 15px 35px rgba(245,158,11,0.35);
+        border: 3px solid rgba(255,255,255,0.1);
+    }
+    .sg-empty-title {
+        font-size: 28px; font-weight: 900; color: #e2e8f0;
+        margin-bottom: 14px; position: relative; z-index: 1;
+    }
+    .sg-empty-desc {
+        color: #94a3b8; font-size: 16px; line-height: 1.8;
+        max-width: 450px; margin: 0 auto 40px;
+        font-weight: 500; position: relative; z-index: 1;
+    }
+    .sg-empty-btn {
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 16px 40px; border-radius: 50px;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff; font-weight: 800; font-size: 16px;
+        text-decoration: none; border: none;
+        box-shadow: 0 12px 35px rgba(245,158,11,0.35);
+        transition: all 0.3s ease; position: relative; z-index: 1;
+    }
+    .sg-empty-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 45px rgba(245,158,11,0.5);
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    }
+
+    @media (max-width: 700px) {
+        .sg-hero h1 { font-size: 28px; }
+        .sg-grid { grid-template-columns: 1fr; }
+        .sg-stats { gap: 25px; }
+        .sg-card-actions { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sg-page">
+    <div class="sg-blob sg-blob-1"></div>
+    <div class="sg-blob sg-blob-2"></div>
+    <div class="sg-blob sg-blob-3"></div>
+
+    <!-- Hero -->
+    <div class="sg-hero">
+        <h1>تصحيح الطلبة — المقيم الذكي</h1>
+        <p>اختر المهمة التي تريد تصحيح واجبات الطلاب فيها</p>
+    </div>
+
+    {% if assignments %}
+    <!-- Stats -->
+    <div class="sg-stats">
+        <div class="sg-stat">
+            <div class="sg-stat-num">{{ assignments|length }}</div>
+            <div class="sg-stat-label">مهام جاهزة للتصحيح</div>
+        </div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="sg-grid">
+        {% for a in assignments %}
+        <div class="sg-card">
+            <div class="sg-card-header">
+                <div class="sg-card-info">
+                    <div class="sg-card-title">{{ a.title }}</div>
+                    {% if a.unit_name %}
+                    <div class="sg-card-unit-wrap">
+                        <span class="sg-card-unit">
+                            {{ a.unit_name }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="sg-card-meta">
+                <span class="sg-meta-item ready">
+                    دليل حل المهمة جاهز
+                </span>
+                <span class="sg-meta-item criteria">
+                    {{ a.criteria_count }} معيار
+                </span>
+                <span class="sg-meta-item date">
+                    {{ a.created_at.strftime('%Y-%m-%d') if a.created_at else '' }}
+                </span>
+            </div>
+            <div class="sg-card-actions">
+                <a href="/api/download-reference-solution-pdf/{{ a.id }}" class="sg-btn sg-btn-pdf">
+                    PDF دليل الحل
+                </a>
+                <a href="/api/download-reference-solution/{{ a.id }}" class="sg-btn sg-btn-word">
+                    Word دليل الحل
+                </a>
+                <a href="/batch-grade/{{ a.id }}" class="sg-btn sg-btn-grade">
+                    بدء التصحيح
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="sg-empty">
+        <div class="sg-empty-card">
+            <div class="sg-empty-title">لا توجد مهام منشأة</div>
+            <div class="sg-empty-desc">
+                الرجاء قم بإنشاء دليل حل المهمة أولاً ثم قم بالتقييم
+            </div>
+            <a href="/create-assignment" class="sg-empty-btn">
+                إنشاء دليل حل المهمة
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

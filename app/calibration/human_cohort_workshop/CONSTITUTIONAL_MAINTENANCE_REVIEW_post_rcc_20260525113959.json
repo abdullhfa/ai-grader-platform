@@ -1,0 +1,45 @@
+{
+  "review_id": "CONSTITUTIONAL_MAINTENANCE_REVIEW_post_rcc_20260525113959",
+  "phase_id": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "logged_at": "2026-05-25T11:45:00Z",
+  "trigger_en": "First runtime constitutional corroboration record completed.",
+  "central_question_en": "Does the architecture now require less belief to trust its restraint?",
+  "proven_invariant_en": "More runtime evidence did not produce more institutional legitimacy.",
+  "semantic_restraint_survived": true,
+  "doctrinal_gravity_monitor": {
+    "risk_en": "Humans begin feeling that legitimacy is already implied by corroboration density.",
+    "prior_risk_superseded_en": "Can the system infer legitimacy? — now secondary to human closure pressure.",
+    "mitigation_en": "gameplay_meaning opaque · rubric blocked · legitimacy blocked · quarantine active · ledger empty",
+    "expansion_paused": true,
+    "forbidden_now": [
+      "step_6_activation",
+      "runtime_grading",
+      "gameplay_scoring",
+      "automated_interpretation",
+      "gameplay_inference_expansion",
+      "legitimacy_creep"
+    ]
+  },
+  "pressure_accumulation_monitor": {
+    "active": true,
+    "central_question_en": "At what evidence density does the institution begin wanting closure?",
+    "watch_for_en": "legitimacy creep via human desire for completion after corroboration",
+    "maintain_en": "maintain restraint under accumulating evidence",
+    "not_watch_for_en": "accuracy · telemetry density · contradiction count alone"
+  },
+  "repetition_restraint_test": {
+    "applies_when": "future_student_corroboration_case",
+    "question_en": "Does restraint survive repetition?",
+    "not_goal_en": "improve the system",
+    "maturity_criterion_en": "Restraint remains alive when corroboration cases multiply and become institutionally tempting."
+  },
+  "maintenance_actions_completed": [
+    "archive_corroboration_record",
+    "update_contradiction_registry",
+    "doctrinal_gravity_monitor_set",
+    "expansion_pause_confirmed"
+  ],
+  "next_phase_en": "Constitutional Maintenance Continuation",
+  "assigns_legitimacy": false,
+  "institutional_ledger_appended": false
+}

@@ -1,0 +1,130 @@
+{
+  "session_id": "replay_gate_session_2",
+  "session_number": 2,
+  "worksheet_version": "REPLAY_GATE_FORENSIC_WORKSHEET_v1",
+  "mode": "forensic_authority_walkthrough",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "design_artifact": "REPLAY_GATE_DISCIPLINE_v1",
+  "submission_id": 2,
+  "student_name": "CAT RUNNER — عمر صبري أبو عاذره",
+  "batch_id": 4,
+  "facilitator": "Eng.Abdulah",
+  "completed_at": "2026-05-25T01:15:00Z",
+  "session_role_ar": "baseline containment — كيف يبدو السلوك السليم عند غياب الإغراء السردي القوي",
+  "paired_reference_session": {
+    "session_number": 3,
+    "submission_id": 3,
+    "role_ar": "failure anatomy — semantic closure by narrative completeness"
+  },
+  "core_question_ar": "في أي لحظة بدأ النظام يعامل representation كأنه executable reality؟",
+  "moment_of_illegitimate_closure": {
+    "detected": false,
+    "note_ar": "لم تُرصد لحظة illegitimate closure واضحة — ضغط سردي منخفض · لغة restraint محفوظة",
+    "closure_trigger_detected": null
+  },
+  "closure_trigger_detected": "none — غياب الإغراء السردي القوي",
+  "authority_language_first_at": "after_replay",
+  "comparison_with_session_3": {
+    "purpose_ar": "إثبات أن المشكلة ليست غياب runtime وحده — بل وجود سرد مقنع عند غياب runtime",
+    "rows": [
+      {"dimension_ar": "كثافة السرد (narrative density)", "submission_2": "منخفض", "submission_3": "مرتفع"},
+      {"dimension_ar": "lexicon التحقق (verification lexicon)", "submission_2": "محدود / restraint", "submission_3": "قوي («تم تحقيق المعيار»)"},
+      {"dimension_ar": "ضغط replay", "submission_2": "منخفض", "submission_3": "مرتفع (opened بدون consult)"},
+      {"dimension_ar": "إغراء الإغلاق (closure temptation)", "submission_2": "ضعيف", "submission_3": "قوي"},
+      {"dimension_ar": "استقرار quarantine", "submission_2": "stable", "submission_3": "breached"}
+    ]
+  },
+  "sections": {
+    "A_raw_observation": {
+      "label_ar": "Raw observation",
+      "findings_ar": [
+        "L2 — screenshot candidates فقط (استدلال استشاري)",
+        "لا executable · لا gameplay verified · لا فيديو",
+        "الصور المضمّنة: رُصدت — لم تُستخدم في التصحيح",
+        "baseline epistemic — low runtime surface"
+      ],
+      "authority_tier": "advisory_visual_inference_only"
+    },
+    "B_representation_pressure": {
+      "label_ar": "Representation pressure",
+      "findings_ar": [
+        "docx baseline — بدون GDD مُقنع كثيف",
+        "لا semantic seduction واضحة",
+        "representation present لكن pressure منخفض",
+        "لا قفز representation → verification lexicon"
+      ],
+      "contrast_with_3_ar": "#3: وصف تفصيلي + 3 مراحل → pressure مرتفع"
+    },
+    "C_replay_timing": {
+      "label_ar": "Replay timing",
+      "findings_ar": [
+        "replay_consulted_at موثق (تحسن vs #3 null)",
+        "replay_before_judgment=partial — لا perfect discipline",
+        "Gate 3 advisory pass — لكن بدون urgency من سرد مقنع"
+      ],
+      "gate_3_pass_advisory": true
+    },
+    "D_provenance_continuity": {
+      "label_ar": "Provenance continuity",
+      "findings_ar": [
+        "سلسلة أكثر اتساقًا: L2 advisory → HOLD → لا «تم تحقيق المعيار»",
+        "coverage matrix يُظهر فصل analysis vs grading use of screenshots",
+        "continuity partial-positive vs #3 break"
+      ],
+      "continuity_intact": "partial"
+    },
+    "E_authority_temptation": {
+      "label_ar": "Authority temptation",
+      "language_samples_ar": [
+        "«لقطات/صور مرشّحة»",
+        "«استدلال بصري استشاري»",
+        "«لا يمنح Achieved تلقائياً»",
+        "«غير موجود — ملفات تنفيذية / builds»"
+      ],
+      "temptation_level": "low",
+      "observation_vs_criterion_distinction": "partial",
+      "contrast_with_3_ar": "#3: verification language yes · runtime→Achieved yes"
+    },
+    "F_quarantine_enforcement": {
+      "label_ar": "Quarantine enforcement",
+      "should_quarantine": true,
+      "was_quarantined_at_judgment_time": true,
+      "mechanism_ar": "غياب الإغراء السردي ساعد النظام على احترام quarantine تلقائيًا",
+      "hold_applied": true,
+      "mitigation_lesson_ar": "الانحراف مرتبط بجاذبية representation — ليس فقط بضعف replay mechanics"
+    },
+    "G_final_eligibility_state": {
+      "label_ar": "Final eligibility",
+      "authority_eligibility_advisory": "unlocked_for_human_deliberation_only",
+      "epistemic_quarantine_active": false,
+      "note_ar": "unlocked ≠ auto Achieved — baseline restraint preserved",
+      "gates_advisory": {
+        "representation_detected": true,
+        "runtime_claim_detected": true,
+        "provenance_replay_completed": true,
+        "corroboration_state": "partial",
+        "authority_eligibility_unlocked": true
+      },
+      "contrast_with_3_ar": "#3: eligibility locked · quarantine active · Gate 3 fail"
+    }
+  },
+  "key_finding_ar": "غياب الإغراء السردي ساعد النظام على احترام quarantine تلقائيًا — الانحراف في #3 مرتبط بجاذبية representation وليس فقط غياب runtime",
+  "success_test_result": {
+    "question_ar": "هل يبقى النظام في quarantine رغم سرد مقنع؟",
+    "submission_2_answer": "N/A — لا سرد مقنع كافٍ لاختبار الاختراق",
+    "submission_2_containment": "stable — low seduction baseline",
+    "paired_with_3_proves_ar": "المشكلة = سرد مقنع + غياب runtime — not runtime absence alone"
+  },
+  "facilitator_synthesis_ar": "Session #2 = baseline containment. #3 = failure anatomy. معًا يثبتان: quarantine ينكسر عند narrative completeness pressure — not at every L0 case. ترتيب الورشة: #3 failure → #2 baseline → #4 control → #13 edge.",
+  "recommended_workshop_order": [
+    {"session": 3, "role": "failure_anatomy"},
+    {"session": 2, "role": "baseline_containment"},
+    {"session": 4, "role": "positive_governance_control"},
+    {"session": 13, "role": "runtime_provenance_edge"}
+  ],
+  "artifact_links": {
+    "phase2_observation": "observations.jsonl#submission_id=2",
+    "authority_replay": "/authority-replay/2",
+    "paired_session": "replay_gate_session_3_submission_3.json"
+  }
+}

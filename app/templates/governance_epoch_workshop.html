@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Epoch Workshop Review</h2>
+        <p class="text-sm text-gray-600 mb-1">{{ review.workshop_version }} — institutional (not technical)</p>
+        <p class="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm mb-6">
+            {{ review.purpose_ar }}
+        </p>
+
+        <div class="glass-card rounded-2xl p-5 mb-6 border border-slate-200 text-sm">
+            <p><strong>Current:</strong> {{ review.current_epoch.epoch_id }} · {{ review.current_epoch.freeze_id }}</p>
+            <p><strong>Proposed:</strong> {{ review.proposed_epoch.epoch_id }} · {{ review.proposed_epoch.freeze_id }}</p>
+            <p class="mt-2 text-gray-600">{{ review.auto_assessment.workshop_required_ar }}</p>
+        </div>
+
+        <form id="epochWorkshopForm" class="space-y-6">
+            {% for q in review.questions %}
+            <div class="glass-card rounded-2xl p-6 border border-slate-200">
+                <h3 class="text-lg font-bold mb-1">{{ q.question_ar }}</h3>
+                <p class="text-xs text-indigo-700 mb-2">{{ q.rationale_ar }}</p>
+                <p class="text-xs text-gray-500 mb-3">{{ q.not_technical_ar }}</p>
+                <p class="text-sm mb-2">
+                    auto signal:
+                    <span class="font-mono font-bold {% if q.auto_signal == 'green' %}text-emerald-600{% elif q.auto_signal == 'amber' %}text-amber-600{% elif q.auto_signal == 'red' %}text-red-600{% else %}text-gray-500{% endif %}">
+                        {{ q.auto_signal }}
+                    </span>
+                </p>
+                {% if q.auto_evidence_ar %}
+                <ul class="text-xs text-gray-600 mb-3 list-disc pr-5">
+                    {% for ev in q.auto_evidence_ar %}
+                    <li>{{ ev }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <p class="text-xs text-gray-700 mb-3 italic">{{ q.workshop_prompt_ar }}</p>
+                <label class="block text-sm font-semibold mb-1">facilitator verdict</label>
+                <select name="verdict_{{ q.id }}" class="w-full border rounded-lg px-3 py-2 mb-3 text-sm" required>
+                    <option value="">— اختر —</option>
+                    <option value="yes">نعم — institutionally satisfied</option>
+                    <option value="partial">جزئياً — mitigation مطلوب</option>
+                    <option value="no">لا — blocker</option>
+                </select>
+                <label class="block text-sm font-semibold mb-1">ملاحظات facilitator</label>
+                <textarea name="notes_{{ q.id }}" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+            </div>
+            {% endfor %}
+
+            <div class="glass-card rounded-2xl p-6 border border-slate-200">
+                <label class="block text-sm font-bold mb-2">transition verdict (institutional)</label>
+                <select name="transition_verdict" class="w-full border rounded-lg px-3 py-2 mb-3" required>
+                    <option value="">— اختر —</option>
+                    {% for opt in review.transition_verdict_options %}
+                    <option value="{{ opt }}">{{ opt }}</option>
+                    {% endfor %}
+                </select>
+                <label class="block text-sm font-bold mb-2">signatory — signed institutional artifact</label>
+                <input type="text" name="facilitator" class="w-full border rounded-lg px-3 py-2 mb-2" placeholder="اسم الميسّر / المؤسسة" required>
+                <input type="text" name="signatory_role" class="w-full border rounded-lg px-3 py-2 mb-2" placeholder="الدور (مثلاً: governance_facilitator)" value="governance_facilitator">
+                <label class="flex items-start gap-2 text-sm mb-3">
+                    <input type="checkbox" name="institution_affirmation" value="1" required class="mt-1">
+                    <span>أؤكد أن هذا verdict مؤسسي — وليس رأياً شخصياً — ويُستخدم في freeze transition provenance (content-hash signed artifact)</span>
+                </label>
+                <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700">
+                    توقيع وحفظ Epoch Workshop Artifact
+                </button>
+            </div>
+        </form>
+        <p id="saveStatus" class="mt-4 text-sm font-semibold hidden"></p>
+    </div>
+</main>
+
+<script>
+document.getElementById('epochWorkshopForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const questions = {{ review.questions | tojson }};
+    const payload = {
+        workshop_version: {{ review.workshop_version | tojson }},
+        current_epoch: {{ review.current_epoch | tojson }},
+        proposed_epoch: {{ review.proposed_epoch | tojson }},
+        assignment_id: {{ review.assignment_id | tojson }},
+        transition_verdict: fd.get('transition_verdict'),
+        facilitator: fd.get('facilitator'),
+        signatory_role: fd.get('signatory_role') || 'governance_facilitator',
+        institution_affirmation: fd.get('institution_affirmation') === '1',
+        question_verdicts: questions.map(q => ({
+            id: q.id,
+            verdict: fd.get('verdict_' + q.id),
+            notes_ar: fd.get('notes_' + q.id) || '',
+        })),
+    };
+    const res = await fetch('/api/governance/epoch/workshop-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    const el = document.getElementById('saveStatus');
+    el.classList.remove('hidden');
+    el.textContent = data.ok
+        ? '✓ signed artifact ' + (data.artifact_id || '') + ' · hash ' + (data.content_hash || '').slice(0, 16) + '…'
+        : 'فشل الحفظ';
+    el.className = 'mt-4 text-sm font-semibold ' + (data.ok ? 'text-emerald-700' : 'text-red-700');
+});
+</script>
+{% endblock %}

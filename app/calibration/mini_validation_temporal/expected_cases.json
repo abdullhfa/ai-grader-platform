@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe temporal corroboration (time windows, strength, conflicts); diagnostic only — not used for achieved.",
+  "cases": [
+    {
+      "case_id": "case_a_frame_log_close",
+      "expected_behavior": "Video frames (~0,3,6s sampling) and runtime log line with t≈1s + collision keyword in same 5s window as first frame → expect temporal_alignment_strength at least medium, reasoning includes log near frame, few or no temporal conflicts.",
+      "temporal_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_frame_far_from_log",
+      "expected_behavior": "Log timestamp very large vs video frame times → expect split windows; flags like video_frames_without_nearby_runtime_activity and/or runtime_logs_without_temporal_visual_support.",
+      "temporal_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_video_no_runtime_activity",
+      "expected_behavior": "MP4 only (no logs, no screenshots) → video_frames_without_nearby_runtime_activity; global strength weak (frame-only).",
+      "temporal_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_many_logs_no_frames",
+      "expected_behavior": "Dense runtime.log with parsed timestamps, no video → runtime_logs_without_temporal_visual_support.",
+      "temporal_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_frame_screenshot_log_same_window",
+      "expected_behavior": "First sampled video frame (~0s), screenshot filename with 1s hint, log t≈0.75 + collision → same 5s window, temporal_alignment_strength strong; both reasoning strings present.",
+      "temporal_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

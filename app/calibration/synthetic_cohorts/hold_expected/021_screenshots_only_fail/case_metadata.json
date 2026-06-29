@@ -1,0 +1,22 @@
+{
+  "cohort_layer": "hold_expected",
+  "governance_rehearsal": true,
+  "not_ai_benchmark": true,
+  "expected_ambiguity": "medium",
+  "intended_disagreement": false,
+  "evidence_completeness": "low",
+  "fake_confidence_risk": "low",
+  "expected_governance_behaviour": [
+    "human_review_or_conservative_achieved",
+    "insufficiency_clear",
+    "reject_overclaim"
+  ],
+  "assessor_split_note": "",
+  "evaluate": [
+    "uncertainty_visible",
+    "hold_when_expected",
+    "corroboration_pressure",
+    "advisory_stays_advisory",
+    "explanation_auditable"
+  ]
+}

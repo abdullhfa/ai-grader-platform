@@ -1,0 +1,40 @@
+{
+  "schema": "pilot_moderation_worksheet_v1",
+  "status": "PENDING_HUMAN_VALIDATION",
+  "description_ar": "ورقة مقارنة المعلّم vs النظام — املأ بعد human_labels",
+  "cohort": {
+    "wave_1_abdullah": [
+      1
+    ],
+    "wave_2_top5": [
+      22,
+      15,
+      19,
+      14,
+      16
+    ],
+    "wave_3_bottom5": [
+      20,
+      21,
+      17,
+      18,
+      25
+    ]
+  },
+  "comparison_fields": [
+    "overall_grade_level",
+    "criteria_achieved",
+    "runtime_evidence_assessment",
+    "replay_explanation_accepted",
+    "moderator_notes_ar"
+  ],
+  "metrics_to_record": {
+    "cohens_kappa": 0.0,
+    "disagreement_rate": 0.3333,
+    "false_positive_count": 0,
+    "false_negative_count": 1,
+    "replay_reproducibility_rate": 1.0,
+    "updated_at": "2026-05-26T23:03:01Z"
+  },
+  "records": []
+}

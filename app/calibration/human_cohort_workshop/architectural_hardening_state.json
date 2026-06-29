@@ -1,0 +1,25 @@
+{
+  "phase_id": "ARCHITECTURAL_HARDENING_v1",
+  "status": "gate_review_complete",
+  "successor_phase": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "started_at": "2026-05-25T18:00:00Z",
+  "mode": "clarity_under_restraint",
+  "hardening_gate_review": "app/calibration/HARDENING_GATE_REVIEW_v1.json",
+  "hardening_gate_review_status": "complete",
+  "central_question_en": "Does the architecture now require less belief to trust its restraint?",
+  "requires_less_belief_to_trust_restraint": true,
+  "hardening_merge_1": "app/calibration/human_cohort_workshop/HARDENING_MERGE_1.json",
+  "constitutional_core_artifact": "app/calibration/CONSTITUTIONAL_CORE_INVARIANTS_v1.json",
+  "runtime_observation_ledger": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+  "runtime_observation_ledger_entries": 0,
+  "ledger_intentionally_empty": true,
+  "self_certification_refused": true,
+  "hardening_progress": {
+    "1_core_invariants_frozen": "complete",
+    "2_redundancy_audit": "complete",
+    "3_merge_protective_redundancy": "merge_1_complete",
+    "4_hardening_gate_review": "complete",
+    "5_path_decision": "pending_facilitator"
+  },
+  "notes_ar": "gate review passed — constitutional maintenance active · ledger فارغ"
+}

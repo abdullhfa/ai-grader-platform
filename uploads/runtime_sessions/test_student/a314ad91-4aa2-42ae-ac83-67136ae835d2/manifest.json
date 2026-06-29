@@ -1,0 +1,87 @@
+{
+  "session_id": "a314ad91-4aa2-42ae-ac83-67136ae835d2",
+  "engine": "web",
+  "submission_key": "test_student",
+  "status": "completed",
+  "capabilities": {
+    "supports_headless": true,
+    "supports_input_simulation": true,
+    "supports_screenshots": true,
+    "supports_video_capture": false,
+    "supports_network_isolation": false,
+    "supports_gpu": false,
+    "supports_audio": false,
+    "supports_build_from_source": false,
+    "supports_playmode_tests": false,
+    "supports_log_parsing": false,
+    "supports_telemetry": true
+  },
+  "signals": {
+    "entry_html": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplxzgbgb3\\index.html",
+    "html_valid": true,
+    "navigation_ok": true,
+    "has_script": true,
+    "interactive_hint": true,
+    "screenshot_count": 5,
+    "console_error_count": 0,
+    "page_error_count": 0,
+    "frame_delta_score": 0.0,
+    "freeze_detected": true,
+    "input_simulated": true,
+    "runtime_method": "playwright_headless"
+  },
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": true,
+    "input_responsive": false,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782646616.7586935,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "web",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplxzgbgb3"
+      }
+    }
+  ],
+  "screenshots": [
+    "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_00.png",
+    "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_01.png",
+    "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_02.png",
+    "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_03.png",
+    "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_04.png"
+  ],
+  "logs": [],
+  "errors": [],
+  "artifacts": {
+    "screenshots": [
+      "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_00.png",
+      "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_01.png",
+      "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_02.png",
+      "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_03.png",
+      "uploads\\runtime_sessions\\test_student\\a314ad91-4aa2-42ae-ac83-67136ae835d2\\screenshots\\frame_04.png"
+    ],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

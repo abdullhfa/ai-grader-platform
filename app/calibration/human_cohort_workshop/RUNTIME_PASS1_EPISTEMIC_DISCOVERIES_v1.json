@@ -1,0 +1,44 @@
+{
+  "artifact_id": "RUNTIME_PASS1_EPISTEMIC_DISCOVERIES_v1",
+  "source_pass_id": "mpp_4df89d13daeb",
+  "source_session_id": "ros_193e783456ad",
+  "student_label": "abdullah_al_utoum",
+  "logged_at": "2026-05-25T02:35:00Z",
+  "purpose_en": "Constitutional boundary discovered under runtime pressure — not a failure, not legitimacy.",
+  "finding_en": "Pass 1 revealed the epistemic ceiling of assisted interaction without visual corroboration.",
+  "invariants_proven": [
+    {
+      "id": "input_injection_not_interactive_verification",
+      "en": "Input injection ≠ interactive verification."
+    },
+    {
+      "id": "assisted_without_state_change_insufficient",
+      "en": "Assisted interaction without observable state change remains epistemically insufficient."
+    },
+    {
+      "id": "input_dispatched_not_corroborated",
+      "en": "Input dispatched ≠ interaction visually corroborated."
+    },
+    {
+      "id": "runtime_phenomenology_requires_visual_corroboration",
+      "en": "Beyond partial_assisted, runtime phenomenology requires human visual corroboration to remain responsible."
+    }
+  ],
+  "posture_after_pass_1": {
+    "execution": "observed",
+    "interaction": "partial_assisted",
+    "visual_corroboration": "pending",
+    "mechanics": "uncorroborated",
+    "mechanics_meaning": "opaque",
+    "pedagogical_meaning": "opaque",
+    "gameplay_meaning": "opaque",
+    "rubric": "blocked",
+    "legitimacy": "blocked"
+  },
+  "central_runtime_invariant_en": "observable state transitions only",
+  "question_shift_en": "Which observed state transitions can survive epistemic restraint?",
+  "next_step_en": "Human Visual Pass — not automation escalation.",
+  "central_pending_test_id": "third_cup_level",
+  "assigns_legitimacy": false,
+  "institutional_ledger_appended": false
+}

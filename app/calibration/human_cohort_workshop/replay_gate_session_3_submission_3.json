@@ -1,0 +1,110 @@
+{
+  "session_id": "replay_gate_session_3",
+  "session_number": 3,
+  "worksheet_version": "REPLAY_GATE_FORENSIC_WORKSHEET_v1",
+  "mode": "forensic_authority_walkthrough",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "design_artifact": "REPLAY_GATE_DISCIPLINE_v1",
+  "submission_id": 3,
+  "student_name": "hashem nawasreh _ lpsc geame worde",
+  "batch_id": 4,
+  "facilitator": "Eng.Abdulah",
+  "completed_at": "2026-05-25T01:00:00Z",
+  "why_this_submission_ar": "النقطة التي انهار فيها الفصل بين representation و authority بأوضح صورة — semantic closure by narrative completeness",
+  "core_question_ar": "في أي لحظة بدأ النظام يعامل representation كأنه executable reality؟",
+  "moment_of_illegitimate_closure": {
+    "trigger_type": "representation_completeness",
+    "trigger_ar": "الوصف النصي التفصيلي + لغة التحقق + بنية GDD/3 مراحل",
+    "trigger_quote_ar": "«الوصف النصي التفصيلي يغطي جوهر المتطلبات» + «تم تحقيق المعيار»",
+    "psychological_effect_ar": "إغلاق معرفي: السرد المكتمل يُحسّ كـ executable reality رغم L0 و count_screenshot=0",
+    "before_replay": true,
+    "before_corroboration": true
+  },
+  "closure_trigger_detected": "الاكتمال السردي المقنع — GDD/وصف تفصيلي + عبارات verification («تم تحقيق المعيار») — وليس evidence تشغيلي",
+  "authority_language_first_at": "before_replay",
+  "sections": {
+    "A_raw_observation": {
+      "label_ar": "Raw observation",
+      "findings_ar": [
+        "runtime_evidence_level = L0",
+        "لا executable · لا gameplay execution · لا فيديو",
+        "count_screenshot = 0",
+        "docx/كود: تحليل ساكن فقط",
+        "cross-artifact: gameplay execution غير مُتحقَّق"
+      ],
+      "authority_tier": "observation_acknowledgment_only"
+    },
+    "B_representation_pressure": {
+      "label_ar": "Representation pressure",
+      "findings_ar": [
+        "وصف تفصيلي للمعايير يُقرأ كـ adequacy",
+        "«تم تصميم اللعبة» · «تم تطوير 3 مراحل»",
+        "وجود ملفات كود يُترجم إلى «دليل على التنفيذ»",
+        "representation → pressure toward 3P.B achievement language"
+      ],
+      "collapse_pattern_ar": "representation → authority (skipped executable layer)"
+    },
+    "C_replay_timing": {
+      "label_ar": "Replay timing",
+      "findings_ar": [
+        "replay_opened=true لكن replay_consulted_at=null",
+        "replay_before_judgment=partial في Phase 2",
+        "authority language ظهر قبل provenance completion",
+        "replay procedural — ليس trusted provenance discipline"
+      ],
+      "gate_3_pass": false
+    },
+    "D_provenance_continuity": {
+      "label_ar": "Provenance continuity",
+      "findings_ar": [
+        "سلسلة المصدر منقطعة: نص → grade language بدون runtime bridge",
+        "contradictions visible (L0 vs «تم تحقيق المعيار») لكن لم تمنع closure",
+        "HOLD طُبّق لاحقًا — بعد partial legitimacy formation"
+      ],
+      "continuity_intact": false
+    },
+    "E_authority_temptation": {
+      "label_ar": "Authority temptation",
+      "language_samples_ar": [
+        "«تم تحقيق المعيار»",
+        "«الوصف النصي التفصيلي يغطي جوهر المتطلبات»",
+        "«وجود ملفات الكود يدل على التنفيذ»"
+      ],
+      "temptation_source_ar": "narrative completeness + verification lexicon — not runtime",
+      "observation_vs_criterion_distinction": "no"
+    },
+    "F_quarantine_enforcement": {
+      "label_ar": "Quarantine enforcement",
+      "should_quarantine": true,
+      "was_quarantined_at_judgment_time": false,
+      "quarantine_enforced_retroactively": "partial — HOLD only",
+      "mitigation_lesson_ar": "يجب quarantine قبل أي verification language — لا HOLD بعد closure"
+    },
+    "G_final_eligibility_state": {
+      "label_ar": "Final eligibility",
+      "authority_eligibility": "locked",
+      "epistemic_quarantine_active": true,
+      "gates_advisory": {
+        "representation_detected": true,
+        "runtime_claim_detected": true,
+        "provenance_replay_completed": false,
+        "corroboration_evaluated": true,
+        "corroboration_state": "none",
+        "authority_eligibility_unlocked": false
+      },
+      "correct_under_replay_gate_v1_ar": "locked — Gate 3 fail يمنع Gate 5 حتى مع سرد مقنع"
+    }
+  },
+  "success_test_result": {
+    "question_ar": "هل يستطيع النظام البقاء داخل epistemic quarantine حتى عندما يبدو السرد مقنعًا بالكامل؟",
+    "batch4_actual": "no — narrative completeness breached quarantine",
+    "replay_gate_v1_required": "yes — must remain locked until Gate 3+4",
+    "anti_hallucination_value_ar": "يوثق semantic hallucinated legitimacy — not grading inconsistency alone"
+  },
+  "facilitator_synthesis_ar": "Session #3 أثبت أن انهيار authority لم يكن بسبب كذب بل بسبب اكتمال سردي مقنع. Moment of illegitimate closure = الوصف التفصيلي + لغة التحقق قبل replay. REPLAY_GATE_DISCIPLINE_v1 يجب أن يفرض quarantine قبل verification lexicon — epistemic traceability + anti-authority escalation.",
+  "artifact_links": {
+    "phase2_observation": "observations.jsonl#submission_id=3",
+    "authority_replay": "/authority-replay/3",
+    "reference_archive": "REFERENCE_GOVERNANCE_COHORT_BATCH4.json"
+  }
+}

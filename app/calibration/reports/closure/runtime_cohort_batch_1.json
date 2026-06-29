@@ -1,0 +1,160 @@
+{
+  "report_type": "runtime_cohort_v1",
+  "cohort_id": "batch_1_runtime_coverage",
+  "generated_at": "2026-05-26T23:02:45Z",
+  "config_path": null,
+  "entry_count": 1,
+  "summary": {
+    "deterministic_replay_stable_count": 1,
+    "deterministic_replay_unstable": [],
+    "replay_hash_stable_verification_failed": [],
+    "runtime_actually_launched": [],
+    "files_only_detection": [
+      "batch1_sub_1"
+    ],
+    "ai_human_divergence": [],
+    "priority_flags": {
+      "replay_hash_unstable": false,
+      "replay_verification_mismatch": false,
+      "runtime_not_executed": true,
+      "human_labels_missing": true
+    }
+  },
+  "entries": [
+    {
+      "source_type": "db",
+      "submission_id": 1,
+      "student_name": "عبدالله العتوم",
+      "paths_resolved": 0,
+      "path_source": "none",
+      "batch_id": 1,
+      "metrics": {
+        "runtime_launch": "no_paths",
+        "freeze_detection": {},
+        "crash_detection": {},
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": false,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 2,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": "gated"
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 33.3,
+          "total_score": 300,
+          "max_score": 900,
+          "achieved_criteria": [
+            "8/C.P5",
+            "8/C.P6"
+          ],
+          "achieved_count": 2
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "1136df2c9e1116ef5beeb11375f98177af8bc0e6caa8b09d21c82e15e959bd1b",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "1136df2c9e1116ef5beeb11375f98177af8bc0e6caa8b09d21c82e15e959bd1b",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "1136df2c9e1116ef5beeb11375f98177af8bc0e6caa8b09d21c82e15e959bd1b",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 5,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "no_paths",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "validation": {},
+          "freeze_detection": {},
+          "crash_detection": {},
+          "sandbox_logs_captured": false
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "runtime_only",
+            "runtime_only+partial_code_extraction"
+          ]
+        }
+      },
+      "slot_id": "batch1_sub_1",
+      "platform": "batch",
+      "tier": "pilot",
+      "label_ar": "عبدالله العتوم"
+    }
+  ],
+  "batch_id": 1,
+  "purpose_ar": "Runtime Coverage Mapping — read-only, no grade changes"
+}

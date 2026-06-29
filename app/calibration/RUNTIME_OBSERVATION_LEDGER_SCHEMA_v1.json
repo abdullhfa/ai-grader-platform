@@ -1,0 +1,45 @@
+{
+  "schema_id": "RUNTIME_OBSERVATION_LEDGER_SCHEMA_v1",
+  "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "purpose_en": "Append-only runtime observation capture — not grading, not legitimacy",
+  "assigns_authority": false,
+  "assigns_legitimacy": false,
+  "invariant_en": "Runtime observation does not imply runtime legitimacy.",
+  "required_fields": [
+    "observation_id",
+    "artifact_id",
+    "logged_at",
+    "observation_mode",
+    "assigns_authority",
+    "assigns_legitimacy"
+  ],
+    "optional_fields": [
+    "submission_id",
+    "batch_id",
+    "session_label",
+    "artifact_name",
+    "artifact_type",
+    "telemetry_graph",
+    "provenance_chain",
+    "sandbox_result",
+    "execution_phenomenology",
+    "phenomenology",
+    "facilitator_notes_ar",
+    "l4_language_check",
+    "phenomenology_check"
+  ],
+  "observation_modes": [
+    "design_capture",
+    "controlled_static_and_smoke",
+    "telemetry_replay",
+    "provenance_trace_only"
+  ],
+  "forbidden_entry_signals": [
+    "criterion_achieved",
+    "verified_achievement",
+    "game_completed",
+    "runtime_legitimacy_granted",
+    "auto_achieved"
+  ],
+  "ledger_path": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl"
+}

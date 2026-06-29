@@ -1,0 +1,56 @@
+{
+  "run_purpose": "Observe cross_modal_corroboration windows and noise flags; diagnostic only.",
+  "cases": [
+    {
+      "case_id": "case_a_log_ocr_frame_window",
+      "expected_behavior": "When OCR runs: same temporal window may list runtime_log, video_frame, ocr_text (+ screenshot optional). overlap_strength strong with 3+ modalities.",
+      "cross_modal_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"cross_modal_windows\": [\n    {\n      \"window_start\": 0.0,\n      \"window_end\": 5.0,\n      \"modalities_present\": [\n        \"runtime_log\",\n        \"runtime_screenshot\",\n        \"video_frame\"\n      ],\n      \"overlap_strength\": \"strong\"\n    }\n  ],\n  \"cross_modal_reasoning\": {\n    \"reasoning\": [\n      \"runtime_log_and_screenshot_temporal_overlap\",\n      \"runtime_log_and_video_frame_temporal_overlap\",\n      \"runtime_screenshot_and_video_frame_temporal_overlap\",\n      \"video_frame_present_in_same_temporal_window\"\n    ]\n  },\n  \"cross_modal_noise_flags\": [],\n  \"cross_modal_diversity_score\": 0.75,\n  \"runtime_corroboration_reference\": {\n    \"engine_version\": \"1.4\",\n    \"corroboration_conflict_count\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_screenshot_only_weak",
+      "expected_behavior": "Single gameplay screenshot, no log, no video → typically one weak window (runtime_screenshot only) unless OCR adds ocr_text in same window.",
+      "cross_modal_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"cross_modal_windows\": [\n    {\n      \"window_start\": 50.0,\n      \"window_end\": 55.0,\n      \"modalities_present\": [\n        \"runtime_screenshot\"\n      ],\n      \"overlap_strength\": \"weak\"\n    }\n  ],\n  \"cross_modal_reasoning\": {\n    \"reasoning\": []\n  },\n  \"cross_modal_noise_flags\": [],\n  \"cross_modal_diversity_score\": 0.25,\n  \"runtime_corroboration_reference\": {\n    \"engine_version\": \"1.4\"\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_video_only",
+      "expected_behavior": "Video frames only → weak windows with video_frame; expect video_frames_present_without_temporal_overlap noise when no co-modalities.",
+      "cross_modal_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"cross_modal_windows\": [\n    {\n      \"window_start\": 0.0,\n      \"window_end\": 5.0,\n      \"modalities_present\": [\n        \"video_frame\"\n      ],\n      \"overlap_strength\": \"weak\"\n    }\n  ],\n  \"cross_modal_reasoning\": {\n    \"reasoning\": []\n  },\n  \"cross_modal_noise_flags\": [\n    {\n      \"flag\": \"video_frames_present_without_temporal_overlap\",\n      \"detail\": \"video_only_windows\"\n    }\n  ],\n  \"cross_modal_diversity_score\": 0.25,\n  \"runtime_corroboration_reference\": {\n    \"engine_version\": \"1.4\"\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_logs_only",
+      "expected_behavior": "Runtime log lines only → windows with runtime_log only; diversity may reflect log presence without visuals.",
+      "cross_modal_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"cross_modal_windows\": [\n    {\n      \"window_start\": 1.0,\n      \"window_end\": 6.0,\n      \"modalities_present\": [\n        \"runtime_log\"\n      ],\n      \"overlap_strength\": \"weak\"\n    },\n    {\n      \"window_start\": 10.0,\n      \"window_end\": 15.0,\n      \"modalities_present\": [\n        \"runtime_log\"\n      ],\n      \"overlap_strength\": \"weak\"\n    },\n    {\n      \"window_start\": 25.0,\n      \"window_end\": 30.0,\n      \"modalities_present\": [\n        \"runtime_log\"\n      ],\n      \"overlap_strength\": \"weak\"\n    }\n  ],\n  \"cross_modal_reasoning\": {\n    \"reasoning\": []\n  },\n  \"cross_modal_noise_flags\": [],\n  \"cross_modal_diversity_score\": 0.25,\n  \"runtime_corroboration_reference\": {\n    \"engine_version\": \"1.4\",\n    \"corroboration_conflict_count\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_modalities_split_windows",
+      "expected_behavior": "Video near t≈0, screenshot far (~8000s), log far (~9999) → multiple single-modality weak windows; union of modalities ≥3 → multimodal_presence_split_across_windows flag likely.",
+      "cross_modal_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"cross_modal_windows\": [\n    {\n      \"window_start\": 0.0,\n      \"window_end\": 5.0,\n      \"modalities_present\": [\n        \"video_frame\"\n      ],\n      \"overlap_strength\": \"weak\"\n    },\n    {\n      \"window_start\": 8000.0,\n      \"window_end\": 8005.0,\n      \"modalities_present\": [\n        \"runtime_screenshot\"\n      ],\n      \"overlap_strength\": \"weak\"\n    },\n    {\n      \"window_start\": 9999.0,\n      \"window_end\": 10004.0,\n      \"modalities_present\": [\n        \"runtime_log\"\n      ],\n      \"overlap_strength\": \"weak\"\n    }\n  ],\n  \"cross_modal_reasoning\": {\n    \"reasoning\": []\n  },\n  \"cross_modal_noise_flags\": [\n    {\n      \"flag\": \"video_frames_present_without_temporal_overlap\",\n      \"detail\": \"video_only_windows\"\n    },\n    {\n      \"flag\": \"multimodal_presence_split_across_windows\",\n      \"detail\": \"3\"\n    }\n  ],\n  \"cross_modal_diversity_score\": 0.75,\n  \"runtime_corroboration_reference\": {\n    \"engine_version\": \"1.4\",\n    \"corroboration_conflict_count\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ],
+  "note": "Cross-modal is observation-only; does not affect achieved."
+}

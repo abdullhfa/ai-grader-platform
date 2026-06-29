@@ -1,0 +1,35 @@
+{
+  "schema": "governance_signoff_v1",
+  "status": "PENDING_HUMAN_VALIDATION",
+  "description_ar": "توقيع تجميد الحوكمة — لا يُفعّل تلقائياً",
+  "artifacts_to_freeze": [
+    "app/calibration/governance_release_v1.json",
+    "app/calibration/reports/closure/rubric_freeze_v1.json"
+  ],
+  "signatures_required": [
+    {
+      "role": "teacher",
+      "name": null,
+      "signed_at": null,
+      "status": "PENDING"
+    },
+    {
+      "role": "administration",
+      "name": null,
+      "signed_at": null,
+      "status": "PENDING"
+    },
+    {
+      "role": "quality_officer",
+      "name": null,
+      "signed_at": null,
+      "status": "PENDING"
+    }
+  ],
+  "preconditions": [
+    "human_labels_v1.json >= 20 complete records",
+    "cohens_kappa >= 0.6 on pilot cohort",
+    "replay_stable_rate >= 0.95",
+    "pilot_moderation_worksheet completed"
+  ]
+}

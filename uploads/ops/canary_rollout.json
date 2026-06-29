@@ -1,0 +1,35 @@
+{
+  "phase": "canary_rollout",
+  "status": "active",
+  "started_at": "2026-05-27T16:13:58Z",
+  "base_url": "http://localhost:8000",
+  "cohort": {
+    "instructor_target": 5,
+    "duration_weeks_min": 2,
+    "duration_weeks_max": 4,
+    "replay_retention": "max",
+    "tracing": "verbose"
+  },
+  "kpis": {
+    "replay_mismatch": 0,
+    "runtime_success_rate_pct_min": 95,
+    "dead_letters_max": 0
+  },
+  "monitor": {
+    "dashboard": "http://localhost:8000/api/ops/dashboard",
+    "sla": "http://localhost:8000/api/ops/sla",
+    "metrics": "http://localhost:8000/api/metrics",
+    "grafana": "http://localhost:3000",
+    "prometheus": "http://localhost:9091"
+  },
+  "runbook": "infra/runbooks/CANARY_ROLLOUT.md",
+  "pentest_pack": "infra/pentest/",
+  "notes": "Canary rollout started \u2014 Ship \u2192 Observe \u2192 Sell",
+  "next_steps": [
+    "Assign 5-10 pilot instructors (isolated course/org)",
+    "Enable RBAC roles: examiner / instructor / student",
+    "Hand off infra/pentest/ to external team",
+    "Daily: python tools/verify_operational_signals.py",
+    "Weekly: review replay_mismatch + dead_letter.jsonl"
+  ]
+}

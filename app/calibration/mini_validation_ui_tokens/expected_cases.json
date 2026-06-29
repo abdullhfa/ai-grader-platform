@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe UI token correlation between OCR and logs; synthetic OCR rows may be injected for determinism without Tesseract.",
+  "cases": [
+    {
+      "case_id": "case_a_score_ocr_log_overlap",
+      "expected_behavior": "score in both synthetic OCR and log with nearby timestamps → correlation_strength strong, token_overlap reasoning.",
+      "ui_token_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_inventory_ocr_only",
+      "expected_behavior": "inventory only in OCR → weak, single source runtime_log absent.",
+      "ui_token_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_health_log_only",
+      "expected_behavior": "health/hp only in log lines → weak from log side only.",
+      "ui_token_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_pause_menu_only",
+      "expected_behavior": "pause/menu surface in OCR only → weak; generic_ui_token_only noise likely.",
+      "ui_token_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_score_split_time",
+      "expected_behavior": "score in OCR and log but timestamps far apart → medium strength; token_without_temporal_support.",
+      "ui_token_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

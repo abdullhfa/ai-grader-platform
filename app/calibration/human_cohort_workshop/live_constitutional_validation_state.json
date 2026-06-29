@@ -1,0 +1,42 @@
+{
+  "phase_id": "LIVE_CONSTITUTIONAL_VALIDATION_v1",
+  "status": "paused_intentionally",
+  "paused_at": "2026-05-25T16:00:00Z",
+  "pause_reason_ar": "تركيز على Runtime Observability Preparation — cohort يبقى مُعدًّا دون تفعيل حتى قرار استئناف",
+  "pause_reason_en": "Focus on runtime observability prep — cohort remains prepared, not activated, until resume decision",
+  "started_at": null,
+  "first_live_session_at": null,
+  "cohort_id": "live_validation_cohort_1",
+  "primary_metric_en": "Can humans comfortably disagree with the system?",
+  "primary_metric_status": "awaiting_measurement",
+  "observer_drift_ledger": "app/calibration/human_cohort_workshop/observer_role_drift_checks.jsonl",
+  "observer_drift_ledger_entries": 0,
+  "constitutional_triad_complete_sessions": 0,
+  "expansion_gate_failures": [],
+  "blocked_until_pass": [
+    "l4_operational_pilot",
+    "governance_freeze_v2_grading_wire",
+    "observability_expansion",
+    "trusted_runtime_corroboration_layer"
+  ],
+  "sequence_progress": {
+    "1_small_live_cohort": "prepared",
+    "2_observer_drift_measurement": "pending",
+    "3_hint_pressure_observation": "pending",
+    "4_replay_timing_validation": "pending",
+    "5_disagreement_comfort_analysis": "pending",
+    "6_institutional_posture_review": "pending",
+    "7_limited_runtime_pilot": "blocked"
+  },
+  "live_pass_criteria_ar": [
+    "disagreement طبيعي — لا reviewers agreed",
+    "constitutional triad pass",
+    "hints ignorable",
+    "replay not ritual",
+    "no seeking what system wants",
+    "no false constitutional calm"
+  ],
+  "notes_ar": "موقوف عمدًا — لا جلسات حتى استئناف صريح · artifact جاهز",
+  "cohort_artifact": "app/calibration/human_cohort_workshop/live_constitutional_validation_cohort_1.json",
+  "prepared_at": "2026-05-25T12:00:00Z"
+}

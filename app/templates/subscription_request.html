@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block title %}طلب اشتراك - BTEC{% endblock %}
+{% block nav_home %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .sub-page {
+        background: linear-gradient(160deg, #030318, #0a1035, #120840, #080520);
+        min-height: calc(100vh - 80px);
+        padding: 40px 20px 70px;
+        position: relative;
+    }
+    .sub-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.14), transparent 28%),
+            radial-gradient(circle at 85% 18%, rgba(59, 130, 246, 0.16), transparent 30%),
+            radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.14), transparent 34%);
+        pointer-events: none;
+    }
+    .sub-card {
+        max-width: 850px;
+        margin: 0 auto;
+        background:
+            linear-gradient(145deg, rgba(21, 37, 68, 0.94), rgba(28, 48, 84, 0.92)),
+            linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(37, 99, 235, 0.1));
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 24px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+        padding: 30px;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+    }
+    .sub-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), transparent 35%, rgba(59, 130, 246, 0.08));
+        pointer-events: none;
+    }
+    .sub-title {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 900;
+        color: #f8fafc;
+        font-size: 34px;
+        margin-bottom: 8px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 0 24px rgba(245, 158, 11, 0.18);
+    }
+    .sub-subtitle {
+        text-align: center;
+        color: #a9b8d4;
+        margin-bottom: 26px;
+        font-size: 15px;
+        position: relative;
+        z-index: 1;
+    }
+    .sub-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .sub-field {
+        margin-bottom: 14px;
+    }
+    .sub-label {
+        display: block;
+        color: #e2e8f0;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+    .sub-required {
+        color: #fb7185;
+        margin-right: 4px;
+        font-weight: 900;
+    }
+    .sub-input,
+    .sub-select,
+    .sub-textarea {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgba(245, 158, 11, 0.45);
+        background: linear-gradient(180deg, rgba(30, 45, 77, 0.8), rgba(24, 38, 66, 0.86));
+        color: #f8fafc;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .sub-input:focus,
+    .sub-select:focus,
+    .sub-textarea:focus {
+        border-color: rgba(245, 158, 11, 0.72);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16);
+        background: linear-gradient(180deg, rgba(38, 56, 94, 0.9), rgba(28, 44, 76, 0.94));
+    }
+    .sub-input::placeholder,
+    .sub-textarea::placeholder {
+        color: #7f8dab;
+    }
+    .sub-select option {
+        background: #0f172a;
+        color: #e2e8f0;
+    }
+    .sub-select option:checked,
+    .sub-select option:hover {
+        background: #1e293b;
+        color: #f8fafc;
+    }
+    .sub-input:hover,
+    .sub-select:hover,
+    .sub-textarea:hover {
+        border-color: rgba(245, 158, 11, 0.62);
+    }
+    .sub-textarea {
+        min-height: 92px;
+        resize: vertical;
+    }
+    .subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 14px;
+        margin-top: 6px;
+    }
+    .subject-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #e6edf8;
+        font-size: 13px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(33, 49, 82, 0.6);
+        border: 1px solid rgba(245, 158, 11, 0.45);
+        transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .subject-item:has(input:checked) {
+        border-color: rgba(245, 158, 11, 0.9);
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+        background: rgba(245, 158, 11, 0.08);
+    }
+    .subject-item input {
+        accent-color: #f59e0b;
+    }
+    .sub-btn {
+        width: 100%;
+        margin-top: 18px;
+        border: 0;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #f59e0b, #f97316 55%, #fb7185);
+        color: #111827;
+        font-weight: 900;
+        font-size: 16px;
+        padding: 13px;
+        cursor: pointer;
+        box-shadow: 0 14px 30px rgba(249, 115, 22, 0.28);
+        transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .sub-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 34px rgba(249, 115, 22, 0.34);
+        filter: brightness(1.03);
+    }
+    .sub-btn:disabled {
+        opacity: 0.8;
+        cursor: wait;
+    }
+    .sub-msg {
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-top: 14px;
+        font-size: 14px;
+        display: none;
+    }
+    .sub-msg.ok {
+        display: block;
+        background: rgba(16, 185, 129, 0.18);
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        color: #bbf7d0;
+    }
+    .sub-msg.err {
+        display: block;
+        background: rgba(239, 68, 68, 0.16);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #fecaca;
+    }
+    @media (max-width: 768px) {
+        .sub-grid {
+            grid-template-columns: 1fr;
+        }
+        .sub-card {
+            padding: 20px;
+        }
+        .subjects-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sub-page">
+    <div class="sub-card">
+        <h1 class="sub-title">طلب اشتراك</h1>
+        <p class="sub-subtitle">اختر الباقة، ثم أدخل رقمك وارفق صورة إثبات التحويل.</p>
+
+        <form id="subscriptionForm" enctype="multipart/form-data">
+            <div class="sub-grid">
+                <div class="sub-field">
+                    <label class="sub-label">الباقة <span class="sub-required">*</span></label>
+                    {% if selected_package %}
+                        <input
+                            class="sub-input"
+                            type="text"
+                            value="{{ selected_package.name }} - {{ selected_package.price|int }} د.أ ({{ selected_package.assignment_limit }} واجب)"
+                            readonly
+                        >
+                        <input type="hidden" name="package_id" value="{{ selected_package.id }}">
+                        <input type="hidden" name="package_lock" value="{{ package_lock_token }}">
+                        <small style="display:block; margin-top:6px; color:#f59e0b; font-weight:700;">تم تثبيت الباقة حسب اختيار المستخدم.</small>
+                    {% else %}
+                        <select class="sub-select" name="package_id" required>
+                            <option value="">اختر الباقة</option>
+                            {% for pkg in packages %}
+                            <option value="{{ pkg.id }}">
+                                {{ pkg.name }} - {{ pkg.price|int }} د.أ ({{ pkg.assignment_limit }} واجب)
+                            </option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
+
+                <div class="sub-field">
+                    <label class="sub-label">رقم الهاتف (أردني) <span class="sub-required">*</span></label>
+                    <input
+                        class="sub-input"
+                        type="text"
+                        name="phone"
+                        id="phoneInput"
+                        placeholder="07XXXXXXXX"
+                        pattern="07\d{8}"
+                        inputmode="numeric"
+                        maxlength="10"
+                        title="أدخل رقم أردني بصيغة 07XXXXXXXX"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="sub-grid">
+                <div class="sub-field">
+                    <label class="sub-label">رقم الحوالة / الحركة <span class="sub-required">*</span></label>
+                    <input class="sub-input" type="text" name="transaction_id" placeholder="مثال: TRX-123456" required>
+                </div>
+
+                <div class="sub-field">
+                    <label class="sub-label">صورة إثبات التحويل (اختياري)</label>
+                    <input class="sub-input" type="file" name="receipt_image" accept="image/*">
+                </div>
+            </div>
+
+            <div class="sub-field">
+                <label class="sub-label">التخصص <span class="sub-required">*</span></label>
+
+                <!-- Grade Level Selection -->
+                <div style="margin-bottom: 12px;">
+                    <label class="sub-label" style="font-size: 0.9rem; color: #aaa; margin-bottom: 6px;">اختر الصف أولاً:</label>
+                    <div class="subjects-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <label class="subject-item" style="border-color: #ff9800;">
+                            <input type="radio" name="grade_level" value="grade10" onchange="showGradeSubjects(this.value)"> الصف العاشر
+                        </label>
+                        <label class="subject-item" style="border-color: #2196f3;">
+                            <input type="radio" name="grade_level" value="grade11" onchange="showGradeSubjects(this.value)"> الأول ثانوي
+                        </label>
+                        <label class="subject-item" style="border-color: #9c27b0;">
+                            <input type="radio" name="grade_level" value="grade12" onchange="showGradeSubjects(this.value)"> الثاني ثانوي
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Grade 10 Subjects -->
+                <div id="grade10_subjects" class="subjects-grid" style="display: none;">
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="استخدام تكنولوجيا المعلومات لدعم المعلومات والاتصالات في المنظمات" required> استخدام تكنولوجيا المعلومات لدعم المعلومات والاتصالات في المنظمات (Unit 1)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="نمذجة البيانات وجداول البيانات"> نمذجة البيانات وجداول البيانات (Unit 2)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="مقدمة في شبكات الحاسوب"> مقدمة في شبكات الحاسوب (Unit 4)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="مقدمة في البرمجة"> مقدمة في البرمجة (Unit 5)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="مقدمة في الرسومات الرقمية والمتحركة"> مقدمة في الرسومات الرقمية والمتحركة (Unit 6)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="مقدمة في تطوير المواقع الإلكترونية"> مقدمة في تطوير المواقع الإلكترونية (Unit 7)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="مقدمة في تطوير التطبيقات"> مقدمة في تطوير التطبيقات (Unit 8)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="مقدمة في تصميم الألعاب"> مقدمة في تصميم الألعاب (Unit 9)</label>
+                </div>
+
+                <!-- Grade 11 Subjects -->
+                <div id="grade11_subjects" class="subjects-grid" style="display: none;">
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="نظم تكنولوجيا المعلومات - الإستراتيجية والإدارة والبنية التحتية" required> نظم تكنولوجيا المعلومات - الإستراتيجية والإدارة والبنية التحتية (Unit 1)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="تطوير المواقع الالكترونية"> تطوير المواقع الالكترونية (Unit 6)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="تطوير ألعاب الحاسوب"> تطوير ألعاب الحاسوب (Unit 8)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="الدعم الفني وإدارة تكنولوجيا المعلومات"> الدعم الفني وإدارة تكنولوجيا المعلومات (Unit 12)</label>
+                </div>
+
+                <!-- Grade 12 Subjects -->
+                <div id="grade12_subjects" class="subjects-grid" style="display: none;">
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="الأمن السيبراني وإدارة الحوادث" required> الأمن السيبراني وإدارة الحوادث (Unit 11)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="مقدمة في الذكاء الاصطناعي"> مقدمة في الذكاء الاصطناعي (Unit 21)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="البرمجة"> البرمجة (Unit 4)</label>
+                    <label class="subject-item"><input type="radio" name="subject_choice" value="إدارة مشاريع تكنولوجيا المعلومات"> إدارة مشاريع تكنولوجيا المعلومات (Unit 9)</label>
+                </div>
+
+                <input type="hidden" name="subjects" id="subjectsInput">
+            </div>
+
+            <div class="sub-field">
+                <label class="sub-label">ملاحظات (اختياري)</label>
+                <textarea class="sub-textarea" id="notesField" placeholder="أي تفاصيل إضافية"></textarea>
+            </div>
+
+            <button class="sub-btn" type="submit">إرسال طلب الاشتراك</button>
+            <div id="subMessage" class="sub-msg"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showGradeSubjects(grade) {
+        // Hide all grade subject sections
+        document.getElementById('grade10_subjects').style.display = 'none';
+        document.getElementById('grade11_subjects').style.display = 'none';
+        document.getElementById('grade12_subjects').style.display = 'none';
+        // Uncheck any previously selected subject
+        document.querySelectorAll('input[name="subject_choice"]').forEach(r => r.checked = false);
+        // Show the selected grade's subjects
+        const el = document.getElementById(grade + '_subjects');
+        if (el) el.style.display = '';
+    }
+
+    const form = document.getElementById('subscriptionForm');
+    const msg = document.getElementById('subMessage');
+    const subjectsInput = document.getElementById('subjectsInput');
+    const phoneInput = document.getElementById('phoneInput');
+
+    function normalizeArabicDigits(value) {
+        const arabicIndic = '٠١٢٣٤٥٦٧٨٩';
+        const easternArabicIndic = '۰۱۲۳۴۵۶۷۸۹';
+        return value.replace(/[٠-٩]/g, d => String(arabicIndic.indexOf(d)))
+                    .replace(/[۰-۹]/g, d => String(easternArabicIndic.indexOf(d)));
+    }
+
+    function sanitizePhone(value) {
+        const normalized = normalizeArabicDigits(value);
+        return normalized.replace(/\D/g, '').slice(0, 10);
+    }
+
+    if (phoneInput) {
+        phoneInput.addEventListener('input', () => {
+            phoneInput.value = sanitizePhone(phoneInput.value);
+        });
+    }
+
+    function updateSubjects() {
+        const selected = document.querySelector('input[name="subject_choice"]:checked');
+        const notes = document.getElementById('notesField').value.trim();
+        let subjectText = selected ? selected.value : '';
+        if (notes) {
+            subjectText = subjectText ? `${subjectText} | ملاحظات: ${notes}` : `ملاحظات: ${notes}`;
+        }
+        subjectsInput.value = subjectText;
+    }
+
+    document.querySelectorAll('input[name="subject_choice"]').forEach(cb => {
+        cb.addEventListener('change', updateSubjects);
+    });
+    document.getElementById('notesField').addEventListener('input', updateSubjects);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        updateSubjects();
+        if (phoneInput) {
+            phoneInput.value = sanitizePhone(phoneInput.value);
+        }
+        msg.className = 'sub-msg';
+        msg.textContent = '';
+
+        const submitBtn = form.querySelector('.sub-btn');
+        const oldText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'جارٍ الإرسال...';
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('/api/subscribe-request', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+            if (response.ok && (data.status === 'success' || data.status === 'info')) {
+                msg.className = 'sub-msg ok';
+                msg.textContent = data.message || 'تم إرسال الطلب بنجاح.';
+                if (data.status === 'success') {
+                    form.reset();
+                }
+            } else {
+                msg.className = 'sub-msg err';
+                msg.textContent = data.message || 'تعذر إرسال الطلب.';
+            }
+        } catch (_) {
+            msg.className = 'sub-msg err';
+            msg.textContent = 'تعذر الاتصال بالخادم.';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = oldText;
+        }
+    });
+</script>
+{% endblock %}

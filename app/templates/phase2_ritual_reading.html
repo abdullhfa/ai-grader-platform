@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10 max-w-4xl" dir="rtl">
+    <a href="/governance-pilot/batch/{{ batch_id }}" class="text-sm text-indigo-600 hover:underline mb-4 inline-block">
+        ← مرصد دفعة {{ batch_id }}
+    </a>
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">المرحلة 2 — القراءة الطقسية</h1>
+    <p class="text-rose-900 bg-rose-50 border border-rose-200 rounded-lg px-4 py-3 text-sm mb-6">
+        <strong>بطيء جداً.</strong> ليس «من أخطأ؟» ولا «كم تسرب؟» —
+        بل: كيف استقرّ اليقين نفسياً تحت قابلية ملاحظة runtime المحدودة.
+    </p>
+
+    {% if phase2_state.cooling_period_active %}
+    <p class="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm mb-6">
+        فترة التهدئة لا تزال نشطة حتى {{ phase2_state.cooling_period_ends_at }} —
+        اقرأ تركيب epistemic ببطء، لكن لا تسجّل الذاكرة الدلالية بعد.
+    </p>
+    {% endif %}
+
+    <p class="text-sm text-gray-600 mb-6">
+        تركيب epistemic:
+        <a class="text-violet-700 underline" href="/api/governance-pilot/epistemic-evidence/batch/{{ batch_id }}">
+            الأدلة السلوكية للدفعة {{ batch_id }}
+        </a>
+    </p>
+
+    <form id="ritual-form" class="space-y-6">
+        {% for lens in lenses %}
+        <div class="glass-card rounded-xl p-5 border border-violet-200">
+            <p class="font-bold text-violet-950">{{ lens.label_ar }}</p>
+            <p class="text-sm text-gray-700 mt-1">{{ lens.question_ar }}</p>
+            <p class="text-xs text-gray-500 mb-3">لماذا: {{ lens.why_ar }}</p>
+            <select name="observed_{{ lens.id }}" class="w-full border rounded-lg px-2 py-1 text-sm mb-2">
+                <option value="">— هل لُاحظ؟</option>
+                <option value="yes">نعم</option>
+                <option value="partial">جزئياً</option>
+                <option value="no">لا</option>
+                <option value="not_applicable">لا ينطبق</option>
+            </select>
+            <textarea name="notes_{{ lens.id }}" rows="3"
+                class="w-full border rounded-lg px-3 py-2 text-sm"
+                placeholder="ملاحظات حرفية — عينات لغوية · صمت · توقيت">{{ ritual_reading.lenses[lens.id].notes_ar if ritual_reading.lenses.get(lens.id) else '' }}</textarea>
+        </div>
+        {% endfor %}
+
+        <label class="block text-sm">
+            تأمل الميسّر — بعد القراءة البطيئة
+            <textarea name="facilitator_reflection_ar" rows="4"
+                class="w-full border rounded-lg px-3 py-2 mt-1">{{ ritual_reading.facilitator_reflection_ar or '' }}</textarea>
+        </label>
+
+        <div class="flex flex-wrap gap-3 items-center">
+            <button type="button" id="save-draft"
+                class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-bold px-4 py-2 rounded-lg">
+                حفظ مسودة
+            </button>
+            <button type="button" id="mark-complete"
+                class="bg-violet-700 hover:bg-violet-800 text-white text-sm font-bold px-4 py-2 rounded-lg">
+                إكمال القراءة الطقسية
+            </button>
+            <span id="ritual-status" class="text-xs text-gray-500"></span>
+        </div>
+    </form>
+
+    {% if ritual_reading.completed_at %}
+    <p class="text-emerald-700 text-sm mt-6 font-semibold">
+        ✓ اكتملت القراءة الطقسية في {{ ritual_reading.completed_at }} —
+        الآن فقط: تسجيل الذاكرة الدلالية (بعد التأمل).
+    </p>
+    {% endif %}
+</main>
+
+<script>
+const batchId = {{ batch_id }};
+
+async function saveRitual(markComplete) {
+    const form = document.getElementById('ritual-form');
+    const status = document.getElementById('ritual-status');
+    status.textContent = 'جاري الحفظ…';
+    const lenses = {};
+    {% for lens in lenses %}
+    lenses['{{ lens.id }}'] = {
+        observed: form.querySelector('[name="observed_{{ lens.id }}"]').value || null,
+        notes_ar: form.querySelector('[name="notes_{{ lens.id }}"]').value || '',
+    };
+    {% endfor %}
+    const payload = {
+        lenses,
+        facilitator_reflection_ar: form.querySelector('[name="facilitator_reflection_ar"]').value || '',
+        mark_complete: markComplete,
+    };
+    if (markComplete && !{{ 'true' if not phase2_state.cooling_period_active else 'false' }}) {
+        payload.advance = true;
+    }
+    try {
+        const res = await fetch('/api/governance-pilot/phase2/ritual-reading/' + batchId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'فشل الحفظ');
+        status.textContent = markComplete ? '✓ اكتملت القراءة الطقسية' : '✓ تم حفظ المسودة';
+        if (markComplete) setTimeout(() => location.reload(), 800);
+    } catch (err) {
+        status.textContent = 'خطأ: ' + err.message;
+    }
+}
+
+document.getElementById('save-draft').addEventListener('click', () => saveRitual(false));
+document.getElementById('mark-complete').addEventListener('click', () => saveRitual(true));
+</script>
+{% endblock %}

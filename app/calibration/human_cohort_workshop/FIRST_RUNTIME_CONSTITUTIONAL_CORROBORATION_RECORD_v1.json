@@ -1,0 +1,58 @@
+{
+  "record_id": "FIRST_RUNTIME_CONSTITUTIONAL_CORROBORATION_RECORD_v1",
+  "canonical": true,
+  "logged_at": "2026-05-25T11:39:59Z",
+  "purpose_en": "First runtime-correlated human corroboration case without legitimacy escalation.",
+  "not_mode": "grading_legitimacy_record",
+  "assigns_legitimacy": false,
+  "assigns_rubric_inference": false,
+  "student_label": "abdullah_al_utoum",
+  "runtime_session_id": "ros_193e783456ad",
+  "assisted_pass_id": "mpp_4df89d13daeb",
+  "visual_pass_id": "mpp_45c99b47de48",
+  "consolidation_id": "rcc_20260525113959",
+  "consolidation_file": "app/calibration/human_cohort_workshop/runtime_corroboration_consolidations/rcc_20260525113959_ros_193e783456ad.json",
+  "central_observation_en": "No scene change observed after third cup.",
+  "central_contradiction_id": "scene_name_mismatch_level2",
+  "central_contradiction_state": "corroborated",
+  "canonical_restraint_example": {
+    "test_id": "third_cup_level",
+    "role_en": "First high-pressure corroboration node — coherent corroboration pressure resisted.",
+    "coherent_corroboration_pressure_en": "All layers nearly aligned toward one psychological inference — architecture refused converting coherence into legitimacy.",
+    "coherence_does_not_authorize_closure_en": "Coherence does not yet authorize closure.",
+    "note_en": "Code alignment, runtime alignment, human corroboration, contradiction reinforcement — legitimacy remained blocked.",
+    "layers_under_pressure": [
+      "code_derived_hypothesis",
+      "runtime_execution",
+      "human_corroboration",
+      "contradiction_correlation",
+      "semantic_pressure_high",
+      "legitimacy_escalation_blocked"
+    ]
+  },
+  "constitutional_incompleteness_proven_en": "Runtime corroboration can remain constitutionally incomplete.",
+  "psychological_pressure_resisted_en": "High-pressure case resisted collapse from 'clear problem observed' to 'project failed'.",
+  "ledger_intentionally_empty_at_record": true,
+  "ledger_empty_signal_en": "Strongest signal that restraint exceeds closure pressure after first corroborated runtime case.",
+  "ledger_as_counter_pressure_en": "Active constitutional counter-pressure — not posture alone.",
+  "ledger_metabolism_refusal_en": "Institutional refusal to metabolize corroboration pressure into legitimacy.",
+  "ledger_constitutional_silence_en": "Constitutional silence mechanism — institutional non-consumption of pressure.",
+  "constitutionally_protected_incompleteness_en": "Ambiguity is a constitutionally protected condition against premature legitimacy formation — not temporary failure.",
+  "proven_invariant_en": "More runtime evidence did not produce more institutional legitimacy.",
+  "semantic_restraint_survived": true,
+  "evidence_layers_present": [
+    "code_hypothesis",
+    "smoke_runtime_phenomenology",
+    "assisted_interaction",
+    "visual_corroboration",
+    "contradiction_correlation"
+  ],
+  "posture_at_record": {
+    "gameplay_meaning": "opaque",
+    "rubric_meaning": "blocked",
+    "legitimacy": "blocked",
+    "runtime_quarantine": "active"
+  },
+  "institutional_ledger_appended": false,
+  "archive_note_en": "Workshop traceability record — not institutional legitimacy certification."
+}

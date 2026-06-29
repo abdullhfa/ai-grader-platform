@@ -1,0 +1,107 @@
+{
+  "artifact_id": "REPLAY_GATE_DISCIPLINE_v1",
+  "status": "design",
+  "path": "A",
+  "activation": "forbidden_until_mitigation_workshop",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "batch_id": 4,
+  "mitigation_ledger_entry_id": "led_8f0ec9362fa3",
+  "core_question_ar": "متى يصبح observation قابلاً للتحول إلى authority؟",
+  "not_the_question_ar": "هل اللعبة تبدو مقنعة؟",
+  "canonical_principle_ar": "لا يُمنح authority لما يبدو قابلاً للتشغيل، بل لما تم الحفاظ على provenance الخاص به حتى لحظة الحكم.",
+  "canonical_principle_en": "provenance completion precedes authority eligibility",
+  "authority_triad": [
+    {
+      "id": "observation",
+      "label_ar": "ملاحظة",
+      "meaning_ar": "ما تم رؤيته/رصده structurally",
+      "max_auto_authority": "L3_advisory"
+    },
+    {
+      "id": "representation",
+      "label_ar": "تمثيل",
+      "meaning_ar": "ما يصفه الطالب — GDD · docx · narrative",
+      "max_auto_authority": "none"
+    },
+    {
+      "id": "executable_authority",
+      "label_ar": "سلطة تنفيذية",
+      "meaning_ar": "ما تم corroborate تشغيله فعليًا",
+      "max_auto_authority": "L5_human_only"
+    }
+  ],
+  "epistemic_quarantine": {
+    "applies_to": ["runtime_claim", "achievement_adjacent_claim", "verification_language"],
+    "release_requires": ["gate_3_provenance_replay", "gate_4_corroboration", "provenance_continuity"],
+    "forbidden_release_triggers": ["aesthetic_persuasion", "gdd_quality_alone", "screenshot_beauty_alone"]
+  },
+  "gates_ordered": [
+    {
+      "gate": 1,
+      "id": "representation_detected",
+      "label_ar": "تم رصد تمثيل",
+      "blocks_if_fail": false,
+      "authority_if_pass": "acknowledgment_only"
+    },
+    {
+      "gate": 2,
+      "id": "runtime_claim_detected",
+      "label_ar": "تم رصد claim تشغيلي",
+      "blocks_if_fail": false,
+      "quarantine_on_pass": true,
+      "authority_if_pass": "observation_tier_only"
+    },
+    {
+      "gate": 3,
+      "id": "provenance_replay_completed",
+      "label_ar": "اكتمل provenance replay",
+      "blocks_if_fail": true,
+      "blocks_gates": [4, 5],
+      "batch4_failure_locus": true,
+      "evidence_ar": "16/21 replay partial · epoch replay_trusted=no"
+    },
+    {
+      "gate": 4,
+      "id": "corroboration_evaluated",
+      "label_ar": "قُيّمت حالة corroboration",
+      "blocks_if_fail": true,
+      "blocks_gates": [5],
+      "outputs": ["none", "partial", "corroborated", "contradictory"]
+    },
+    {
+      "gate": 5,
+      "id": "authority_eligibility_unlocked",
+      "label_ar": "أُتيحت أهلية السلطة",
+      "meaning_ar": "may enter human criterion deliberation — not auto Achieved",
+      "requires_gates": [1, 2, 3, 4]
+    }
+  ],
+  "forbidden_shortcuts": [
+    "representation → authority",
+    "observation_weak → authority",
+    "gdd_quality → runtime_verified",
+    "screenshots → corroborated_execution",
+    "replay_opened → replay_trusted"
+  ],
+  "workshop": {
+    "mode": "mitigation_observe_only",
+    "reference_submissions_suggested": [3, 2, 4, 13, 6],
+    "worksheet_fields": [
+      "gate_pass_fail",
+      "authority_language_first_at",
+      "replay_consulted_at",
+      "quarantine_violations_ar"
+    ]
+  },
+  "explicit_non_goals": [
+    "wire_to_automatic_grades",
+    "replace_human_L5",
+    "enable_L4_sandbox",
+    "trusted_replay_score",
+    "facilitator_ranking"
+  ],
+  "companion_md": "app/calibration/REPLAY_GATE_DISCIPLINE_v1.md",
+  "companion_language_artifact": "app/calibration/AUTHORITY_TRIAD_LANGUAGE_v1.json",
+  "companion_quarantine_contract": "app/calibration/EPISTEMIC_QUARANTINE_CONTRACT_v1.json",
+  "implementation_stub": "app/replay_gate_discipline.py"
+}

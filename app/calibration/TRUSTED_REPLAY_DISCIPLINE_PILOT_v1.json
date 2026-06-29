@@ -1,0 +1,54 @@
+{
+  "pilot_id": "TRUSTED_REPLAY_DISCIPLINE_PILOT_v1",
+  "status": "design_advisory",
+  "mode": "replay_precedence_behaviour_study",
+  "not": ["grading_pilot", "l4_activation", "replay_engine_build", "trusted_certification"],
+  "institutional_invariant_en": "Containment evidence is not activation evidence.",
+  "core_question_en": "Does replay timing alter authority formation behaviour?",
+  "not_the_question_en": "Was replay opened?",
+  "trusted_replay_definition_ar": "replay له precedence على intuition — consult قبل verification lexicon",
+  "prerequisite_artifacts": [
+    "REPLAY_GATE_DISCIPLINE_v1",
+    "EXIT_CRITERIA_TRACKING_WORKSHOP_v1"
+  ],
+  "parallel_track": "EXIT_CRITERIA_TRACKING_WORKSHOP_v1",
+  "batch4_baseline": {
+    "replay_opened_approx": "21/21",
+    "replay_consulted_at_set": "1/21",
+    "replay_before_judgment_yes": "1/21",
+    "interpretation_ar": "replay procedural — not trusted precedence"
+  },
+  "comparison_dimensions": [
+    {"dimension": "replay_consulted_at_set", "batch4_baseline": "1/21", "target": "increase"},
+    {"dimension": "replay_before_judgment_yes", "batch4_baseline": "1/21", "target": "increase"},
+    {"dimension": "authority_before_replay", "batch4_baseline": "common", "target": "rare"},
+    {"dimension": "gate_3_advisory_pass", "batch4_baseline": "minority", "target": "majority_under_runtime_claims"}
+  ],
+  "worksheet_fields": [
+    "replay_opened_at",
+    "first_authority_language_at",
+    "replay_consulted_at",
+    "timing_delta_ar",
+    "authority_formation_altered",
+    "intuition_would_have_closed"
+  ],
+  "pilot_success_test_ar": "≥5 submissions: replay_consult precedes verification language in majority AND authority_language_first_at ≠ before_replay in majority",
+  "session_anchors": [
+    {"session": 3, "lesson": "authority before replay — failure"},
+    {"session": 2, "lesson": "replay consulted — easier restraint"},
+    {"session": 4, "lesson": "anchors despite replay gap"},
+    {"session": 13, "lesson": "strong evidence · Gate 3 fail · partial legitimacy"}
+  ],
+  "feeds_exit_criterion": "trusted_replay_discipline",
+  "does_not_satisfy_exit_alone": true,
+  "explicit_non_goals": [
+    "grading_pipeline_integration",
+    "l4_sandbox_build",
+    "freeze_v2_from_pilot",
+    "wire_gates_to_grading",
+    "certify_replay_trusted_yes"
+  ],
+  "facilitator": "Eng.Abdulah",
+  "activated_at": "2026-05-25T08:00:00Z",
+  "companion_md": "app/calibration/TRUSTED_REPLAY_DISCIPLINE_PILOT_v1.md"
+}

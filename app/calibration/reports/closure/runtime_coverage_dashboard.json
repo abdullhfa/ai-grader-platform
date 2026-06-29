@@ -1,0 +1,309 @@
+{
+  "schema": "runtime_coverage_dashboard_v1",
+  "generated_at": "2026-05-26T23:02:45Z",
+  "total_submissions": 25,
+  "taxonomy_counts": {
+    "missing_artifacts": 3,
+    "source_only": 22
+  },
+  "entries": [
+    {
+      "submission_id": 1,
+      "student_name": "عبدالله العتوم",
+      "batch_id": 1,
+      "taxonomy": "missing_artifacts",
+      "paths_resolved": 0,
+      "runtime_launch": "no_paths",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 2,
+      "student_name": "(ج) مهمه الالعاب محمد رمزي",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 34,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 3,
+      "student_name": "CAT RUNNER  عمر صبري أبو عاذره",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 41,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 4,
+      "student_name": "hashem nawasreh _ lpsc geame worde",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 41,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 5,
+      "student_name": "احمد طبوش",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 8,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 6,
+      "student_name": "الالعاب سيف سليمان ابو فرده",
+      "batch_id": 4,
+      "taxonomy": "missing_artifacts",
+      "paths_resolved": 0,
+      "runtime_launch": "no_paths",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 7,
+      "student_name": "العاب حيدر عمر الزعارير",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 14,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 8,
+      "student_name": "عبد الرحمن بني مصطفى",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 19,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 9,
+      "student_name": "ايمن الشنباري",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 41,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 10,
+      "student_name": "أيهم حسن العتوم",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 40,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 11,
+      "student_name": "محمد عبد المعطي نوفل",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 9,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 12,
+      "student_name": "محمد قاسم نوفل",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 17,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 13,
+      "student_name": "حذيفه محمد صبيحي",
+      "batch_id": 4,
+      "taxonomy": "source_only",
+      "paths_resolved": 5,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 14,
+      "student_name": "(ج) مهمه الالعاب محمد رمزي",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 34,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 15,
+      "student_name": "CAT RUNNER  عمر صبري أبو عاذره",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 41,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 16,
+      "student_name": "hashem nawasreh _ lpsc geame worde",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 41,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 17,
+      "student_name": "احمد طبوش",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 8,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 18,
+      "student_name": "الالعاب سيف سليمان ابو فرده",
+      "batch_id": 5,
+      "taxonomy": "missing_artifacts",
+      "paths_resolved": 0,
+      "runtime_launch": "no_paths",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 19,
+      "student_name": "العاب حيدر عمر الزعارير",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 14,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 20,
+      "student_name": "عبد الرحمن بني مصطفى",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 19,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 21,
+      "student_name": "ايمن الشنباري",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 41,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 22,
+      "student_name": "أيهم حسن العتوم",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 40,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 23,
+      "student_name": "محمد عبد المعطي نوفل",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 9,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 24,
+      "student_name": "محمد قاسم نوفل",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 17,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    },
+    {
+      "submission_id": 25,
+      "student_name": "حذيفه محمد صبيحي",
+      "batch_id": 5,
+      "taxonomy": "source_only",
+      "paths_resolved": 5,
+      "runtime_launch": "fail",
+      "replay_stable": true
+    }
+  ],
+  "batch_summaries": {
+    "1": {
+      "deterministic_replay_stable_count": 1,
+      "deterministic_replay_unstable": [],
+      "replay_hash_stable_verification_failed": [],
+      "runtime_actually_launched": [],
+      "files_only_detection": [
+        "batch1_sub_1"
+      ],
+      "ai_human_divergence": [],
+      "priority_flags": {
+        "replay_hash_unstable": false,
+        "replay_verification_mismatch": false,
+        "runtime_not_executed": true,
+        "human_labels_missing": true
+      }
+    },
+    "4": {
+      "deterministic_replay_stable_count": 12,
+      "deterministic_replay_unstable": [],
+      "replay_hash_stable_verification_failed": [],
+      "runtime_actually_launched": [],
+      "files_only_detection": [
+        "batch4_sub_2",
+        "batch4_sub_3",
+        "batch4_sub_4",
+        "batch4_sub_5",
+        "batch4_sub_6",
+        "batch4_sub_7",
+        "batch4_sub_8",
+        "batch4_sub_9",
+        "batch4_sub_10",
+        "batch4_sub_11",
+        "batch4_sub_12",
+        "batch4_sub_13"
+      ],
+      "ai_human_divergence": [],
+      "priority_flags": {
+        "replay_hash_unstable": false,
+        "replay_verification_mismatch": false,
+        "runtime_not_executed": true,
+        "human_labels_missing": true
+      }
+    },
+    "5": {
+      "deterministic_replay_stable_count": 12,
+      "deterministic_replay_unstable": [],
+      "replay_hash_stable_verification_failed": [],
+      "runtime_actually_launched": [],
+      "files_only_detection": [
+        "batch5_sub_14",
+        "batch5_sub_15",
+        "batch5_sub_16",
+        "batch5_sub_17",
+        "batch5_sub_18",
+        "batch5_sub_19",
+        "batch5_sub_20",
+        "batch5_sub_21",
+        "batch5_sub_22",
+        "batch5_sub_23",
+        "batch5_sub_24",
+        "batch5_sub_25"
+      ],
+      "ai_human_divergence": [],
+      "priority_flags": {
+        "replay_hash_unstable": false,
+        "replay_verification_mismatch": false,
+        "runtime_not_executed": true,
+        "human_labels_missing": true
+      }
+    }
+  },
+  "institutional_note_ar": "source_only ≠ فشل — يعني لا build قابل للتشغيل"
+}

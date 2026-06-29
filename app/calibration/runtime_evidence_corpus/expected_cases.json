@@ -1,0 +1,1066 @@
+{
+  "corpus_id": "runtime_evidence_calibration_v1",
+  "freeze": "GOVERNANCE_FREEZE_v1",
+  "purpose_ar": "اختبار governability — ليس grading accuracy",
+  "case_count": 80,
+  "invariants_tested": [
+    "l2_screenshot_ingestion",
+    "engine_asset_exclusion",
+    "video_no_authority_leakage",
+    "contradictions_visible",
+    "runtime_claim_contract_complete",
+    "replay_claim_boundary"
+  ],
+  "cases": [
+    {
+      "case_id": "l0_doc_only_001",
+      "archetype": "l0_doc_only",
+      "expect": {
+        "runtime_level_max": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": false,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l0_doc_only_002",
+      "archetype": "l0_doc_only",
+      "expect": {
+        "runtime_level_max": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": false,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l0_doc_only_003",
+      "archetype": "l0_doc_only",
+      "expect": {
+        "runtime_level_max": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": false,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l0_doc_only_004",
+      "archetype": "l0_doc_only",
+      "expect": {
+        "runtime_level_max": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": false,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l0_doc_only_005",
+      "archetype": "l0_doc_only",
+      "expect": {
+        "runtime_level_max": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": false,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l0_doc_only_006",
+      "archetype": "l0_doc_only",
+      "expect": {
+        "runtime_level_max": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": false,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_001",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_002",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_003",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_004",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_005",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_006",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_007",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_exe_only_008",
+      "archetype": "l1_exe_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 0,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_001",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_002",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_003",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_004",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_005",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_006",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_007",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_godot_export_008",
+      "archetype": "l1_godot_export",
+      "expect": {
+        "runtime_level_min": 1,
+        "l2_count_max": 0,
+        "expect_ambiguity_min": 1,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_001",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_002",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_003",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_004",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_005",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_006",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_007",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_008",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_009",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_010",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_011",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshot_folder_012",
+      "archetype": "l2_screenshot_folder",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "l2_count_max": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 0,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_001",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_002",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_003",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_004",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_005",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_006",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_007",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_008",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_009",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_mixed_with_exe_010",
+      "archetype": "l2_mixed_with_exe",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "godot_assets_excluded": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_001",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_002",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_003",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_004",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_005",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_006",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_007",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_video_only_008",
+      "archetype": "l3_video_only",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_001",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_002",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_003",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_004",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_005",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_006",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_007",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l3_orphan_video_008",
+      "archetype": "l3_orphan_video",
+      "expect": {
+        "runtime_level_min": 1,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 1,
+        "expect_orphan_video_flag": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_001",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_002",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_003",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_004",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_005",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_006",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_007",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_008",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_009",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l1_l2_l3_full_010",
+      "archetype": "l1_l2_l3_full",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "expect_video_detected": true,
+        "expect_ambiguity_min": 2,
+        "expect_contradictions_when_exe": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "godot_assets_only_001",
+      "archetype": "godot_assets_only",
+      "expect": {
+        "runtime_level_max": 2,
+        "l2_count_max": 0,
+        "godot_assets_excluded": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "godot_assets_only_002",
+      "archetype": "godot_assets_only",
+      "expect": {
+        "runtime_level_max": 2,
+        "l2_count_max": 0,
+        "godot_assets_excluded": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "godot_assets_only_003",
+      "archetype": "godot_assets_only",
+      "expect": {
+        "runtime_level_max": 2,
+        "l2_count_max": 0,
+        "godot_assets_excluded": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "godot_assets_only_004",
+      "archetype": "godot_assets_only",
+      "expect": {
+        "runtime_level_max": 2,
+        "l2_count_max": 0,
+        "godot_assets_excluded": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "godot_assets_only_005",
+      "archetype": "godot_assets_only",
+      "expect": {
+        "runtime_level_max": 2,
+        "l2_count_max": 0,
+        "godot_assets_excluded": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "godot_assets_only_006",
+      "archetype": "godot_assets_only",
+      "expect": {
+        "runtime_level_max": 2,
+        "l2_count_max": 0,
+        "godot_assets_excluded": true,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_001",
+      "archetype": "l2_screenshots_path_markers",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_002",
+      "archetype": "l2_screenshots_path_markers",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_003",
+      "archetype": "l2_screenshots_path_markers",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    },
+    {
+      "case_id": "l2_screenshots_path_markers_004",
+      "archetype": "l2_screenshots_path_markers",
+      "expect": {
+        "runtime_level_min": 2,
+        "l2_count_min": 2,
+        "authority_auto_inferred": false,
+        "claims_registry_complete": true,
+        "replay_has_claim_boundary": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,1886 @@
+{% extends "base.html" %}
+
+{% block nav_model_answers %}active{% endblock %}
+
+{% block title %}إنشاء دليل حل المهمة - BTEC Grader{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ======= PREMIUM EMERALD THEME ======= */
+    .ca-page {
+        background: linear-gradient(160deg, #0f2027, #203a43, #2c5364);
+        min-height: calc(100vh - 80px);
+        position: relative;
+        overflow: hidden;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+
+    /* Animated floating blobs */
+    .ca-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.35;
+        z-index: 0;
+        animation: caFloat 18s ease-in-out infinite alternate;
+    }
+    .ca-blob-1 {
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, #00b09b, #96c93d);
+        top: -120px; right: -80px;
+        animation-delay: 0s;
+    }
+    .ca-blob-2 {
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, #2d5f6e, #00d2ff);
+        bottom: -150px; left: -100px;
+        animation-delay: -6s;
+    }
+    .ca-blob-3 {
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, #11998e, #38ef7d);
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        animation-delay: -12s;
+        opacity: 0.15;
+    }
+    @keyframes caFloat {
+        0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        33% { transform: translate(40px, -30px) scale(1.08) rotate(5deg); }
+        66% { transform: translate(-30px, 40px) scale(0.95) rotate(-3deg); }
+        100% { transform: translate(20px, 20px) scale(1.05) rotate(2deg); }
+    }
+
+    /* Page header */
+    .ca-header {
+        position: relative;
+        z-index: 5;
+        text-align: center;
+        padding: 48px 20px 24px;
+    }
+    .ca-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #38ef7d;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.25s;
+        text-decoration: none;
+        margin-bottom: 16px;
+    }
+    .ca-back-link:hover {
+        color: #96c93d;
+        transform: translateX(5px);
+    }
+    .ca-title {
+        font-size: 36px;
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+    .ca-subtitle {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 16px;
+        font-weight: 500;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Timeline connector */
+    .ca-timeline {
+        position: relative;
+        z-index: 5;
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+    }
+    .ca-timeline::before {
+        content: '';
+        position: absolute;
+        right: 44px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #38ef7d, #11998e, rgba(17, 153, 142, 0.1));
+        border-radius: 3px;
+    }
+
+    /* Step cards */
+    .ca-step {
+        position: relative;
+        margin-bottom: 28px;
+        padding-right: 70px;
+        animation: caSlideIn 0.6s ease-out backwards;
+    }
+    .ca-step:nth-child(1) { animation-delay: 0.1s; }
+    .ca-step:nth-child(2) { animation-delay: 0.2s; }
+    .ca-step:nth-child(3) { animation-delay: 0.3s; }
+    .ca-step:nth-child(4) { animation-delay: 0.4s; }
+    .ca-step:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes caSlideIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ca-step-number {
+        position: absolute;
+        right: 0;
+        top: 28px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 18px;
+        z-index: 10;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 20px rgba(56, 239, 125, 0.3);
+    }
+    .ca-step-number.emerald {
+        background: linear-gradient(135deg, #38ef7d, #11998e);
+        color: #0f2027;
+    }
+    .ca-step-number.teal {
+        background: linear-gradient(135deg, #00b09b, #2d5f6e);
+        color: white;
+    }
+    .ca-step-number.completed {
+        background: linear-gradient(135deg, #38ef7d, #96c93d);
+        color: #0f2027;
+        transform: scale(1.1);
+    }
+
+    .ca-card {
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        padding: 32px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .ca-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(56, 239, 125, 0.25);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(-3px);
+    }
+
+    .ca-card-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 6px;
+    }
+    .ca-card-desc {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 24px;
+    }
+
+    /* Form inputs */
+    .ca-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 8px;
+    }
+    .ca-label .required {
+        color: #f87171;
+    }
+
+    .ca-input {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 15px;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .ca-input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    .ca-input:focus {
+        border-color: #38ef7d;
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.15);
+    }
+
+    .ca-select {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 15px;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+        outline: none;
+        transition: all 0.3s;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2338ef7d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: left 16px center;
+    }
+    .ca-select:focus {
+        border-color: #38ef7d;
+        box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.15);
+    }
+    .ca-select option {
+        background: #1a3a4a;
+        color: #fff;
+    }
+
+    /* File upload area */
+    .ca-file-zone {
+        border: 2px dashed rgba(56, 239, 125, 0.3);
+        border-radius: 16px;
+        padding: 40px 20px;
+        text-align: center;
+        background: rgba(56, 239, 125, 0.03);
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .ca-file-zone:hover {
+        border-color: #38ef7d;
+        background: rgba(56, 239, 125, 0.08);
+        transform: translateY(-2px);
+    }
+    .ca-file-zone i {
+        font-size: 40px;
+        color: #38ef7d;
+        margin-bottom: 12px;
+        display: block;
+    }
+    .ca-file-zone p {
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    .ca-file-zone .ca-file-hint {
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 12px;
+    }
+
+    /* Buttons */
+    .ca-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 30px;
+        background: linear-gradient(135deg, #38ef7d, #11998e);
+        color: #0f2027;
+        font-weight: 800;
+        font-size: 15px;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 20px rgba(56, 239, 125, 0.3);
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .ca-btn-primary:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(56, 239, 125, 0.45);
+    }
+    .ca-btn-primary:active {
+        transform: translateY(0) scale(0.98);
+    }
+    .ca-btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .ca-btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 40px;
+        background: linear-gradient(135deg, #f5af19, #f12711);
+        color: white;
+        font-weight: 800;
+        font-size: 17px;
+        border-radius: 16px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 25px rgba(241, 39, 17, 0.35);
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .ca-btn-submit:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 10px 40px rgba(241, 39, 17, 0.5);
+    }
+
+    /* Success badge */
+    .ca-success-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        background: rgba(56, 239, 125, 0.15);
+        border: 1px solid rgba(56, 239, 125, 0.3);
+        border-radius: 30px;
+        color: #38ef7d;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    /* Unit details box */
+    .ca-unit-details {
+        padding: 20px;
+        background: rgba(0, 176, 155, 0.08);
+        border: 1px solid rgba(0, 176, 155, 0.2);
+        border-radius: 16px;
+        margin-top: 16px;
+    }
+    .ca-unit-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: #38ef7d;
+        margin-bottom: 8px;
+    }
+    .ca-unit-meta {
+        display: flex;
+        gap: 24px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 16px;
+    }
+    .ca-unit-meta strong {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    .ca-criteria-scroll {
+        max-height: 220px;
+        overflow-y: auto;
+        padding-right: 8px;
+    }
+    .ca-criteria-scroll::-webkit-scrollbar { width: 4px; }
+    .ca-criteria-scroll::-webkit-scrollbar-track { background: transparent; }
+    .ca-criteria-scroll::-webkit-scrollbar-thumb { background: rgba(56, 239, 125, 0.3); border-radius: 4px; }
+
+    .ca-criteria-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        margin-bottom: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 12px;
+    }
+    .ca-badge {
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 800;
+        font-size: 10px;
+        height: fit-content;
+        white-space: nowrap;
+    }
+    .ca-badge-p { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .ca-badge-m { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+    .ca-badge-d { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
+    .ca-badge-default { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); }
+
+    /* Page range grid */
+    .ca-range-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Text area */
+    .ca-textarea {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 15px;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+        outline: none;
+        transition: all 0.3s;
+        min-height: 100px;
+        resize: vertical;
+    }
+    .ca-textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .ca-textarea:focus {
+        border-color: #38ef7d;
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.15);
+    }
+
+    /* Info hint */
+    .ca-hint {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .ca-hint i { color: #38ef7d; }
+
+    /* ===== Loading / processing overlay (premium) ===== */
+    .ca-loading-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 16px;
+        overflow-y: auto;
+        background: radial-gradient(ellipse at 50% 20%, rgba(17, 153, 142, 0.18) 0%, rgba(8, 18, 24, 0.97) 55%, rgba(5, 10, 14, 0.99) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+    }
+    .ca-wait-orbs {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .ca-wait-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.35;
+        animation: caWaitOrb 14s ease-in-out infinite alternate;
+    }
+    .ca-wait-orb-1 { width: 420px; height: 420px; background: #38ef7d; top: -8%; right: 10%; }
+    .ca-wait-orb-2 { width: 360px; height: 360px; background: #00d2ff; bottom: -10%; left: 5%; animation-delay: -5s; }
+    .ca-wait-orb-3 { width: 280px; height: 280px; background: #11998e; top: 40%; left: 45%; animation-delay: -9s; opacity: 0.2; }
+    @keyframes caWaitOrb {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(30px, -24px) scale(1.12); }
+    }
+
+    .ca-loading-card {
+        position: relative;
+        z-index: 2;
+        width: min(560px, 96vw);
+        border-radius: 32px;
+        overflow: hidden;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow:
+            0 32px 80px rgba(0, 0, 0, 0.45),
+            0 0 0 1px rgba(56, 239, 125, 0.08) inset,
+            0 0 60px rgba(56, 239, 125, 0.06);
+        animation: caWaitPanelIn 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes caWaitPanelIn {
+        from { opacity: 0; transform: translateY(24px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .ca-loading-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #38ef7d, #00d2ff, #38ef7d, transparent);
+        background-size: 200% 100%;
+        animation: caShimmer 2.5s linear infinite;
+    }
+    @keyframes caShimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .ca-loading-header {
+        padding: 40px 32px 28px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .ca-loading-body {
+        padding: 24px 28px 28px;
+        max-height: min(46vh, 380px);
+        overflow-y: auto;
+    }
+
+    .ca-wait-ring-stage {
+        position: relative;
+        width: 168px;
+        height: 168px;
+        margin: 0 auto 22px;
+    }
+    .ca-wait-ring-orbit {
+        position: absolute;
+        inset: 0;
+        animation: caWaitSpin 8s linear infinite;
+    }
+    .ca-wait-ring-orbit svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+    .ca-wait-ring-orbit .orbit-dash {
+        stroke: rgba(56, 239, 125, 0.25);
+        stroke-dasharray: 8 14;
+    }
+    @keyframes caWaitSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .ca-progress-ring {
+        position: absolute;
+        inset: 12px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, rgba(56, 239, 125, 0.12), rgba(15, 32, 39, 0.85) 65%);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+            0 8px 32px rgba(56, 239, 125, 0.2);
+    }
+    .ca-progress-ring svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+        filter: drop-shadow(0 0 8px rgba(56, 239, 125, 0.45));
+    }
+    .ca-progress-ring .progress-track {
+        stroke: rgba(255, 255, 255, 0.1);
+    }
+    .ca-progress-ring #progressCircle {
+        stroke: url(#caProgressGrad);
+        stroke-linecap: round;
+    }
+    .ca-wait-ring-core {
+        position: absolute;
+        inset: 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+    }
+    #progressPercent {
+        font-size: 32px;
+        font-weight: 900;
+        color: #fff;
+        line-height: 1;
+        letter-spacing: -0.02em;
+    }
+    .ca-wait-timer {
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(56, 239, 125, 0.9);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.06em;
+    }
+    .ca-wait-timer i {
+        font-size: 11px;
+        margin-left: 4px;
+        opacity: 0.85;
+    }
+
+    #loadingText {
+        font-size: 22px;
+        font-weight: 800;
+        color: #fff;
+        margin: 0 0 6px;
+    }
+    #loadingSubtext {
+        color: rgba(255, 255, 255, 0.55);
+        margin: 0 0 18px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    .ca-wait-linear {
+        height: 5px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+    #progressBarFill {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #11998e, #38ef7d, #96c93d);
+        box-shadow: 0 0 12px rgba(56, 239, 125, 0.6);
+        transition: width 0.45s ease-out;
+    }
+
+    .ca-wait-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        position: relative;
+    }
+    .ca-wait-steps::before {
+        content: '';
+        position: absolute;
+        right: 19px;
+        top: 28px;
+        bottom: 28px;
+        width: 2px;
+        background: linear-gradient(to bottom, rgba(56, 239, 125, 0.5), rgba(255, 255, 255, 0.08));
+        border-radius: 2px;
+    }
+    .ca-wait-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 14px 12px 14px 0;
+        text-align: right;
+        position: relative;
+        transition: all 0.35s ease;
+    }
+    .ca-wait-step-icon {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.04);
+        border: 2px solid rgba(255, 255, 255, 0.14);
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 1;
+    }
+    .ca-wait-step-body { flex: 1; min-width: 0; padding-top: 4px; }
+    .ca-wait-step-title {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.5);
+        transition: color 0.3s;
+    }
+    .ca-wait-step-sub {
+        display: block;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.28);
+        margin-top: 3px;
+    }
+    .ca-wait-step.active .ca-wait-step-icon {
+        border-color: #38ef7d;
+        color: #0f2027;
+        background: linear-gradient(135deg, #38ef7d, #11998e);
+        box-shadow: 0 0 20px rgba(56, 239, 125, 0.45);
+        animation: caStepPulse 1.6s ease-in-out infinite;
+    }
+    .ca-wait-step.active .ca-wait-step-title {
+        color: #fff;
+        font-weight: 800;
+    }
+    .ca-wait-step.done .ca-wait-step-icon {
+        border-color: #38ef7d;
+        background: #38ef7d;
+        color: #0f2027;
+        animation: none;
+    }
+    .ca-wait-step.done .ca-wait-step-title {
+        color: rgba(56, 239, 125, 0.95);
+        font-weight: 700;
+    }
+    @keyframes caStepPulse {
+        0%, 100% { box-shadow: 0 0 12px rgba(56, 239, 125, 0.35); transform: scale(1); }
+        50% { box-shadow: 0 0 24px rgba(56, 239, 125, 0.55); transform: scale(1.05); }
+    }
+
+    #successActions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    @media (max-width: 480px) {
+        .ca-loading-header { padding: 32px 20px 22px; }
+        .ca-loading-body { padding: 18px 16px 22px; }
+        .ca-wait-ring-stage { width: 148px; height: 148px; }
+        #progressPercent { font-size: 28px; }
+        #loadingText { font-size: 18px; }
+    }
+
+    /* Hidden utility */
+    .hidden { display: none !important; }
+
+    /* File input native styling */
+    .ca-file-native {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .ca-file-native:focus {
+        border-color: #38ef7d;
+        box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.15);
+    }
+    .ca-file-native::file-selector-button {
+        padding: 8px 18px;
+        border-radius: 8px;
+        border: none;
+        background: linear-gradient(135deg, #38ef7d, #11998e);
+        color: #0f2027;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        margin-left: 12px;
+        transition: all 0.2s;
+    }
+    .ca-file-native::file-selector-button:hover {
+        filter: brightness(1.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .ca-timeline::before { display: none; }
+        .ca-step { padding-right: 0; }
+        .ca-step-number { display: none; }
+        .ca-title { font-size: 26px; }
+        .ca-range-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ca-page">
+    <!-- Animated Blobs -->
+    <div class="ca-blob ca-blob-1"></div>
+    <div class="ca-blob ca-blob-2"></div>
+    <div class="ca-blob ca-blob-3"></div>
+
+    <!-- Page Header -->
+    <div class="ca-header">
+        <a href="/dashboard" class="ca-back-link">
+            <i class="fa-solid fa-arrow-right"></i>
+            العودة للرئيسية
+        </a>
+        <h1 class="ca-title" id="caPageTitle">{% if is_admin %}إنشاء دليل حل المهمة{% else %}طلب دليل المهمة{% endif %}</h1>
+        <p class="ca-subtitle" id="caPageSubtitle">{% if is_admin %}اتبع الخطوات التالية لرفع الكتاب والواجب، وسيقوم الـ AI بالباقي.{% else %}اختر مادتك من اشتراكك ثم اضغط موافق لطلب الدليل مباشرة من قاعدة البيانات.{% endif %}</p>
+    </div>
+
+    <!-- Steps Timeline -->
+    <form id="createAssignmentForm" enctype="multipart/form-data">
+        <div class="ca-timeline">
+
+            <!-- Step 1: Upload Textbook (admin only) -->
+            <div class="ca-step{% if not is_admin %} hidden{% endif %}" id="stepTextbookUpload">
+                <div class="ca-step-number emerald">1</div>
+                <div class="ca-card">
+                    <h3 class="ca-card-title"><i class="fa-solid fa-book-open" style="color: #38ef7d; margin-left: 8px;"></i> تحميل كتاب Pearson</h3>
+                    <p class="ca-card-desc">ارفع ملف الكتاب بصيغة PDF ليتم تحليله بالذكاء الاصطناعي</p>
+
+                    <div style="margin-bottom: 18px;">
+                        <label class="ca-label">عنوان الكتاب <span class="required">*</span></label>
+                        <input type="text" id="textbookTitle" {% if is_admin %}required{% endif %} class="ca-input"
+                            placeholder="مثال: Pearson BTEC Level 3 IT - Unit 1">
+                    </div>
+
+                    <div style="margin-bottom: 18px;">
+                        <label class="ca-label">ملف الكتاب (PDF) <span class="required">*</span></label>
+                        <input type="file" id="textbookFile" accept=".pdf" {% if is_admin %}required{% endif %} class="ca-file-native">
+                        <p class="ca-hint"><i class="fa-solid fa-info-circle"></i> يفضل استخدام ملفات PDF نصية لضمان دقة القراءة.</p>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <button type="button" id="uploadTextbookBtn" class="ca-btn-primary">
+                            <i class="fa-solid fa-upload"></i>
+                            رفع وتحليل الكتاب
+                        </button>
+
+                        <div id="textbookStatus" class="ca-success-badge hidden">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <span>تم الرفع بنجاح</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Select Unit -->
+            <div class="ca-step{% if is_admin %} hidden{% endif %}" id="stepUnitSelection">
+                <div class="ca-step-number teal">{% if is_admin %}2{% else %}1{% endif %}</div>
+                <div class="ca-card">
+                    {% set sub_subjects = (subscription.subjects if subscription and subscription.subjects) or '' %}
+                    {% set sub_subject_list = sub_subjects.split('|') if sub_subjects else [] %}
+                    {% set sub_subject_list = sub_subject_list | reject('equalto', '') | reject('equalto', 'أخرى') | list %}
+
+                    {% if sub_subject_list | length > 0 %}
+                    <!-- Subject selector from subscription -->
+                    <h3 class="ca-card-title"><i class="fa-solid fa-layer-group" style="color: #00b09b; margin-left: 8px;"></i> الوحدة التعليمية (Unit)</h3>
+                    <p class="ca-card-desc">اختر المادة من اشتراكك وسيتم تحديد المستوى والوحدة تلقائياً</p>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="ca-label">المادة (التخصص) <span class="required">*</span></label>
+                        <select id="subjectSelect" class="ca-select" style="background: rgba(56, 239, 125, 0.1); border-color: rgba(56, 239, 125, 0.3);">
+                            <option value="">اختر المادة...</option>
+                            {% for subj in sub_subject_list %}
+                            <option value="{{ subj.strip() }}">{{ subj.strip() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="ca-label">المستوى (Level)</label>
+                        <div class="ca-input" style="background: rgba(56, 239, 125, 0.1); border-color: rgba(56, 239, 125, 0.3); cursor: default;">
+                            <i class="fa-solid fa-layer-group" style="color: #38ef7d; margin-left: 8px;"></i>
+                            <span id="autoLevelText">اختر المادة أولاً</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="ca-label">الوحدة</label>
+                        <div class="ca-input" style="background: rgba(56, 239, 125, 0.1); border-color: rgba(56, 239, 125, 0.3); cursor: default;">
+                            <i class="fa-solid fa-book-open" style="color: #38ef7d; margin-left: 8px;"></i>
+                            <span id="autoUnitText">اختر المادة أولاً</span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden elements for form compatibility -->
+                    <input type="hidden" id="levelSelect" value="">
+                    <div id="unitSelectWrapper" class="hidden">
+                        <select id="unitSelectHidden" class="hidden" aria-hidden="true"><option value=""></option></select>
+                    </div>
+
+                    {% else %}
+                    <!-- Manual selection -->
+                    <h3 class="ca-card-title"><i class="fa-solid fa-layer-group" style="color: #00b09b; margin-left: 8px;"></i> اختيار الوحدة (Unit)</h3>
+                    <p class="ca-card-desc">حدد المستوى ثم اختر الوحدة من <strong>قائمة المواصفات الرسمية</strong> المخزّنة في النظام. هذه القائمة <strong>لا</strong> تُبنى تلقائياً من ملف PDF: رفع الكتاب يوفّر المحتوى للمعالجة، أما عناوين الوحدات والمعايير فتأتي من ملف مواصفات BTEC (يمكن توسيعه أو استبداله بنسخة Pearson الكاملة عندكم).</p>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="ca-label">المستوى (Level) <span class="required">*</span></label>
+                        <select id="levelSelect" class="ca-select">
+                            <option value="">اختر المستوى...</option>
+                            <option value="L2">Level 2 — الصف العاشر</option>
+                            <option value="L3">Level 3 — الأول والثاني ثانوي</option>
+                        </select>
+                    </div>
+
+                    <div id="unitSelectWrapper" class="hidden" style="margin-bottom: 16px;">
+                        <label class="ca-label">الوحدة المطلوبة <span class="required">*</span></label>
+                        <select id="unitSelect" class="ca-select">
+                            <option value="">اختر الوحدة من القائمة...</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div id="unitDetails" class="ca-unit-details hidden">
+                        <div style="display: flex; align-items: flex-start; gap: 14px;">
+                            <div style="background: rgba(56, 239, 125, 0.1); padding: 12px; border-radius: 12px;">
+                                <i class="fa-solid fa-book-open" style="font-size: 22px; color: #38ef7d;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h4 class="ca-unit-name" id="unitName">Unit Name</h4>
+                                <div class="ca-unit-meta">
+                                    <p><strong>Learning Aims:</strong> <span id="learningAimsCount">-</span></p>
+                                    <p><strong>Criteria:</strong> <span id="criteriaCount">-</span></p>
+                                </div>
+                                <div id="criteriaList" class="ca-criteria-scroll"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if sub_subject_list | length > 0 or not is_admin %}
+                    <div style="margin-top: 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                        <button type="button" id="confirmSubjectBtn" class="ca-btn-primary" disabled>
+                            <i class="fa-solid fa-check"></i>
+                            {% if is_admin %}موافق ومتابعة{% else %}موافق — طلب الدليل{% endif %}
+                        </button>
+                        <span id="subjectConfirmHint" class="ca-hint" style="margin: 0;">
+                            <i class="fa-solid fa-circle-info"></i>
+                            {% if is_admin %}اختر المادة ثم اضغط موافق للمتابعة{% else %}اختر المادة ثم اضغط موافق لطلب الدليل مباشرة{% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Step 3: Specify Pages (admin only) -->
+            <div class="ca-step hidden" id="step2">
+                <div class="ca-step-number teal">3</div>
+                <div class="ca-card">
+                    <h3 class="ca-card-title"><i class="fa-solid fa-file-lines" style="color: #00d2ff; margin-left: 8px;"></i> تحديد نطاق الصفحات</h3>
+                    <p class="ca-card-desc">حدد الصفحات ذات الصلة من الكتاب</p>
+
+                    <div class="ca-range-grid">
+                        <div>
+                            <label class="ca-label">من صفحة</label>
+                            <input type="number" id="pageFrom" {% if is_admin %}required{% endif %} min="1" class="ca-input" placeholder="1">
+                        </div>
+                        <div>
+                            <label class="ca-label">إلى صفحة</label>
+                            <input type="number" id="pageTo" {% if is_admin %}required{% endif %} min="1" class="ca-input" placeholder="10">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if is_admin %}
+            <!-- Step 4: Assignment Details (admin only) -->
+            <div class="ca-step hidden" id="step3">
+                <div class="ca-step-number teal">4</div>
+                <div class="ca-card">
+                    <h3 class="ca-card-title"><i class="fa-solid fa-pen-fancy" style="color: #f5af19; margin-left: 8px;"></i> تفاصيل الواجب</h3>
+                    <p class="ca-card-desc">أدخل تفاصيل الواجب وارفع الملف</p>
+
+                    <div style="margin-bottom: 18px;">
+                        <label class="ca-label">عنوان الواجب <span class="required">*</span></label>
+                        <input type="text" id="assignmentTitle" required class="ca-input"
+                            placeholder="مثال: Assignment 1 - AI Ethics">
+                    </div>
+
+                    <div style="margin-bottom: 18px;">
+                        <label class="ca-label">وصف الواجب (اختياري)</label>
+                        <textarea id="assignmentDescription" class="ca-textarea"
+                            placeholder="أضف أي ملاحظات إضافية هنا..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="ca-label">ملف الواجب <span class="required">*</span></label>
+                        <div class="ca-file-zone" onclick="document.getElementById('assignmentFile').click()">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p>اضغط لرفع الملف أو اسحبه هنا</p>
+                            <span class="ca-file-hint">PDF, DOCX, MD supported</span>
+                            <input type="file" id="assignmentFile" accept=".pdf,.docx,.doc,.md,.txt" required class="hidden">
+                            <div id="fileName" style="margin-top: 10px; font-size: 14px; color: #38ef7d; font-weight: 700;" class="hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button (admin only) -->
+            <div class="ca-step hidden" id="submitSection" style="padding-right: 70px;">
+                <div style="display: flex; justify-content: flex-start;">
+                    <button type="submit" id="submitBtn" class="ca-btn-submit">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>بدء المعالجة الذكية</span>
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </form>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="ca-loading-overlay hidden">
+        <div class="ca-wait-orbs" aria-hidden="true">
+            <div class="ca-wait-orb ca-wait-orb-1"></div>
+            <div class="ca-wait-orb ca-wait-orb-2"></div>
+            <div class="ca-wait-orb ca-wait-orb-3"></div>
+        </div>
+        <div class="ca-loading-card">
+            <div class="ca-loading-header">
+                <div class="ca-wait-ring-stage">
+                    <div class="ca-wait-ring-orbit" aria-hidden="true">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="orbit-dash" cx="50" cy="50" r="46" fill="none" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="ca-progress-ring">
+                        <svg viewBox="0 0 100 100" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="caProgressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#11998e" />
+                                    <stop offset="50%" stop-color="#38ef7d" />
+                                    <stop offset="100%" stop-color="#96c93d" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-track" cx="50" cy="50" r="42" fill="none" stroke-width="7" />
+                            <circle id="progressCircle" cx="50" cy="50" r="42" fill="none" stroke-width="7"
+                                stroke-linecap="round" pathLength="100"
+                                stroke-dasharray="100" stroke-dashoffset="100"
+                                style="transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);" />
+                        </svg>
+                        <div class="ca-wait-ring-core">
+                            <span id="progressPercent">0%</span>
+                            <span class="ca-wait-timer" id="loadingTimer"><i class="fa-regular fa-clock"></i>00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 id="loadingText">جاري المعالجة...</h3>
+                <p id="loadingSubtext">{% if is_admin %}يقوم الذكاء الاصطناعي بإنشاء دليل المهمة — لا تغلق الصفحة{% else %}جاري البحث عن دليل المهمة الجاهز وربطه بحسابك{% endif %}</p>
+                <div class="ca-wait-linear" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div id="progressBarFill"></div>
+                </div>
+            </div>
+
+            <div class="ca-loading-body">
+                <div id="stepsContainer" class="ca-wait-steps">
+                    <div class="ca-wait-step" id="step1">
+                        <div class="ca-wait-step-icon">1</div>
+                        <div class="ca-wait-step-body">
+                            <span class="ca-wait-step-title">استخراج محتوى الكتاب وفهم السياق</span>
+                            <span class="ca-wait-step-sub">قراءة المادة وتحديد نطاق المهمة</span>
+                        </div>
+                    </div>
+                    <div class="ca-wait-step" id="step3Progress">
+                        <div class="ca-wait-step-icon">2</div>
+                        <div class="ca-wait-step-body">
+                            <span class="ca-wait-step-title">توليد الحلول النموذجية</span>
+                            <span class="ca-wait-step-sub">إعداد إجابات مرجعية لكل معيار</span>
+                        </div>
+                    </div>
+                    <div class="ca-wait-step" id="step4Progress">
+                        <div class="ca-wait-step-icon">3</div>
+                        <div class="ca-wait-step-body">
+                            <span class="ca-wait-step-title" id="step4DurationHint">إنشاء دليل المعلم وإنهاء المعالجة</span>
+                            <span class="ca-wait-step-sub">تنسيق الدليل وتصدير النتيجة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="successActions" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const isAdminUser = {{ 'true' if is_admin else 'false' }};
+
+    function hideLoadingOverlay() {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+
+    // File Input Helper (admin upload)
+    const assignmentFileEl = document.getElementById('assignmentFile');
+    if (assignmentFileEl) {
+        assignmentFileEl.addEventListener('change', function (e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : '';
+            const displayDiv = document.getElementById('fileName');
+            if (fileName) {
+                displayDiv.textContent = fileName;
+                displayDiv.classList.remove('hidden');
+            } else {
+                displayDiv.classList.add('hidden');
+            }
+        });
+    }
+
+    let textbookId = null;
+
+    function textbookUploadErrorDetail(data, responseStatus) {
+        if (!data || typeof data !== 'object') return 'خطأ غير معروف (لم يصل JSON)';
+        let d = data.detail;
+        if (Array.isArray(d)) {
+            d = d.map((x) => (x && (x.msg || x.message)) ? (x.msg || x.message) : JSON.stringify(x)).join(' — ');
+        } else if (d && typeof d === 'object') {
+            d = JSON.stringify(d);
+        }
+        d = typeof d === 'string' ? d.trim() : (d ? String(d) : '');
+        if (!d && data.message) d = String(data.message);
+        if (!d && data.error && typeof data.error === 'string') d = data.error;
+        return d || ('خطأ الخادم HTTP ' + (responseStatus || ''));
+    }
+
+    // Upload textbook
+    document.getElementById('uploadTextbookBtn').addEventListener('click', async () => {
+        const title = document.getElementById('textbookTitle').value;
+        const file = document.getElementById('textbookFile').files[0];
+
+        if (!title || !file) {
+            alert('يرجى إدخال عنوان الكتاب واختيار الملف');
+            return;
+        }
+
+        const btn = document.getElementById('uploadTextbookBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع...';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/api/upload-textbook', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+            });
+            const rawText = await response.text();
+            let data = {};
+            try {
+                data = rawText ? JSON.parse(rawText) : {};
+            } catch (parseErr) {
+                alert('فشل في رفع الكتاب — لم يمكن قراءة رد الخادم (HTTP ' + response.status + ')\n\n' +
+                      (rawText ? rawText.substring(0, 500) : '(فارغ)'));
+                return;
+            }
+
+            const okPayload = !!data.success && response.ok;
+
+            if (okPayload) {
+                textbookId = data.id;
+                document.getElementById('textbookStatus').classList.remove('hidden');
+                document.getElementById('stepUnitSelection').classList.remove('hidden');
+                return;
+            }
+
+            const errMsg = textbookUploadErrorDetail(data, response.status);
+            alert('فشل في رفع الكتاب\n\n' + errMsg +
+                  (response.status ? '\n\n(HTTP ' + response.status + ')' : ''));
+
+        } catch (error) {
+            alert('حدث خطأ أثناء الاتصال: ' + ((error && error.message) ? error.message : ''));
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    });
+
+    // Load units from specification
+    let selectedUnitNumber = null;
+
+    // Subject → { level, unitNumber } mapping
+    const subjectUnitMap = {
+        // الصف العاشر (L2)
+        'استخدام تكنولوجيا المعلومات لدعم المعلومات والاتصالات في المنظمات': { level: 'L2', unit: 'L2_1' },
+        'نمذجة البيانات وجداول البيانات': { level: 'L2', unit: 'L2_2' },
+        'مقدمة في شبكات الحاسوب':         { level: 'L2', unit: 'L2_4' },
+        'مقدمة في البرمجة':               { level: 'L2', unit: 'L2_5' },
+        'مقدمة في الرسومات الرقمية والمتحركة': { level: 'L2', unit: 'L2_6' },
+        'مقدمة في تطوير المواقع الإلكترونية': { level: 'L2', unit: 'L2_7' },
+        'مقدمة في تطوير التطبيقات':       { level: 'L2', unit: 'L2_8' },
+        'مقدمة في تصميم الألعاب':         { level: 'L2', unit: 'L2_9' },
+        // الصف الأول ثانوي (L3)
+        'نظم تكنولوجيا المعلومات - الإستراتيجية والإدارة والبنية التحتية': { level: 'L3', unit: 'L3_1' },
+        'تطوير المواقع الالكترونية':      { level: 'L3', unit: 'L3_6' },
+        'تطوير ألعاب الحاسوب':            { level: 'L3', unit: 'L3_8' },
+        'الدعم الفني وإدارة تكنولوجيا المعلومات': { level: 'L3', unit: 'L3_12' },
+        // الصف الثاني ثانوي (L3)
+        'الأمن السيبراني وإدارة الحوادث':  { level: 'L3', unit: 'L3_11' },
+        'مقدمة في الذكاء الاصطناعي':      { level: 'L3', unit: 'L3_21' },
+        'البرمجة':                        { level: 'L3', unit: 'L3_4' },
+        'إدارة مشاريع تكنولوجيا المعلومات': { level: 'L3', unit: 'L3_9' },
+    };
+    const levelDisplayNames = {
+        'L2': 'Level 2 (BTEC First)',
+        'L3': 'Level 3 (BTEC National)',
+    };
+
+    // Check if subscription has subjects
+    const allSubscriptionSubjects = '{{ (subscription.subjects if subscription and subscription.subjects) or "" }}'.split('|').map(s => s.trim()).filter(s => s && s !== 'أخرى');
+
+    // Direct match first, then fuzzy (partial) match for short subject names like "شبكات"
+    function findSubjectMapping(subj) {
+        if (subjectUnitMap[subj]) return { mapping: subjectUnitMap[subj], fullName: subj };
+        for (const key of Object.keys(subjectUnitMap)) {
+            if (key.includes(subj) || subj.includes(key)) return { mapping: subjectUnitMap[key], fullName: key };
+        }
+        return null;
+    }
+
+    const subjectSelectEl = document.getElementById('subjectSelect');
+    const hasSubjectDropdown = !!subjectSelectEl;
+    const confirmSubjectBtn = document.getElementById('confirmSubjectBtn');
+    let selectedSubscriptionSubject = '';
+    let selectedAssignmentId = null;
+
+    function updateSubjectConfirmButton() {
+        if (!confirmSubjectBtn) return;
+        if (subjectSelectEl) {
+            confirmSubjectBtn.disabled = !subjectSelectEl.value;
+            return;
+        }
+        const unitSelect = document.getElementById('unitSelect');
+        confirmSubjectBtn.disabled = !(unitSelect && unitSelect.value);
+    }
+
+    function resetUserRequestSteps() {
+        selectedAssignmentId = null;
+    }
+
+    function revealAssignmentSteps() {
+        if (!isAdminUser) return;
+        document.getElementById('step2').classList.remove('hidden');
+        document.getElementById('step3').classList.remove('hidden');
+        document.getElementById('submitSection').classList.remove('hidden');
+        const nextStep = document.getElementById('step3');
+        if (nextStep) nextStep.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetAssignmentSteps() {
+        if (isAdminUser) {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('submitSection').classList.add('hidden');
+        }
+        resetUserRequestSteps();
+    }
+
+    async function fetchAvailableAssignments() {
+        if (!selectedUnitNumber) {
+            alert('يرجى اختيار المادة/الوحدة أولاً');
+            return null;
+        }
+
+        const params = new URLSearchParams({
+            unit_number: selectedUnitNumber,
+            subject: selectedSubscriptionSubject || subjectSelectEl?.value || '',
+        });
+
+        const response = await fetch(`/api/available-assignments?${params.toString()}`);
+        const data = await response.json();
+
+        if (data.subscription_required) {
+            alert(data.detail || 'يجب الاشتراك أولاً');
+            window.location.href = '/dashboard#packages';
+            return null;
+        }
+
+        if (!response.ok || !data.success) {
+            alert(data.detail || 'تعذّر تحميل المهمة الجاهزة');
+            return null;
+        }
+
+        return data.assignments || [];
+    }
+
+    async function requestAssignmentForUnit() {
+        const assignments = await fetchAvailableAssignments();
+        if (!assignments) return;
+
+        if (!assignments.length) {
+            alert('لا توجد مهمة جاهزة لهذه الوحدة بعد. يرجى التواصل مع الإدارة.');
+            return;
+        }
+
+        selectedAssignmentId = assignments[0].id;
+        await submitRequestAssignment();
+    }
+
+    function showRequestSuccess(data) {
+        const doneSteps = ['step1', 'step3Progress'];
+        doneSteps.forEach(s => markStepComplete(s));
+        updateProgress(100, '✅ تم طلب دليل المهمة بنجاح!', 'يمكنك الآن تحميل الدليل أو الانتقال لتصحيح واجبات الطلبة');
+        const btnContainer = document.getElementById('successActions');
+        if (btnContainer) {
+            btnContainer.innerHTML = `
+                <a href="/batch-grade/${data.id}" style="display:inline-flex; align-items:center; gap:10px; padding:14px 36px; background:linear-gradient(135deg,#FFB300,#F57C00); color:#fff; border-radius:14px; font-weight:800; font-size:1.1rem; text-decoration:none; box-shadow:0 4px 20px rgba(245,124,0,0.4);">
+                    <i class="fas fa-graduation-cap"></i>
+                    تصحيح الواجبات
+                </a>
+                <a href="/model-answers" style="display:inline-flex; align-items:center; gap:8px; padding:12px 28px; border:2px solid rgba(255,255,255,0.3); color:rgba(255,255,255,0.8); border-radius:14px; font-weight:700; font-size:0.95rem; text-decoration:none;">
+                    <i class="fas fa-book-open"></i>
+                    عرض أدلة حل المهام
+                </a>
+            `;
+            btnContainer.classList.remove('hidden');
+            btnContainer.style.display = 'flex';
+        }
+    }
+
+    async function submitRequestAssignment() {
+        if (!selectedAssignmentId) {
+            alert('يرجى اختيار المهمة أولاً');
+            return;
+        }
+
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        resetSteps();
+        updateProgress(20, 'جاري الربط...', 'جاري ربط دليل المهمة بحسابك');
+        setActiveStep('step1');
+
+        try {
+            const response = await fetch('/api/request-assignment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    assignment_id: selectedAssignmentId,
+                    subject: selectedSubscriptionSubject || subjectSelectEl?.value || '',
+                    unit_number: selectedUnitNumber,
+                }),
+            });
+
+            const rawText = await response.text();
+            let data = {};
+            try { data = rawText ? JSON.parse(rawText) : {}; } catch (_) {}
+
+            if (data.subscription_required) {
+                hideLoadingOverlay();
+                alert(data.detail || 'يجب الاشتراك أولاً');
+                window.location.href = '/dashboard#packages';
+                return;
+            }
+
+            if (data.assignment_not_available || (!response.ok && !data.success)) {
+                hideLoadingOverlay();
+                alert(data.detail || 'المهمة غير متوفرة بعد. يرجى التواصل مع الإدارة.');
+                return;
+            }
+
+            if (data.success) {
+                markStepComplete('step1');
+                updateProgress(85, 'جاري الإنهاء...', 'تم ربط الدليل بنجاح');
+                markStepComplete('step3Progress');
+                showRequestSuccess(data);
+            } else {
+                hideLoadingOverlay();
+                alert(data.detail || 'فشل طلب الدليل');
+            }
+        } catch (error) {
+            hideLoadingOverlay();
+            alert(error.message || 'حدث خطأ أثناء طلب الدليل');
+        }
+    }
+
+    // Function to apply subject selection (set level, unit, show details)
+    function applySubjectSelection(subj, revealSteps = true) {
+        const result = findSubjectMapping(subj);
+        if (!result) {
+            document.getElementById('autoLevelText').textContent = 'غير معروف';
+            document.getElementById('autoUnitText').textContent = 'غير معروف';
+            selectedUnitNumber = null;
+            resetAssignmentSteps();
+            return false;
+        }
+        const { mapping } = result;
+        selectedSubscriptionSubject = subj;
+        const autoLevel = mapping.level;
+        const autoUnit = mapping.unit;
+
+        document.getElementById('levelSelect').value = autoLevel;
+        document.getElementById('autoLevelText').textContent = levelDisplayNames[autoLevel] || autoLevel;
+
+        selectedUnitNumber = autoUnit;
+        fetch(`/api/get-unit/${autoUnit}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const unit = data.unit;
+                    const dispNum = unit.unit_number.replace(/^L\d+_/, '');
+                    document.getElementById('autoUnitText').textContent = `Unit ${dispNum}: ${unit.unit_name}`;
+                    document.getElementById('unitName').textContent = `Unit ${dispNum}: ${unit.unit_name}`;
+                    document.getElementById('learningAimsCount').textContent = Object.keys(unit.learning_aims || {}).length;
+                    document.getElementById('criteriaCount').textContent = unit.criteria.length;
+                    const criteriaList = document.getElementById('criteriaList');
+                    criteriaList.innerHTML = '';
+                    if (unit.criteria && unit.criteria.length > 0) {
+                        unit.criteria.forEach(criterion => {
+                            const div = document.createElement('div');
+                            div.className = 'ca-criteria-item';
+                            let badgeClass = 'ca-badge-default';
+                            if (criterion.level === 'P') badgeClass = 'ca-badge-p';
+                            if (criterion.level === 'M') badgeClass = 'ca-badge-m';
+                            if (criterion.level === 'D') badgeClass = 'ca-badge-d';
+                            div.innerHTML = `
+                                <span class="ca-badge ${badgeClass}">${criterion.code}</span>
+                                <span style="color: rgba(255,255,255,0.65); line-height: 1.6;">${criterion.description}</span>
+                            `;
+                            criteriaList.appendChild(div);
+                        });
+                    }
+                    document.getElementById('unitDetails').classList.remove('hidden');
+                }
+            });
+        if (revealSteps) {
+            revealAssignmentSteps();
+        }
+        return true;
+    }
+
+    function initSubscriptionSubjectFlow() {
+        if (!hasSubjectDropdown) return;
+
+        updateSubjectConfirmButton();
+
+        if (allSubscriptionSubjects.length === 1) {
+            subjectSelectEl.value = allSubscriptionSubjects[0];
+            updateSubjectConfirmButton();
+        }
+
+        const step = document.getElementById('stepUnitSelection');
+        const tryAutoApply = () => {
+            if (!subjectSelectEl.value) return;
+            if (step && step.classList.contains('hidden')) return;
+            applySubjectSelection(subjectSelectEl.value, false);
+        };
+
+        if (step && !step.classList.contains('hidden')) {
+            tryAutoApply();
+        } else {
+            const observer = new MutationObserver(() => {
+                if (!step.classList.contains('hidden')) {
+                    observer.disconnect();
+                    tryAutoApply();
+                }
+            });
+            observer.observe(step, { attributes: true, attributeFilter: ['class'] });
+        }
+    }
+
+    if (hasSubjectDropdown) {
+        // === SUBSCRIPTION MODE: user picks from their subscribed subjects ===
+        subjectSelectEl.addEventListener('change', (e) => {
+            const chosen = e.target.value;
+            updateSubjectConfirmButton();
+            if (chosen) {
+                applySubjectSelection(chosen, false);
+            } else {
+                selectedSubscriptionSubject = '';
+                selectedUnitNumber = null;
+                document.getElementById('autoLevelText').textContent = 'اختر المادة أولاً';
+                document.getElementById('autoUnitText').textContent = 'اختر المادة أولاً';
+                document.getElementById('unitDetails').classList.add('hidden');
+                resetAssignmentSteps();
+            }
+        });
+
+        if (confirmSubjectBtn) {
+            confirmSubjectBtn.addEventListener('click', async () => {
+                const chosen = subjectSelectEl.value;
+                if (!chosen) {
+                    alert('يرجى اختيار المادة أولاً');
+                    return;
+                }
+                if (!applySubjectSelection(chosen, false)) {
+                    alert('تعذّر تحديد الوحدة لهذه المادة. يرجى التواصل مع الإدارة.');
+                    return;
+                }
+                if (isAdminUser) {
+                    revealAssignmentSteps();
+                } else {
+                    await requestAssignmentForUnit();
+                }
+            });
+        }
+
+        initSubscriptionSubjectFlow();
+    } else {
+        // === MANUAL MODE: user selects level → unit ===
+        document.getElementById('levelSelect').addEventListener('change', async (e) => {
+            const level = e.target.value;
+            const unitSelectWrapper = document.getElementById('unitSelectWrapper');
+            const unitSelect = document.getElementById('unitSelect');
+
+            if (level) {
+                await loadUnits(level);
+                unitSelectWrapper.classList.remove('hidden');
+            } else {
+                unitSelectWrapper.classList.add('hidden');
+                unitSelect.innerHTML = '<option value="">اختر الوحدة من القائمة...</option>';
+                selectedUnitNumber = null;
+                document.getElementById('unitDetails').classList.add('hidden');
+                document.getElementById('step2').classList.add('hidden');
+                document.getElementById('step3').classList.add('hidden');
+                document.getElementById('submitSection').classList.add('hidden');
+                updateSubjectConfirmButton();
+            }
+        });
+    }
+
+    async function loadUnits(level) {
+        try {
+            const url = level ? `/api/get-units?level=${encodeURIComponent(level)}` : '/api/get-units';
+            const response = await fetch(url);
+            const select = document.getElementById('unitSelect');
+            if (!response.ok) {
+                select.innerHTML = '<option value="">اختر الوحدة من القائمة...</option>';
+                const option = document.createElement('option');
+                option.value = '';
+                option.disabled = true;
+                option.textContent = 'تعذر تحميل الوحدات (خطأ خادم).';
+                select.appendChild(option);
+                return;
+            }
+            const data = await response.json();
+
+            if (data.success) {
+                select.innerHTML = '<option value="">اختر الوحدة من القائمة...</option>';
+
+                if (data.missing_spec) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.disabled = true;
+                    option.textContent = data.detail || 'ملف مواصفات BTEC غير موجود';
+                    select.appendChild(option);
+                    return;
+                }
+
+                if (data.units_list.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.disabled = true;
+                    option.textContent = `لا توجد وحدات لـ ${level} — يرجى رفع ملف المواصفات`;
+                    select.appendChild(option);
+                } else {
+                    // Group by grade_level
+                    const grouped = {};
+                    data.units_list.forEach(unit => {
+                        const grade = unit.grade_level || 'أخرى';
+                        if (!grouped[grade]) grouped[grade] = [];
+                        grouped[grade].push(unit);
+                    });
+
+                    Object.keys(grouped).forEach(grade => {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = grade;
+                        grouped[grade].forEach(unit => {
+                            const option = document.createElement('option');
+                            option.value = unit.unit_number;
+                            const displayNum = unit.unit_number.replace(/^L\d+_/, '');
+                            const displayName = unit.unit_name_ar || unit.unit_name;
+                            option.textContent = `Unit ${displayNum}: ${displayName}`;
+                            optgroup.appendChild(option);
+                        });
+                        select.appendChild(optgroup);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load units:', error);
+        }
+    }
+
+    // Handle unit selection (manual mode has #unitSelect; subscription mode uses subject picker only)
+    const unitSelectMain = document.getElementById('unitSelect');
+    if (unitSelectMain) {
+        unitSelectMain.addEventListener('change', async (e) => {
+        const unitNumber = e.target.value;
+        updateSubjectConfirmButton();
+
+        if (unitNumber) {
+            selectedUnitNumber = unitNumber;
+            await showUnitDetails(unitNumber);
+            if (isAdminUser) {
+                document.getElementById('step2').classList.remove('hidden');
+                document.getElementById('step3').classList.remove('hidden');
+                document.getElementById('submitSection').classList.remove('hidden');
+            }
+        } else {
+            selectedUnitNumber = null;
+            document.getElementById('unitDetails').classList.add('hidden');
+            resetAssignmentSteps();
+        }
+    });
+    }
+
+    if (confirmSubjectBtn && !hasSubjectDropdown) {
+        updateSubjectConfirmButton();
+        confirmSubjectBtn.addEventListener('click', async () => {
+            const unitSelect = document.getElementById('unitSelect');
+            if (!unitSelect || !unitSelect.value) {
+                alert('يرجى اختيار الوحدة أولاً');
+                return;
+            }
+            selectedUnitNumber = unitSelect.value;
+            if (isAdminUser) {
+                revealAssignmentSteps();
+            } else {
+                await requestAssignmentForUnit();
+            }
+        });
+    }
+
+    // Show unit details
+    async function showUnitDetails(unitNumber) {
+        try {
+            const response = await fetch(`/api/get-unit/${unitNumber}`);
+            const data = await response.json();
+
+            if (data.success) {
+                const unit = data.unit;
+                const dispNum = unit.unit_number.replace(/^L\d+_/, '');
+                document.getElementById('unitName').textContent = `Unit ${dispNum}: ${unit.unit_name}`;
+                document.getElementById('learningAimsCount').textContent = Object.keys(unit.learning_aims || {}).length;
+                document.getElementById('criteriaCount').textContent = unit.criteria.length;
+
+                const criteriaList = document.getElementById('criteriaList');
+                criteriaList.innerHTML = '';
+                if (unit.criteria && unit.criteria.length > 0) {
+                    unit.criteria.forEach(criterion => {
+                        const div = document.createElement('div');
+                        div.className = 'ca-criteria-item';
+
+                        let badgeClass = 'ca-badge-default';
+                        if (criterion.level === 'P') badgeClass = 'ca-badge-p';
+                        if (criterion.level === 'M') badgeClass = 'ca-badge-m';
+                        if (criterion.level === 'D') badgeClass = 'ca-badge-d';
+
+                        div.innerHTML = `
+                            <span class="ca-badge ${badgeClass}">${criterion.code}</span>
+                            <span style="color: rgba(255,255,255,0.65); line-height: 1.6;">${criterion.description}</span>
+                        `;
+                        criteriaList.appendChild(div);
+                    });
+                }
+                document.getElementById('unitDetails').classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Failed to load details:', error);
+        }
+    }
+
+    // Submit form (admin only)
+    document.getElementById('createAssignmentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!isAdminUser) return;
+
+        if (!textbookId) return alert('يرجى رفع الكتاب أولاً');
+        if (!selectedUnitNumber) return alert('يرجى اختيار المادة/الوحدة أولاً');
+
+        const pageFrom = document.getElementById('pageFrom').value;
+        const pageTo = document.getElementById('pageTo').value;
+        const assignmentTitle = document.getElementById('assignmentTitle').value;
+        const assignmentFile = document.getElementById('assignmentFile').files[0];
+
+        if (!pageFrom || !pageTo || !assignmentTitle || !assignmentFile) {
+            return alert('يرجى إكمال جميع الحقول');
+        }
+
+        let subjectForForm = selectedSubscriptionSubject || '';
+        if (!subjectForForm && selectedUnitNumber) {
+            for (const [name, mapping] of Object.entries(subjectUnitMap)) {
+                if (mapping.unit === selectedUnitNumber) {
+                    subjectForForm = name;
+                    break;
+                }
+            }
+        }
+
+        const formData = new FormData();
+        formData.append('textbook_id', textbookId);
+        if (selectedUnitNumber) formData.append('unit_number', selectedUnitNumber);
+        formData.append('subject', subjectForForm);
+        formData.append('page_from', pageFrom);
+        formData.append('page_to', pageTo);
+        formData.append('title', assignmentTitle);
+        formData.append('description', document.getElementById('assignmentDescription').value);
+        formData.append('assignment_file', assignmentFile);
+
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+
+        // --- Continuous Progress Logic ---
+        // Uses logarithmic easing: moves fast at start, progressively slower
+        // NEVER stops or gets stuck - always moving until API responds
+        resetSteps();
+        let apiDone = false;
+        let progressTimer;
+        const startTime = Date.now();
+
+        // Configuration: how long (ms) before progress approaches its max
+        const MAX_PROGRESS = 98;      // Never exceed this before API response
+        const TIME_CONSTANT = 90000;  // ~90s to approach 98% (adjusts to AI speed)
+
+        const phases = [
+            { at: 20, text: 'جاري المعالجة...', sub: 'قراءة الكتاب وتحليل السياق التعليمي', step: 'step1' },
+            { at: 55, text: 'جاري المعالجة...', sub: 'توليد الحلول المرجعية لكل معيار', step: 'step3Progress' },
+            { at: 85, text: 'جاري المعالجة...', sub: 'إعداد دليل المعلم — اقتربنا من النهاية', step: 'step4Progress' },
+        ];
+        let lastPhaseIdx = -1;
+
+        function formatElapsed(ms) {
+            const secs = Math.floor(ms / 1000);
+            const m = String(Math.floor(secs / 60)).padStart(2, '0');
+            const s = String(secs % 60).padStart(2, '0');
+            return m + ':' + s;
+        }
+
+        function animateProgress() {
+            if (apiDone) return;
+
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(MAX_PROGRESS, MAX_PROGRESS * (1 - Math.exp(-elapsed / TIME_CONSTANT)));
+            const displayProgress = Math.round(progress);
+
+            let phaseIdx = 0;
+            for (let i = phases.length - 1; i >= 0; i--) {
+                if (displayProgress >= phases[i].at) { phaseIdx = i; break; }
+            }
+
+            const phase = phases[phaseIdx];
+            updateProgress(displayProgress, phase.text, phase.sub);
+
+            const timerEl = document.getElementById('loadingTimer');
+            if (timerEl) {
+                timerEl.innerHTML = '<i class="fa-regular fa-clock"></i>' + formatElapsed(elapsed);
+            }
+
+            setActiveStep(phase.step);
+
+            if (phaseIdx > lastPhaseIdx) {
+                for (let i = lastPhaseIdx + 1; i <= phaseIdx; i++) {
+                    if (i > 0) markStepComplete(phases[i - 1].step);
+                }
+                lastPhaseIdx = phaseIdx;
+            }
+
+            progressTimer = requestAnimationFrame(animateProgress);
+        }
+
+        // Start the continuous animation
+        progressTimer = requestAnimationFrame(animateProgress);
+        // ------------------------
+
+        try {
+            const response = await fetch('/api/create-assignment', { method: 'POST', body: formData });
+            cancelAnimationFrame(progressTimer);
+            apiDone = true;
+
+            // Resilient response parsing — server may return non-JSON on 5xx errors
+            let data;
+            const rawText = await response.text();
+            try {
+                data = rawText ? JSON.parse(rawText) : {};
+            } catch (parseErr) {
+                cancelAnimationFrame(progressTimer);
+                const errMsg = 'خطأ في الخادم (HTTP ' + response.status + ')\n' +
+                               'الرد غير صالح JSON. أول 200 حرف من الاستجابة:\n\n' +
+                               (rawText || '(فارغ)').substring(0, 200);
+                updateProgress(0, '❌ خطأ', errMsg);
+                setTimeout(() => {
+                    hideLoadingOverlay();
+                    alert(errMsg);
+                }, 2000);
+                return;
+            }
+
+            // Surface explicit HTTP errors when the body lacks our usual shape
+            if (!response.ok && !data.success) {
+                const errMsg = (data.detail || data.error || data.message ||
+                                'خطأ في الخادم (HTTP ' + response.status + ').');
+                cancelAnimationFrame(progressTimer);
+                updateProgress(0, '❌ فشل', errMsg);
+                setTimeout(() => {
+                    hideLoadingOverlay();
+                    alert(errMsg);
+                }, 2000);
+                return;
+            }
+
+            if (data.subscription_required) {
+                hideLoadingOverlay();
+                alert(data.detail || 'يجب الاشتراك أولاً');
+                window.location.href = '/dashboard#packages';
+                return;
+            }
+
+            if (data.assignment_not_available) {
+                hideLoadingOverlay();
+                alert(data.detail || 'المهمة غير متوفرة بعد. يرجى التواصل مع الإدارة.');
+                return;
+            }
+
+            if (data.success) {
+                ['step1', 'step3Progress', 'step4Progress'].forEach(s => markStepComplete(s));
+                updateProgress(100, '✅ تم إنشاء دليل حل المهمة بنجاح!', 'يمكنك الآن الانتقال لتصحيح واجبات الطلبة');
+                // Show the "تصحيح الواجبات" button
+                const btnContainer = document.getElementById('successActions');
+                if (btnContainer) {
+                    btnContainer.innerHTML = `
+                        <a href="/batch-grade/${data.id}" style="display:inline-flex; align-items:center; gap:10px; padding:14px 36px; background:linear-gradient(135deg,#FFB300,#F57C00); color:#fff; border-radius:14px; font-weight:800; font-size:1.1rem; text-decoration:none; box-shadow:0 4px 20px rgba(245,124,0,0.4); transition:all 0.2s;"
+                           onmouseenter="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 28px rgba(245,124,0,0.5)'"
+                           onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 20px rgba(245,124,0,0.4)'">
+                            <i class="fas fa-graduation-cap"></i>
+                            تصحيح الواجبات
+                        </a>
+                        <a href="/model-answers" style="display:inline-flex; align-items:center; gap:8px; padding:12px 28px; border:2px solid rgba(255,255,255,0.3); color:rgba(255,255,255,0.8); border-radius:14px; font-weight:700; font-size:0.95rem; text-decoration:none; transition:all 0.2s;"
+                           onmouseenter="this.style.borderColor='rgba(255,255,255,0.6)'; this.style.color='#fff'"
+                           onmouseleave="this.style.borderColor='rgba(255,255,255,0.3)'; this.style.color='rgba(255,255,255,0.8)'">
+                            <i class="fas fa-book-open"></i>
+                            عرض أدلة حل المهام
+                        </a>
+                    `;
+                    btnContainer.classList.remove('hidden');
+                    btnContainer.style.display = 'flex';
+                }
+            } else {
+                const errMsg = data.detail || data.error || data.message ||
+                               ('فشل غير معروف. HTTP ' + response.status + '. تحقق من سجل الخادم لمعرفة سبب الخطأ.');
+                updateProgress(0, '❌ فشل', errMsg);
+                setTimeout(() => { hideLoadingOverlay(); alert(errMsg); }, 2000);
+            }
+        } catch (error) {
+            cancelAnimationFrame(progressTimer);
+            apiDone = true;
+            updateProgress(0, '❌ خطأ', error.message);
+            setTimeout(() => { hideLoadingOverlay(); alert(error.message); }, 2000);
+        }
+    });
+
+    function updateProgress(percent, text, subtext) {
+        const pct = Math.max(0, Math.min(100, Number(percent) || 0));
+        const circle = document.getElementById('progressCircle');
+        if (circle) {
+            circle.style.strokeDashoffset = String(100 - pct);
+        }
+        document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+        document.getElementById('loadingText').textContent = text;
+        const subEl = document.getElementById('loadingSubtext');
+        if (subtext && subtext.trim()) {
+            subEl.textContent = subtext;
+            subEl.style.display = 'block';
+        } else {
+            subEl.textContent = '';
+            subEl.style.display = 'none';
+        }
+        const bar = document.getElementById('progressBarFill');
+        if (bar) bar.style.width = pct + '%';
+        const barWrap = document.querySelector('.ca-wait-linear');
+        if (barWrap) barWrap.setAttribute('aria-valuenow', String(Math.round(pct)));
+    }
+
+    const progressStepNums = { step1: '1', step3Progress: '2', step4Progress: '3' };
+    const progressStepOrder = ['step1', 'step3Progress', 'step4Progress'];
+
+    function setActiveStep(activeId) {
+        progressStepOrder.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el || el.classList.contains('done')) return;
+            el.classList.toggle('active', id === activeId);
+        });
+    }
+
+    function resetSteps() {
+        progressStepOrder.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.remove('active', 'done');
+            const icon = el.querySelector('.ca-wait-step-icon');
+            if (icon) icon.innerHTML = progressStepNums[id] || '1';
+        });
+        const timerEl = document.getElementById('loadingTimer');
+        if (timerEl) timerEl.innerHTML = '<i class="fa-regular fa-clock"></i>00:00';
+        setActiveStep('step1');
+    }
+
+    function markStepComplete(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('active');
+        el.classList.add('done');
+        const icon = el.querySelector('.ca-wait-step-icon');
+        if (icon) {
+            icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{
+  "phase": "go_live_execution",
+  "action": "up",
+  "timestamp": "2026-05-27T16:35:22Z",
+  "base_url": "http://localhost:8000",
+  "platform_version": "1.0.0-institutional",
+  "contract_status": "frozen",
+  "compose_files": [
+    "infra/docker/docker-compose.yml",
+    "infra/docker/docker-compose.ops.yml",
+    "infra/docker/docker-compose.staging.yml"
+  ],
+  "contract_manifest": "schemas/CONTRACT_MANIFEST.json",
+  "next_steps": [
+    "python tools/verify_operational_signals.py",
+    "hand off infra/pentest/ to external team"
+  ]
+}

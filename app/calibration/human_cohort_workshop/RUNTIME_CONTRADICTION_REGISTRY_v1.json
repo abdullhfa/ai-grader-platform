@@ -1,0 +1,54 @@
+{
+  "registry_id": "RUNTIME_CONTRADICTION_REGISTRY_v1",
+  "purpose_en": "Runtime contradiction corroboration continuity — not rubric meaning.",
+  "assigns_legitimacy": false,
+  "assigns_rubric_inference": false,
+  "updated_at": "2026-05-25T11:45:00Z",
+  "entries": [
+    {
+      "contradiction_id": "scene_name_mismatch_level2",
+      "case_id": "abdullah_al_utoum",
+      "runtime_session_id": "ros_193e783456ad",
+      "consolidation_id": "rcc_20260525113959",
+      "sources": ["code_inspection", "visual_human_pass"],
+      "corroboration_state": "corroborated",
+      "central_test_id": "third_cup_level",
+      "observed_en": "No scene change observed after third cup.",
+      "note_en": "Runtime-correlated contradiction — hold remains; not project invalidity claim.",
+      "legitimacy_blocked": true
+    },
+    {
+      "contradiction_id": "timer_not_wired_to_game_over",
+      "case_id": "abdullah_al_utoum",
+      "runtime_session_id": "ros_193e783456ad",
+      "consolidation_id": "rcc_20260525113959",
+      "sources": ["code_inspection", "visual_human_pass"],
+      "corroboration_state": "corroborated",
+      "central_test_id": "timer_zero",
+      "observed_en": "Timer reached zero with no observed gameplay event.",
+      "note_en": "Representation vs implemented consequence — not timer system invalidity claim.",
+      "legitimacy_blocked": true
+    },
+    {
+      "contradiction_id": "space_key_dual_use",
+      "case_id": "abdullah_al_utoum",
+      "runtime_session_id": "ros_193e783456ad",
+      "consolidation_id": "rcc_20260525113959",
+      "sources": ["code_inspection", "visual_human_pass"],
+      "corroboration_state": "inconclusive",
+      "note_en": "Jump and start both observed — dual-use not fully resolved.",
+      "legitimacy_blocked": true
+    },
+    {
+      "contradiction_id": "timescale_start_conflict",
+      "case_id": "abdullah_al_utoum",
+      "runtime_session_id": "ros_193e783456ad",
+      "consolidation_id": "rcc_20260525113959",
+      "sources": ["code_inspection", "visual_human_pass"],
+      "corroboration_state": "inconclusive",
+      "note_en": "Start transition observed — timescale conflict not fully resolved.",
+      "legitimacy_blocked": true
+    }
+  ],
+  "institutional_ledger_appended": false
+}

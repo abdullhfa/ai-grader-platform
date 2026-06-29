@@ -1,0 +1,49 @@
+{
+  "spec_id": "RUNTIME_CORROBORATION_CONSOLIDATION_v1",
+  "purpose_en": "Consolidate multi-layer runtime evidence without grading legitimacy.",
+  "not_mode": "grading_legitimacy_session",
+  "assigns_legitimacy": false,
+  "assigns_rubric_inference": false,
+  "central_question_en": "Can the system retain restraint after accumulating runtime evidence?",
+  "forbidden_question_en": "Can the system deliver a judgment?",
+  "prerequisite_sequence": [
+    "human_visual_pass",
+    "runtime_corroboration_update",
+    "runtime_corroboration_consolidation",
+    "constitutional_maintenance_review"
+  ],
+  "evidence_layers_at_consolidation": {
+    "code_hypotheses": "present",
+    "smoke_runtime_phenomenology": "present",
+    "assisted_interaction": "present",
+    "visual_corroboration": "pending_until_visual_pass_complete",
+    "contradiction_corroboration": "partial_or_complete",
+    "semantic_restraint": "preserved"
+  },
+  "consolidation_actions": {
+    "contradiction_registry": "update_confirmed_refuted_inconclusive",
+    "phenomenology_manifest": "append_interactive_descriptors_observed_only",
+    "provenance_continuity_notes": "append_observation_chain_segments",
+    "unresolved_runtime_opacity": "preserve_explicitly",
+    "runtime_quarantine": "remains_active",
+    "legitimacy": "remains_blocked"
+  },
+  "forbidden_at_consolidation": [
+    "step_6_activation",
+    "auto_grading",
+    "runtime_legitimacy_activation",
+    "rubric_escalation",
+    "achievement_inference",
+    "institutional_ledger_population_without_human_gate"
+  ],
+  "post_consolidation_phase": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "optional_future_pilot": "explicit_constitutional_decision_only",
+  "first_case_candidate": {
+    "student_label": "abdullah_al_utoum",
+    "runtime_session_id": "ros_193e783456ad",
+    "visual_pass_id": "mpp_45c99b47de48",
+    "assisted_pass_id": "mpp_4df89d13daeb",
+    "status": "awaiting_visual_pass_observations"
+  },
+  "institutional_ledger_appended": false
+}

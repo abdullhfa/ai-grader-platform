@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 120
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    build,
+    dist,
+    *.egg-info
+ignore = 
+    # Line too long (120 chars is acceptable)
+    E501,
+    # Whitespace before ':' (conflicts with Black formatter)
+    E203,
+    # Line break before binary operator (PEP 8 updated)
+    W503

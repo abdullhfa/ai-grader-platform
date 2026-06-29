@@ -1,0 +1,235 @@
+{
+  "session_id": "0fa4fa12-74c8-4753-878e-0399c0802db9",
+  "engine": "godot",
+  "submission_key": "godot_demo",
+  "status": "completed",
+  "capabilities": {
+    "supports_headless": true,
+    "supports_input_simulation": true,
+    "supports_screenshots": true,
+    "supports_video_capture": false,
+    "supports_network_isolation": false,
+    "supports_gpu": false,
+    "supports_audio": false,
+    "supports_build_from_source": true,
+    "supports_playmode_tests": false,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "signals": {
+    "pck_pairing": {
+      "paired": false,
+      "native_pair": false,
+      "pck": null,
+      "donor_exe": null
+    },
+    "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmp4iezs8b_",
+    "godot_layout": {
+      "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmp4iezs8b_",
+      "has_project_godot": true,
+      "has_export_presets": false,
+      "student_executable": null,
+      "student_pck": null,
+      "paired_executable": null
+    },
+    "export_attempt": {
+      "success": false,
+      "error": "godot_binary_not_configured",
+      "hint": "Set AI_GRADER_GODOT_BIN to Godot executable path",
+      "static_analysis": {
+        "mode": "godot_static_analysis",
+        "metadata": {
+          "ok": true,
+          "project_name": "Demo",
+          "main_scene": "res://main.tscn",
+          "has_main_scene": true
+        },
+        "export_presets": [],
+        "godot_binary_configured": false,
+        "godot_binary_path": null,
+        "script_count": 1,
+        "scene_count": 0,
+        "sample_scripts": [
+          "player.gd"
+        ],
+        "sample_scenes": [],
+        "scene_validation": {
+          "scene_count": 0,
+          "main_scene": "res://main.tscn",
+          "main_scene_present": false,
+          "validation_passed": false,
+          "sample_scenes": []
+        },
+        "runnable_build_present": false,
+        "completeness_hint": 0.7
+      }
+    },
+    "godot_project_analysis": {
+      "mode": "godot_static_analysis",
+      "metadata": {
+        "ok": true,
+        "project_name": "Demo",
+        "main_scene": "res://main.tscn",
+        "has_main_scene": true
+      },
+      "export_presets": [],
+      "godot_binary_configured": false,
+      "godot_binary_path": null,
+      "script_count": 1,
+      "scene_count": 0,
+      "sample_scripts": [
+        "player.gd"
+      ],
+      "sample_scenes": [],
+      "scene_validation": {
+        "scene_count": 0,
+        "main_scene": "res://main.tscn",
+        "main_scene_present": false,
+        "validation_passed": false,
+        "sample_scenes": []
+      },
+      "runnable_build_present": false,
+      "completeness_hint": 0.7
+    },
+    "legacy_observation": {
+      "status": "partial",
+      "observation_mode": "godot_static_analysis",
+      "runtime_method": "godot_static_analysis",
+      "game_launch_attempted": false,
+      "runtime_verified": false,
+      "runtime_observed": false,
+      "godot_binary_configured": false,
+      "observation_summary_ar": "تحليل Godot ثابت فقط — لا project.godot ولا تشغيل. اضبط AI_GRADER_GODOT_BIN أو أرفق build قابل للتشغيل.",
+      "godot_project_analysis": {
+        "mode": "godot_static_analysis",
+        "metadata": {
+          "ok": true,
+          "project_name": "Demo",
+          "main_scene": "res://main.tscn",
+          "has_main_scene": true
+        },
+        "export_presets": [],
+        "godot_binary_configured": false,
+        "godot_binary_path": null,
+        "script_count": 1,
+        "scene_count": 0,
+        "sample_scripts": [
+          "player.gd"
+        ],
+        "sample_scenes": [],
+        "scene_validation": {
+          "scene_count": 0,
+          "main_scene": "res://main.tscn",
+          "main_scene_present": false,
+          "validation_passed": false,
+          "sample_scenes": []
+        },
+        "runnable_build_present": false,
+        "completeness_hint": 0.7
+      }
+    },
+    "godot_observation": {
+      "status": "partial",
+      "observation_mode": "godot_static_analysis",
+      "runtime_method": "godot_static_analysis",
+      "game_launch_attempted": false,
+      "runtime_verified": false,
+      "runtime_observed": false,
+      "godot_binary_configured": false,
+      "observation_summary_ar": "تحليل Godot ثابت فقط — لا project.godot ولا تشغيل. اضبط AI_GRADER_GODOT_BIN أو أرفق build قابل للتشغيل.",
+      "godot_project_analysis": {
+        "mode": "godot_static_analysis",
+        "metadata": {
+          "ok": true,
+          "project_name": "Demo",
+          "main_scene": "res://main.tscn",
+          "has_main_scene": true
+        },
+        "export_presets": [],
+        "godot_binary_configured": false,
+        "godot_binary_path": null,
+        "script_count": 1,
+        "scene_count": 0,
+        "sample_scripts": [
+          "player.gd"
+        ],
+        "sample_scenes": [],
+        "scene_validation": {
+          "scene_count": 0,
+          "main_scene": "res://main.tscn",
+          "main_scene_present": false,
+          "validation_passed": false,
+          "sample_scenes": []
+        },
+        "runnable_build_present": false,
+        "completeness_hint": 0.7
+      }
+    },
+    "runtime_method": "godot_static_analysis",
+    "runtime_evidence_promotion": null
+  },
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": false,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782645307.2432353,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "godot",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmp4iezs8b_"
+      }
+    },
+    {
+      "timestamp": 1782645307.6054692,
+      "type": "godot_export_attempt",
+      "severity": "info",
+      "source": "godot_engine",
+      "payload": {
+        "success": false,
+        "presets_tried": []
+      }
+    },
+    {
+      "timestamp": 1782645307.7768474,
+      "type": "godot_static_analysis",
+      "severity": "info",
+      "source": "godot_engine",
+      "payload": {
+        "script_count": 1,
+        "scene_count": 0
+      }
+    }
+  ],
+  "screenshots": [],
+  "logs": [],
+  "errors": [
+    "no_godot_executable_or_export"
+  ],
+  "artifacts": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

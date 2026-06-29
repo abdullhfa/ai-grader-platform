@@ -1,0 +1,3906 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    /* ======= PREMIUM DARK GRADING THEME ======= */
+    .bg-page {
+        background: linear-gradient(160deg, #0f2027, #203a43, #2c5364);
+        min-height: calc(100vh - 80px);
+        position: relative;
+        overflow: hidden;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    /* Animated floating blobs */
+    .bg-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.30;
+        z-index: 0;
+        animation: blobFloat 18s ease-in-out infinite alternate;
+    }
+    .bg-blob-1 { width: 500px; height: 500px; background: radial-gradient(circle, #00b09b, #96c93d); top: -120px; right: -80px; }
+    .bg-blob-2 { width: 400px; height: 400px; background: radial-gradient(circle, #2d5f6e, #00d2ff); bottom: -150px; left: -100px; animation-delay: -6s; }
+    .bg-blob-3 { width: 300px; height: 300px; background: radial-gradient(circle, #11998e, #38ef7d); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -12s; opacity: 0.12; }
+    @keyframes blobFloat {
+        0% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(40px, -30px) scale(1.08); }
+        66% { transform: translate(-30px, 40px) scale(0.95); }
+        100% { transform: translate(20px, 20px) scale(1.05); }
+    }
+
+    /* Glass card */
+    .gcard {
+        background: rgba(255, 255, 255, 0.06);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 20px;
+        padding: 28px;
+        transition: all 0.35s ease;
+    }
+    .gcard:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(56, 239, 125, 0.2);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Inputs */
+    .ginput {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 15px;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .ginput::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .ginput:focus {
+        border-color: #38ef7d;
+        background: rgba(255, 255, 255, 0.11);
+        box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.15);
+    }
+
+    /* Labels */
+    .glabel {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 8px;
+    }
+    .glabel .req { color: #f87171; }
+
+    .grading-mode-panel {
+        margin-bottom: 22px;
+        padding: 16px 18px;
+        border-radius: 14px;
+        background: rgba(0, 210, 255, 0.06);
+        border: 1px solid rgba(0, 210, 255, 0.28);
+    }
+    .grading-mode-options {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+    .grading-mode-card {
+        flex: 1;
+        min-width: 220px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+    .grading-mode-card:hover {
+        border-color: rgba(56, 239, 125, 0.35);
+        background: rgba(255, 255, 255, 0.07);
+    }
+    .grading-mode-card input {
+        margin-left: 8px;
+        accent-color: #38ef7d;
+    }
+    .grading-mode-card.is-pro {
+        border-color: rgba(56, 239, 125, 0.45);
+        background: rgba(56, 239, 125, 0.08);
+    }
+    .grading-mode-card.is-basic {
+        border-color: rgba(251, 191, 36, 0.45);
+        background: rgba(251, 191, 36, 0.08);
+    }
+    .grading-mode-title {
+        font-weight: 800;
+        font-size: 15px;
+        color: #fff;
+        margin-bottom: 6px;
+    }
+    .grading-mode-hint {
+        font-size: 12px;
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.55);
+    }
+
+    /* Upload zone */
+    .gupload {
+        border: 2px dashed rgba(56, 239, 125, 0.3);
+        border-radius: 16px;
+        padding: 36px 20px;
+        text-align: center;
+        background: rgba(56, 239, 125, 0.03);
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .gupload:hover {
+        border-color: #38ef7d;
+        background: rgba(56, 239, 125, 0.08);
+        transform: translateY(-2px);
+    }
+    .gupload i.upload-icon { font-size: 36px; color: #38ef7d; margin-bottom: 10px; display: block; }
+
+    .gupload-group {
+        border: 2px dashed rgba(56, 239, 125, 0.3);
+        border-radius: 16px;
+        padding: 20px 16px;
+        background: rgba(56, 239, 125, 0.03);
+        flex: 1.15;
+        min-width: 200px;
+    }
+    .gupload-group-title {
+        color: #fff;
+        font-weight: 800;
+        font-size: 15px;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+    .gupload-group-hint {
+        color: rgba(255,255,255,0.35);
+        font-size: 11px;
+        text-align: center;
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+    .gupload-split {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .gupload-sub {
+        flex: 1;
+        min-width: 120px;
+        padding: 14px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(56, 239, 125, 0.25);
+        background: rgba(0,0,0,0.2);
+        color: rgba(255,255,255,0.85);
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+    .gupload-sub:hover {
+        border-color: #38ef7d;
+        background: rgba(56, 239, 125, 0.12);
+    }
+    .gupload-sub i { display: block; font-size: 22px; color: #38ef7d; margin-bottom: 6px; }
+    .gupload-sub.zip i { color: #fbbf24; }
+
+    /* Buttons */
+    .gbtn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 36px;
+        background: linear-gradient(135deg, #38ef7d, #11998e);
+        color: #0f2027;
+        font-weight: 800;
+        font-size: 16px;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 20px rgba(56, 239, 125, 0.3);
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .gbtn-primary:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(56, 239, 125, 0.45);
+    }
+    .gbtn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+    .gbtn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 22px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .gbtn-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(56, 239, 125, 0.4);
+        color: #38ef7d;
+    }
+
+    /* Criteria grid */
+    .criteria-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+    .criteria-chip {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 8px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: all 0.25s;
+        font-size: 14px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.65);
+    }
+    .criteria-chip:hover { background: rgba(56, 239, 125, 0.08); border-color: rgba(56, 239, 125, 0.3); }
+    .criteria-chip.selected {
+        background: rgba(56, 239, 125, 0.12);
+        border-color: rgba(56, 239, 125, 0.5);
+        color: #38ef7d;
+        box-shadow: 0 0 12px rgba(56, 239, 125, 0.15);
+    }
+    .criteria-chip input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+
+    /* File preview list */
+    .gfile-list {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-top: 14px;
+    }
+    .gfile-list-header {
+        padding: 10px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        font-weight: 700;
+    }
+    .gfile-list-header .badge {
+        background: linear-gradient(135deg, #38ef7d, #11998e);
+        color: #0f2027;
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 800;
+    }
+    .gfile-list ul {
+        max-height: 160px;
+        overflow-y: auto;
+        list-style: none;
+        padding: 6px;
+        margin: 0;
+    }
+    .gfile-list ul::-webkit-scrollbar { width: 4px; }
+    .gfile-list ul::-webkit-scrollbar-thumb { background: rgba(56, 239, 125, 0.25); border-radius: 4px; }
+    .gfile-list li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.6);
+        border-radius: 8px;
+    }
+    .gfile-list li:hover { background: rgba(255, 255, 255, 0.04); }
+    .gfile-list li i { color: rgba(56, 239, 125, 0.5); }
+
+    /* Section icon */
+    .sec-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    /* Status badge */
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+        background: rgba(56, 239, 125, 0.12);
+        color: #38ef7d;
+        border: 1px solid rgba(56, 239, 125, 0.25);
+    }
+
+    /* Back link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #38ef7d;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.25s;
+        margin-bottom: 14px;
+    }
+    .back-link:hover { color: #96c93d; transform: translateX(5px); }
+
+    /* Hidden */
+    .hidden { display: none !important; }
+
+    /* ======= LOADING OVERLAY — Emerald Premium ======= */
+    #loadingOverlay {
+        position: fixed;
+        top: 104px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        overflow-y: auto;
+        background:
+            radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0, 176, 155, 0.2) 0%, transparent 55%),
+            radial-gradient(ellipse 60% 50% at 90% 80%, rgba(56, 239, 125, 0.12) 0%, transparent 50%),
+            radial-gradient(ellipse 50% 40% at 10% 70%, rgba(17, 153, 142, 0.1) 0%, transparent 45%),
+            linear-gradient(165deg, #060a09 0%, #0a1210 35%, #081210 70%, #060908 100%);
+        -webkit-backdrop-filter: blur(28px);
+        backdrop-filter: blur(28px);
+    }
+    @media (max-width: 900px) {
+        #loadingOverlay { top: 80px; }
+    }
+    .molten-orbs {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .molten-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        opacity: 0.45;
+        animation: moltenDrift 16s ease-in-out infinite alternate;
+    }
+    .molten-orb-1 { width: 480px; height: 480px; background: #00b09b; top: -8%; left: 20%; }
+    .molten-orb-2 { width: 380px; height: 380px; background: #38ef7d; bottom: -10%; right: 10%; animation-delay: -6s; }
+    .molten-orb-3 { width: 320px; height: 320px; background: #11998e; top: 45%; left: 55%; animation-delay: -11s; opacity: 0.25; }
+    @keyframes moltenDrift {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(-28px, 22px) scale(1.1); }
+    }
+
+    .loading-panel {
+        position: relative;
+        z-index: 2;
+        width: min(620px, 96vw);
+        margin: auto;
+        border-radius: 28px;
+        overflow: visible;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 176, 155, 0.05) 50%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid rgba(56, 239, 125, 0.22);
+        box-shadow:
+            0 32px 80px rgba(0, 0, 0, 0.55),
+            0 0 0 1px rgba(0, 176, 155, 0.12) inset,
+            0 0 80px rgba(56, 239, 125, 0.08);
+        animation: moltenPanelIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes moltenPanelIn {
+        from { opacity: 0; transform: translateY(28px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .loading-panel::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00b09b, #38ef7d, #96c93d, #11998e, transparent);
+        background-size: 200% 100%;
+        animation: moltenShimmer 2.8s linear infinite;
+    }
+    @keyframes moltenShimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    .loading-panel::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 30% 0%, rgba(56, 239, 125, 0.06) 0%, transparent 45%);
+        pointer-events: none;
+    }
+
+    .molten-hero {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        padding: 56px 28px 28px;
+        text-align: center;
+        border-bottom: 1px solid rgba(56, 239, 125, 0.1);
+        overflow: visible;
+        background: linear-gradient(180deg, rgba(8, 18, 14, 0.98) 0%, rgba(8, 18, 14, 0.94) 88%, rgba(8, 18, 14, 0) 100%);
+    }
+    .molten-body {
+        padding: 20px 24px 24px;
+    }
+
+    .molten-ring-stage {
+        position: relative;
+        width: 176px;
+        height: 176px;
+        margin: 8px auto 24px;
+        flex-shrink: 0;
+        overflow: visible;
+    }
+    .molten-ring-orbit {
+        position: absolute;
+        inset: 4px;
+        animation: moltenSpin 10s linear infinite;
+        overflow: visible;
+    }
+    .molten-ring-orbit svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+        overflow: visible;
+    }
+    .molten-ring-orbit .orbit-dash {
+        stroke: rgba(56, 239, 125, 0.28);
+        stroke-dasharray: 6 12;
+    }
+    @keyframes moltenSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .molten-ring-core-wrap {
+        position: absolute;
+        inset: 16px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 32%, rgba(0, 176, 155, 0.16), rgba(8, 18, 14, 0.92) 68%);
+        box-shadow: 0 0 0 1px rgba(56, 239, 125, 0.15) inset, 0 8px 36px rgba(0, 176, 155, 0.22);
+        overflow: visible;
+    }
+    .molten-ring-core-wrap svg {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: block;
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+        overflow: visible;
+        filter: drop-shadow(0 0 10px rgba(56, 239, 125, 0.45));
+    }
+    .molten-ring-core-wrap .progress-track {
+        stroke: rgba(255, 255, 255, 0.08);
+    }
+    #moltenProgressCircle {
+        stroke: url(#moltenGrad);
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .molten-ring-inner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        width: 72%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        pointer-events: none;
+        text-align: center;
+    }
+    #progressPercent {
+        font-size: 28px;
+        font-weight: 900;
+        color: #fff;
+        line-height: 1.1;
+        text-shadow: 0 0 24px rgba(56, 239, 125, 0.45);
+    }
+    .molten-counter {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(150, 201, 61, 0.9);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.2;
+    }
+
+    #loadingText {
+        font-size: 20px;
+        font-weight: 800;
+        color: #fff;
+        margin: 0 0 6px;
+    }
+    #estimatedTime {
+        font-size: 13px;
+        color: rgba(150, 201, 61, 0.55);
+        margin: 0 0 16px;
+        line-height: 1.5;
+        min-height: 1.5em;
+    }
+    #progressHintLine {
+        display: inline;
+    }
+    #elapsedTimer {
+        display: inline;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+    .molten-status-spin {
+        display: inline-block;
+        color: #38ef7d;
+        font-size: 12px;
+        animation: moltenFaSpin 0.85s linear infinite;
+        transform-origin: center center;
+    }
+    @keyframes moltenFaSpin {
+        to { transform: rotate(360deg); }
+    }
+    .molten-linear {
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+        max-width: 340px;
+        margin: 0 auto;
+        box-shadow: 0 0 0 1px rgba(56, 239, 125, 0.1) inset;
+    }
+    #progressBar {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #11998e, #00b09b, #38ef7d, #96c93d);
+        background-size: 200% 100%;
+        animation: moltenBarFlow 2s linear infinite;
+        box-shadow: 0 0 16px rgba(56, 239, 125, 0.55);
+        transition: width 0.45s ease-out;
+    }
+    @keyframes moltenBarFlow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+
+    .molten-cancel-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 0;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(248, 113, 113, 0.45);
+        background: rgba(127, 29, 29, 0.35);
+        color: #fecaca;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s, opacity 0.2s;
+    }
+    .molten-cancel-btn:hover:not(:disabled) {
+        background: rgba(185, 28, 28, 0.45);
+    }
+    .molten-cancel-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .molten-action-row {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+    .molten-action-row.is-visible {
+        display: flex;
+    }
+
+    .molten-bg-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(56, 239, 125, 0.45);
+        background: rgba(6, 78, 59, 0.35);
+        color: #86efac;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s, opacity 0.2s;
+    }
+    .molten-bg-btn:hover:not(:disabled) {
+        background: rgba(6, 95, 70, 0.5);
+    }
+    .molten-bg-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .molten-files-card {
+        border: 1px solid rgba(56, 239, 125, 0.14);
+        border-radius: 18px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.25);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .molten-files-head {
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(56, 239, 125, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 176, 155, 0.06);
+    }
+    .molten-files-head span:first-child {
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(150, 201, 61, 0.65);
+    }
+    #fileSummaryBadge {
+        font-size: 12px;
+        color: rgba(56, 239, 125, 0.75);
+        font-weight: 600;
+    }
+    #gradingFileList {
+        max-height: min(42vh, 340px);
+        overflow-y: auto;
+        list-style: none;
+        padding: 6px;
+        margin: 0;
+    }
+    #gradingFileList::-webkit-scrollbar { width: 6px; }
+    #gradingFileList::-webkit-scrollbar-thumb {
+        background: rgba(56, 239, 125, 0.35);
+        border-radius: 6px;
+    }
+
+    @media (max-width: 480px) {
+        .molten-hero { padding: 48px 18px 22px; }
+        .molten-body { padding: 16px 14px 20px; }
+        .molten-ring-stage { width: 156px; height: 156px; }
+        #progressPercent { font-size: 24px; }
+        #loadingText { font-size: 17px; }
+    }
+
+    @keyframes moltenPulse {
+        0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(56, 239, 125, 0.3); }
+        50% { opacity: 0.85; box-shadow: 0 0 16px rgba(56, 239, 125, 0.55); }
+    }
+
+    @media (max-width: 768px) {
+        .criteria-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ── Low Balance Popup ── */
+    .balance-overlay {
+        position: fixed; inset: 0; z-index: 10000;
+        background: rgba(0,0,0,0.65); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        display: flex; align-items: center; justify-content: center;
+    }
+    .balance-overlay.hidden { display: none; }
+    .balance-popup {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border: 2px solid #e74c3c; border-radius: 18px;
+        padding: 36px 32px 28px; max-width: 440px; width: 92%;
+        text-align: center; color: #fff; box-shadow: 0 20px 60px rgba(231,76,60,0.35);
+        animation: popIn 0.35s ease-out;
+    }
+    @keyframes popIn {
+        0% { transform: scale(0.7) translateY(30px); opacity: 0; }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .balance-popup .icon { font-size: 52px; margin-bottom: 12px; }
+    .balance-popup h3 { font-size: 1.3rem; margin: 0 0 10px; color: #ff6b6b; }
+    .balance-popup .amount { font-size: 2rem; font-weight: 700; color: #e74c3c; margin: 8px 0 16px; direction: ltr; }
+    .balance-popup p { font-size: 0.95rem; color: #ccc; margin: 0 0 20px; line-height: 1.6; }
+    .balance-popup .btn-close-popup {
+        background: linear-gradient(135deg, #e74c3c, #c0392b); border: none;
+        color: #fff; padding: 10px 36px; border-radius: 10px; font-size: 1rem;
+        cursor: pointer; font-family: inherit; transition: transform 0.15s;
+    }
+    .balance-popup .btn-close-popup:hover { transform: scale(1.05); }
+
+    /* ── General Toast Popup ── */
+    .toast-overlay {
+        position: fixed; inset: 0; z-index: 10001;
+        background: rgba(0,0,0,0.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        display: flex; align-items: center; justify-content: center;
+    }
+    .toast-overlay.hidden { display: none !important; }
+    .toast-box {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 18px; padding: 32px 28px 24px; max-width: 420px; width: 92%;
+        text-align: center; color: #fff; animation: popIn 0.3s ease-out;
+    }
+    .toast-box.toast-error   { border: 2px solid #e74c3c; box-shadow: 0 16px 50px rgba(231,76,60,0.3); }
+    .toast-box.toast-warning { border: 2px solid #f59e0b; box-shadow: 0 16px 50px rgba(245,158,11,0.25); }
+    .toast-box.toast-info    { border: 2px solid #38ef7d; box-shadow: 0 16px 50px rgba(56,239,125,0.2); }
+    .toast-box .toast-icon { font-size: 44px; margin-bottom: 10px; }
+    .toast-box .toast-title { font-size: 1.15rem; font-weight: 800; margin: 0 0 10px; }
+    .toast-box.toast-error .toast-title   { color: #ff6b6b; }
+    .toast-box.toast-warning .toast-title  { color: #f59e0b; }
+    .toast-box.toast-info .toast-title     { color: #38ef7d; }
+    .toast-box .toast-msg {
+        font-size: 0.95rem; color: #ccc; margin: 0 0 20px; line-height: 1.7;
+        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px; padding: 12px 16px; direction: rtl;
+    }
+    .toast-box .toast-btn {
+        border: none; color: #fff; padding: 10px 36px; border-radius: 10px;
+        font-size: 1rem; cursor: pointer; font-family: inherit; font-weight: 700;
+        transition: transform 0.15s;
+    }
+    .toast-box .toast-btn:hover { transform: scale(1.05); }
+    .toast-box.toast-error .toast-btn   { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .toast-box.toast-warning .toast-btn  { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .toast-box.toast-info .toast-btn     { background: linear-gradient(135deg, #38ef7d, #11998e); color: #0f2027; }
+
+    .balance-error-box {
+        background: rgba(231, 76, 60, 0.12);
+        border: 1px solid rgba(231, 76, 60, 0.3);
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin: 12px 0 16px;
+    }
+    .balance-error-label {
+        font-size: 0.85rem;
+        color: #ff9999;
+        margin-bottom: 6px;
+    }
+    #errorCode {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #e74c3c;
+        direction: ltr;
+    }
+    .balance-error-desc {
+        font-size: 0.9rem;
+        color: #ccc;
+        margin-top: 6px;
+        line-height: 1.65;
+        text-align: right;
+    }
+    #errorTechnical {
+        display: none;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.45);
+        margin-top: 8px;
+        word-break: break-word;
+        text-align: right;
+        direction: ltr;
+    }
+    #errorTechnical.is-visible { display: block; }
+    .balance-phone-block {
+        font-size: 1rem;
+        color: #fff;
+        line-height: 1.8;
+        margin: 16px 0;
+    }
+    .balance-phone-block.hidden { display: none; }
+    .balance-phone-link {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #38ef7d;
+        text-decoration: none;
+        direction: ltr;
+        display: inline-block;
+        margin-top: 6px;
+        letter-spacing: 1px;
+    }
+
+    .bg-page-inner {
+        position: relative;
+        z-index: 5;
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 48px 20px 60px;
+    }
+    .bg-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .bg-page-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+    .bg-subtitle {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 16px;
+    }
+    .bg-disclaimer {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 13px;
+        margin-top: 10px;
+        line-height: 1.8;
+        max-width: 800px;
+        font-weight: 600;
+        word-spacing: 2px;
+    }
+    .text-accent-green { color: #38ef7d; font-weight: 800; }
+    .text-accent-green-md { color: #38ef7d; font-weight: 700; }
+    .text-accent-amber { color: #f59e0b; font-weight: 700; }
+    .text-strong-white { color: #fff; }
+
+    .gcard--accent {
+        margin-bottom: 28px;
+        border-right: 3px solid #38ef7d;
+    }
+    .gcard--spaced { margin-bottom: 28px; }
+    .gcard-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .gcard-row-start {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .sec-icon--green {
+        background: rgba(56, 239, 125, 0.1);
+        color: #38ef7d;
+    }
+    .sec-icon--cyan {
+        background: rgba(0, 210, 255, 0.1);
+        color: #00d2ff;
+    }
+    .gcard-subtitle {
+        font-weight: 800;
+        color: #fff;
+        font-size: 16px;
+        margin-bottom: 2px;
+    }
+    .gcard-meta {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+    }
+    .icon-word-blue { color: #60a5fa; }
+    .icon-pdf-red { color: #f87171; }
+    .guide-download-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    .gcard-section-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gcard-section-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #fff;
+    }
+    .form-block { margin-bottom: 22px; }
+
+    .force-regrade-box {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+    .force-regrade-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        line-height: 1.5;
+    }
+    .force-regrade-check {
+        margin-top: 4px;
+        width: 16px;
+        height: 16px;
+    }
+    .force-regrade-hint {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 12px;
+        margin: 8px 0 0 28px;
+        line-height: 1.5;
+    }
+
+    .glabel--tight { margin-bottom: 4px; }
+    .hint-muted-sm {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 0 0 4px 0;
+    }
+    .hint-muted-md {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 14px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    .hint-filter {
+        color: rgba(56, 239, 125, 0.85);
+        font-size: 13px;
+        margin-bottom: 10px;
+        line-height: 1.5;
+        font-weight: 600;
+    }
+    .icon-filter { margin-left: 6px; }
+
+    #intakeFilterPanel {
+        margin-bottom: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(56, 239, 125, 0.08);
+        border: 1px solid rgba(56, 239, 125, 0.25);
+        font-size: 13px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    #preflightPanel {
+        margin-bottom: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(0, 210, 255, 0.06);
+        border: 1px solid rgba(0, 210, 255, 0.28);
+        font-size: 13px;
+        line-height: 1.65;
+        color: rgba(255, 255, 255, 0.88);
+    }
+    #uploadBlockedBanner {
+        margin-bottom: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    #uploadBlockedBanner .upload-blocked-banner__icon {
+        color: #f59e0b;
+        margin-left: 6px;
+    }
+    #uploadBlockedBanner .upload-blocked-banner__action {
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .upload-buttons-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+    }
+    .gupload--flex {
+        flex: 1;
+        min-width: 140px;
+    }
+    .gupload-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .gupload-sublabel {
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 11px;
+        margin: 0;
+    }
+    #multiModeHint {
+        display: none;
+        color: #38ef7d;
+        font-size: 10px;
+        margin: 4px 0 0;
+        font-weight: 700;
+    }
+    #multiModeHint.is-visible { display: block; }
+    .upload-icon--word { color: #60a5fa; }
+
+    .criteria-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .glabel--inline { margin-bottom: 0; }
+    .criteria-add-row { display: flex; gap: 8px; }
+    .ginput--compact {
+        padding: 6px 12px;
+        font-size: 13px;
+        width: 140px;
+        height: 36px;
+    }
+    .gbtn-primary--compact {
+        padding: 0 16px;
+        font-size: 13px;
+        height: 36px;
+        min-width: 80px;
+    }
+    .form-submit-row {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 8px;
+    }
+    .grading-mode-card-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .grading-mode-badge {
+        display: none;
+        margin: 6px 0 0;
+        font-size: 12px;
+        font-weight: 800;
+        color: #86efac;
+    }
+    .grading-mode-badge.is-visible { display: block; }
+    .grading-mode-badge.is-basic { color: #fcd34d; }
+    .molten-files-head .icon-list { margin-left: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Low Balance / Error Popup -->
+<div id="balancePopup" class="balance-overlay hidden">
+    <div class="balance-popup">
+        <div class="icon">⚠️</div>
+        <h3 id="errorTitle">حدث خطأ في النظام</h3>
+        <div class="balance-error-box">
+            <div class="balance-error-label">كود المشكلة</div>
+            <div id="errorCode">رقم 1</div>
+            <div id="errorDesc" class="balance-error-desc">مشكلة في الرصيد</div>
+            <div id="errorTechnical"></div>
+        </div>
+        <p id="errorPhoneBlock" class="balance-phone-block">
+            الرجاء الاتصال على الرقم أدناه:<br>
+            <a href="tel:0786060100" class="balance-phone-link">0786060100</a>
+        </p>
+        <button class="btn-close-popup" onclick="document.getElementById('balancePopup').classList.add('hidden')">حسناً</button>
+    </div>
+</div>
+
+<!-- General Toast Popup -->
+<div id="toastPopup" class="toast-overlay hidden">
+    <div id="toastBox" class="toast-box toast-error">
+        <div id="toastIcon" class="toast-icon">⚠️</div>
+        <h3 id="toastTitle" class="toast-title">خطأ</h3>
+        <div id="toastMsg" class="toast-msg"></div>
+        <button class="toast-btn" onclick="closeToast()">حسناً</button>
+    </div>
+</div>
+
+<div class="bg-page">
+    <!-- Blobs -->
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+
+    <div class="bg-page-inner">
+
+        <!-- Header -->
+        <a href="/dashboard" class="back-link">
+            <i class="fa-solid fa-arrow-right"></i>
+            العودة للوحة التحكم
+        </a>
+
+        <div class="bg-header-row">
+            <div>
+                <h1 class="bg-page-title">تقييم الواجبات (تقييم + نسبة الذكاء الاصطناعي + الانتحال)</h1>
+                <p class="bg-subtitle">
+                    الواجب الحالي: <span class="text-accent-green">{{ assignment.title }}</span>
+                </p>
+                <p class="bg-disclaimer">
+                    <span class="text-accent-amber">ملاحظة:</span> تعتمد عملية تقييم الواجبات على ثلاثة عناصر رئيسية: التقدير الأكاديمي للمحتوى، وتحليل نسبة استخدام أدوات الذكاء الاصطناعي، والكشف عن نسبة الانتحال. ويوفر الموقع تقييمًا آليًا أوليًا يمكن الاعتماد عليه بدرجة جيدة، إذ تصل دقته إلى حوالي 80%. ومع ذلك، فإن النتائج النهائية لا ينبغي أن تعتمد بشكل كامل على التقييم الآلي، بل يجب أن تخضع النسبة المتبقية إلى مراجعة بشرية دقيقة لضمان العدالة والدقة في التقييم.
+                </p>
+            </div>
+        </div>
+
+        <!-- Assignment Info Card -->
+        <div class="gcard gcard--accent">
+            <div class="gcard-row">
+                <div class="gcard-row-start">
+                    <div class="sec-icon sec-icon--green">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <div>
+                        <h3 class="gcard-subtitle">نطاق الصفحات المحدد</h3>
+                        <p class="gcard-meta">
+                            من صفحة <span class="text-accent-green-md">{{ assignment.page_from }}</span>
+                            إلى <span class="text-accent-green-md">{{ assignment.page_to }}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="guide-download-row">
+                    <a href="/api/download-reference-solution-pdf/{{ assignment.id }}" class="gbtn-primary gbtn-primary--compact">
+                        <i class="fa-solid fa-file-pdf icon-pdf-red"></i>
+                        تحميل دليل الحل (PDF)
+                    </a>
+                    <a href="/api/download-reference-solution/{{ assignment.id }}" class="gbtn-outline">
+                        <i class="fa-regular fa-file-word icon-word-blue"></i>
+                        Word
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Form -->
+        <form id="batchGradeForm" enctype="multipart/form-data">
+
+            <!-- Batch Settings -->
+            <div class="gcard gcard--spaced">
+                <div class="gcard-section-head">
+                    <div class="sec-icon sec-icon--cyan">
+                        <i class="fa-solid fa-users-viewfinder"></i>
+                    </div>
+                    <h3 class="gcard-section-title">إعدادات الدفعة</h3>
+                </div>
+
+                <!-- Batch Name -->
+                <div class="form-block">
+                    <label class="glabel">اسم الدفعة <span class="req">*</span></label>
+                    <input type="text" id="batchName" required class="ginput"
+                        placeholder="مثال: طلاب الشعبة أ - الفصل الدراسي الأول">
+                </div>
+
+                <div class="force-regrade-box">
+                    <label class="force-regrade-label">
+                        <input type="checkbox" id="forceRegrade" class="force-regrade-check">
+                        <span>إعادة تصحيح كاملة — تجاهل الكاش واستدعاء الذكاء الاصطناعي من جديد</span>
+                    </label>
+                    <p class="force-regrade-hint">
+                        فعّل هذا إذا تغيّرت العلامات بين محاولات سابقة لنفس الملف. بدونه قد تُنسخ علامات دفعة قديمة تلقائياً.
+                    </p>
+                </div>
+
+                {% if is_admin or (user and user.role is defined and user.role and (user.role.value == 'admin' if user.role.value is defined else user.role == 'admin')) %}
+                <div class="grading-mode-panel" id="adminGradingModePanel">
+                    <label class="glabel glabel--tight">وضع التصحيح (Admin)</label>
+                    <p class="hint-muted-sm">
+                        اختر قبل بدء التصحيح — يُطبَّق على كل طلاب هذه الدفعة.
+                    </p>
+                    <div class="grading-mode-options">
+                        <label class="grading-mode-card is-pro" id="gradingModeCardPro">
+                            <div class="grading-mode-card-row">
+                                <input type="radio" name="admin_grading_mode" value="deep" checked>
+                                <div>
+                                    <div class="grading-mode-title">PRO — تصحيح دقيق</div>
+                                    <div class="grading-mode-hint">
+                                        Pro + Runtime؛ Word 3 صور / لعبة 5؛ تخطّي فيديو إن Runtime نجح. ~12–22 / ~18–35 د.
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="grading-mode-card is-basic" id="gradingModeCardBasic">
+                            <div class="grading-mode-card-row">
+                                <input type="radio" name="admin_grading_mode" value="fast">
+                                <div>
+                                    <div class="grading-mode-title">STANDARD — تصحيح سريع</div>
+                                    <div class="grading-mode-hint">
+                                        Word ~2–3 د + Vision لصور Word (10). كود من ZIP. 30 طالب ≈ 8 (~25–50 د).
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- File Upload -->
+                <div class="form-block">
+                    <label class="glabel">ملفات الطلاب <span class="req">*</span></label>
+                    <p class="hint-muted-md">
+                        <span class="text-accent-amber">ملاحظة:</span>
+                        <strong class="text-strong-white">طالب واحد:</strong> مجلد مفتوح أو ملف <strong class="text-strong-white">ZIP/RAR</strong> (لا تستخدم «مجلد» لاختيار ملف مضغوط).
+                        <strong class="text-strong-white">عدة طلاب:</strong> ZIP/RAR فيه مجلد لكل طالب. <strong class="text-strong-white">Word:</strong> كل ملف = طالب.
+                    </p>
+                    <p class="hint-filter">
+                        <i class="fa-solid fa-filter icon-filter"></i>
+                        عند رفع <strong class="text-strong-white">مجلد</strong> يُستبعد تلقائياً ما داخل
+                        <strong class="text-strong-white">Library</strong> / <strong class="text-strong-white">Temp</strong> / <strong class="text-strong-white">obj</strong> / <strong class="text-strong-white">build</strong> / <strong class="text-strong-white">node_modules</strong> وغيرها (لا يُرفع للخادم).
+                        لمشاريع Unity / Godot يُفضّل أيضاً رفع <strong class="text-strong-white">ZIP</strong> واحد بعد التنظيف.
+                    </p>
+                    <div id="intakeFilterPanel" class="hidden"></div>
+                    <div id="preflightPanel" class="hidden"></div>
+                    <div id="uploadBlockedBanner" class="hidden">
+                        <i class="fa-solid fa-circle-info upload-blocked-banner__icon"></i>
+                        <span id="uploadBlockedText">تصحيح جارٍ — لا يمكن رفع ملف جديد حتى ينتهي.</span>
+                        <button type="button" id="btnAbandonGrading" class="gbtn-primary gbtn-primary--compact upload-blocked-banner__action">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            إلغاء التصحيح ورفع ملف جديد
+                        </button>
+                    </div>
+                    <div class="upload-buttons-row">
+                        <div class="gupload-group">
+                            <p class="gupload-group-title">طالب واحد</p>
+                            <p class="gupload-group-hint">ملف ZIP لا يظهر في نافذة «اختر مجلد» — استخدم الزر الأصفر</p>
+                            <div class="gupload-split">
+                                <button type="button" class="gupload-sub" id="btnPickFolder" title="مجلد المشروع مفتوح (ليس ملف zip)">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                    مجلد المشروع
+                                </button>
+                                <button type="button" class="gupload-sub zip" id="btnPickZipSingle" title="ملف مضغوط .zip أو .rar">
+                                    <i class="fa-solid fa-file-zipper"></i>
+                                    ZIP / RAR
+                                </button>
+                            </div>
+                            <input type="file" id="studentFiles" webkitdirectory directory multiple class="hidden">
+                            <input type="file" id="studentArchive" accept=".zip,.rar,application/zip,application/x-zip-compressed,application/vnd.rar,application/x-rar-compressed" class="hidden">
+                        </div>
+                        <div class="gupload gupload--flex" id="btnPickZipMulti" title="ZIP/RAR — كل مجلد طالب = submission منفصل">
+                            <i class="fa-solid fa-people-group upload-icon"></i>
+                            <p class="gupload-label">عدة طلاب</p>
+                            <p class="gupload-sublabel">ZIP/RAR — مجلد لكل طالب</p>
+                            <p id="multiModeHint">✓ وضع عدة طلاب</p>
+                        </div>
+                        <div class="gupload gupload--flex" id="btnPickWord">
+                            <i class="fa-solid fa-file-word upload-icon upload-icon--word"></i>
+                            <p class="gupload-label">Word</p>
+                            <p class="gupload-sublabel">.doc / .docx</p>
+                            <input type="file" id="studentDocuments" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple class="hidden">
+                        </div>
+                    </div>
+
+                    <!-- File List Preview -->
+                    <div id="filesList" class="gfile-list hidden">
+                        <div class="gfile-list-header">
+                            <span>الملفات المحددة</span>
+                            <span id="fileCountBadge" class="badge">0</span>
+                        </div>
+                        <ul id="filesListContent"></ul>
+                    </div>
+                </div>
+
+                <!-- Criteria Selection -->
+                <div>
+                    <div class="criteria-toolbar">
+                        <label class="glabel glabel--inline">المعايير المطلوب تصحيحها <span class="req">*</span></label>
+                        <div class="criteria-add-row">
+                            <input type="text" id="manualCriterion" class="ginput ginput--compact" placeholder="أضف معيار (مثلاً A.P1)">
+                            <button type="button" class="gbtn-primary gbtn-primary--compact" onclick="addManualCriterion()">إضافة</button>
+                        </div>
+                    </div>
+                    <div class="criteria-grid" id="criteriaGrid">
+                        {% for criterion in assignment_criteria %}
+                        <label class="criteria-chip selected" onclick="toggleCriteriaChip(this)">
+                            <input type="checkbox" name="criteria" value="{{ criterion }}" checked>
+                            {{ criterion }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-submit-row">
+                <button type="submit" id="submitBtn" class="gbtn-primary">
+                    <span>إبدأ التقييم</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Loading Overlay — Molten Premium -->
+        <div id="loadingOverlay" class="hidden">
+            <div class="molten-orbs" aria-hidden="true">
+                <div class="molten-orb molten-orb-1"></div>
+                <div class="molten-orb molten-orb-2"></div>
+                <div class="molten-orb molten-orb-3"></div>
+            </div>
+            <div class="loading-panel">
+                <div class="molten-hero">
+                    <div class="molten-ring-stage">
+                        <div class="molten-ring-orbit" aria-hidden="true">
+                            <svg viewBox="-6 -6 112 112" overflow="visible">
+                                <circle class="orbit-dash" cx="50" cy="50" r="44" fill="none" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <div class="molten-ring-core-wrap">
+                            <svg viewBox="-6 -6 112 112" overflow="visible" aria-hidden="true">
+                                <defs>
+                                    <linearGradient id="moltenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#11998e" />
+                                        <stop offset="35%" stop-color="#00b09b" />
+                                        <stop offset="65%" stop-color="#38ef7d" />
+                                        <stop offset="100%" stop-color="#96c93d" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-track" cx="50" cy="50" r="42" fill="none" stroke-width="7" />
+                                <circle id="moltenProgressCircle" cx="50" cy="50" r="42" fill="none" stroke-width="7"
+                                    stroke-linecap="round" pathLength="100"
+                                    stroke-dasharray="100" stroke-dashoffset="100" />
+                            </svg>
+                            <div class="molten-ring-inner">
+                                <span id="progressPercent">0%</span>
+                                <span class="molten-counter">
+                                    (<span id="progressText">0</span>/<span id="totalText">0</span>)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 id="loadingText">جاري التصحيح...</h3>
+                    <p id="gradingModeBadge" class="grading-mode-badge"></p>
+                    <p id="estimatedTime"><span id="progressHintLine">الوقت المتبقي: جاري الحساب...</span><span id="elapsedTimer"></span></p>
+                    <div class="molten-linear" role="progressbar" aria-label="تقدّم التصحيح" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div id="progressBar"></div>
+                    </div>
+                    <div id="gradingActionRow" class="molten-action-row">
+                        <button type="button" id="backgroundGradingBtn" class="molten-bg-btn" title="متابعة التصحيح أثناء تصفّح الموقع">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>تصحيح في الخلفية</span>
+                        </button>
+                        <button type="button" id="cancelGradingBtn" class="molten-cancel-btn" title="إيقاف بعد انتهاء الطالب الحالي">
+                            <i class="fa-solid fa-stop"></i>
+                            <span>إيقاف التصحيح</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="molten-body">
+                    <div class="molten-files-card">
+                        <div class="molten-files-head">
+                            <span><i class="fa-solid fa-list-check icon-list"></i> ملفات الطلاب</span>
+                            <span id="fileSummaryBadge">0 من 0</span>
+                        </div>
+                        <ul id="gradingFileList">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="batch-grade-boot">
+{{ {'is_admin': is_admin, 'intake_ignore_dirs': intake_ignore_dirs | default([]), 'assignment_id': assignment.id} | tojson }}
+</script>
+<script>
+    const __batchGradeBoot = JSON.parse(document.getElementById('batch-grade-boot').textContent);
+    const assignmentId = String(__batchGradeBoot.assignment_id || '');
+    const IS_ADMIN = __batchGradeBoot.is_admin === true;
+    const INTAKE_IGNORE_DIRS = new Set(__batchGradeBoot.intake_ignore_dirs || []);
+
+    function getSelectedAdminGradingMode() {
+        const el = document.querySelector('input[name="admin_grading_mode"]:checked');
+        return el ? el.value : 'deep';
+    }
+
+    function syncAdminGradingModeCards() {
+        const proCard = document.getElementById('gradingModeCardPro');
+        const basicCard = document.getElementById('gradingModeCardBasic');
+        if (!proCard || !basicCard) return;
+        const mode = getSelectedAdminGradingMode();
+        proCard.classList.toggle('is-pro', mode === 'deep');
+        basicCard.classList.toggle('is-basic', mode === 'fast');
+        proCard.style.opacity = mode === 'deep' ? '1' : '0.72';
+        basicCard.style.opacity = mode === 'fast' ? '1' : '0.72';
+    }
+
+    function showGradingModeBadge(label) {
+        const badge = document.getElementById('gradingModeBadge');
+        if (!badge || !label) return;
+        badge.classList.add('is-visible');
+        badge.classList.toggle('is-basic', label === 'STANDARD' || label === 'BASIC');
+        badge.textContent = 'وضع التصحيح: ' + label;
+    }
+
+    async function resolveValidBatchId(preferredId) {
+        if (preferredId) {
+            try {
+                const meta = await fetch(`/api/batch-meta/${preferredId}`).then((r) => r.json());
+                if (meta.found) return Number(preferredId);
+            } catch (_) { /* ignore */ }
+        }
+        try {
+            const latest = await fetch(`/api/batch-grade-latest/${assignmentId}`).then((r) => r.json());
+            if (latest.found && latest.batch_id) {
+                const meta = await fetch(`/api/batch-meta/${latest.batch_id}`).then((r) => r.json());
+                if (meta.found && latest.status === 'completed') {
+                    return Number(latest.batch_id);
+                }
+            }
+        } catch (_) { /* ignore */ }
+        return null;
+    }
+
+    async function openBatchResultsSafe(batchId) {
+        try {
+            const progress = await fetch(`/api/batch-grade-progress/${assignmentId}`).then((r) => r.json());
+            if (progress.found && !progress.finished && !progress.failed) {
+                // Grading may be done while post-save (PDF/snapshot) is still running.
+                // If the batch row is already COMPLETED in DB, allow redirect anyway.
+                let dbReady = false;
+                if (batchId) {
+                    try {
+                        const meta = await fetch(`/api/batch-meta/${batchId}`).then((r) => r.json());
+                        dbReady = meta.found && meta.status === 'completed';
+                    } catch (_) { /* ignore */ }
+                }
+                if (!dbReady) {
+                    try {
+                        const latest = await fetch(`/api/batch-grade-latest/${assignmentId}`).then((r) => r.json());
+                        if (latest.found && latest.status === 'completed' && latest.batch_id) {
+                            const meta = await fetch(`/api/batch-meta/${latest.batch_id}`).then((r) => r.json());
+                            dbReady = meta.found && meta.status === 'completed';
+                            if (dbReady && !batchId) batchId = latest.batch_id;
+                        }
+                    } catch (_) { /* ignore */ }
+                }
+                if (!dbReady) {
+                    showToast('التصحيح ما زال جارياً — انتظر حتى يكتمل الحفظ', 'warning');
+                    return false;
+                }
+            }
+        } catch (_) { /* ignore */ }
+
+        const validId = await resolveValidBatchId(batchId);
+        if (validId) {
+            window.location.href = `/batch-results/${validId}`;
+            return true;
+        }
+
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) overlay.classList.add('hidden');
+        if (window.BtecBackgroundGrading) {
+            window.BtecBackgroundGrading.deactivate();
+        }
+        showToast(
+            'نتائج الدفعة #' + (batchId || '?') + ' غير محفوظة في قاعدة البيانات. أعد رفع الملف وتصحيح PRO.',
+            'error'
+        );
+        return false;
+    }
+
+    document.querySelectorAll('input[name="admin_grading_mode"]').forEach((radio) => {
+        radio.addEventListener('change', syncAdminGradingModeCards);
+    });
+    syncAdminGradingModeCards();
+    let studentFileNames = [];
+    let accumulatedFiles = []; // Store all accumulated files
+    let folderGroups = {};     // folder_name -> [file, file, ...] for folder uploads
+    let isFolderMode = false;  // Track if user uploaded folders
+    let pollBatchId = null;
+    let batchWasQueued = false;
+    let _currentGradingStartMs = 0;
+    let _lastDisplayPercent = 0;
+    let _batchGradingUiComplete = false;
+
+    function progressIsFromPriorRun(info, clientStartMs) {
+        if (!info || !info.found) return false;
+        const st = Number(info.start_time || 0);
+        if (!st) {
+            return Boolean(info.finished && !batchWasQueued);
+        }
+        return st < (clientStartMs / 1000) - 2;
+    }
+    let uploadMode = '';     // 'folder' | 'archive' | 'document'
+    let archiveScope = 'single'; // 'single' | 'multi' — for UI hints only
+    let lastIntakeFilterStats = null;
+    let lastPreflightResult = null;
+    let preflightAcknowledged = false;
+    let preflightScanInFlight = false;
+    let _toastCallback = null;
+
+    const UPLOAD_ARCHIVE_EXTS = new Set(['zip', 'rar']);
+    const UPLOAD_DOC_EXTS = new Set(['doc', 'docx']);
+
+    function fileExtension(name) {
+        const parts = String(name || '').split('.');
+        return parts.length > 1 ? parts.pop().toLowerCase() : '';
+    }
+
+    function pathMatchesIntakeIgnore(relPath) {
+        const norm = String(relPath || '').replace(/\\/g, '/');
+        const parts = norm.split('/').filter(Boolean).map(p => p.toLowerCase());
+        return parts.some(p => INTAKE_IGNORE_DIRS.has(p));
+    }
+
+    function filterFilesForIntake(fileList) {
+        const kept = [];
+        const skipped = [];
+        const hitSegments = new Set();
+        for (const f of fileList) {
+            const rel = f.webkitRelativePath || f.name || '';
+            if (pathMatchesIntakeIgnore(rel)) {
+                skipped.push(f);
+                rel.replace(/\\/g, '/').split('/').filter(Boolean).forEach(p => {
+                    if (INTAKE_IGNORE_DIRS.has(p.toLowerCase())) hitSegments.add(p);
+                });
+            } else {
+                kept.push(f);
+            }
+        }
+        return { kept, skipped, hitSegments };
+    }
+
+    function showIntakeFilterPanel(stats) {
+        const panel = document.getElementById('intakeFilterPanel');
+        if (!panel || !stats || stats.skipped === 0) {
+            if (panel) panel.classList.add('hidden');
+            return;
+        }
+        const segList = Array.from(stats.hitSegments).slice(0, 8).join('، ');
+        panel.innerHTML =
+            '<div style="font-weight:800;color:#38ef7d;margin-bottom:6px;">' +
+            '<i class="fa-solid fa-broom" style="margin-left:6px;"></i> تنظيف تلقائي قبل الرفع</div>' +
+            'تم استبعاد <strong style="color:#fff;">' + stats.skipped + '</strong> ملف/مجلد ضوضاء ' +
+            '(مثل Library، Temp، obj، build، node_modules).' +
+            ' سيُرفع للتصحيح: <strong style="color:#fff;">' + stats.kept + '</strong> ملف فقط.' +
+            (segList ? '<div style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.5);">أقسام مكتشفة: ' + segList + '</div>' : '');
+        panel.classList.remove('hidden');
+    }
+
+    function resetPreflightState() {
+        lastPreflightResult = null;
+        preflightAcknowledged = false;
+        const panel = document.getElementById('preflightPanel');
+        if (panel) {
+            panel.classList.add('hidden');
+            panel.innerHTML = '';
+        }
+    }
+
+    function renderPreflightPanel(preflight, options) {
+        options = options || {};
+        const panel = document.getElementById('preflightPanel');
+        if (!panel || !preflight) return;
+
+        const items = preflight.items || [];
+        const lines = items.map((it) =>
+            '<div style="display:flex;gap:8px;align-items:center;">' +
+            '<span style="font-weight:800;width:18px;color:' + (it.present ? '#38ef7d' : '#f87171') + ';">' +
+            (it.symbol || (it.present ? '✓' : '✗')) + '</span>' +
+            '<span>' + it.label_ar + '</span></div>'
+        ).join('');
+
+        const hint = String(preflight.expected_grade_hint || '');
+        const coreOk = hint === 'P' || hint === 'P+';
+        const warn = preflight.warn_teacher && !coreOk;
+        const titleColor = coreOk ? '#38ef7d' : (warn ? '#f59e0b' : '#00d2ff');
+        const titleIcon = coreOk ? 'fa-circle-check' : (warn ? 'fa-triangle-exclamation' : 'fa-magnifying-glass-chart');
+        const title = coreOk
+            ? ('فحص سريع — الأدلة الأساسية متوفرة (تلميح ' + hint + ')')
+            : (warn
+                ? 'فحص سريع — أدلة ناقصة محتملة (C.P6)'
+                : 'فحص سريع للأدلة — يبدو جيداً من أسماء الملفات');
+
+        let html =
+            '<div style="font-weight:800;color:' + titleColor + ';margin-bottom:8px;">' +
+            '<i class="fa-solid ' + titleIcon + '" style="margin-left:6px;"></i> ' + title + '</div>' +
+            '<div style="margin-bottom:8px;">' + lines + '</div>' +
+            '<div style="font-size:12px;color:rgba(255,255,255,0.55);">' +
+            (preflight.expected_grade_label_ar || '') +
+            (preflight.engine_detected ? ' · محرك: ' + preflight.engine_detected : '') +
+            '</div>';
+
+        if (preflight.disclaimer_ar) {
+            html += '<div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,0.4);">' + preflight.disclaimer_ar + '</div>';
+        }
+        if (options.loading) {
+            html = '<div style="font-weight:700;color:#00d2ff;"><i class="fa-solid fa-spinner fa-spin" style="margin-left:6px;"></i> جاري الفحص السريع للأدلة...</div>';
+        }
+
+        panel.innerHTML = html;
+        panel.classList.remove('hidden');
+    }
+
+    async function runPreflightScan() {
+        if (preflightScanInFlight) return;
+        if (uploadMode === 'document' || accumulatedFiles.length === 0) {
+            resetPreflightState();
+            return;
+        }
+
+        preflightScanInFlight = true;
+        preflightAcknowledged = false;
+        renderPreflightPanel({ items: [] }, { loading: true });
+
+        try {
+            let preflight = null;
+
+            if (uploadMode === 'folder' && accumulatedFiles.length > 0) {
+                const paths = accumulatedFiles.map((f) => f.webkitRelativePath || f.name).filter(Boolean);
+                const body = new FormData();
+                body.append('paths_json', JSON.stringify(paths));
+                const res = await fetch('/api/preflight-evidence/' + assignmentId, { method: 'POST', body });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.detail || 'فشل الفحص السريع');
+                preflight = data.preflight;
+            } else if (uploadMode === 'archive' && accumulatedFiles[0]) {
+                const body = new FormData();
+                body.append('file', accumulatedFiles[0]);
+                const res = await fetch('/api/preflight-evidence/' + assignmentId, { method: 'POST', body });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.detail || 'فشل الفحص السريع');
+                preflight = data.preflight;
+            }
+
+            if (preflight) {
+                lastPreflightResult = preflight;
+                renderPreflightPanel(preflight);
+            } else {
+                resetPreflightState();
+            }
+        } catch (err) {
+            console.warn('[preflight]', err);
+            const panel = document.getElementById('preflightPanel');
+            if (panel) {
+                panel.innerHTML =
+                    '<div style="color:rgba(255,255,255,0.5);font-size:12px;">تعذّر الفحص السريع — يمكنك المتابعة للتصحيح الكامل.</div>';
+                panel.classList.remove('hidden');
+            }
+        } finally {
+            preflightScanInFlight = false;
+        }
+    }
+
+    function confirmPreflightIfNeeded(onContinue) {
+        onContinue();
+    }
+
+    // ─── Manual Criteria Entry ───
+    function addManualCriterion() {
+        const input = document.getElementById('manualCriterion');
+        let code = input.value.trim().toUpperCase();
+        if (!code) return;
+
+        // Validation for BTEC format (e.g. A.P1 or P1)
+        if (!/^[A-Z]{0,2}\.?[PMD]\d{1,2}$/i.test(code)) {
+            return showToast('تنسيق المعيار غير صحيح. مثال: A.P1 أو P1', 'warning');
+        }
+
+        const grid = document.getElementById('criteriaGrid');
+        // Check if already exists
+        const existing = Array.from(grid.querySelectorAll('input')).map(i => i.value);
+        if (existing.includes(code)) {
+            return showToast('المعيار موجود بالفعل في القائمة', 'info');
+        }
+
+        // Create new chip
+        const label = document.createElement('label');
+        label.className = 'criteria-chip selected';
+        label.onclick = function() { toggleCriteriaChip(this); };
+        label.innerHTML = `
+            <input type="checkbox" name="criteria" value="${code}" checked>
+            ${code}
+        `;
+        grid.appendChild(label);
+        input.value = '';
+    }
+
+    function toggleCriteriaChip(el) {
+        var cb = el.querySelector('input');
+        cb.checked = !cb.checked;
+        el.classList.toggle('selected');
+        // Prevent default if it's called from label click (which it is)
+        if (event) event.preventDefault();
+    }
+
+    // ─── Toast Popup ───
+    function showToast(msg, type, callback) {
+        type = type || 'error';
+        _toastCallback = callback || null;
+        const icons = { error: '❌', warning: '⚠️', info: '✅' };
+        const titles = { error: 'خطأ', warning: 'تنبيه', info: 'معلومة' };
+        const box = document.getElementById('toastBox');
+        box.className = 'toast-box toast-' + type;
+        document.getElementById('toastIcon').textContent = icons[type] || '⚠️';
+        document.getElementById('toastTitle').textContent = titles[type] || 'تنبيه';
+        document.getElementById('toastMsg').textContent = msg;
+        document.getElementById('toastPopup').classList.remove('hidden');
+    }
+    function closeToast() {
+        document.getElementById('toastPopup').classList.add('hidden');
+        if (_toastCallback) { _toastCallback(); _toastCallback = null; }
+    }
+
+    // Helper: rebuild the file list UI from accumulatedFiles
+    function rebuildFileListUI() {
+        const filesList = document.getElementById('filesList');
+        const filesListContent = document.getElementById('filesListContent');
+        const badge = document.getElementById('fileCountBadge');
+
+        studentFileNames = [];
+        filesListContent.innerHTML = '';
+
+        if (isFolderMode && Object.keys(folderGroups).length > 0) {
+            // Folder mode: show folder header + all individual files
+            const folderName = Object.keys(folderGroups)[0];
+            const files = folderGroups[folderName];
+            const suffix = (lastIntakeFilterStats && lastIntakeFilterStats.skipped > 0)
+                ? ' (' + lastIntakeFilterStats.skipped + ' مستبعد)'
+                : '';
+            badge.textContent = files.length + ' ملف' + suffix;
+
+            // Folder header
+            const header = document.createElement('li');
+            header.style.cssText = 'padding:10px 12px;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8);font-size:14px;border-radius:8px;background:rgba(255,255,255,0.03);margin-bottom:4px;';
+            header.innerHTML = `
+                <i class="fa-solid fa-folder" style="color:rgba(56,239,125,0.7);font-size:16px;"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;">
+                    ${folderName}
+                    <span style="color:rgba(255,255,255,0.35);font-weight:400;font-size:12px;margin-right:6px;">(${files.length} ملف)</span>
+                </span>
+                <button type="button" onclick="clearUpload()" style="background:none;border:none;color:rgba(255,100,100,0.6);cursor:pointer;font-size:20px;padding:2px 6px;" title="حذف">&times;</button>
+            `;
+            filesListContent.appendChild(header);
+
+            // Individual files
+            files.forEach((file) => {
+                const fname = file.name || (file.webkitRelativePath || '').split('/').pop();
+                const li = document.createElement('li');
+                li.style.cssText = 'padding:6px 10px 6px 28px;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.5);font-size:12px;border-radius:6px;';
+                li.innerHTML = `
+                    <i class="fa-regular fa-file" style="color:rgba(56,239,125,0.35);font-size:12px;"></i>
+                    <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${fname}</span>
+                `;
+                filesListContent.appendChild(li);
+                studentFileNames.push(fname.replace(/\.[^/.]+$/, ""));
+            });
+            filesList.classList.remove('hidden');
+        } else if (uploadMode === 'document' && accumulatedFiles.length > 0) {
+            badge.textContent = accumulatedFiles.length + ' Word';
+
+            accumulatedFiles.forEach((file) => {
+                const li = document.createElement('li');
+                li.style.cssText = 'padding:8px 10px;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:13px;border-radius:8px;margin-bottom:4px;';
+                li.innerHTML = `
+                    <i class="fa-solid fa-file-word" style="color:#60a5fa;"></i>
+                    <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${file.name}</span>
+                `;
+                filesListContent.appendChild(li);
+                studentFileNames.push(file.name.replace(/\.[^/.]+$/, ""));
+            });
+            const clearLi = document.createElement('li');
+            clearLi.style.cssText = 'padding:4px 0;text-align:left;';
+            clearLi.innerHTML = '<button type="button" onclick="clearUpload()" style="background:none;border:none;color:rgba(255,100,100,0.6);cursor:pointer;font-size:13px;">مسح الكل</button>';
+            filesListContent.appendChild(clearLi);
+            filesList.classList.remove('hidden');
+        } else if (uploadMode === 'archive' && accumulatedFiles.length > 0) {
+            const file = accumulatedFiles[0];
+            badge.textContent = 'أرشيف';
+
+            const li = document.createElement('li');
+            li.style.cssText = 'padding:8px 10px;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:13px;border-radius:8px;';
+            li.innerHTML = `
+                <i class="fa-solid fa-file-zipper" style="color:rgba(56,239,125,0.5);"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${file.name} ${archiveScope === 'single' ? '(طالب واحد — محتوى الأرشيف)' : '(كل مجلد علوي = طالب)'}</span>
+                <button type="button" onclick="clearUpload()" style="background:none;border:none;color:rgba(255,100,100,0.6);cursor:pointer;font-size:20px;padding:2px 6px;" title="حذف">&times;</button>
+            `;
+            filesListContent.appendChild(li);
+            if (archiveScope !== 'multi') {
+                studentFileNames.push(file.name.replace(/\.[^/.]+$/, ""));
+            }
+            filesList.classList.remove('hidden');
+        } else {
+            filesList.classList.add('hidden');
+        }
+    }
+
+    // Clear the upload
+    function clearUpload() {
+        accumulatedFiles = [];
+        folderGroups = {};
+        isFolderMode = false;
+        uploadMode = '';
+        archiveScope = 'single';
+        const multiHint = document.getElementById('multiModeHint');
+        const multiBtn = document.getElementById('btnPickZipMulti');
+        if (multiHint) multiHint.classList.remove('is-visible');
+        if (multiBtn) multiBtn.style.outline = '';
+        lastIntakeFilterStats = null;
+        resetPreflightState();
+        const panel = document.getElementById('intakeFilterPanel');
+        if (panel) panel.classList.add('hidden');
+        syncInputFiles();
+        document.getElementById('studentArchive').value = '';
+        document.getElementById('studentDocuments').value = '';
+        rebuildFileListUI();
+    }
+
+    // Sync folder picks only (never put ZIP into webkitdirectory input)
+    function syncInputFiles() {
+        if (uploadMode !== 'folder') return;
+        const dt = new DataTransfer();
+        accumulatedFiles.forEach(f => dt.items.add(f));
+        document.getElementById('studentFiles').files = dt.files;
+    }
+
+    function openArchivePicker(scope) {
+        archiveScope = scope;
+        const multiHint = document.getElementById('multiModeHint');
+        const multiBtn = document.getElementById('btnPickZipMulti');
+        if (multiHint && multiBtn) {
+            const on = scope === 'multi';
+            multiHint.classList.toggle('is-visible', on);
+            multiBtn.style.outline = on ? '2px solid rgba(56,239,125,0.7)' : '';
+        }
+        document.getElementById('studentArchive').click();
+    }
+
+    document.getElementById('btnPickFolder').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('studentFiles').click();
+    });
+    document.getElementById('btnPickZipSingle').addEventListener('click', (e) => {
+        e.preventDefault();
+        openArchivePicker('single');
+    });
+    document.getElementById('btnPickZipMulti').addEventListener('click', (e) => {
+        e.preventDefault();
+        openArchivePicker('multi');
+    });
+    document.getElementById('btnPickWord').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('studentDocuments').click();
+    });
+
+    // Folder Upload Logic - one folder = one student (all files inside)
+    document.getElementById('studentFiles').addEventListener('change', (e) => {
+        const rawFiles = Array.from(e.target.files);
+        if (rawFiles.length === 0) return;
+
+        const filtered = filterFilesForIntake(rawFiles);
+        lastIntakeFilterStats = {
+            total: rawFiles.length,
+            kept: filtered.kept.length,
+            skipped: filtered.skipped.length,
+            hitSegments: filtered.hitSegments,
+        };
+
+        if (filtered.kept.length === 0) {
+            showToast(
+                'كل الملفات داخل مجلدات يُستبعدها النظام (Library/Temp/obj/build/…). احذفها من المشروع أو ارفع ZIP بعد التنظيف.',
+                'warning'
+            );
+            e.target.value = '';
+            return;
+        }
+
+        accumulatedFiles = filtered.kept;
+        isFolderMode = true;
+        uploadMode = 'folder';
+        folderGroups = {};
+        document.getElementById('studentArchive').value = '';
+        document.getElementById('studentDocuments').value = '';
+
+        const firstPath = filtered.kept[0].webkitRelativePath || filtered.kept[0].name;
+        const folderName = firstPath.split('/')[0] || 'طالب';
+        folderGroups[folderName] = filtered.kept;
+
+        showIntakeFilterPanel(lastIntakeFilterStats);
+        if (filtered.skipped.length > 0) {
+            showToast(
+                'تم استبعاد ' + filtered.skipped + ' ملف تلقائياً (مجلدات بناء/محرك). سيُرفع ' + filtered.kept.length + ' ملف.',
+                'info'
+            );
+        }
+
+        syncInputFiles();
+        rebuildFileListUI();
+        runPreflightScan();
+    });
+
+    // Archive Upload — ZIP/RAR (each top-level folder inside = one student)
+    document.getElementById('studentArchive').addEventListener('change', (e) => {
+        const newFiles = Array.from(e.target.files);
+        if (newFiles.length === 0) return;
+
+        const archiveFile = newFiles[0];
+        const ext = fileExtension(archiveFile.name);
+        if (!UPLOAD_ARCHIVE_EXTS.has(ext)) {
+            showToast('يرجى رفع ملف ZIP أو RAR فقط من هذا الصندوق', 'warning');
+            e.target.value = '';
+            return;
+        }
+
+        accumulatedFiles = [archiveFile];
+        isFolderMode = false;
+        uploadMode = 'archive';
+        folderGroups = {};
+        document.getElementById('studentFiles').value = '';
+        document.getElementById('studentDocuments').value = '';
+
+        rebuildFileListUI();
+        runPreflightScan();
+    });
+
+    // Word Upload — .doc / .docx (each file = one student; multiple allowed)
+    document.getElementById('studentDocuments').addEventListener('change', (e) => {
+        const newFiles = Array.from(e.target.files);
+        if (newFiles.length === 0) return;
+
+        const docFiles = newFiles.filter(f => UPLOAD_DOC_EXTS.has(fileExtension(f.name)));
+        if (docFiles.length === 0) {
+            showToast('يرجى رفع ملف Word بصيغة .doc أو .docx', 'warning');
+            e.target.value = '';
+            return;
+        }
+        if (docFiles.length < newFiles.length) {
+            showToast('تم تجاهل ' + (newFiles.length - docFiles.length) + ' ملف غير مدعوم (Word فقط)', 'info');
+        }
+
+        accumulatedFiles = docFiles;
+        isFolderMode = false;
+        uploadMode = 'document';
+        folderGroups = {};
+        document.getElementById('studentFiles').value = '';
+        document.getElementById('studentArchive').value = '';
+
+        resetPreflightState();
+        rebuildFileListUI();
+    });
+
+    // ─── Progress UI helpers ───
+    const BATCH_PHASE_LABELS = {
+        preparing: 'جاري تحضير الملفات...',
+        extracting_archive: 'جاري فك الملف المضغوط (ZIP/RAR)...',
+        extracting_archive_multi: 'جاري استخراج قائمة الطلاب من الأرشيف...',
+        extracting: 'استخراج محتوى ملف الطالب...',
+        vision: 'تحليل الصور واللقطات...',
+        runtime: 'تشغيل اللعبة والتحقق التشغيلي...',
+        inventory: 'فحص المشروع والأدلة التقنية...',
+        grading: 'المقيم الذكي يصحّح المعايير...',
+        saving: 'حفظ النتائج...',
+        starting: 'بدء التصحيح...',
+        queued: 'في قائمة انتظار التصحيح على الخادم...',
+    };
+
+    let _lastHintPhase = '';
+    let _lastEtaCompleted = -1;
+    const STAY_OPEN_UNTIL_DONE_PREFIX = 'لا تغلق الصفحة حتى ينتهي التصحيح';
+
+    function updateStayOpenElapsedHint(elapsedSec) {
+        const hintEl = document.getElementById('progressHintLine');
+        const timerEl = document.getElementById('elapsedTimer');
+        if (!hintEl) return;
+        const elapsed = Math.max(0, Math.round(Number(elapsedSec) || 0));
+        hintEl.textContent = `${STAY_OPEN_UNTIL_DONE_PREFIX} . الوقت المنجز : ${formatTime(elapsed)}`;
+        if (timerEl) timerEl.textContent = '';
+    }
+
+    function shouldUseSimpleStayOpenHint(info) {
+        if (!info || info.finished) return false;
+        if (window._batchUploadInProgress) return false;
+        const phase = info.current_phase || '';
+        if (!phase || phase === 'queued') return false;
+        return true;
+    }
+
+    function setProgressHint(text, options) {
+        options = options || {};
+        const hintEl = document.getElementById('progressHintLine');
+        const timerEl = document.getElementById('elapsedTimer');
+        const legacyEl = document.getElementById('estimatedTime');
+        if (!hintEl) {
+            if (legacyEl) legacyEl.textContent = String(text || '');
+            return;
+        }
+        let line = String(text || '').trim();
+        if (line.includes('اكتمل')) {
+            hintEl.textContent = line;
+            if (timerEl) timerEl.textContent = '';
+            return;
+        }
+        if (options.includeStayOpen !== false && line && !line.includes('لا تغلق')) {
+            line += ' — لا تغلق الصفحة';
+        }
+        hintEl.textContent = line || 'لا تغلق الصفحة';
+    }
+
+    function resolveStayOpenPhaseLabel(info, singleArchiveUi) {
+        if (!info) return 'جاري التصحيح...';
+        const phase = info.current_phase || '';
+        if (phase === 'extracting_archive') {
+            return singleArchiveUi
+                ? BATCH_PHASE_LABELS.extracting_archive
+                : (info.phase_label || BATCH_PHASE_LABELS.extracting_archive_multi);
+        }
+        const label = info.phase_label || BATCH_PHASE_LABELS[phase] || 'جاري التصحيح...';
+        return label.replace('الذكاء الاصطناعي', 'المقيم الذكي');
+    }
+
+    function syncStayOpenHint(info, ctx) {
+        ctx = ctx || {};
+        if (!info || !info.found) return;
+        if (ctx.etaText) {
+            if (ctx.shownCompleted !== _lastEtaCompleted) {
+                _lastEtaCompleted = ctx.shownCompleted;
+                setProgressHint(ctx.etaText);
+            }
+            return;
+        }
+        const phase = info.current_phase || '';
+        if (phase && phase !== _lastHintPhase) {
+            _lastHintPhase = phase;
+            _lastEtaCompleted = -1;
+            setProgressHint(resolveStayOpenPhaseLabel(info, ctx.singleArchiveUi));
+        } else if (!document.getElementById('progressHintLine')?.textContent?.trim()) {
+            setProgressHint(resolveStayOpenPhaseLabel(info, ctx.singleArchiveUi));
+        }
+    }
+
+    function refreshExtractingListActivity(info) {
+        if (!info || !studentFileNames.length) return;
+        const phase = info.current_phase || '';
+        const serverNames = info.all_student_names || [];
+        const isRealStudentList =
+            serverNames.length > 0 &&
+            studentFileNames.length === serverNames.length;
+        if (phase === 'extracting' && isRealStudentList) {
+            return;
+        }
+        if (phase !== 'extracting_archive' && phase !== 'preparing' && phase !== 'extracting') {
+            return;
+        }
+        const curFile = String(info.current_student || '');
+        if (studentFileNames.length === 1) {
+            setFileStatus(0, 'active');
+            const li = document.getElementById('grading-file-0');
+            if (li) {
+                const statusText = li.querySelector('[data-status-text]');
+                if (statusText) {
+                    if (phase === 'extracting' && !isRealStudentList) {
+                        statusText.textContent = curFile
+                            ? ('جاري تحليل الملفات: ' + curFile)
+                            : (info.phase_label || 'جاري تحليل ملفات الطالب...');
+                    } else {
+                        statusText.textContent = curFile
+                            ? ('جاري فك الأرشيف: ' + curFile)
+                            : (info.phase_label || 'جاري فك الأرشيف...');
+                    }
+                }
+            }
+            return;
+        }
+        const placeholder = String(studentFileNames[0] || '');
+        if (placeholder.startsWith('جاري')) {
+            setFileStatus(0, 'active');
+            return;
+        }
+        const cur = normalizeFileNameEntry(curFile);
+        if (!cur) return;
+        const idx = studentFileNames.findIndex(function (n) {
+            return n === cur || n.includes(cur) || cur.includes(n);
+        });
+        if (idx >= 0) setFileStatus(idx, 'active');
+    }
+
+    function resolveProgressPercent(info, uploadPercent, uploadInProgress) {
+        if (_batchGradingUiComplete) {
+            return 100;
+        }
+        if (uploadInProgress) {
+            return Math.max(0, Math.min(12, Number(uploadPercent) || 0));
+        }
+        if (info && info.found) {
+            const frDone = info.final_response && info.final_response.success;
+            if ((info.finished || frDone) && !progressIsFromPriorRun(info, _currentGradingStartMs || Date.now())) {
+                return 100;
+            }
+            const pollCompleted = Math.min(Number(info.completed) || 0, Number(info.total) || 1);
+            const pollTotal = Math.max(Number(info.total) || 0, 1);
+            const pollPhase = info.current_phase || '';
+            if (
+                pollCompleted < pollTotal &&
+                (pollPhase === 'grading' || pollPhase === 'vision' ||
+                    pollPhase === 'runtime' || pollPhase === 'inventory')
+            ) {
+                let honest = Math.round(Number(info.percent) || 0);
+                honest = Math.min(85, honest);
+                return Math.max(0, honest);
+            }
+            const total = Math.max(
+                Number(info.total) || 0,
+                (info.all_student_names || []).length,
+                1
+            );
+            const completed = Math.min(Number(info.completed) || 0, total);
+            const sp = Number(info.student_progress) || 0;
+            if (typeof info.percent === 'number' && !Number.isNaN(info.percent)) {
+                let pct = Math.round(info.percent);
+                const phase = info.current_phase || '';
+                if (phase === 'preparing' || phase === 'extracting_archive') {
+                    pct = Math.max(pct, uploadPercent || 0);
+                }
+                const postExtract = (
+                    phase === 'grading' || phase === 'vision' ||
+                    phase === 'inventory' || phase === 'saving' || phase === 'finalizing'
+                );
+                if (postExtract && (info.archive_all_files || []).length > 0) {
+                    pct = Math.max(pct, 46);
+                }
+                return Math.max(0, Math.min(99, pct));
+            }
+            if (total > 0) {
+                let pct = Math.max(0, Math.min(99, Math.round(((completed + sp) / total) * 100)));
+                if (completed >= total) {
+                    pct = Math.max(pct, 99);
+                }
+                return pct;
+            }
+        }
+        return Math.max(0, Math.min(12, uploadPercent || 0));
+    }
+
+    function isPostExtractPhase(phase) {
+        return phase === 'grading' || phase === 'vision' || phase === 'runtime' ||
+            phase === 'inventory' || phase === 'saving' || phase === 'finalizing';
+    }
+
+    function updateProgress(percent, opts) {
+        const optsSafe = opts || {};
+        if (_batchGradingUiComplete || optsSafe.forceComplete) {
+            percent = 100;
+        }
+        let pct = Math.max(0, Math.min(100, Number(percent) || 0));
+        const reset = optsSafe.reset;
+        const serverPhase = optsSafe.serverPhase || '';
+        if (reset) {
+            _lastDisplayPercent = 0;
+        } else if (
+            serverPhase === 'extracting' || serverPhase === 'queued' ||
+            serverPhase === 'starting' || serverPhase === 'preparing' ||
+            serverPhase === 'extracting_archive'
+        ) {
+            pct = Math.max(0, Math.min(45, pct));
+            _lastDisplayPercent = pct;
+        } else {
+            pct = Math.max(_lastDisplayPercent, pct);
+            if (batchWasQueued && isPostExtractPhase(serverPhase)) {
+                pct = Math.max(46, pct);
+            }
+        }
+        _lastDisplayPercent = pct;
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+        const circle = document.getElementById('moltenProgressCircle');
+        if (circle) circle.style.strokeDashoffset = String(100 - pct);
+        const barWrap = document.querySelector('.molten-linear');
+        if (barWrap) barWrap.setAttribute('aria-valuenow', String(Math.round(pct)));
+    }
+
+    function updateLoadingPhase(info) {
+        if (!info || !info.found) return;
+        const loadingText = document.getElementById('loadingText');
+        const total = Math.max(
+            Number(info.total) || 0,
+            (info.all_student_names || []).length,
+            1
+        );
+        const completed = Math.min(Number(info.completed) || 0, total);
+        const phase = info.current_phase || '';
+        const student = normalizeFileNameEntry(info.current_student || '');
+
+        if (phase === 'grading' && student) {
+            const isLast = completed >= Math.max(0, total - 1);
+            loadingText.textContent = isLast
+                ? `المقيم الذكي يصحّح الطالب : ${student}`
+                : `المقيم الذكي يصحّح: ${student} (${completed + 1}/${total})`;
+            return;
+        }
+        if (phase === 'saving') {
+            loadingText.textContent = 'جاري حفظ النتائج وإعداد التقارير...';
+            return;
+        }
+        if (phase === 'vision') {
+            const who = student || resolveProgressStudentNames(info)[0] || '';
+            loadingText.textContent = who
+                ? `تحليل الصور واللقطات: ${who}`
+                : BATCH_PHASE_LABELS.vision;
+            return;
+        }
+
+        if (phase === 'preparing' && student) {
+            if (info.phase_label && info.phase_label.includes('MB')) {
+                loadingText.textContent = info.phase_label;
+            } else {
+                loadingText.textContent = `جاري حفظ الملف: ${student}`;
+            }
+            return;
+        }
+        if (phase === 'extracting_archive') {
+            const singleArchive = archiveScope === 'single' || studentFileNames.length === 1;
+            if (info.phase_label && !student && !singleArchive) {
+                loadingText.textContent = info.phase_label;
+            } else if (student) {
+                loadingText.textContent = singleArchive
+                    ? `جاري فك أرشيف الطالب: ${student}`
+                    : `جاري استخراج: ${student}`;
+            } else {
+                loadingText.textContent = singleArchive
+                    ? BATCH_PHASE_LABELS.extracting_archive
+                    : (info.phase_label || BATCH_PHASE_LABELS.extracting_archive_multi);
+            }
+            return;
+        }
+
+        const label = info.phase_label || BATCH_PHASE_LABELS[phase] || '';
+        if (label) {
+            loadingText.textContent = label.replace('الذكاء الاصطناعي', 'المقيم الذكي');
+        } else if (student) {
+            loadingText.textContent = 'جاري تصحيح: ' + student;
+        }
+    }
+
+    function buildFileList(fileNames, isArchiveMode) {
+        const list = document.getElementById('gradingFileList');
+        list.innerHTML = '';
+        const names = normalizeFileNameList(fileNames);
+        names.forEach((name, idx) => {
+            const li = document.createElement('li');
+            li.id = 'grading-file-' + idx;
+            li.style.cssText = 'padding:12px 16px;display:flex;align-items:center;gap:12px;transition:all 0.3s;border-bottom:1px solid rgba(255,255,255,0.05);';
+            const icon = isArchiveMode ? getFileIcon(name) : (idx + 1);
+
+            const iconDiv = document.createElement('div');
+            iconDiv.style.cssText = 'flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);';
+            iconDiv.setAttribute('data-status-icon', '');
+            iconDiv.textContent = typeof icon === 'string' ? icon : String(icon);
+
+            const bodyDiv = document.createElement('div');
+            bodyDiv.style.cssText = 'flex:1;min-width:0;';
+
+            const nameEl = document.createElement('p');
+            nameEl.setAttribute('data-file-name', '');
+            nameEl.style.cssText = 'font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            nameEl.textContent = name;
+
+            const statusEl = document.createElement('p');
+            statusEl.setAttribute('data-status-text', '');
+            statusEl.style.cssText = 'font-size:11px;color:rgba(255,255,255,0.3);';
+            statusEl.textContent = 'في الانتظار';
+
+            bodyDiv.appendChild(nameEl);
+            bodyDiv.appendChild(statusEl);
+
+            const badgeDiv = document.createElement('div');
+            badgeDiv.style.cssText = 'flex-shrink:0;';
+            badgeDiv.setAttribute('data-badge', '');
+            badgeDiv.innerHTML = '<span style="font-size:10px;padding:2px 10px;border-radius:20px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);font-weight:600;">انتظار</span>';
+
+            li.appendChild(iconDiv);
+            li.appendChild(bodyDiv);
+            li.appendChild(badgeDiv);
+            list.appendChild(li);
+        });
+    }
+
+    function setFileStatus(idx, status) {
+        const li = document.getElementById('grading-file-' + idx);
+        if (!li) return;
+        const iconDiv = li.querySelector('[data-status-icon]');
+        const nameEl = li.querySelector('[data-file-name]');
+        const statusText = li.querySelector('[data-status-text]');
+        const badge = li.querySelector('[data-badge]');
+
+        if (status === 'active') {
+            li.style.cssText = 'padding:12px 16px;display:flex;align-items:center;gap:12px;transition:all 0.3s;border-bottom:1px solid rgba(56,239,125,0.08);background:rgba(0,176,155,0.08);border-right:3px solid #00b09b;';
+            iconDiv.style.cssText = 'flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(56,239,125,0.18);display:flex;align-items:center;justify-content:center;';
+            if (!iconDiv.querySelector('.molten-status-spin')) {
+                iconDiv.innerHTML = '<i class="fa-solid fa-spinner molten-status-spin"></i>';
+            }
+            nameEl.style.cssText = 'font-size:13px;font-weight:800;color:#96c93d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            statusText.textContent = 'جاري التصحيح...';
+            statusText.style.cssText = 'font-size:11px;color:#38ef7d;font-weight:600;';
+            badge.innerHTML = '<span style="font-size:10px;padding:2px 10px;border-radius:20px;background:rgba(56,239,125,0.15);color:#38ef7d;font-weight:700;animation:moltenPulse 2s infinite;">جاري</span>';
+            li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else if (status === 'done') {
+            li.style.cssText = 'padding:12px 16px;display:flex;align-items:center;gap:12px;transition:all 0.3s;border-bottom:1px solid rgba(56,239,125,0.06);background:rgba(56,239,125,0.04);';
+            iconDiv.style.cssText = 'flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(56,239,125,0.12);display:flex;align-items:center;justify-content:center;';
+            iconDiv.innerHTML = '<i class="fa-solid fa-check" style="color:#38ef7d;font-size:12px;"></i>';
+            nameEl.style.cssText = 'font-size:13px;font-weight:600;color:rgba(150,201,61,0.9);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            statusText.textContent = 'تم التصحيح ✓';
+            statusText.style.cssText = 'font-size:11px;color:rgba(56,239,125,0.7);font-weight:600;';
+            badge.innerHTML = '<span style="font-size:10px;padding:2px 10px;border-radius:20px;background:rgba(56,239,125,0.12);color:#38ef7d;font-weight:700;">مكتمل</span>';
+        } else if (status === 'attached') {
+            li.style.cssText = 'padding:12px 16px;display:flex;align-items:center;gap:12px;transition:all 0.3s;border-bottom:1px solid rgba(255,255,255,0.05);opacity:0.5;';
+            iconDiv.style.cssText = 'flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;';
+            iconDiv.innerHTML = '<i class="fa-solid fa-paperclip" style="color:rgba(255,255,255,0.3);font-size:12px;"></i>';
+            nameEl.style.cssText = 'font-size:13px;font-weight:500;color:rgba(255,255,255,0.35);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            statusText.textContent = 'ملف مرفق';
+            statusText.style.cssText = 'font-size:11px;color:rgba(255,255,255,0.2);';
+            badge.innerHTML = '<span style="font-size:10px;padding:2px 10px;border-radius:20px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.25);font-weight:600;">مرفق</span>';
+        } else if (status === 'failed') {
+            li.style.cssText = 'padding:12px 16px;display:flex;align-items:center;gap:12px;transition:all 0.3s;border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(239,68,68,0.08);border-right:3px solid #ef4444;';
+            iconDiv.style.cssText = 'flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;';
+            iconDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;font-size:12px;"></i>';
+            nameEl.style.cssText = 'font-size:13px;font-weight:700;color:#ef4444;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            const errText = (arguments.length > 2 && arguments[2]) ? String(arguments[2]) : 'فشل التصحيح';
+            statusText.textContent = 'FAILED — ' + errText.substring(0, 80);
+            statusText.style.cssText = 'font-size:11px;color:rgba(239,68,68,0.85);font-weight:600;';
+            statusText.title = errText;
+            badge.innerHTML = '<span style="font-size:10px;padding:2px 10px;border-radius:20px;background:rgba(239,68,68,0.15);color:#ef4444;font-weight:700;">FAILED</span>';
+            li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else if (status === 'success') {
+            li.style.cssText = 'padding:12px 16px;display:flex;align-items:center;gap:12px;transition:all 0.3s;border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(56,239,125,0.05);border-right:3px solid #38ef7d;';
+            iconDiv.style.cssText = 'flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(56,239,125,0.15);display:flex;align-items:center;justify-content:center;';
+            iconDiv.innerHTML = '<i class="fa-solid fa-check" style="color:#38ef7d;font-size:12px;"></i>';
+            nameEl.style.cssText = 'font-size:13px;font-weight:700;color:#38ef7d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            statusText.textContent = 'SUCCESS — تم التصحيح بنجاح';
+            statusText.style.cssText = 'font-size:11px;color:rgba(56,239,125,0.85);font-weight:600;';
+            badge.innerHTML = '<span style="font-size:10px;padding:2px 10px;border-radius:20px;background:rgba(56,239,125,0.15);color:#38ef7d;font-weight:700;">SUCCESS</span>';
+        }
+    }
+    window._failedStudents = new Set();
+
+    function getFileIcon(name) {
+        const ext = (name.match(/\.[^.]+$/) || [''])[0].toLowerCase();
+        const docExts = ['.pdf', '.docx', '.doc', '.txt', '.md'];
+        const codeExts = ['.py', '.cs', '.java', '.cpp', '.c', '.h', '.js', '.ts', '.html', '.css', '.jsx', '.tsx'];
+        const dataExts = ['.csv', '.json', '.xml', '.xlsx', '.xls'];
+        const imgExts = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.bmp'];
+        const nbExts = ['.ipynb'];
+        if (docExts.includes(ext)) return '<i class="fa-solid fa-file-lines text-blue-500 text-xs"></i>';
+        if (codeExts.includes(ext)) return '<i class="fa-solid fa-code text-purple-500 text-xs"></i>';
+        if (dataExts.includes(ext)) return '<i class="fa-solid fa-table text-emerald-500 text-xs"></i>';
+        if (imgExts.includes(ext)) return '<i class="fa-solid fa-image text-amber-500 text-xs"></i>';
+        if (nbExts.includes(ext)) return '<i class="fa-solid fa-book-open text-orange-500 text-xs"></i>';
+        return '<i class="fa-solid fa-file text-gray-400 text-xs"></i>';
+    }
+
+    function isGradableFile(name) {
+        const ext = (name.match(/\.[^.]+$/) || [''])[0].toLowerCase();
+        return ['.pdf', '.docx', '.doc', '.txt', '.md'].includes(ext);
+    }
+
+    function formatTime(seconds) {
+        seconds = Math.max(0, Math.round(seconds));
+        if (seconds < 60) return seconds + ' ثانية';
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return m + ' دقيقة' + (s > 0 ? ' و ' + s + ' ثانية' : '');
+    }
+
+    // ─── Show Error Popup Helper ───
+    function resolveBatchErrorCode(raw) {
+        const s = String(raw || '').toLowerCase();
+        if (s.includes('429') || s.includes('depleted') || s.includes('resource_exhausted')) return 'AI-429';
+        if (s.includes('402') || s.includes('insufficient') || s.includes('quota')) return 'AI-402';
+        if (s.includes('json serializable') || s.includes('windowspath')) return 'SYS-JSON';
+        if (s.includes('timeout') || s.includes('timed out')) return 'NET-TIMEOUT';
+        return 'GRD-001';
+    }
+
+    function humanizeBatchError(raw, student) {
+        const s = String(raw || '');
+        const low = s.toLowerCase();
+        const prefix = student ? (student + ' — ') : '';
+        if (low.includes('429') || low.includes('depleted') || low.includes('resource_exhausted')) {
+            return prefix + 'نفد رصيد مزود الذكاء الاصطناعي (Gemini). شحن الحساب من Google AI Studio ثم أعد المحاولة.';
+        }
+        if (low.includes('402') || low.includes('insufficient') || low.includes('quota')) {
+            return prefix + 'رصيد الذكاء الاصطناعي غير كافٍ — راجع الفوترة ثم أعد المحاولة.';
+        }
+        if (low.includes('json serializable') || low.includes('windowspath')) {
+            return prefix + 'خطأ داخلي في النظام أثناء حفظ نتيجة التصحيح — أعد المحاولة بعد تحديث الخادم.';
+        }
+        if (low.includes('timeout') || low.includes('timed out')) {
+            return prefix + 'انتهت مهلة الاتصال بمزود الذكاء الاصطناعي — أعد المحاولة.';
+        }
+        if (s.includes('لم يُصحَّح أي طالب')) {
+            return prefix + 'لم يُكتمل تصحيح أي طالب. راجع التفاصيل التقنية أدناه إن وُجدت.';
+        }
+        return prefix + (s || 'فشل التصحيح — سبب غير معروف.');
+    }
+
+    function resolveBatchErrorMessage(source) {
+        if (!source) return { code: 'GRD-001', message: 'فشل التصحيح', technical: '' };
+        const fr = source.final_response || source;
+        const errors = fr.errors || source.errors || [];
+        const first = errors.length ? errors[0] : null;
+        const raw = (first && first.error)
+            || source.detail_ar
+            || fr.detail_ar
+            || source.error
+            || fr.detail
+            || source.detail
+            || '';
+        const student = first && first.student ? String(first.student) : '';
+        const code = source.error_code || fr.error_code || resolveBatchErrorCode(raw);
+        const message = humanizeBatchError(raw, student);
+        const technical = (raw && message !== raw) ? String(raw) : '';
+        return { code, message, technical };
+    }
+
+    function showBatchFailurePopup(source) {
+        const resolved = resolveBatchErrorMessage(source);
+        const isAiBilling = String(resolved.code || '').startsWith('AI-');
+        showErrorPopup(resolved.code, resolved.message, {
+            title: isAiBilling ? 'مشكلة في رصيد الذكاء الاصطناعي' : 'حدث خطأ في التصحيح',
+            technical: resolved.technical,
+            hidePhone: isAiBilling,
+        });
+    }
+
+    function showErrorPopup(code, description, options) {
+        options = options || {};
+        const codeEl = document.getElementById('errorCode');
+        if (codeEl) codeEl.textContent = code ? String(code) : 'خطأ';
+        const titleEl = document.getElementById('errorTitle');
+        if (titleEl) titleEl.textContent = options.title || 'حدث خطأ في النظام';
+        document.getElementById('errorDesc').textContent = description || 'حدث خطأ غير معروف';
+        const techEl = document.getElementById('errorTechnical');
+        if (techEl) {
+            if (options.technical) {
+                techEl.classList.add('is-visible');
+                techEl.textContent = options.technical;
+            } else {
+                techEl.classList.remove('is-visible');
+                techEl.textContent = '';
+            }
+        }
+        const phoneBlock = document.getElementById('errorPhoneBlock');
+        if (phoneBlock) phoneBlock.classList.toggle('hidden', !!options.hidePhone);
+        document.getElementById('balancePopup').classList.remove('hidden');
+    }
+
+    function isCreditError(msg) {
+        if (!msg) return false;
+        const s = msg.toLowerCase();
+        return s.includes('402') || s.includes('429') || s.includes('رصيد')
+            || s.includes('credit') || s.includes('insufficient') || s.includes('balance')
+            || s.includes('depleted') || s.includes('resource_exhausted') || s.includes('billing');
+    }
+
+    // ─── Balance Check Helper ───
+    async function checkAIBalance() {
+        try {
+            const resp = await fetch('/api/check-ai-balance');
+            const data = await resp.json();
+            if (data.show_popup && data.balance !== null) {
+                showErrorPopup('1', 'مشكلة في الرصيد — المتبقي: $' + parseFloat(data.balance).toFixed(2));
+            }
+            return data;
+        } catch (e) {
+            console.warn('Balance check failed:', e);
+            return { show_popup: false };
+        }
+    }
+
+    // Check balance on page load
+    checkAIBalance();
+
+    /** POST with long timeout (folder uploads can be large). */
+    function postBatchGrade(url, formData, onUploadProgress) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.withCredentials = true;
+            xhr.timeout = 2 * 60 * 60 * 1000;
+            xhr.upload.onprogress = (ev) => {
+                if (ev.lengthComputable && onUploadProgress) {
+                    onUploadProgress(ev.loaded, ev.total);
+                }
+            };
+            xhr.onload = () => {
+                resolve({
+                    ok: xhr.status >= 200 && xhr.status < 300,
+                    status: xhr.status,
+                    text: () => Promise.resolve(xhr.responseText || ''),
+                });
+            };
+            xhr.onerror = () => reject(new Error(
+                'تعذّر الاتصال بالخادم — تأكد أن السيرفر يعمل (localhost:5557) ثم أعد المحاولة'
+            ));
+            xhr.ontimeout = () => reject(new Error('انتهت مهلة الاتصال أثناء الرفع'));
+            xhr.send(formData);
+        });
+    }
+
+    function normalizeFileNameEntry(entry) {
+        if (entry == null) return '';
+        if (Array.isArray(entry)) {
+            return normalizeFileNameList(entry).join(', ');
+        }
+        if (typeof FileList !== 'undefined' && entry instanceof FileList) {
+            return normalizeFileNameList(Array.from(entry)).join(', ');
+        }
+        if (typeof File !== 'undefined' && entry instanceof File) {
+            return entry.name ? String(entry.name) : '';
+        }
+        if (typeof entry === 'object' && typeof entry.name === 'string' && entry.name) {
+            return String(entry.name);
+        }
+        if (typeof entry === 'string') {
+            const s = entry.trim();
+            return s.includes('[object File]') ? '' : s;
+        }
+        const s = String(entry).trim();
+        return s.includes('[object File]') ? '' : s;
+    }
+
+    function normalizeFileNameList(entries) {
+        const flat = [];
+        function walk(item) {
+            if (item == null) return;
+            if (Array.isArray(item)) {
+                item.forEach(walk);
+                return;
+            }
+            if (typeof FileList !== 'undefined' && item instanceof FileList) {
+                Array.from(item).forEach(walk);
+                return;
+            }
+            const name = normalizeFileNameEntry(item);
+            if (name) flat.push(name);
+        }
+        if (Array.isArray(entries)) {
+            entries.forEach(walk);
+        } else {
+            walk(entries);
+        }
+        return flat;
+    }
+
+    function stripExtension(name) {
+        return String(name || '').replace(/\.[^/.]+$/, '');
+    }
+
+    function normalizeStudentName(name) {
+        return normalizeFileNameEntry(name).trim().toLowerCase().replace(/\.[^/.]+$/, '');
+    }
+
+    function findStudentIndex(studentName) {
+        if (!studentName) return -1;
+        const target = normalizeStudentName(studentName);
+        if (!target) return -1;
+        let idx = studentFileNames.findIndex(name => normalizeStudentName(name) === target);
+        if (idx !== -1) return idx;
+        return studentFileNames.findIndex(name => {
+            const n = normalizeStudentName(name);
+            return n && (target.includes(n) || n.includes(target));
+        });
+    }
+
+    function setCancelGradingEnabled(enabled) {
+        const btn = document.getElementById('cancelGradingBtn');
+        if (btn) btn.disabled = !enabled;
+        setGradingActionRowVisible(enabled);
+    }
+
+    function setGradingActionRowVisible(visible) {
+        const row = document.getElementById('gradingActionRow');
+        if (row) row.classList.toggle('is-visible', !!visible);
+    }
+
+    function setBackgroundGradingEnabled(enabled) {
+        const btn = document.getElementById('backgroundGradingBtn');
+        if (btn) btn.disabled = !enabled;
+    }
+
+    function clearBatchPageTimers() {
+        if (window._batchPollInterval) {
+            clearInterval(window._batchPollInterval);
+            window._batchPollInterval = null;
+        }
+        if (window._batchClockInterval) {
+            clearInterval(window._batchClockInterval);
+            window._batchClockInterval = null;
+        }
+    }
+
+    function runGradingInBackground() {
+        if (!batchWasQueued) {
+            showToast('انتظر حتى يبدأ التصحيح على الخادم (بعد رفع الملفات)', 'warning');
+            return;
+        }
+        if (window.BtecBackgroundGrading && !window.BtecBackgroundGrading.isActive()) {
+            window.BtecBackgroundGrading.activate({
+                assignmentId: assignmentId,
+                batchId: pollBatchId,
+                batchName: document.getElementById('batchName')?.value || '',
+                returnUrl: window.location.pathname,
+                overlayDismissed: false,
+                uploadMode: uploadMode,
+                archiveScope: archiveScope,
+                studentLabel: studentFileNames[0] || '',
+            });
+        }
+        window._gradingHandedOffToBackground = true;
+        if (window.BtecBackgroundGrading) {
+            window.BtecBackgroundGrading.dismissOverlay();
+        }
+        clearBatchPageTimers();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        setGradingActionRowVisible(false);
+        setUploadControlsEnabled(false);
+        showToast(
+            'يمكنك تصفّح الموقع بحرية — ستصلك إشعار عند انتهاء التصحيح.',
+            'info'
+        );
+    }
+
+    document.getElementById('backgroundGradingBtn')?.addEventListener('click', runGradingInBackground);
+
+    window.addEventListener('pagehide', function () {
+        if (batchWasQueued && window.BtecBackgroundGrading && window.BtecBackgroundGrading.isActive()) {
+            window.BtecBackgroundGrading.dismissOverlay();
+        }
+    });
+
+    async function requestCancelGrading() {
+        const btn = document.getElementById('cancelGradingBtn');
+        if (!btn || btn.disabled) return;
+        if (!confirm('إيقاف التصحيح؟\n\nسيتوقف بعد انتهاء الطالب الحالي. النتائج المكتملة تُحفظ.')) {
+            return;
+        }
+        btn.disabled = true;
+        btn.querySelector('span').textContent = 'جاري الإيقاف...';
+        try {
+            const res = await fetch(`/api/batch-grade-cancel/${assignmentId}`, { method: 'POST' });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                showToast(data.detail || 'تعذّر إيقاف التصحيح', 'error');
+                btn.disabled = false;
+                btn.querySelector('span').textContent = 'إيقاف التصحيح';
+                return;
+            }
+            _batchGradingUiComplete = true;
+            clearBatchPageTimers();
+            document.getElementById('loadingOverlay')?.classList.add('hidden');
+            setGradingActionRowVisible(false);
+            setUploadControlsEnabled(true);
+            setCancelGradingEnabled(false);
+            if (window.BtecBackgroundGrading) {
+                window.BtecBackgroundGrading.deactivate();
+            }
+            showToast(data.message || 'تم إيقاف التصحيح', 'warning');
+        } catch (_) {
+            showToast('تعذّر الاتصال لإيقاف التصحيح', 'error');
+            btn.disabled = false;
+            btn.querySelector('span').textContent = 'إيقاف التصحيح';
+        }
+    }
+
+    document.getElementById('cancelGradingBtn')?.addEventListener('click', requestCancelGrading);
+
+    function finishBatchGradingUI(data, pollInterval, clockInterval, clientStartTime, totalStudents) {
+        _batchGradingUiComplete = true;
+        setCancelGradingEnabled(false);
+        clearInterval(pollInterval);
+        clearInterval(clockInterval);
+        window._batchPollInterval = null;
+        window._batchClockInterval = null;
+
+        if (window._gradingHandedOffToBackground && window.BtecBackgroundGrading) {
+            window.BtecBackgroundGrading.handleExternalComplete(data);
+            window._gradingHandedOffToBackground = false;
+            return;
+        }
+        if (
+            window.BtecBackgroundGrading &&
+            window.BtecBackgroundGrading.isActive() &&
+            window.BtecBackgroundGrading.isOverlayDismissed()
+        ) {
+            window.BtecBackgroundGrading.handleExternalComplete(data);
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            return;
+        }
+        if (window.BtecBackgroundGrading && window.BtecBackgroundGrading.isActive()) {
+            window.BtecBackgroundGrading.deactivate();
+        }
+
+        if (data.subscription_required) {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            const msg = data.detail || 'يجب الاشتراك أولاً';
+            const isExhausted = msg.includes('استنفدت') || msg.includes('يجب الاشتراك');
+            showToast(msg, 'error', isExhausted ? function() { window.location.href = '/dashboard#packages'; } : null);
+            return;
+        }
+
+        const totalCount = Math.max(
+            totalStudents,
+            studentFileNames.length,
+            Number(data.total_students) || 0,
+            1
+        );
+        const processed = Number(data.processed ?? data.total_students ?? 0);
+        const failedIndices = new Set();
+
+        if (data.errors && data.errors.length > 0) {
+            window._failedStudents.clear();
+            data.errors.forEach(err => {
+                const idx = findStudentIndex(err.student);
+                if (idx !== -1) {
+                    setFileStatus(idx, 'failed', err.error);
+                    failedIndices.add(idx);
+                    window._failedStudents.add(idx);
+                }
+            });
+            if (failedIndices.size === 0 && studentFileNames.length > 0) {
+                if (studentFileNames.length === 1 && data.errors.length === 1) {
+                    setFileStatus(0, 'failed', data.errors[0].error);
+                    failedIndices.add(0);
+                    window._failedStudents.add(0);
+                } else if (studentFileNames.length === data.errors.length) {
+                    data.errors.forEach((err, i) => {
+                        setFileStatus(i, 'failed', err.error);
+                        failedIndices.add(i);
+                        window._failedStudents.add(i);
+                    });
+                }
+            }
+        }
+
+        const failedCount = failedIndices.size;
+        const successCount = Math.max(0, studentFileNames.length - failedCount);
+
+        updateProgress(100, { forceComplete: true, reset: false });
+        document.getElementById('progressText').textContent = String(processed > 0 ? processed : successCount);
+        document.getElementById('totalText').textContent = String(totalCount);
+        document.getElementById('fileSummaryBadge').textContent =
+            `${successCount} من ${Math.max(studentFileNames.length, totalCount)}`;
+
+        if (data.cancelled) {
+            document.getElementById('loadingText').textContent = '⏹️ تم إيقاف التصحيح';
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            setGradingActionRowVisible(false);
+            setUploadControlsEnabled(true);
+            if (window.BtecBackgroundGrading) {
+                window.BtecBackgroundGrading.deactivate();
+            }
+            showToast(data.detail || 'أُوقف التصحيح — يمكنك رفع ملف جديد', 'warning');
+            return;
+        } else if (data.success && failedCount === 0) {
+            const totalElapsed = Math.round((Date.now() - clientStartTime) / 1000);
+            document.getElementById('loadingText').textContent = '🎉 تم التصحيح بنجاح!';
+            studentFileNames.forEach((_, i) => setFileStatus(i, 'done'));
+            setProgressHint(
+                `اكتمل التصحيح في ${formatTime(totalElapsed)}  ·  متوسط ${formatTime(Math.round(totalElapsed / totalCount))} لكل طالب`,
+                { includeStayOpen: false }
+            );
+
+            if (data.batch_id) {
+                setTimeout(() => openBatchResultsSafe(data.batch_id), 2000);
+            }
+            return;
+        }
+
+        if (failedCount > 0) {
+            studentFileNames.forEach((_, i) => {
+                if (!failedIndices.has(i)) {
+                    setFileStatus(i, 'done');
+                }
+            });
+            document.getElementById('loadingText').textContent =
+                failedCount === studentFileNames.length
+                    ? '❌ فشل تصحيح جميع الملفات'
+                    : '⚠️ اكتمل مع ' + failedCount + ' فشل من أصل ' + studentFileNames.length;
+            setProgressHint('اكتمل التصحيح', { includeStayOpen: false });
+            showRetryUI(failedCount, data.batch_id);
+            return;
+        }
+
+        if (data.batch_id && processed > 0) {
+            studentFileNames.forEach((_, i) => setFileStatus(i, 'done'));
+            document.getElementById('loadingText').textContent = '🎉 تم التصحيح بنجاح!';
+            setProgressHint('اكتمل التصحيح', { includeStayOpen: false });
+            setTimeout(() => openBatchResultsSafe(data.batch_id), 2000);
+            return;
+        }
+
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        const resolved = resolveBatchErrorMessage(data);
+        if (isCreditError(resolved.message) || isCreditError(resolved.technical)) {
+            showBatchFailurePopup(data);
+            checkAIBalance();
+        } else if (resolved.message) {
+            showBatchFailurePopup(data);
+        } else {
+            showToast('فشل غير معروف', 'error');
+        }
+    }
+
+    // ─── Submit Logic ───
+    document.getElementById('batchGradeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        confirmPreflightIfNeeded(function () {
+            startBatchGradingAfterPreflight();
+        });
+    });
+
+    async function startBatchGradingAfterPreflight() {
+        // Check balance before starting grading
+        const balanceData = await checkAIBalance();
+        if (balanceData.show_popup) return; // popup is already shown
+
+        const batchName = document.getElementById('batchName').value;
+        const files = accumulatedFiles;
+        if ((uploadMode === 'folder' || isFolderMode) && Object.keys(folderGroups).length > 0) {
+            isFolderMode = true;
+            uploadMode = 'folder';
+        }
+        const criteriaCheckboxes = document.querySelectorAll('input[name="criteria"]:checked');
+        const selectedCriteria = Array.from(criteriaCheckboxes).map(cb => cb.value).join(',');
+
+        if (!batchName || files.length === 0) return showToast('يرجى تعبئة جميع الحقول المطلوبة', 'warning');
+        if (!selectedCriteria) return showToast('يجب اختيار معيار واحد على الأقل', 'warning');
+        if (isFolderMode && files.length > 200) {
+            return showToast(
+                'مجلد فيه ' + files.length + ' ملف — قد يفشل الرفع. يُفضّل ضغط عمل كل طالب في ملف ZIP واحد ثم رفعه.',
+                'warning'
+            );
+        }
+
+        const formData = new FormData();
+        formData.append('batch_name', batchName);
+        formData.append('selected_criteria', selectedCriteria);
+        let adminMode = 'deep';
+        if (IS_ADMIN) {
+            adminMode = getSelectedAdminGradingMode();
+            formData.append('grading_mode', adminMode);
+            showGradingModeBadge(adminMode === 'fast' ? 'STANDARD' : 'PRO');
+        }
+        // PRO always full re-grade (never clone old batch snapshots).
+        if (adminMode === 'deep' || document.getElementById('forceRegrade')?.checked) {
+            formData.append('force_regrade', 'true');
+        }
+
+        // In folder mode, send folder mapping so backend groups files as one student
+        if (isFolderMode) {
+            formData.append('folder_mode', 'true');
+            const folderMap = {};
+            for (const [folderName, folderFiles] of Object.entries(folderGroups)) {
+                folderMap[folderName] = folderFiles.map(f => f.webkitRelativePath || f.name);
+            }
+            formData.append('folder_map', JSON.stringify(folderMap));
+        } else if (uploadMode === 'archive' && archiveScope === 'single') {
+            formData.append('single_student_archive', 'true');
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        let totalStudents = 1;
+        if (isFolderMode) {
+            totalStudents = Math.max(1, Object.keys(folderGroups).length);
+            studentFileNames = Object.keys(folderGroups).map((folderName) => {
+                const count = (folderGroups[folderName] || []).length;
+                return count > 1 ? `${folderName} (${count} ملف)` : folderName;
+            });
+        } else if (uploadMode === 'archive') {
+            totalStudents = archiveScope === 'multi' ? 0 : 1;
+            studentFileNames = archiveScope === 'multi'
+                ? ['جاري استخراج قائمة الطلاب من الأرشيف...']
+                : [stripExtension(normalizeFileNameEntry(accumulatedFiles[0])) || 'طالب واحد'];
+        } else if (uploadMode === 'document') {
+            totalStudents = files.length;
+            studentFileNames = normalizeFileNameList(files);
+        } else {
+            studentFileNames = normalizeFileNameList(studentFileNames.length ? studentFileNames : files);
+        }
+        const clientStartTime = Date.now();
+        _currentGradingStartMs = clientStartTime;
+        batchWasQueued = false;
+        _batchGradingUiComplete = false;
+        pollBatchId = null;
+        window._gradingHandedOffToBackground = false;
+
+        try {
+            await fetch(`/api/batch-grade-reset-progress/${assignmentId}`, {
+                method: 'POST',
+                credentials: 'same-origin',
+            });
+        } catch (_) { /* ignore */ }
+
+        // Show overlay & build file list
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        setCancelGradingEnabled(false);
+        setBackgroundGradingEnabled(false);
+        window._gradingHandedOffToBackground = false;
+        updateProgress(0, { reset: true });
+        document.getElementById('progressText').textContent = '0';
+        document.getElementById('totalText').textContent = totalStudents > 0 ? totalStudents : '…';
+        document.getElementById('fileSummaryBadge').textContent = totalStudents > 0
+            ? `0 من ${totalStudents}`
+            : 'جاري تحليل الأرشيف...';
+        buildFileList(studentFileNames, false);
+        _lastHintPhase = '';
+        _lastEtaCompleted = -1;
+        setProgressHint('الوقت المتبقي: جاري الحساب...', { includeStayOpen: false });
+        const _elapsedBoot = document.getElementById('elapsedTimer');
+        if (_elapsedBoot) _elapsedBoot.textContent = '';
+
+        // ─── Real-time progress polling (server-driven; no fake 85% cap) ───
+        let lastCompleted = 0;
+        let activeFileIdx = -1;
+        const completedSet = new Set();
+        let listRebuilt = false;
+        let archiveMode = false;
+        let archiveStudentMap = {};
+        let fileToStudent = {};
+        let uploadPercent = 0;
+        let uploadInProgress = true;
+        window._batchUploadInProgress = true;
+        let pollInterval;
+        let clockInterval;
+        let stalePollCount = 0;
+        let nearCompleteStallCount = 0;
+
+        async function tryRecoverCompletedBatch() {
+            if (!batchWasQueued) return false;
+            try {
+                const lr = await fetch(`/api/batch-grade-latest/${assignmentId}`);
+                const latest = await lr.json();
+                if (latest.found && latest.status === 'completed' &&
+                    latest.processed_students >= latest.total_students) {
+                    const metaOk = await fetch(`/api/batch-meta/${latest.batch_id}`)
+                        .then((r) => r.json())
+                        .catch(() => ({ found: false }));
+                    if (!metaOk.found) return false;
+                    clearInterval(pollInterval);
+                    clearInterval(clockInterval);
+                    updateProgress(100);
+                    document.getElementById('loadingText').textContent = 'اكتمل التصحيح!';
+                    setProgressHint('جاري فتح النتائج...', { includeStayOpen: false });
+                    showToast('اكتمل التصحيح — جاري فتح النتائج', 'success');
+                    const opened = await openBatchResultsSafe(latest.batch_id);
+                    if (!opened) {
+                        // Post-save still in flight — retry until progress.finished or DB ready.
+                        let retries = 0;
+                        const retryOpen = setInterval(async () => {
+                            retries++;
+                            if (await openBatchResultsSafe(latest.batch_id)) {
+                                clearInterval(retryOpen);
+                            } else if (retries >= 30) {
+                                clearInterval(retryOpen);
+                                setProgressHint(
+                                    'اكتمل التصحيح — افتح النتائج يدوياً من «الطلاب المصحّحون» أو حدّث الصفحة',
+                                    { includeStayOpen: false }
+                                );
+                            }
+                        }, 2000);
+                    }
+                    return true;
+                }
+            } catch (_) { /* ignore */ }
+            return false;
+        }
+
+        pollInterval = setInterval(async () => {
+            if (window._gradingHandedOffToBackground || _batchGradingUiComplete) return;
+            try {
+                const res = await fetch(`/api/batch-grade-progress/${assignmentId}`);
+                const info = await res.json();
+                if (info.grading_mode_label) {
+                    showGradingModeBadge(info.grading_mode_label);
+                }
+                if (!info.found) {
+                    stalePollCount++;
+                    if (batchWasQueued && stalePollCount >= 8) {
+                        if (await tryRecoverCompletedBatch()) return;
+                        if (stalePollCount >= 20) {
+                            setProgressHint('انقطع الاتصال بالخادم — حدّث الصفحة (Ctrl+F5) أو افتح «الطلاب المصحّحون»', { includeStayOpen: false });
+                        }
+                    }
+                    return;
+                }
+                stalePollCount = 0;
+
+                if (progressIsFromPriorRun(info, clientStartTime)) {
+                    return;
+                }
+
+                if (info.resuming || info.server_restarted) {
+                    document.getElementById('loadingOverlay').classList.remove('hidden');
+                    setGradingActionRowVisible(true);
+                    syncProgressOverlayFromServer(info);
+                    if (!uploadInProgress) {
+                        updateProgress(resolveProgressPercent(info, uploadPercent, false), {
+                            serverPhase: info.current_phase || '',
+                        });
+                    }
+                    setProgressHint(
+                        info.phase_label || 'جاري استئناف التصحيح بعد إعادة تشغيل الخادم...',
+                        { includeStayOpen: false }
+                    );
+                    return;
+                }
+                if (info.finished && info.failed && (info.error || (info.final_response && info.final_response.errors))) {
+                    clearBatchPageTimers();
+                    if (window.BtecBackgroundGrading && window.BtecBackgroundGrading.deactivate) {
+                        window.BtecBackgroundGrading.deactivate();
+                    }
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                    setGradingActionRowVisible(false);
+                    showBatchFailurePopup(info);
+                    if (info.batch_id) pollBatchId = info.batch_id;
+                    return;
+                }
+
+                const pollTotal = Math.max(
+                    Number(info.total) || 0,
+                    (info.all_student_names || []).length,
+                    1
+                );
+                const pollCompleted = Math.min(Number(info.completed) || 0, pollTotal);
+                const pollPct = resolveProgressPercent(info, uploadPercent, uploadInProgress);
+                if (!info.finished && batchWasQueued &&
+                    (pollCompleted >= pollTotal - 1 || pollPct >= 97)) {
+                    nearCompleteStallCount++;
+                    if (nearCompleteStallCount >= 6) {
+                        if (await tryRecoverCompletedBatch()) return;
+                    }
+                } else {
+                    nearCompleteStallCount = 0;
+                }
+
+                if (info.cancel_requested && !info.finished) {
+                    document.getElementById('loadingText').textContent = 'جاري إيقاف التصحيح...';
+                    setCancelGradingEnabled(false);
+                }
+
+                if (
+                    info.finished &&
+                    (info.cancelled || (info.final_response && info.final_response.cancelled))
+                ) {
+                    clearBatchPageTimers();
+                    finishBatchGradingUI(
+                        info.final_response || { cancelled: true, detail: info.error },
+                        pollInterval,
+                        clockInterval,
+                        clientStartTime,
+                        totalStudents
+                    );
+                    return;
+                }
+
+                if (_batchGradingUiComplete) {
+                    return;
+                }
+                if (
+                    batchWasQueued &&
+                    (info.finished || (info.final_response && info.final_response.success)) &&
+                    info.final_response &&
+                    !progressIsFromPriorRun(info, clientStartTime)
+                ) {
+                    updateProgress(100, { forceComplete: true });
+                    finishBatchGradingUI(
+                        info.final_response,
+                        pollInterval,
+                        clockInterval,
+                        clientStartTime,
+                        totalStudents
+                    );
+                    return;
+                }
+                if (info.finished && info.failed) {
+                    clearInterval(pollInterval);
+                    clearInterval(clockInterval);
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                    showBatchFailurePopup(info);
+                    return;
+                }
+
+                const serverNamesPoll = info.all_student_names || [];
+                if (serverNamesPoll.length > 0 && archiveMode) {
+                    archiveMode = false;
+                    studentFileNames = normalizeFileNameList(serverNamesPoll);
+                    buildFileList(studentFileNames, false);
+                    document.getElementById('fileSummaryBadge').textContent =
+                        `0 من ${Math.max(info.total, serverNamesPoll.length)} طالب`;
+                }
+
+                // Rebuild file list from server once we get real data
+                if (!listRebuilt) {
+                    const archiveFiles = info.archive_all_files || [];
+                    const serverNames = serverNamesPoll;
+
+                    if (serverNames.length > 0) {
+                        archiveMode = false;
+                        archiveStudentMap = info.archive_student_map || {};
+                        studentFileNames = normalizeFileNameList(serverNames);
+                        buildFileList(studentFileNames, false);
+                        listRebuilt = true;
+                        activeFileIdx = -1;
+                        completedSet.clear();
+
+                        fileToStudent = {};
+                        for (const [student, fnames] of Object.entries(archiveStudentMap)) {
+                            for (const fname of fnames) {
+                                fileToStudent[fname] = student;
+                            }
+                        }
+
+                        document.getElementById('totalText').textContent = Math.max(info.total, serverNames.length);
+                        document.getElementById('fileSummaryBadge').textContent =
+                            `0 من ${Math.max(info.total, serverNames.length)} طالب`;
+                    } else if (archiveFiles.length > 0 && !(isFolderMode && totalStudents <= 1)) {
+                        archiveMode = true;
+                        archiveStudentMap = info.archive_student_map || {};
+                        studentFileNames = normalizeFileNameList(archiveFiles);
+                        buildFileList(studentFileNames, true);
+                        listRebuilt = true;
+                        activeFileIdx = -1;
+                        completedSet.clear();
+
+                        fileToStudent = {};
+                        for (const [student, files] of Object.entries(archiveStudentMap)) {
+                            for (const fname of files) {
+                                fileToStudent[fname] = student;
+                            }
+                        }
+
+                        studentFileNames.forEach((name, idx) => {
+                            if (!isGradableFile(name)) {
+                                setFileStatus(idx, 'attached');
+                            }
+                        });
+
+                        document.getElementById('totalText').textContent = info.total;
+                        document.getElementById('fileSummaryBadge').textContent =
+                            `0 من ${info.total} طالب (${archiveFiles.length} ملف)`;
+                    }
+                    refreshExtractingListActivity(info);
+                }
+
+                const completed = Math.min(Number(info.completed) || 0, Number(info.total) || 0);
+                const serverNames = info.all_student_names || [];
+                const serverTotal = Number(info.total) || 0;
+                const isPreparing = !info.finished && (
+                    info.current_phase === 'preparing' ||
+                    info.current_phase === 'extracting_archive' ||
+                    serverTotal === 0
+                );
+                const total = isPreparing && serverTotal === 0
+                    ? 0
+                    : Math.max(serverTotal, serverNames.length, studentFileNames.length, 1);
+                const shownCompleted = Math.min(completed, total || completed);
+                if (!uploadInProgress) {
+                    updateProgress(resolveProgressPercent(info, uploadPercent, false), {
+                        serverPhase: info.current_phase || '',
+                    });
+                }
+                updateLoadingPhase(info);
+                if (isPreparing && serverTotal === 0) {
+                    const singleArchiveUi =
+                        (archiveScope === 'single' && uploadMode === 'archive') ||
+                        studentFileNames.length === 1;
+                    if (info.current_phase === 'extracting_archive' && singleArchiveUi) {
+                        document.getElementById('progressText').textContent = '0';
+                        document.getElementById('totalText').textContent = '1';
+                        const badge = document.getElementById('fileSummaryBadge');
+                        if (badge) {
+                            badge.textContent = info.current_student
+                                ? `فك الأرشيف: ${info.current_student}`
+                                : 'جاري فك أرشيف طالب واحد...';
+                        }
+                    } else {
+                        document.getElementById('progressText').textContent = '…';
+                        document.getElementById('totalText').textContent = '…';
+                        const badge = document.getElementById('fileSummaryBadge');
+                        if (badge && info.current_phase === 'extracting_archive') {
+                            badge.textContent = info.current_student
+                                ? `استخراج: ${info.current_student}`
+                                : 'جاري استخراج قائمة الطلاب...';
+                        }
+                    }
+                } else {
+                    document.getElementById('progressText').textContent = shownCompleted;
+                    document.getElementById('totalText').textContent = total;
+                }
+
+                if (archiveMode) {
+                    document.getElementById('fileSummaryBadge').textContent =
+                        `${shownCompleted} من ${total} طالب (${studentFileNames.length} ملف)`;
+
+                    // Mark completed students → checkmark ALL their files
+                    const completedNames = info.completed_students || [];
+                    completedNames.forEach(name => {
+                        if (completedSet.has(name)) return;
+                        completedSet.add(name);
+                        const files = archiveStudentMap[name] || [];
+                        files.forEach(fname => {
+                            const idx = studentFileNames.indexOf(fname);
+                            if (idx !== -1) setFileStatus(idx, 'done');
+                        });
+                    });
+
+                    // Mark current student → highlight ALL their files as active
+                    const curName = info.current_student;
+                    if (curName && !completedSet.has(curName)) {
+                        const files = archiveStudentMap[curName] || [];
+                        files.forEach(fname => {
+                            const idx = studentFileNames.indexOf(fname);
+                            if (idx !== -1 && isGradableFile(fname)) {
+                                setFileStatus(idx, 'active');
+                            }
+                        });
+                    }
+                } else {
+                    document.getElementById('fileSummaryBadge').textContent =
+                        `${shownCompleted} من ${total} طالب`;
+
+                    // Mark completed files with checkmark
+                    const completedNames = info.completed_students || [];
+                    completedNames.forEach(name => {
+                        if (completedSet.has(name)) return;
+                        completedSet.add(name);
+                        let idx = studentFileNames.indexOf(name);
+                        if (idx === -1) {
+                            idx = studentFileNames.findIndex(fn =>
+                                name.includes(fn) || fn.includes(name)
+                            );
+                        }
+                        if (idx !== -1) setFileStatus(idx, 'done');
+                    });
+
+                    // Mark current active file
+                    const curName = info.current_student;
+                    if (curName && !completedSet.has(curName)) {
+                        let curIdx = studentFileNames.indexOf(curName);
+                        if (curIdx === -1) {
+                            curIdx = studentFileNames.findIndex(fn =>
+                                curName.includes(fn) || fn.includes(curName)
+                            );
+                        }
+                        if (curIdx !== -1 && curIdx !== activeFileIdx) {
+                            setFileStatus(curIdx, 'active');
+                            activeFileIdx = curIdx;
+                        }
+                    }
+                }
+
+                // Stable hint + ETA (timer updates separately)
+                const singleArchiveUi =
+                    (archiveScope === 'single' && uploadMode === 'archive') ||
+                    studentFileNames.length === 1;
+                refreshExtractingListActivity(info);
+                window._lastProgressInfo = info;
+
+                if (shouldUseSimpleStayOpenHint(info)) {
+                    updateStayOpenElapsedHint((Date.now() - clientStartTime) / 1000);
+                } else if (shownCompleted > 0 && shownCompleted < total) {
+                    const elapsedServer = (Date.now() / 1000) - info.start_time;
+                    const avgPerStudent = elapsedServer / shownCompleted;
+                    const remaining = (total - shownCompleted) * avgPerStudent;
+                    syncStayOpenHint(info, {
+                        eta: true,
+                        shownCompleted: shownCompleted,
+                        etaText: `الوقت المتبقي المقدر: ${formatTime(remaining)}  ·  متوسط ${formatTime(avgPerStudent)} لكل طالب`,
+                    });
+                } else if (!info.finished) {
+                    syncStayOpenHint(info, { singleArchiveUi: singleArchiveUi });
+                } else if (info.finished && total > 0) {
+                    setProgressHint('اكتمل التصحيح!', { includeStayOpen: false });
+                    studentFileNames.forEach((_, i) => setFileStatus(i, 'done'));
+                }
+
+                lastCompleted = shownCompleted;
+            } catch (_) { /* ignore poll errors */ }
+        }, 1500);
+        window._batchPollInterval = pollInterval;
+
+        // Mark first file as active immediately
+        if (studentFileNames.length > 0) {
+            setFileStatus(0, 'active');
+            activeFileIdx = 0;
+        }
+
+        // ─── Elapsed clock (ticks every second — hint stays fixed) ───
+        clockInterval = setInterval(() => {
+            if (window._gradingHandedOffToBackground) return;
+            const hintEl = document.getElementById('progressHintLine');
+            if (hintEl && hintEl.textContent.includes('اكتمل')) return;
+            const elapsed = Math.round((Date.now() - clientStartTime) / 1000);
+            if (shouldUseSimpleStayOpenHint(window._lastProgressInfo)) {
+                updateStayOpenElapsedHint(elapsed);
+            } else {
+                const timerEl = document.getElementById('elapsedTimer');
+                if (timerEl) timerEl.textContent = '  ⏱ ' + formatTime(elapsed);
+            }
+        }, 1000);
+        window._batchClockInterval = clockInterval;
+
+        try {
+            document.getElementById('loadingText').textContent = 'جاري رفع الملفات...';
+            const response = await postBatchGrade(
+                `/api/batch-grade/${assignmentId}`,
+                formData,
+                (loaded, total) => {
+                    if (total > 0) {
+                        uploadPercent = Math.min(12, Math.round((loaded / total) * 12));
+                        updateProgress(resolveProgressPercent(null, uploadPercent, true));
+                        setProgressHint(`رفع الملفات: ${uploadPercent}% — لا تغلق الصفحة`);
+                    }
+                }
+            );
+
+            uploadInProgress = false;
+            window._batchUploadInProgress = false;
+
+            const rawBody = await response.text();
+            let data = {};
+            try {
+                data = rawBody ? JSON.parse(rawBody) : {};
+            } catch (parseErr) {
+                throw new Error(rawBody ? rawBody.substring(0, 200) : 'رد غير صالح من الخادم');
+            }
+
+            if (!response.ok && !data.async) {
+                const detail = data.detail || `خطأ ${response.status}`;
+                if (response.status === 409) {
+                    throw new Error(detail);
+                }
+                throw new Error(detail);
+            }
+
+            // Background grading: keep polling until finished (avoids Failed to fetch timeout)
+            if (data.async) {
+                pollBatchId = data.batch_id || null;
+                batchWasQueued = true;
+                updateProgress(resolveProgressPercent(
+                    { found: true, percent: 8, current_phase: 'queued' },
+                    uploadPercent,
+                    false
+                ), { serverPhase: 'queued' });
+                setCancelGradingEnabled(true);
+                setBackgroundGradingEnabled(true);
+                if (window.BtecBackgroundGrading) {
+                    window.BtecBackgroundGrading.activate({
+                        assignmentId: assignmentId,
+                        batchId: pollBatchId,
+                        batchName: document.getElementById('batchName')?.value || '',
+                        returnUrl: window.location.pathname,
+                        overlayDismissed: false,
+                        uploadMode: uploadMode,
+                        archiveScope: archiveScope,
+                        studentLabel: studentFileNames[0] || '',
+                    });
+                }
+                setProgressHint('التصحيح يعمل على الخادم — «تصحيح في الخلفية» للخروج من الصفحة بأمان', { includeStayOpen: false });
+                return;
+            }
+
+            finishBatchGradingUI(data, pollInterval, clockInterval, clientStartTime, totalStudents);
+        } catch (error) {
+            clearInterval(pollInterval);
+            clearInterval(clockInterval);
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            // Check if it's a credit error
+            const errText = error.message || '';
+            if (isCreditError(errText)) {
+                showErrorPopup('1', 'مشكلة في الرصيد');
+                checkAIBalance();
+            } else if (
+                errText.includes('يوجد تصحيح') ||
+                errText.includes('BASIC جار') ||
+                errText.includes('PRO جار')
+            ) {
+                showErrorPopup('busy', errText);
+            } else {
+                const bd = await checkAIBalance();
+                if (bd.show_popup) {
+                    showErrorPopup('1', 'مشكلة في الرصيد');
+                } else {
+                    const prefix = errText.startsWith('يوجد') ? '' : 'حدث خطأ في الاتصال: ';
+                    showToast(prefix + errText, 'error');
+                }
+            }
+        }
+    }
+
+    // ───── Retry-only-failed-files helpers ─────
+    function showRetryUI(failedCount, batchId) {
+        if (!failedCount || failedCount <= 0) {
+            const panel = document.getElementById('retryPanel');
+            if (panel) panel.style.display = 'none';
+            return;
+        }
+        let panel = document.getElementById('retryPanel');
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.id = 'retryPanel';
+            panel.style.cssText = 'margin-top:18px;padding:14px 18px;border-radius:12px;background:rgba(239,68,68,0.10);border:1px solid rgba(239,68,68,0.35);display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;';
+            const overlay = document.querySelector('#loadingOverlay .loading-panel') || document.getElementById('loadingOverlay');
+            if (overlay) overlay.appendChild(panel);
+        }
+        panel.innerHTML =
+            '<div style="flex:1;min-width:240px;">' +
+              '<div style="color:#ef4444;font-weight:800;font-size:14px;margin-bottom:4px;">' +
+                '<i class="fa-solid fa-triangle-exclamation" style="margin-left:6px;"></i>' +
+                failedCount + ' ملف فشل التصحيح' +
+              '</div>' +
+              '<div style="color:rgba(255,255,255,0.55);font-size:12px;">' +
+                'يمكنك إعادة محاولة تصحيح الملفات الفاشلة فقط دون رفع الباقي مجدداً.' +
+              '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+              '<button onclick="retryFailedFiles()" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:6px;">' +
+                '<i class="fa-solid fa-rotate-right"></i> إعادة محاولة الملفات الفاشلة' +
+              '</button>' +
+              (batchId ?
+                '<a href="/batch-results/' + batchId + '" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.15);padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:6px;">' +
+                  '<i class="fa-solid fa-eye"></i> عرض النتائج المُصحَّحة' +
+                '</a>' : '') +
+              '<button onclick="document.getElementById(\'loadingOverlay\').classList.add(\'hidden\')" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.10);padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:600;">إغلاق</button>' +
+            '</div>';
+        panel.style.display = 'flex';
+    }
+
+    async function retryFailedFiles() {
+        if (!window._failedStudents || window._failedStudents.size === 0) {
+            showToast('لا توجد ملفات فاشلة لإعادة المحاولة', 'info');
+            return;
+        }
+        const failedIndices = Array.from(window._failedStudents);
+        const filteredFiles = failedIndices.map(i => accumulatedFiles[i]).filter(Boolean);
+        if (filteredFiles.length === 0) {
+            showToast('تعذّر العثور على ملفات الفشل في التحميل الأصلي. الرجاء رفعها مجدداً.', 'warning');
+            return;
+        }
+        const panel = document.getElementById('retryPanel');
+        if (panel) panel.style.display = 'none';
+        document.getElementById('loadingText').textContent =
+            '🔁 إعادة محاولة ' + filteredFiles.length + ' ملف...';
+        updateProgress(0);
+        failedIndices.forEach((i, k) => {
+            if (k === 0) setFileStatus(i, 'active');
+            else setFileStatus(i, 'pending');
+        });
+        const formData = new FormData();
+        filteredFiles.forEach(f => formData.append('files', f, f.name));
+        formData.append('batch_name', document.getElementById('batchName').value + ' (إعادة محاولة)');
+        const checked = Array.from(document.querySelectorAll('input[name="criteria"]:checked')).map(cb => cb.value);
+        formData.append('selected_criteria', checked.join(','));
+        formData.append('folder_mode', 'false');
+        if (IS_ADMIN) {
+            formData.append('grading_mode', getSelectedAdminGradingMode());
+        }
+        try {
+            const response = await fetch('/api/batch-grade/' + assignmentId, {
+                method: 'POST', body: formData
+            });
+            const txt = await response.text();
+            let data;
+            try { data = txt ? JSON.parse(txt) : {}; }
+            catch (e) {
+                showToast('رد غير صالح من الخادم: ' + txt.substring(0, 200), 'error');
+                return;
+            }
+            if (data.success) {
+                failedIndices.forEach(i => setFileStatus(i, 'success'));
+                window._failedStudents.clear();
+                document.getElementById('loadingText').textContent = '✅ نجحت إعادة المحاولة!';
+                updateProgress(100);
+                setTimeout(() => {
+                    if (data.batch_id) openBatchResultsSafe(data.batch_id);
+                }, 1500);
+            } else if (data.errors && data.errors.length > 0) {
+                window._failedStudents.clear();
+                data.errors.forEach(err => {
+                    const idx = studentFileNames.findIndex(name =>
+                        name === err.student ||
+                        name.replace(/\.[^/.]+$/, '') === err.student ||
+                        (err.student && err.student.includes(name))
+                    );
+                    if (idx !== -1) {
+                        setFileStatus(idx, 'failed', err.error);
+                        window._failedStudents.add(idx);
+                    }
+                });
+                showRetryUI(window._failedStudents.size, data.batch_id);
+                document.getElementById('loadingText').textContent =
+                    '⚠️ ' + window._failedStudents.size + ' ملف لا يزال فاشلاً';
+            } else {
+                showToast(data.detail || 'فشل غير معروف أثناء إعادة المحاولة', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال أثناء إعادة المحاولة: ' + e.message, 'error');
+        }
+    }
+
+    function resolveProgressStudentNames(info) {
+        const fromServer = normalizeFileNameList(info.all_student_names || []);
+        if (fromServer.length) return fromServer;
+        if (studentFileNames.length) return studentFileNames.slice();
+        const ctx = window.BtecBackgroundGrading?.getContext?.() || {};
+        if (ctx.studentLabel) return [ctx.studentLabel];
+        const cur = normalizeFileNameEntry(info.current_student || '');
+        if (cur) return [cur];
+        const done = normalizeFileNameList(info.completed_students || []);
+        if (done.length) return done;
+        if ((Number(info.total) || 0) === 1 ||
+            archiveScope === 'single' ||
+            (ctx.uploadMode === 'archive' && ctx.archiveScope !== 'multi')) {
+            return ['طالب واحد'];
+        }
+        return [];
+    }
+
+    function syncProgressOverlayFromServer(info) {
+        if (!info || !info.found) return;
+        if (info.grading_mode_label) showGradingModeBadge(info.grading_mode_label);
+        updateLoadingPhase(info);
+
+        const names = resolveProgressStudentNames(info);
+        const serverTotal = Number(info.total) || 0;
+        const total = Math.max(serverTotal, names.length, 1);
+        const completed = Math.min(Number(info.completed) || 0, total);
+        const phase = info.current_phase || '';
+        const isArchiveExtract = phase === 'extracting_archive' || phase === 'preparing';
+
+        if (names.length) {
+            const same = names.length === studentFileNames.length &&
+                names.every(function (n, i) { return n === studentFileNames[i]; });
+            if (!same) {
+                studentFileNames = names;
+                buildFileList(studentFileNames, false);
+            } else if (!document.getElementById('gradingFileList')?.children?.length) {
+                buildFileList(studentFileNames, false);
+            }
+        }
+
+        document.getElementById('progressText').textContent = String(completed);
+        document.getElementById('totalText').textContent = String(total);
+
+        const badge = document.getElementById('fileSummaryBadge');
+        if (badge) {
+            if (isArchiveExtract && total <= 1) {
+                badge.textContent = info.current_student
+                    ? `فك ZIP: ${info.current_student}`
+                    : 'جاري فك أرشيف طالب واحد...';
+            } else if (isPostExtractPhase(phase) && total <= 1) {
+                badge.textContent = info.phase_label || 'المقيم الذكي يصحّح (PRO)...';
+            } else {
+                badge.textContent = `${completed} من ${total} طالب`;
+            }
+        }
+
+        const activeStudent = normalizeFileNameEntry(info.current_student || '');
+        refreshExtractingListActivity(info);
+        if (isPostExtractPhase(phase) && studentFileNames.length === 1) {
+            setFileStatus(0, 'active');
+            const li = document.getElementById('grading-file-0');
+            if (li) {
+                const statusText = li.querySelector('[data-status-text]');
+                if (statusText) {
+                    statusText.textContent = info.phase_label || 'المقيم الذكي يصحّح المعايير...';
+                }
+            }
+        } else if (activeStudent && studentFileNames.length) {
+            studentFileNames.forEach(function (name, idx) {
+                if (name === activeStudent || name.includes(activeStudent) || activeStudent.includes(name)) {
+                    if (phase === 'grading' || phase === 'vision' || phase === 'extracting') {
+                        setFileStatus(idx, 'active');
+                    } else if (phase === 'extracting_archive' || phase === 'preparing') {
+                        setFileStatus(idx, 'active');
+                    }
+                } else if (completed > 0 && (info.completed_students || []).some(function (s) {
+                    return s === name || name.includes(s) || s.includes(name);
+                })) {
+                    setFileStatus(idx, 'done');
+                }
+            });
+        } else {
+            refreshExtractingListActivity(info);
+        }
+
+        const singleArchiveUi =
+            (archiveScope === 'single' && uploadMode === 'archive') ||
+            studentFileNames.length === 1;
+        if (completed > 0 && completed < total) {
+            const elapsedServer = (Date.now() / 1000) - (info.start_time || Date.now() / 1000);
+            const avgPerStudent = elapsedServer / completed;
+            const remaining = (total - completed) * avgPerStudent;
+            syncStayOpenHint(info, {
+                eta: true,
+                shownCompleted: completed,
+                etaText: `الوقت المتبقي المقدر: ${formatTime(remaining)}  ·  متوسط ${formatTime(avgPerStudent)} لكل طالب`,
+            });
+        } else if (!info.finished) {
+            syncStayOpenHint(info, { singleArchiveUi: singleArchiveUi });
+        }
+    }
+
+    function initResumeGradingPage() {
+        const params = new URLSearchParams(window.location.search);
+        const wantsResume = params.get('resume_grading') === '1';
+        const bg = window.BtecBackgroundGrading;
+        if (!wantsResume || !bg || !bg.isActive()) return;
+
+        const ctx = bg.getContext ? bg.getContext() : null;
+        if (ctx && ctx.uploadMode) uploadMode = ctx.uploadMode;
+        if (ctx && ctx.archiveScope) archiveScope = ctx.archiveScope;
+        if (ctx && ctx.studentLabel && !studentFileNames.length) {
+            studentFileNames = [ctx.studentLabel];
+            buildFileList(studentFileNames, false);
+            document.getElementById('totalText').textContent = '1';
+            document.getElementById('fileSummaryBadge').textContent = '0 من 1';
+        }
+
+        batchWasQueued = true;
+        window._gradingHandedOffToBackground = false;
+        hideFloaterOnGradingPage();
+
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) overlay.classList.remove('hidden');
+        setGradingActionRowVisible(true);
+        setCancelGradingEnabled(true);
+        setBackgroundGradingEnabled(true);
+        document.getElementById('loadingText').textContent = 'جاري التصحيح...';
+        setProgressHint('متابعة التصحيح — يمكنك «تصحيح في الخلفية» مرة أخرى', { includeStayOpen: false });
+
+        window.BtecBackgroundGradingOnProgress = function (info, pct) {
+            if (typeof pct === 'number') updateProgress(pct);
+            syncProgressOverlayFromServer(info);
+            if (info && info.finished && info.final_response) {
+                window.BtecBackgroundGradingOnProgress = null;
+                finishBatchGradingUI(info.final_response, null, null, Date.now(), info.total || 1);
+            } else if (info && info.finished && info.failed) {
+                window.BtecBackgroundGradingOnProgress = null;
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                showBatchFailurePopup(info);
+            }
+        };
+
+        bg.fetchProgress(assignmentId).then(function (info) {
+            const pct = bg.resolveProgressPercent(info) || 3;
+            updateProgress(pct);
+            syncProgressOverlayFromServer(info);
+        }).catch(function () { /* ignore */ });
+
+        clearBatchPageTimers();
+        window._batchPollInterval = setInterval(async function () {
+            if (window._gradingHandedOffToBackground || _batchGradingUiComplete) return;
+            try {
+                const res = await fetch(`/api/batch-grade-progress/${assignmentId}`);
+                const info = await res.json();
+                if (info.grading_mode_label) showGradingModeBadge(info.grading_mode_label);
+                const pct = bg.resolveProgressPercent(info);
+                if (typeof pct === 'number') updateProgress(pct);
+                syncProgressOverlayFromServer(info);
+                if ((info.finished || (info.final_response && info.final_response.success)) && info.final_response) {
+                    clearBatchPageTimers();
+                    finishBatchGradingUI(info.final_response, null, null, Date.now(), info.total || 1);
+                } else if (info.finished && info.failed) {
+                    clearBatchPageTimers();
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                    showBatchFailurePopup(info);
+                }
+            } catch (_) { /* ignore */ }
+        }, 2000);
+    }
+
+    function hideFloaterOnGradingPage() {
+        const el = document.getElementById('bgGradingFloater');
+        if (el) el.classList.add('hidden');
+    }
+
+    function setUploadControlsEnabled(enabled) {
+        ['btnPickFolder', 'btnPickZipSingle', 'btnPickZipMulti', 'btnPickWord'].forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.style.opacity = enabled ? '' : '0.45';
+            el.style.pointerEvents = enabled ? '' : 'none';
+            el.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+        });
+        const banner = document.getElementById('uploadBlockedBanner');
+        if (banner) banner.classList.toggle('hidden', !!enabled);
+    }
+
+    async function abandonInFlightGrading() {
+        if (!confirm('إلغاء التصحيح الحالي ورفع ملف جديد؟\n\nسيتوقف التصحيح الجاري.')) {
+            return;
+        }
+        try {
+            await fetch(`/api/batch-grade-cancel/${assignmentId}`, { method: 'POST', credentials: 'same-origin' });
+        } catch (_) { /* ignore */ }
+        try {
+            await fetch(`/api/batch-grade-reset-progress/${assignmentId}`, {
+                method: 'POST',
+                credentials: 'same-origin',
+            });
+        } catch (_) { /* ignore */ }
+        batchWasQueued = false;
+        _batchGradingUiComplete = false;
+        clearBatchPageTimers();
+        document.getElementById('loadingOverlay')?.classList.add('hidden');
+        setGradingActionRowVisible(false);
+        setCancelGradingEnabled(false);
+        setBackgroundGradingEnabled(false);
+        if (window.BtecBackgroundGrading) window.BtecBackgroundGrading.deactivate();
+        setUploadControlsEnabled(true);
+        showToast('تم إلغاء التصحيح — يمكنك رفع ملف جديد', 'success');
+    }
+
+    document.getElementById('btnAbandonGrading')?.addEventListener('click', abandonInFlightGrading);
+
+    function attachInFlightGradingPoll(clientStartMs) {
+        clearBatchPageTimers();
+        const startMs = clientStartMs || Date.now();
+        window._lastProgressInfo = window._lastProgressInfo || null;
+        window._batchClockInterval = setInterval(() => {
+            if (window._gradingHandedOffToBackground || _batchGradingUiComplete) return;
+            const info = window._lastProgressInfo;
+            const serverStart = info && Number(info.start_time || 0);
+            const elapsedSec = serverStart > 0
+                ? Math.max(0, Math.round(Date.now() / 1000 - serverStart))
+                : Math.max(0, Math.round((Date.now() - startMs) / 1000));
+            if (shouldUseSimpleStayOpenHint(info)) {
+                updateStayOpenElapsedHint(elapsedSec);
+            } else {
+                const timerEl = document.getElementById('elapsedTimer');
+                if (timerEl) timerEl.textContent = '  ⏱ ' + formatTime(elapsedSec);
+            }
+        }, 1000);
+        window._batchPollInterval = setInterval(async function () {
+            if (window._gradingHandedOffToBackground || _batchGradingUiComplete) return;
+            try {
+                const res = await fetch(`/api/batch-grade-progress/${assignmentId}`);
+                const info = await res.json();
+                window._lastProgressInfo = info;
+                if (!info.found) {
+                    setUploadControlsEnabled(true);
+                    clearBatchPageTimers();
+                    return;
+                }
+                if (info.grading_mode_label) showGradingModeBadge(info.grading_mode_label);
+                if (info.batch_id) pollBatchId = info.batch_id;
+                if (!info.finished && !info.failed) {
+                    document.getElementById('loadingOverlay')?.classList.remove('hidden');
+                    setGradingActionRowVisible(true);
+                    setCancelGradingEnabled(true);
+                    setBackgroundGradingEnabled(true);
+                    setUploadControlsEnabled(false);
+                    const pct = window.BtecBackgroundGrading
+                        ? window.BtecBackgroundGrading.resolveProgressPercent(info)
+                        : (typeof info.percent === 'number' ? info.percent : 3);
+                    if (typeof pct === 'number') updateProgress(pct);
+                    syncProgressOverlayFromServer(info);
+                    if (shouldUseSimpleStayOpenHint(info)) {
+                        const serverStart = Number(info.start_time || 0);
+                        const elapsedSec = serverStart > 0
+                            ? Math.max(0, Math.round(Date.now() / 1000 - serverStart))
+                            : Math.max(0, Math.round((Date.now() - startMs) / 1000));
+                        updateStayOpenElapsedHint(elapsedSec);
+                    } else {
+                        setProgressHint(
+                            info.phase_label || 'تصحيح جارٍ — استخدم «تصحيح في الخلفية» لمتابعة التصفح',
+                            { includeStayOpen: false }
+                        );
+                    }
+                    if (info.cancel_requested && !info.finished) {
+                        document.getElementById('loadingText').textContent = 'جاري إيقاف التصحيح...';
+                        setCancelGradingEnabled(false);
+                    }
+                    if (
+                        info.finished &&
+                        (info.cancelled || (info.final_response && info.final_response.cancelled))
+                    ) {
+                        clearBatchPageTimers();
+                        setUploadControlsEnabled(true);
+                        document.getElementById('loadingOverlay')?.classList.add('hidden');
+                        setGradingActionRowVisible(false);
+                        if (window.BtecBackgroundGrading) {
+                            window.BtecBackgroundGrading.deactivate();
+                        }
+                        _batchGradingUiComplete = true;
+                        showToast(
+                            (info.final_response && info.final_response.detail) ||
+                                'تم إيقاف التصحيح',
+                            'warning'
+                        );
+                    }
+                    return;
+                }
+                clearBatchPageTimers();
+                setUploadControlsEnabled(true);
+                document.getElementById('loadingOverlay')?.classList.add('hidden');
+                if (info.finished && info.failed) {
+                    showBatchFailurePopup(info);
+                }
+            } catch (_) { /* ignore */ }
+        }, 2000);
+    }
+
+    async function initInFlightGradingOnPageLoad() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('resume_grading') === '1') return;
+        if (batchWasQueued) return;
+        try {
+            const res = await fetch(`/api/batch-grade-progress/${assignmentId}`);
+            const info = await res.json();
+            if (!info.found || info.finished || info.failed) return;
+            batchWasQueued = true;
+            pollBatchId = info.batch_id || null;
+            hideFloaterOnGradingPage();
+            document.getElementById('loadingOverlay')?.classList.remove('hidden');
+            setGradingActionRowVisible(true);
+            setCancelGradingEnabled(true);
+            setBackgroundGradingEnabled(true);
+            setUploadControlsEnabled(false);
+            document.getElementById('loadingText').textContent = 'جاري التصحيح...';
+            const pct = window.BtecBackgroundGrading
+                ? window.BtecBackgroundGrading.resolveProgressPercent(info)
+                : (typeof info.percent === 'number' ? info.percent : 3);
+            if (typeof pct === 'number') updateProgress(pct);
+            syncProgressOverlayFromServer(info);
+            window._lastProgressInfo = info;
+            const serverStart = Number(info.start_time || 0);
+            if (shouldUseSimpleStayOpenHint(info)) {
+                const elapsedSec = serverStart > 0
+                    ? Math.max(0, Math.round(Date.now() / 1000 - serverStart))
+                    : 0;
+                updateStayOpenElapsedHint(elapsedSec);
+            } else {
+                setProgressHint(
+                    info.phase_label || 'تصحيح جارٍ — لا يمكن رفع ملف جديد حتى ينتهي',
+                    { includeStayOpen: false }
+                );
+            }
+            attachInFlightGradingPoll(
+                serverStart > 0 ? Math.round(serverStart * 1000) : Date.now()
+            );
+        } catch (_) { /* ignore */ }
+    }
+</script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (function () {
+        function bootGradingPage() {
+            if (typeof initResumeGradingPage === 'function') initResumeGradingPage();
+            if (typeof initInFlightGradingOnPageLoad === 'function') initInFlightGradingOnPageLoad();
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bootGradingPage);
+        } else {
+            bootGradingPage();
+        }
+    })();
+</script>
+{% endblock %}

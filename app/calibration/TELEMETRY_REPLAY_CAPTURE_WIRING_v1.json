@@ -1,0 +1,85 @@
+{
+  "spec_id": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1",
+  "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "step": 4,
+  "status": "design_only",
+  "activation": false,
+  "extends": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1",
+  "primary_invariant_en": "Telemetry density does not imply gameplay understanding.",
+  "primary_invariant_ar": "كثافة telemetry لا تعني فهم gameplay.",
+  "replay_invariant_en": "Replay is evidence of reproducibility, not evidence of validity.",
+  "replay_invariant_ar": "Replay دليل على reproducibility — لا على validity.",
+  "visibility_comprehension_split_en": "execution visibility ≠ execution comprehension",
+  "visibility_comprehension_split_ar": "رؤية التنفيذ ≠ فهم التنفيذ",
+  "supreme_risk_en": "epistemic saturation — signal density creates false comprehension",
+  "supreme_risk_ar": "تشبع epistemic — كثرة الإشارات → «النظام بالتأكيد يفهم»",
+  "legitimacy_theater_risk_en": "high-resolution legitimacy theater — technical signal density without epistemic verification",
+  "telemetry_architecture": {
+    "layers": [
+      {
+        "layer_id": "raw_telemetry",
+        "function_en": "capture only",
+        "epistemic_interpretation": false,
+        "signal_types": [
+          "fps_sample",
+          "frame_event",
+          "process_lifecycle",
+          "input_timestamp",
+          "crash_signal",
+          "render_continuity"
+        ],
+        "storage_mode": "phenomenological_traces",
+        "not": "meaningful_gameplay_claims"
+      },
+      {
+        "layer_id": "epistemic_interpretation",
+        "function_en": "blocked by default",
+        "epistemic_interpretation": false,
+        "default_state": "blocked",
+        "unlock_requires": "human_governed_explicit_gate",
+        "not": "auto_inference_from_density"
+      }
+    ]
+  },
+  "replay_phenomenology": {
+    "layer_id": "replay_phenomenology",
+    "purpose_en": "Describe replay capture phenomena — not validity or authenticity claims.",
+    "pairs": [
+      {"phenomenology_en": "replay captured", "forbidden_escalation_en": "gameplay verified"},
+      {"phenomenology_en": "replay deterministic", "forbidden_escalation_en": "submission authentic"},
+      {"phenomenology_en": "replay reproducible", "forbidden_escalation_en": "rubric satisfied"},
+      {"phenomenology_en": "replay continuous", "forbidden_escalation_en": "mechanics validated"}
+    ]
+  },
+  "forbidden_shortcuts": [
+    "dense telemetry → system understands gameplay",
+    "ordered replay → game confirmed",
+    "coherent telemetry → rubric satisfied",
+    "continuous execution → mechanics validated"
+  ],
+  "wiring_outputs": [
+    "raw_telemetry_traces",
+    "telemetry_graph",
+    "replay_phenomenology",
+    "provenance_chain_segment",
+    "epistemic_interpretation_blocked_stub"
+  ],
+  "forbidden_outputs": [
+    "gameplay_understood",
+    "gameplay_verified",
+    "submission_authentic",
+    "rubric_satisfied",
+    "mechanics_validated",
+    "high_resolution_legitimacy_summary"
+  ],
+  "implementation_module": "app/telemetry_replay_capture.py",
+  "schema": "app/calibration/PHENOMENOLOGY_MANIFEST_v1.json",
+  "ledger_path": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+  "ledger_intentionally_empty": true,
+  "companions": [
+    "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1.json",
+    "PHENOMENOLOGY_MANIFEST_v1.json",
+    "QUARANTINE_DOMAIN_SPLIT_v1.json",
+    "RUNTIME_OBSERVATION_LEDGER_SCHEMA_v1.json"
+  ]
+}

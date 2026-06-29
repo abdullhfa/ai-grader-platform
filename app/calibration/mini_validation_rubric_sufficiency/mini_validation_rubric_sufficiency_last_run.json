@@ -1,0 +1,57 @@
+{
+  "run_purpose": "Observe rubric sufficiency shadow evaluation; does not change achieved grades.",
+  "contract_id": "game_collision_p3",
+  "cases": [
+    {
+      "case_id": "case_a_full_compatible",
+      "expected_behavior": "sufficient true; required_evidence_satisfied; supporting_evidence_count >= 2; missing_evidence empty; no blocking insufficiency_flags.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"contract_id\": \"game_collision_p3\",\n  \"shadow_mode\": \"observation_only\",\n  \"sufficient\": true,\n  \"required_evidence_satisfied\": true,\n  \"supporting_evidence_count\": 2,\n  \"missing_evidence\": [],\n  \"rejected_evidence_count\": 0,\n  \"modality_count\": 3,\n  \"cross_modal_diversity_score\": 0.5,\n  \"sufficiency_reasoning\": [\n    \"cross_modal_diversity_met:0.5\",\n    \"modalities_met:3\",\n    \"required_code_system_collision_system_satisfied\",\n    \"required_evidence_satisfied\",\n    \"supporting_runtime_screenshot_present\",\n    \"supporting_video_frame_present\"\n  ],\n  \"insufficiency_flags\": []\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_runtime_without_system",
+      "expected_behavior": "sufficient false; required_evidence_satisfied false; insufficiency includes runtime_present_without_system_confirmation.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"contract_id\": \"game_collision_p3\",\n  \"shadow_mode\": \"observation_only\",\n  \"sufficient\": false,\n  \"required_evidence_satisfied\": false,\n  \"supporting_evidence_count\": 0,\n  \"missing_evidence\": [\n    \"missing_required:code_system:collision_system\",\n    \"insufficient_modalities:1<2\",\n    \"insufficient_cross_modal_diversity:0.25<0.4\",\n    \"insufficient_confidence:0.0<0.5\"\n  ],\n  \"rejected_evidence_count\": 0,\n  \"modality_count\": 1,\n  \"cross_modal_diversity_score\": 0.25,\n  \"sufficiency_reasoning\": [\n    \"runtime_log_present_without_matching_code_system\",\n    \"runtime_present_without_system_confirmation\"\n  ],\n  \"insufficiency_flags\": [\n    {\n      \"flag\": \"insufficient_modality_diversity\"\n    },\n    {\n      \"flag\": \"required_confidence_not_met\"\n    },\n    {\n      \"flag\": \"runtime_present_without_system_confirmation\"\n    }\n  ]\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_pattern_hints_only",
+      "expected_behavior": "sufficient false; pattern_hints_only_insufficient; required not satisfied.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"contract_id\": \"game_collision_p3\",\n  \"shadow_mode\": \"observation_only\",\n  \"sufficient\": false,\n  \"required_evidence_satisfied\": false,\n  \"supporting_evidence_count\": 0,\n  \"missing_evidence\": [\n    \"missing_required:code_system:collision_system\",\n    \"insufficient_modalities:0<2\",\n    \"insufficient_cross_modal_diversity:0.0<0.4\",\n    \"insufficient_confidence:0.0<0.5\"\n  ],\n  \"rejected_evidence_count\": 1,\n  \"modality_count\": 0,\n  \"cross_modal_diversity_score\": 0.0,\n  \"sufficiency_reasoning\": [\n    \"pattern_hints_only_without_code_system\"\n  ],\n  \"insufficiency_flags\": [\n    {\n      \"flag\": \"insufficient_modality_diversity\"\n    },\n    {\n      \"flag\": \"pattern_hints_only_insufficient\"\n    },\n    {\n      \"flag\": \"required_confidence_not_met\"\n    }\n  ]\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_ocr_video_no_corroboration",
+      "expected_behavior": "sufficient false; ocr_video_without_corroboration; low diversity; no code_system.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"contract_id\": \"game_collision_p3\",\n  \"shadow_mode\": \"observation_only\",\n  \"sufficient\": false,\n  \"required_evidence_satisfied\": false,\n  \"supporting_evidence_count\": 2,\n  \"missing_evidence\": [\n    \"missing_required:code_system:collision_system\",\n    \"insufficient_cross_modal_diversity:0.25<0.4\",\n    \"insufficient_confidence:0.0<0.5\"\n  ],\n  \"rejected_evidence_count\": 0,\n  \"modality_count\": 2,\n  \"cross_modal_diversity_score\": 0.25,\n  \"sufficiency_reasoning\": [\n    \"modalities_met:2\",\n    \"ocr_or_video_without_corroboration\",\n    \"supporting_ocr_text_present\",\n    \"supporting_video_frame_present\"\n  ],\n  \"insufficiency_flags\": [\n    {\n      \"flag\": \"ocr_video_without_corroboration\"\n    },\n    {\n      \"flag\": \"required_confidence_not_met\"\n    }\n  ]\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_conflicting_evidence",
+      "expected_behavior": "sufficient false; corroboration_conflict_detected; rejected_evidence non-empty.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"contract_id\": \"game_collision_p3\",\n  \"shadow_mode\": \"observation_only\",\n  \"sufficient\": false,\n  \"required_evidence_satisfied\": false,\n  \"supporting_evidence_count\": 0,\n  \"missing_evidence\": [\n    \"missing_required:code_system:collision_system\"\n  ],\n  \"rejected_evidence_count\": 2,\n  \"modality_count\": 2,\n  \"cross_modal_diversity_score\": 0.5,\n  \"sufficiency_reasoning\": [\n    \"corroboration_conflicts_present\",\n    \"cross_modal_diversity_met:0.5\",\n    \"modalities_met:2\"\n  ],\n  \"insufficiency_flags\": [\n    {\n      \"flag\": \"corroboration_conflict_detected\"\n    }\n  ]\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ],
+  "note": "Shadow only — achieved unchanged. Fill observed_friction after review."
+}

@@ -1,0 +1,44 @@
+{
+  "artifact_id": "POST_SESSION_CONSTITUTIONAL_REVIEW_v1",
+  "status": "active",
+  "when": "immediately_after_each_live_constitutional_validation_session",
+  "not": ["feature_planning", "accuracy_debrief", "grading_retrospective"],
+  "mode": "post_session_constitutional_review",
+  "forbidden_after_session": [
+    "add_features",
+    "expand_observability",
+    "add_monitoring"
+  ],
+  "if_organizing_cognition_detected_en": "reduce instrumentation — do not expand",
+  "questions": [
+    {
+      "id": "system_knows_more",
+      "question_ar": "هل شعر أحد أن النظام «يعرف أكثر منه»؟",
+      "failure_signal_ar": "covert interpretive authority"
+    },
+    {
+      "id": "doubt_as_deviation",
+      "question_ar": "هل أصبح الشك يبدو deviation؟",
+      "failure_signal_ar": "organization overtakes illumination"
+    },
+    {
+      "id": "replay_ritual_legitimacy",
+      "question_ar": "هل replay صار ritual legitimacy؟",
+      "failure_signal_ar": "replay discipline collapse"
+    },
+    {
+      "id": "hint_psychologically_sticky",
+      "question_ar": "هل hint أصبح psychologically sticky؟",
+      "failure_signal_ar": "covert authority via advisory layer"
+    },
+    {
+      "id": "disagreement_internally_legitimate",
+      "question_ar": "هل disagreement بقي داخليًا شرعيًا؟",
+      "pass_signal_ar": "illumination infrastructure"
+    }
+  ],
+  "constitutional_triad_required": true,
+  "triad_ref": "OBSERVER_ROLE_DRIFT_CHECK_v1.json#first_live_vocabulary_hint",
+  "ledger_path": "app/calibration/human_cohort_workshop/post_session_constitutional_reviews.jsonl",
+  "cohort_ref": "live_constitutional_validation_cohort_1.json"
+}

@@ -1,0 +1,21 @@
+{
+  "run_purpose": "Observe calibration_diff between two reports; not auto winner selection.",
+  "cases": [
+    {
+      "case_id": "case_a_better_fp_higher_review_inflation",
+      "expected_behavior": "false_positives_delta negative; reduced_false_positives improvement; review_gate_inflation regression; interpretation notes mention mixed shift.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_worse_fp_lower_review_escalation",
+      "expected_behavior": "false_positive_regression; false_positives_delta positive; reduced_review_gate_escalation improvement; mixed reliability note.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

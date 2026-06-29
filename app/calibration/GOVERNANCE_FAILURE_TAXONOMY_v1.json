@@ -1,0 +1,26 @@
+{
+  "id": "GOVERNANCE_FAILURE_TAXONOMY_v1",
+  "status": "frozen",
+  "companion_freeze": "GOVERNANCE_FREEZE_v1",
+  "failure_modes": [
+    "GFM_AUTHORITY_INFLATION",
+    "GFM_CONTRADICTION_INVISIBILITY",
+    "GFM_SEMANTIC_ESCALATION",
+    "GFM_REPLAY_INCOMPLETENESS",
+    "GFM_FALSE_CORROBORATION",
+    "GFM_MODALITY_DOMINANCE",
+    "GFM_DRIFT_SILENCE",
+    "GFM_BOUNDARY_OMISSION",
+    "GFM_REVIEWER_AUTHORITY_CONFUSION",
+    "GFM_TRUST_EROSION",
+    "GFM_CANONICAL_DRIFT"
+  ],
+  "automatic_sources": [
+    "governance_drift_monitor",
+    "temporal_consistency_governance",
+    "cross_artifact_consistency"
+  ],
+  "manual_sources": [
+    "human_cohort_workshop"
+  ]
+}

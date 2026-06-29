@@ -1,0 +1,22 @@
+{
+  "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "status": "capability_complete",
+  "completed_at": "2026-05-25T17:00:00Z",
+  "mode": "observability_only",
+  "next_recommended_phase": "ARCHITECTURAL_HARDENING_v1",
+  "step_6_status": "blocked_constitutionally",
+  "supreme_invariant_en": "Runtime observation does not imply runtime legitimacy.",
+  "capability_vs_legitimacy_en": "Capability built ≠ legitimacy granted.",
+  "constitutional_pilot_status": "paused_intentionally",
+  "runtime_observation_ledger": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+  "runtime_observation_ledger_entries": 0,
+  "runtime_observation_ledger_intentionally_empty": true,
+  "sub_sequence_progress": {
+    "1_ledger_schema": "complete",
+    "2_provenance_sandbox_spec": "complete",
+    "3_telemetry_replay_wiring": "complete",
+    "4_runtime_epistemic_governance": "complete",
+    "5_limited_runtime_validation": "blocked_until_live_pass"
+  },
+  "notes_ar": "capability complete — hardening recommended · لا Step 6 · ledger فارغ عمدًا"
+}

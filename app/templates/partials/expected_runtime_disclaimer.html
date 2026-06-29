@@ -1,0 +1,27 @@
+{% set PRO_PACKAGES_HREF = '/dashboard#packages' %}
+{% set PRO_UPGRADE_STATUS_AR = 'تحديث الى خطة برو' %}
+{% set PRO_UPGRADE_DISCLAIMER_AR = '( تحديث الخطة الى برو )' %}
+{% set PRO_UPGRADE_STATUSES = [
+    PRO_UPGRADE_STATUS_AR,
+    PRO_UPGRADE_DISCLAIMER_AR,
+    'تحديث الخطة الى برو',
+] %}
+
+{% macro render_pro_upgrade_link(label=PRO_UPGRADE_DISCLAIMER_AR, link_class='pro-upgrade-link', title='عرض الباقات', block=false) %}
+<a href="{{ PRO_PACKAGES_HREF }}" class="{{ link_class }}" title="{{ title }}"{% if block %} style="display: inline-block; margin-top: 4px;"{% endif %}>{{ label }}</a>
+{% endmacro %}
+
+{% macro render_expected_disclaimer(size='md', tone='dark', centered=false) %}
+{% set sizes = {'sm': '11px', 'md': '12px', 'lg': '13px'} %}
+{% set fs = sizes.get(size, '12px') %}
+{% if tone == 'light' %}
+{% set text_color = 'color: rgba(49, 46, 129, 0.88);' %}
+{% else %}
+{% set text_color = 'color: rgba(255, 255, 255, 0.82);' %}
+{% endif %}
+{% set align = 'text-align: center;' if centered else '' %}
+<span style="font-weight: 800; font-size: {{ fs }}; line-height: 1.55; display: block; {{ text_color }} {{ align }}">
+    بناء على الوثائق والصور والفيديو؛ التشغيل الفعلي لم يدقق.
+    {{ render_pro_upgrade_link(block=true) }}
+</span>
+{% endmacro %}

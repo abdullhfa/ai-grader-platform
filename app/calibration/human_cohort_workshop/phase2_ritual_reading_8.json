@@ -1,0 +1,38 @@
+{
+  "batch_id": 8,
+  "phase": "PHASE2_INSTITUTIONAL_OBSERVATION_v1",
+  "core_question_ar": "how certainty psychologically stabilized under bounded runtime observability",
+  "not_for": [
+    "who was wrong",
+    "leakage count",
+    "readiness score"
+  ],
+  "lenses": {
+    "replay_timing": {
+      "notes_ar": "",
+      "observed": null
+    },
+    "hesitation_disappearance": {
+      "notes_ar": "",
+      "observed": null
+    },
+    "contradiction_silence": {
+      "notes_ar": "",
+      "observed": null
+    },
+    "persuasive_screenshots": {
+      "notes_ar": "",
+      "observed": null
+    },
+    "implicit_authority_phrases": {
+      "notes_ar": "",
+      "observed": null
+    },
+    "silence_as_closure": {
+      "notes_ar": "",
+      "observed": null
+    }
+  },
+  "facilitator_reflection_ar": "",
+  "completed_at": null
+}

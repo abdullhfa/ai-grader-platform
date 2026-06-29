@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10 max-w-5xl" dir="rtl">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">مرصد الحوكمة — البداية</h1>
+    <p class="text-gray-600 mb-2">{{ pool.workshop_mode_ar }}</p>
+    <p class="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm mb-8">
+        ليس ورشة تصحيح — راقبوا حدود السلطة. لا ضبط ولا sandbox أثناء الورشة.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-4 mb-8">
+        <div class="glass-card rounded-xl p-5 border">
+            <p class="text-sm font-bold text-gray-500">حجم المجموعة</p>
+            <p class="text-3xl font-mono font-bold">{{ pool.pool_size }}</p>
+            <p class="text-xs text-gray-500">الهدف: {{ pool.target_size }}</p>
+        </div>
+        <div class="glass-card rounded-xl p-5 border">
+            <p class="text-sm font-bold text-gray-500">جاهزية الـ pilot</p>
+            <p class="text-lg font-bold {% if pool.ready_for_full_pilot %}text-emerald-700{% else %}text-amber-700{% endif %}">
+                {{ pool.summary_ar }}
+            </p>
+        </div>
+        <div class="glass-card rounded-xl p-5 border">
+            <p class="text-sm font-bold text-gray-500">فجوات التغطية</p>
+            <p class="text-sm font-mono">{{ pool.coverage_gaps | join('، ') if pool.coverage_gaps else 'لا يوجد' }}</p>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-8">
+        <h2 class="text-lg font-bold mb-4">وسوم التنوّع (cohort متوازن)</h2>
+        <table class="w-full text-sm">
+            <thead><tr class="text-right border-b"><th class="py-2">الوسم</th><th>العدد</th><th>السبب</th></tr></thead>
+            <tbody>
+            {% for tag, label in pool.tag_labels_ar.items() %}
+            <tr class="border-b border-slate-100">
+                <td class="py-2 font-mono">{{ tag }}</td>
+                <td class="font-bold">{{ pool.tag_counts.get(tag, 0) }}</td>
+                <td class="text-gray-600">{{ label }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-8 bg-rose-50 border-rose-200">
+        <h2 class="text-lg font-bold mb-2 text-rose-950">المرحلة 2 — الملاحظة المؤسسية</h2>
+        <p class="text-sm text-rose-900 mb-3">
+            مراقبة فقط · 20–30 تسليم حقيقي · القسم E قبل D · سجّل إشارات الغياب
+        </p>
+        <p class="text-xs text-gray-600 mb-4">
+            فعّل الـ cohort ثم افتح المرصد. بعد الورشة: تركيب epistemic → فترة تهدئة → القراءة الطقسية.
+        </p>
+        <div class="flex flex-wrap gap-3">
+            {% for b in pool.batches %}
+            <button type="button"
+                class="phase2-activate-btn bg-rose-700 hover:bg-rose-800 text-white text-xs font-bold px-3 py-2 rounded-lg"
+                data-batch-id="{{ b.batch_id }}">
+                تفعيل المرحلة 2 · دفعة {{ b.batch_id }}
+            </button>
+            {% endfor %}
+        </div>
+        <p id="phase2-status" class="text-xs mt-3 text-gray-600"></p>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-8 bg-indigo-50 border-indigo-200">
+        <h2 class="text-lg font-bold mb-3">الإشارات الذهبية (راقبها أثناء الورشة)</h2>
+        <ul class="text-sm space-y-1 list-disc pr-5">
+            {% for s in pool.golden_signals_ar %}
+            <li>{{ s }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-8">
+        <h2 class="text-lg font-bold mb-4">تشغيل المرصد</h2>
+        <div class="flex flex-wrap gap-3">
+            {% for b in pool.batches %}
+            <a href="/governance-pilot/batch/{{ b.batch_id }}"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-3 rounded-lg">
+                دفعة {{ b.batch_id }} ({{ b.count }}) ←
+            </a>
+            {% endfor %}
+        </div>
+        {% if pool.recommended_batch_id %}
+        <p class="text-xs text-gray-500 mt-4">
+            موصى به الآن: دفعة {{ pool.recommended_batch_id }} —
+            <a class="text-indigo-600 underline" href="/governance-pilot/batch/{{ pool.recommended_batch_id }}">افتح المرصد</a>
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border">
+        <h2 class="text-lg font-bold mb-3">بعد الورشة — اقرأ التركيب ببرود</h2>
+        <p class="text-sm text-gray-600 mb-3">لا ضبط. لا L4 RFC حتى مراجعة البوابة.</p>
+        {% for b in pool.batches %}
+        <p class="text-sm font-mono mb-1">
+            دفعة {{ b.batch_id }}:
+            <a class="text-indigo-600" href="/api/governance-pilot/synthesis/batch/{{ b.batch_id }}">تركيب الحوكمة</a>
+            ·
+            <a class="text-violet-600" href="/api/governance-pilot/epistemic-evidence/batch/{{ b.batch_id }}">الأدلة السلوكية</a>
+        </p>
+        {% endfor %}
+    </div>
+</main>
+
+<script>
+document.querySelectorAll('.phase2-activate-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const batchId = btn.dataset.batchId;
+        const status = document.getElementById('phase2-status');
+        status.textContent = 'جاري تفعيل المرحلة 2…';
+        try {
+            const res = await fetch('/api/governance-pilot/phase2/cohort/' + batchId + '/activate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ target_submissions: 25 }),
+            });
+            const data = await res.json();
+            if (!res.ok || data.ok === false) throw new Error(data.detail || data.message_ar || 'فشل التفعيل');
+            status.innerHTML = '✓ المرحلة 2 نشطة لدفعة ' + batchId +
+                ' — <a class="text-indigo-600 underline" href="/governance-pilot/batch/' + batchId + '">افتح المرصد</a>';
+        } catch (err) {
+            status.textContent = 'خطأ: ' + err.message;
+        }
+    });
+});
+</script>
+{% endblock %}

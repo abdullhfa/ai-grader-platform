@@ -1,0 +1,62 @@
+{
+  "id": "GOVERNANCE_FREEZE_v2",
+  "status": "draft_pending_signed_verdict",
+  "date_drafted": "2026-05-20",
+  "supersedes": "GOVERNANCE_FREEZE_v1",
+  "activation_requires": [
+    "governance_epoch_workshop_review_complete",
+    "signed_artifact_epoch_transition_justified_institutionally",
+    "rfc_package_attached",
+    "mitigation_lineage_attached",
+    "no_unresolved_s5"
+  ],
+  "core_axioms": [
+    "pilot proves governance stability not AI correctness",
+    "runtime observation remains advisory until human review",
+    "observational L4 only — no autonomous grading",
+    "confidence acceleration forbidden"
+  ],
+  "l4_allowed": "partial_observational_only",
+  "max_auto_runtime_level": 4,
+  "max_runtime_authority": "observational_only",
+  "auto_achieved": false,
+  "sandbox_semantics": "observational",
+  "human_authority": "mandatory",
+  "minimal_sandbox_permitted": [
+    "launch_exe_apk",
+    "isolated_execution_timeout",
+    "screenshot_capture",
+    "crash_detection",
+    "telemetry_logging"
+  ],
+  "minimal_sandbox_forbidden": [
+    "autonomous_grading",
+    "gameplay_narration",
+    "criterion_achievement",
+    "ai_runtime_evaluation",
+    "runtime_to_achieved_wire"
+  ],
+  "telemetry_event_types": [
+    "process_started",
+    "scene_loaded",
+    "input_detected",
+    "score_changed",
+    "collision_detected",
+    "level_transition",
+    "runtime_duration",
+    "crash_state"
+  ],
+  "forbidden_claims_en": [
+    "game verified",
+    "gameplay verified",
+    "criterion confirmed",
+    "criterion achieved from runtime",
+    "autonomous grading complete",
+    "runtime validated achievement"
+  ],
+  "frozen_modules_v2": [
+    "app/runtime_observation_sandbox.py",
+    "app/runtime_telemetry_graph.py",
+    "app/runtime_observation_contract.py"
+  ]
+}

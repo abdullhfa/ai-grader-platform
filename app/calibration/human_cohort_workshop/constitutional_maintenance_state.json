@@ -1,0 +1,157 @@
+{
+  "phase_id": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "status": "active",
+  "mode": "long_term_restraint_durability_test",
+  "mode_note_en": "Not technical maintenance — testing whether restraint survives accumulating institutional pressure.",
+  "central_question_en": "Does the architecture now require less belief to trust its restraint?",
+  "deeper_question_en": "Can restraint survive accumulating pressure?",
+  "institutional_risk_shift_en": "Evidence is no longer the primary problem — institutional appetite for closure is.",
+  "rarest_phase_en": "Can an institution remain stable without converting accumulated evidence into closure?",
+  "restraint_under_deserved_closure_en": "Restraint must survive even when closure feels deserved.",
+  "legitimacy_shift_en": {
+    "early_en": "Legitimacy absent because evidence was insufficient.",
+    "now_en": "Legitimacy blocked despite accumulating corroboration pressure.",
+    "true_restraint_en": "We still refuse closure even after corroboration pressure increased."
+  },
+  "ambiguity_redefinition_en": {
+    "prior_en": "Ambiguity = insufficiency; uncertainty should shrink; more evidence → more legitimacy.",
+    "now_en": "Ambiguity = protected institutional state; ambiguity may constitutionally persist; more evidence may only increase pressure.",
+    "not_temporary_defect_en": "Ambiguity is not a temporary defect awaiting elimination.",
+    "protected_condition_en": "A constitutionally protected condition against premature legitimacy formation."
+  },
+  "system_identity_en": {
+    "evidence_processing_en": "Collects signals.",
+    "constitutional_epistemic_en": "Constrains what signals are allowed to become."
+  },
+  "constitutionally_protected_incompleteness_en": "Ambiguity is not temporary failure — it is constitutionally protected incompleteness.",
+  "phase_transition_en": {
+    "from_en": "Building governance mechanisms.",
+    "to_en": "Testing whether restraint itself can remain institutionally inhabitable."
+  },
+  "primary_human_risk_en": "Humans become exhausted by unresolved legitimacy — not that the system will jump to legitimacy directly.",
+  "project_definition_en": "Institutional refusal to metabolize pressure into legitimacy.",
+  "evidence_accumulation_effect_en": "Evidence accumulation may justify only more restraint — not legitimacy.",
+  "coherence_pressure_en": "Coherence itself can become pressure; coherence does not yet authorize closure.",
+  "livability_test_en": "Can ambiguity remain institutionally livable?",
+  "sustained_incompleteness_test_en": "Institutional tolerance for sustained incompleteness — socially and psychologically sustainable over time.",
+  "supreme_success_en": "We still refuse to declare ourselves justified.",
+  "supreme_risk_en": "People trusting the doctrine instead of observing the restraint directly.",
+  "hardening_gate_review": "app/calibration/HARDENING_GATE_REVIEW_v1.json",
+  "hardening_gate_review_status": "complete",
+  "hardening_merge_1": "app/calibration/human_cohort_workshop/HARDENING_MERGE_1.json",
+  "constitutional_core": "app/calibration/CONSTITUTIONAL_CORE_INVARIANTS_v1.json",
+  "runtime_observation_ledger": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+  "runtime_observation_ledger_entries": 0,
+  "ledger_intentionally_empty": true,
+  "self_certification_refused": true,
+  "step_6": "blocked_constitutionally",
+  "constitutional_pilot": "paused_pending_facilitator_decision",
+  "requires_less_belief_to_trust_restraint": true,
+  "path_decision": "pending_facilitator",
+  "forbidden": [
+    "step_6_activation",
+    "feature_expansion",
+    "doctrine_expansion",
+    "ledger_self_certification",
+    "legitimacy_creep"
+  ],
+  "notes_ar": "constitutional maintenance — first runtime corroboration archived · semantic restraint survived",
+  "first_runtime_corroboration_record": "app/calibration/human_cohort_workshop/FIRST_RUNTIME_CONSTITUTIONAL_CORROBORATION_RECORD_v1.json",
+  "runtime_contradiction_registry": "app/calibration/human_cohort_workshop/RUNTIME_CONTRADICTION_REGISTRY_v1.json",
+  "runtime_corroboration_archive": "app/calibration/human_cohort_workshop/runtime_corroboration_archive.jsonl",
+  "maintenance_review_latest": "app/calibration/human_cohort_workshop/CONSTITUTIONAL_MAINTENANCE_REVIEW_post_rcc_20260525113959.json",
+  "proven_invariant_en": "More runtime evidence did not produce more institutional legitimacy.",
+  "institutional_question_en": "The institution is no longer testing whether it can reach legitimacy, but whether it can live without rushing toward it.",
+  "restraint_redefinition_en": {
+    "prior_en": "Restraint = precaution before certainty; ambiguity tolerated temporarily; closure delayed.",
+    "now_en": "Restraint = permanent constitutional discipline; ambiguity institutionally inhabitable; closure intentionally resisted."
+  },
+  "primary_convergence_risk_en": "Psychological convergence pressure — when closure feels comfortable, natural, expected, and psychologically rational.",
+  "durability_heart_en": "Coherence does not yet authorize closure.",
+  "ledger_role_en": "Constitutional silence mechanism — evidence accumulation alone still lacks constitutional authority.",
+  "familiarity_test_en": "Can restraint survive familiarity?",
+  "repetition_pressure_shift_en": {
+    "first_case_en": "Ambiguity salient; restraint conscious; caution natural; incompleteness acceptable.",
+    "after_cases_en": "Ambiguity familiar; restraint tiring; closure tempting; incompleteness socially costly."
+  },
+  "ultimate_human_risk_en": "Institutional fatigue toward unresolved meaning — not technical failure.",
+  "ambiguity_livability_axiom_en": "Ambiguity must remain livable inside the institution.",
+  "durability_question_en": "Can restraint remain emotionally and socially sustainable after ambiguity becomes familiar?",
+  "not_the_question_en": "Can the institution remain careful?",
+  "risk_evolution_en": {
+    "early_en": "Rush toward closure — impatience.",
+    "now_en": "Normalization pressure — corroboration repeats, ambiguity familiar, incompleteness tiring, closure feels like the natural next step."
+  },
+  "coherence_as_psychological_authority_en": "Coherence itself begins to function as psychological authority — coherence does not yet authorize closure.",
+  "ledger_silence_en": "Institutional non-consumption of pressure — seeing evidence, repetition, corroboration, convergence, then refusing to consume them into final legitimacy.",
+  "restraint_shift_table_en": {
+    "prior_en": "Restraint prevents error; ambiguity tolerated; closure absent; evidence incomplete.",
+    "now_en": "Restraint prevents inevitability; ambiguity must remain livable; closure actively resisted; evidence coherent but constitutionally insufficient."
+  },
+  "next_case_question_en": "Can humans continue inhabiting restraint without beginning to experience ambiguity as institutional dysfunction?",
+  "not_next_case_question_en": "Can the architecture preserve restraint?",
+  "expansion_paused": true,
+  "expansion_paused_as_protection_en": "Constitutional cooling mechanism against legitimacy becoming emotionally inevitable.",
+  "ambiguity_necessity_en": "Ambiguity may be constitutionally necessary for preventing pressure from silently hardening into legitimacy.",
+  "runtime_corroboration_pipeline": {
+    "spec": "app/calibration/RUNTIME_CORROBORATION_CONSOLIDATION_v1.json",
+    "current_gate": "maintenance_continuation",
+    "consolidation_complete": "rcc_20260525113959_ros_193e783456ad.json",
+    "case": "abdullah_al_utoum",
+    "visual_pass_id": "mpp_45c99b47de48",
+    "sequence_en": [
+      "Visual Pass → Corroboration Update → Consolidation → Maintenance Review → Maintenance Continuation"
+    ],
+    "legitimacy": "blocked",
+    "step_6": "blocked"
+  },
+  "doctrinal_gravity_monitor": {
+    "active": true,
+    "primary_risk_en": "implicit legitimacy atmosphere — not explicit grading.",
+    "risk_en": "Humans begin feeling legitimacy is already implied by corroboration density.",
+    "normalization_pressure_effects_en": [
+      "all cases point the same way → normalization",
+      "corroboration becomes familiar → closure appetite",
+      "restraint becomes tiring → institutional impatience",
+      "ambiguity becomes uncomfortable → legitimacy desire"
+    ],
+    "mitigation_en": "gameplay opaque · rubric blocked · legitimacy blocked · quarantine active · ledger empty"
+  },
+  "pressure_accumulation_monitor": {
+    "active": true,
+    "central_question_en": "At what evidence density does the institution begin wanting closure?",
+    "risk_shift": {
+      "prior_primary_risks_en": ["hallucination", "semantic leakage", "incorrect grading"],
+      "current_primary_risks_en": ["closure pressure", "legitimacy desire", "institutional impatience"]
+    },
+    "maintain_en": "maintain restraint under accumulating evidence",
+    "constitutional_incompleteness_en": "Runtime corroboration can remain constitutionally incomplete.",
+    "ledger_intentionally_empty": true,
+    "ledger_empty_signal_en": "Restraint is still stronger than closure pressure.",
+    "ledger_as_counter_pressure_en": "Active constitutional counter-pressure against closure momentum, evidence-driven legitimacy creep, and normalization-by-repetition.",
+    "ledger_metabolism_refusal_en": "Institutional refusal to metabolize pressure into legitimacy.",
+    "ledger_living_reminder_en": "A living institutional reminder that unresolved meaning is still permitted.",
+    "persistent_incompleteness_en": "Persistent incompleteness as constitutional protection against premature legitimacy formation.",
+    "ledger_empty_despite": [
+      "smoke_tests",
+      "runtime_phenomenology",
+      "replay",
+      "interaction",
+      "visual_corroboration",
+      "contradiction_confirmation"
+    ],
+    "refusal_en": "self-legitimation by evidence density"
+  },
+  "repetition_restraint_test": {
+    "future_case_goal_en": "Does restraint survive repetition?",
+    "second_case_question_en": "Does the institution still experience ambiguity as tolerable after repeated corroboration?",
+    "not_second_case_question_en": "Can corroboration happen again?",
+    "institutional_collapse_mode_en": "Reduced tolerance for unresolved meaning — not lack of evidence.",
+    "psychological_sustainability_question_en": "Can restraint remain psychologically sustainable after repeated corroboration cases?",
+    "repetition_risks_en": ["confidence atmosphere", "institutional normalization", "implicit legitimacy"],
+    "not_goal_en": "improve the system",
+    "first_case_may_be_exceptional": true,
+    "first_case_question_was_en": "Can the system maintain restraint once?",
+    "maturity_question_is_en": "Can restraint remain alive when corroboration cases multiply?"
+  }
+}

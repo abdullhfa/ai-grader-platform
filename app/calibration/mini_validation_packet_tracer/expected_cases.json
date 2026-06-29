@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe Packet Tracer deterministic extraction; not pass/fail product proof.",
+  "cases": [
+    {
+      "case_id": "case_a_valid_network",
+      "expected_behavior": "Readable legacy .pkt; topology_detected true; ip_configurations_detected true; device_count >= 4; routers/switches/PCs present; static_routes_detected and RIP in routing_protocols; evidence_type packet_tracer_topology in evidence_layer.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_empty_pkt",
+      "expected_behavior": "Empty .pkt: readable false; pkt_empty_or_unreadable or decode failure; topology_detected false; unreadable evidence row or zero devices.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_topology_no_ips",
+      "expected_behavior": "Devices/topology without IP tags: topology_detected true; ip_configurations_detected false; noise flag topology_without_ip_configuration.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_routing_no_interfaces",
+      "expected_behavior": "RIP/static route markers without interface strings: static_routes_detected or routing_protocols present; interfaces_detected 0; noise flag routing_without_interfaces.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_corrupt_pkt",
+      "expected_behavior": "Random bytes: decode fails; readable false; topology_detected false; pkt_decode_failed noise.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

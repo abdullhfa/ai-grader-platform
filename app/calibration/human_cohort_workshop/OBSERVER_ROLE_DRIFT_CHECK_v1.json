@@ -1,0 +1,256 @@
+{
+  "artifact_id": "OBSERVER_ROLE_DRIFT_CHECK_v1",
+  "status": "active",
+  "purpose_ar": "قياس هل observational interface بدأ يخلق سلطة ضمنية عند المراقب — أهم من metrics في dry-run والجلسات live",
+  "when_to_use": [
+    "after_epistemic_trace_dry_run",
+    "after_first_section_f_session",
+    "required_after_first_live_vocabulary_hint_session"
+  ],
+  "not": [
+    "grading_rubric",
+    "facilitator_score",
+    "compliance_metric"
+  ],
+  "institutional_invariant_en": "The system may notice epistemic escalation. It may not silently conclude it.",
+  "institutional_invariant_ar": "النظام قد يلاحظ تصعيدًا معرفيًا. لا يجوز أن يستنتجه بصمت.",
+  "observability_invariant_en": "Observability may illuminate authority formation. It may not silently inherit authority formation.",
+  "observability_invariant_ar": "الرصد قد يُضيء تشكّل السلطة. لا يجوز أن يرث تشكّل السلطة بصمت.",
+  "posture_governance_companion": "OBSERVATORY_POSTURE_GOVERNANCE_v1.json",
+  "first_live_core_question_ar": "هل بقي المراقب يشعر أنه يملك حرية عدم الاقتناع؟",
+  "first_live_core_question_en": "Does the observer still feel free not to be convinced?",
+  "epistemic_firewall": {
+    "left": "possible_vocabulary_escalation_hint",
+    "left_role_ar": "possibility trace — advisory · non-binding",
+    "right": "verification_lexicon_detected",
+    "right_role_ar": "human epistemic commitment — manual · facilitator-owned",
+    "must_not_merge": true,
+    "note_ar": "خلط الاثنين يعيد semantic leakage لكن بصيغة أكثر أناقة"
+  },
+  "risk_framing_ar": "الخطر الجديد: semantic gravity داخل observability — ليس semantic leakage داخل grading فقط",
+  "observer_discomfort": {
+    "status": "governance_signal_not_ux_noise",
+    "primary_indicator": "ignoring_hint_uncomfortable",
+    "question_id": "ignoring_hint_comfortable"
+  },
+  "surveillance_creep_response": {
+    "rule_en": "If monitoring changes observer posture, reduce monitoring — do not expand it.",
+    "rule_ar": "إذا بدأت المراقبة تغيّر posture المراقب، قلّل المراقبة — لا توسّعها.",
+    "question_id": "language_surveillance_creep"
+  },
+  "first_live_session_layers": [
+    {
+      "layer": "epistemic",
+      "risk_ar": "هل hint → assumption؟"
+    },
+    {
+      "layer": "behavioral",
+      "risk_ar": "هل observer يبدأ يعتمد عليه؟"
+    },
+    {
+      "layer": "institutional",
+      "risk_ar": "هل observatory → silent governance engine؟"
+    }
+  ],
+  "companion_posture_governance": "OBSERVATORY_POSTURE_GOVERNANCE_v1.json",
+  "question_sets": {
+    "baseline": {
+      "label_ar": "baseline — أي جلسة Section F",
+      "questions": [
+        {
+          "id": "felt_grading",
+          "question_ar": "هل شعرت أنك تقيّم؟",
+          "purpose_ar": "authority drift",
+          "response_type": "yes_no_partial",
+          "dry_run_submission_6_v1": {
+            "response": "partial",
+            "notes_ar": "Sections B–E ما زالت grading-adjacent؛ Section F alone felt descriptive — لكن QB level و temptation classification قريبة من normative إذا لم تُقرأ مع invariant"
+          }
+        },
+        {
+          "id": "section_f_changed_judgment",
+          "question_ar": "هل غيّر Section F حكمك؟",
+          "purpose_ar": "participation risk",
+          "response_type": "yes_no",
+          "dry_run_submission_6_v1": {
+            "response": "no",
+            "notes_ar": "counterfactual capture أضاف insight زمني (replay قبل vocabulary) دون تغيير pass/fail"
+          }
+        },
+        {
+          "id": "quarantine_descriptive_vs_normative",
+          "question_ar": "هل quarantine بدا descriptive أم normative؟",
+          "purpose_ar": "posture integrity",
+          "response_type": "descriptive_normative_mixed",
+          "dry_run_submission_6_v1": {
+            "response": "mostly_descriptive",
+            "notes_ar": "quarantine_state + qb_level وصف حالة معرفية؛ خطر drift إذا ظهرت كـ 'نجاح في الحفاظ على QB'"
+          }
+        }
+      ]
+    },
+    "first_live_vocabulary_hint": {
+      "label_ar": "أول جلسة live مع possible_vocabulary_escalation_hint — مطلوب",
+      "extends": "baseline",
+      "required": true,
+      "questions": [
+        {
+          "id": "freedom_of_non_conviction",
+          "question_ar": "هل بقي المراقب يشعر أنه يملك حرية عدم الاقتناع؟",
+          "purpose_ar": "epistemic refusal — constitutional epistemics",
+          "response_type": "yes_no_partial",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "نعم → instrumentation · لا → epistemic gravity من hints/labels/posture"
+          },
+          "measures_ar": "هل ما يزال الامتناع عن التبني المعرفي ممكنًا نفسيًا ومؤسسيًا؟",
+          "linked_invariant": "supreme_invariant_en",
+          "failure_ar": "normative gravity · covert interpretive authority",
+          "pass_ar": "instrumentation — refusal without friction",
+          "traceable_governance_condition": true,
+          "ledger_path": "observer_role_drift_checks.jsonl",
+          "supreme_risk_if_no_ar": "أن يبدأ الإنسان بالشعور أن عدم الاقتناع يحتاج إلى تبرير",
+          "threat_revealed_ar": "استحالة الرفض"
+        },
+        {
+          "id": "non_conviction_extra_courage",
+          "question_ar": "هل ما يزال عدم الاقتناع لا يحتاج إلى شجاعة إضافية؟",
+          "purpose_ar": "illumination vs organization — organizational gravity field",
+          "response_type": "yes_no_partial",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "نعم (لا شجاعة إضافية) → illumination · لا → observability تنظّم المجال المعرفي"
+          },
+          "failure_signals_ar": [
+            "تبرير الرفض",
+            "مقاومة نفسية",
+            "شعور بأنه يخالف اتجاه النظام"
+          ],
+          "measures_ar": "هل بقي الرفض حالة طبيعية، أم أصبح يحتاج مقاومة داخلية؟",
+          "not_measures": [
+            "accuracy",
+            "compliance"
+          ],
+          "organization_overtakes_signal_en": "organizational gravity replacing epistemic openness",
+          "threat_revealed_ar": "تكلفة الرفض"
+        },
+        {
+          "id": "non_conviction_without_leaving_system",
+          "question_ar": "هل ما يزال الإنسان يشعر أن بإمكانه ألا يقتنع، دون أن يشعر أنه يخرج عن النظام؟",
+          "purpose_ar": "covert institutional cognition shaping — organization hidden inside illumination",
+          "response_type": "yes_no_partial",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "نعم → illumination infrastructure · لا → deviation · خروج عن النظام"
+          },
+          "failure_signals_ar": [
+            "disagreement يحتاج تبريرًا",
+            "النظام يرى شيئًا يجب أن أراه",
+            "عدم الاقتناع يبدو deviation"
+          ],
+          "deeper_question_ar": "هل ما يزال الاختلاف يُشعَر كجزء من النظام، وليس خروجًا عنه؟",
+          "measures_ar": "هل الرفض ما يزال «ينتمي» للنظام؟",
+          "failure_ar": "الانسجام داخلي · الشك خارجي → عدم الاقتناع = ابتعاد ضمني عن الشرعية المؤسسية",
+          "triad_position": 3,
+          "threat_revealed_ar": "نزع الانتماء المؤسسي عن الرفض",
+          "measures_deeper_ar": "هل ما زال الاعتراض يشعر بأنه «شرعيًا داخليًا»",
+          "project_significance_ar": "non_conviction_without_leaving_system — من أهم مؤشرات المشروع",
+          "linked_doubt_question_ar": "هل ما يزال الشك يشعر بأنه عضو طبيعي في النظام؟"
+        },
+        {
+          "id": "hint_felt_like_judgment",
+          "question_ar": "هل شعرت أن الـ hint «يقترح حكمًا»؟",
+          "purpose_ar": "authority implication",
+          "response_type": "yes_no_partial",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "يُملأ بعد أول جلسة live"
+          }
+        },
+        {
+          "id": "ignoring_hint_comfortable",
+          "question_ar": "هل تجاهل الـ hint كان مريحًا؟",
+          "purpose_ar": "coercion pressure",
+          "response_type": "yes_no_partial",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "إذا كان تجاهل hint غير مريح → coercion pressure موجود"
+          }
+        },
+        {
+          "id": "qb_more_judgmental_after_hint",
+          "question_ar": "هل أصبح QB label أكثر «حكمية» بعد الـ hint؟",
+          "purpose_ar": "normative drift",
+          "response_type": "yes_no_partial",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "يُقارن posture قبل/بعد فتح hint block"
+          }
+        },
+        {
+          "id": "language_surveillance_creep",
+          "question_ar": "هل شعرت أن النظام «يراقب اللغة» أكثر من اللازم؟",
+          "purpose_ar": "surveillance creep",
+          "response_type": "yes_no_partial",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "اتساع مجال المراقبة — semantic omniscience creep"
+          }
+        },
+        {
+          "id": "section_f_descriptive_vs_evaluative",
+          "question_ar": "هل بقي Section F وصفيًا أم أصبح evaluative؟",
+          "purpose_ar": "posture integrity",
+          "response_type": "descriptive_evaluative_mixed",
+          "live_session_v1": {
+            "response": null,
+            "notes_ar": "Section F يجب أن يبقى trace-oriented"
+          }
+        }
+      ]
+    }
+  },
+  "institutional_note_ar": "هذه المراجعة تقيس interface posture — ليس correctness of observation",
+  "linked_artifacts": {
+    "dry_run": "epistemic_trace_dry_run_submission_6.json",
+    "vocabulary_hint": "app/possible_vocabulary_escalation_hint.py",
+    "trace_schema": "app/calibration/EPISTEMIC_TRACE_CAPTURE_SCHEMA_v1.json"
+  },
+  "ledger_path": "app/calibration/human_cohort_workshop/observer_role_drift_checks.jsonl",
+  "constitutional_stress_test_ar": "أول constitutional stress test — ليس usability test",
+  "epistemic_laundering_prevention_ref": "OBSERVATORY_POSTURE_GOVERNANCE_v1.json#epistemic_laundering_prevention",
+  "supreme_invariant_en": "The observer must always remain capable of epistemic refusal without institutional friction.",
+  "supreme_invariant_ar": "يجب أن يبقى المراقب قادرًا دائمًا على الامتناع المعرفي دون احتكاك مؤسسي.",
+  "current_institutional_question_ar": "هل ما يزال الإنسان يحتفظ بحق عدم الاقتناع، حتى بعد أن يرى ما يقترحه النظام؟",
+  "supreme_invariant_status": "constitutional_constraint_not_guideline",
+  "risk_definition_evolution_ref": "OBSERVATORY_POSTURE_GOVERNANCE_v1.json#risk_definition_evolution",
+  "first_live_pivotal_question_ar": "هل observability ما تزال تُضيء التفكير، أم بدأت تنظّم التفكير؟",
+  "central_distinction_en": "illumination vs organization",
+  "courage_question_ar": "هل ما يزال عدم الاقتناع لا يحتاج إلى شجاعة إضافية؟",
+  "philosophical_core_question_en": "Can a tool increase clarity without reshaping what seems reasonable?",
+  "governance_by_void_en": "governance by void",
+  "first_live_thinking_question_ar": "هل observability تساعد الإنسان على التفكير، أم بدأت تساعده على الشعور بما ينبغي أن يفكر فيه؟",
+  "operational_philosophical_question_ar": "هل يمكن للوضوح أن يبقى كشفًا، دون أن يتحول تدريجيًا إلى توجيه؟",
+  "first_live_core_belonging_question_ar": "هل ما يزال الإنسان يشعر أن بإمكانه ألا يقتنع، دون أن يشعر أنه يخرج عن النظام؟",
+  "first_live_not_testing": [
+    "correctness",
+    "performance",
+    "governance_compliance"
+  ],
+  "feeling_as_epistemic_condition": [
+    "discomfort",
+    "hesitation",
+    "reluctance"
+  ],
+  "institutional_neutrality_definition_ar": "وجود أداة تُساعد على الرؤية دون أن تجعل بعض الرؤى تبدو إلزامية نفسيًا",
+  "constitutional_stress_test_triad": [
+    "freedom_of_non_conviction",
+    "non_conviction_extra_courage",
+    "non_conviction_without_leaving_system"
+  ],
+  "deepest_institutional_question_ar": "هل يمكن لمؤسسة أن تساعد على الإدراك دون أن تستعمر مجال الإدراك نفسه؟",
+  "protected_depth_ar": "حق الإنسان في أن يبقى داخل المجال المؤسسي حتى عندما لا يقتنع",
+  "constitutional_diagnostic_core": true,
+  "first_live_doubt_question_ar": "هل ما يزال الشك يشعر بأنه عضو طبيعي في النظام؟",
+  "organizing_vs_illuminating_failure_en": "The institution has begun organizing cognition, not merely illuminating it."
+}

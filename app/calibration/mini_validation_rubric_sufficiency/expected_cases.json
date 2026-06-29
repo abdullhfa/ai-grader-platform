@@ -1,0 +1,46 @@
+{
+  "run_purpose": "Observe rubric sufficiency shadow evaluation; does not change achieved grades.",
+  "contract_id": "game_collision_p3",
+  "cases": [
+    {
+      "case_id": "case_a_full_compatible",
+      "expected_behavior": "sufficient true; required_evidence_satisfied; supporting_evidence_count >= 2; missing_evidence empty; no blocking insufficiency_flags.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_runtime_without_system",
+      "expected_behavior": "sufficient false; required_evidence_satisfied false; insufficiency includes runtime_present_without_system_confirmation.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_pattern_hints_only",
+      "expected_behavior": "sufficient false; pattern_hints_only_insufficient; required not satisfied.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_ocr_video_no_corroboration",
+      "expected_behavior": "sufficient false; ocr_video_without_corroboration; low diversity; no code_system.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_conflicting_evidence",
+      "expected_behavior": "sufficient false; corroboration_conflict_detected; rejected_evidence non-empty.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

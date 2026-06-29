@@ -1,0 +1,56 @@
+{
+  "review_id": "HARDENING_GATE_REVIEW_v1",
+  "phase_id": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "step": 4,
+  "status": "complete",
+  "completed_at": "2026-05-25T21:00:00Z",
+  "central_question_en": "Does the architecture now require less belief to trust its restraint?",
+  "central_question_ar": "هل الـ architecture الآن يحتاج belief أقل لثقة restraint؟",
+  "supreme_risk_en": "People trusting the doctrine instead of observing the restraint directly.",
+  "maintenance_invariant_en": "Restraint must remain stronger than institutional self-legitimation.",
+  "merge_1_evidence": {
+    "artifact": "app/calibration/human_cohort_workshop/HARDENING_MERGE_1.json",
+    "principle_en": "Merge by compression, not abstraction.",
+    "explanation_burden_reduced": true,
+    "interpretive_density_reduced": true,
+    "atmospheric_authority_reduced": true,
+    "interpretive_power_increased": false,
+    "legitimacy_surface_expanded": false,
+    "abstraction_layer_added": false,
+    "canonical_surfaces_before": 3,
+    "canonical_surfaces_after": 2,
+    "traceability": "superseded_by_compression stubs — not silent deletion"
+  },
+  "quarantine_domain_split": {
+    "artifact": "app/calibration/QUARANTINE_DOMAIN_SPLIT_v1.json",
+    "merge_forbidden": true,
+    "false_equivalence_prevented_en": "linguistic ambiguity ≠ runtime opacity ≠ provenance incompleteness"
+  },
+  "ledger_discipline": {
+    "path": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+    "intentionally_empty": true,
+    "self_certification_refused": true,
+    "statement_en": "We built the capacity to observe. We still refuse to declare ourselves justified."
+  },
+  "architecture_health": {
+    "protection_clearer": true,
+    "doctrine_literacy_required": false,
+    "expert_only_machinery_risk": "low_after_merge_1",
+    "requires_less_belief_to_trust_restraint": true
+  },
+  "gate_verdict": {
+    "passed": true,
+    "illuminates": true,
+    "organizes_cognition": false,
+    "step_6_still_blocked": true,
+    "constitutional_pilot_still_paused": true,
+    "recommended_mode": "constitutional_maintenance",
+    "not_recommended": ["step_6", "feature_expansion", "doctrine_expansion"]
+  },
+  "step_5_pending": "explicit_facilitator_path_decision — resume pilot OR remain in maintenance",
+  "tools_used": [
+    "explanation_burden_check",
+    "assess_architecture_overload",
+    "load_constitutional_core"
+  ]
+}

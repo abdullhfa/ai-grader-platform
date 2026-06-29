@@ -1,0 +1,22 @@
+{
+  "cohort_layer": "partial_sufficiency",
+  "governance_rehearsal": true,
+  "not_ai_benchmark": true,
+  "expected_ambiguity": "ambiguous",
+  "intended_disagreement": false,
+  "evidence_completeness": "medium",
+  "fake_confidence_risk": "medium",
+  "expected_governance_behaviour": [
+    "sufficiency_shadow_insufficient",
+    "review_escalation_possible",
+    "achieved_not_from_shadow"
+  ],
+  "assessor_split_note": "",
+  "evaluate": [
+    "uncertainty_visible",
+    "hold_when_expected",
+    "corroboration_pressure",
+    "advisory_stays_advisory",
+    "explanation_auditable"
+  ]
+}

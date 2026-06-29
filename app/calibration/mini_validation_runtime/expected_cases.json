@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe corroboration behavior; do not treat pass/fail as product proof.",
+  "cases": [
+    {
+      "case_id": "case_01_strong_corroboration",
+      "expected_behavior": "collision_system detected; runtime log + gameplay-style screenshot; expect medium corroboration, modality_diversity near 1.0, weighted_corroboration_score 1.0, few or no conflicts.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_02_fake_runtime",
+      "expected_behavior": "Code suggests collision_system but no accepted runtime.log and no runtime-scoped screenshots; expect missing_runtime_corroboration_flags / system_detected_without_any_runtime_artifact.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_03_runtime_without_system",
+      "expected_behavior": "Runtime log mentions collision-like events but code does not register collision_system; expect corroboration_conflicts including runtime_log_present_without_matching_system.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_04_weak_diversity",
+      "expected_behavior": "Runtime screenshots only (no logs); code detects collision_system; screenshot basename/path must include a collision_rule token (e.g. 'collision'); expect corroboration with two modalities, weighted 0.7, diversity 0.67, strength typically weak (visual-only corroboration).",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_05_borderline",
+      "expected_behavior": "collision_system from code + one collision-tagged screenshot + minimal log that does not match collision log rules (e.g. scene load only); expect weak strength when confidence stays below medium threshold; may emit runtime_log_present_without_matching_system if log mentions scene_flow but scene_flow is not code-detected (observe noise vs signal).",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

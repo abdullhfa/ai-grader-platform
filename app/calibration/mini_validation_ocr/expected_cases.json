@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe raw OCR pipeline (presence flags, noise, temporal windows); requires Tesseract on PATH. No assertions.",
+  "cases": [
+    {
+      "case_id": "case_a_frame_ui_score",
+      "expected_behavior": "Screenshot under gameplay/ with clear HUD-style text → OCR returns non-empty raw_text; ocr_presence_flags may include ui_text_detected when heuristics match.",
+      "ocr_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_blank_frame",
+      "expected_behavior": "Solid-color image → very little or empty OCR; expect ocr_low_text_density or sparse items.",
+      "ocr_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_noisy_frame",
+      "expected_behavior": "High-noise RGB image → garbled or empty OCR; expect ocr_low_text_density and/or read noise.",
+      "ocr_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_ocr_no_logs",
+      "expected_behavior": "Visual OCR without runtime.log files → ocr_text_without_runtime_context in ocr_noise_flags when items exist.",
+      "ocr_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_ocr_log_screenshot_window",
+      "expected_behavior": "OCR on screenshot + runtime log + video frame timestamps in one 5s window → temporal_groups include ocr_text alongside video_frame/runtime_log; optional ocr_text_within_same_temporal_window_as_video_frame in reasoning.",
+      "ocr_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "submission_key": "العاب",
+  "session_id": "87263a3c-9c6c-43db-9f0e-4523593a2c3e",
+  "snapshot_root": "uploads\\replay_snapshots\\العاب\\87263a3c-9c6c-43db-9f0e-4523593a2c3e",
+  "sections": [
+    "runtime",
+    "gameplay",
+    "timeline",
+    "evidence",
+    "ai_reasoning",
+    "grading_summary"
+  ],
+  "replay_schema_version": "1.0",
+  "reasoning_schema_version": "1.0",
+  "audit_schema_version": "1.0",
+  "evidence_schema_version": "1.0",
+  "gameplay_schema_version": "1.0",
+  "governance_schema_version": "1.0",
+  "platform_version": "1.0.0-institutional",
+  "truth_anchor": "replay_snapshot_canonical",
+  "deterministic_hash": "1b3b7f5d82449da21e4ec98079089663f67b5f1e7e88929174e9d141339a9600"
+}

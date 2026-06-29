@@ -1,0 +1,89 @@
+# =====================================================
+#  Pearson BTEC IT Auto-Grader — Python dependencies
+# =====================================================
+#  Tested with Python 3.11 / 3.12 on Linux & Windows.
+#  Do NOT use Python 3.14 in production — it's still beta.
+# =====================================================
+
+# --- Security ---
+bcrypt>=4.0.0
+
+# --- Web framework ---
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+jinja2==3.1.2
+aiofiles==23.2.1
+
+# --- AI client (OpenAI-compatible — used for Gemini, OpenRouter, Ollama) ---
+# Bump openai to a newer version that's more reliable with the Gemini OpenAI-compat endpoint.
+openai>=1.30.0,<2.0.0
+
+# --- Data validation & ORM ---
+pydantic>=2.5.0
+sqlalchemy>=2.0.23
+pymysql==1.1.0
+psycopg2-binary>=2.9.9
+
+# --- HTTP & config ---
+python-dotenv==1.0.0
+httpx==0.25.2
+requests==2.31.0
+email-validator>=2.0.0
+
+# --- Document processing ---
+pdfplumber==0.10.3
+PyMuPDF>=1.23.0
+pypdf2==3.0.1
+python-docx==1.1.0
+python-pptx>=0.6.23
+openpyxl>=3.1.0
+markdown==3.5.1
+reportlab==4.0.7
+Pillow>=10.0.0
+# RAR archive extraction (requires WinRAR UnRAR.exe on Windows)
+rarfile>=4.2
+# Video frame sampling (corroboration / runtime evidence); optional if only ffmpeg is used.
+opencv-python-headless>=4.8.0
+# Raw OCR (presence only); install Tesseract and add to PATH (e.g. Windows: winget UB-Mannheim.TesseractOCR).
+pytesseract>=0.3.10
+
+# --- Arabic text rendering for PDF/Word output ---
+arabic-reshaper>=3.0.0
+python-bidi>=0.4.2
+cffi>=1.15.0
+
+# --- Background jobs (optional — only used if you enable async batch grading) ---
+celery==5.3.4
+redis==5.0.1
+
+# --- Optional runtime headless (pip install -r requirements-runtime.txt) ---
+# playwright>=1.40.0  → then: playwright install chromium
+#
+# Unity automation (Phase 2):
+# AI_GRADER_UNITY_BIN=C:\Program Files\Unity\Hub\Editor\2022.3.x\Editor\Unity.exe
+# AI_GRADER_UNITY_AUTO_BUILD=0|1
+# AI_GRADER_UNITY_PLAYMODE=0|1
+# AI_GRADER_CAPTURE_GAMEPLAY_VIDEO=1
+# AI_GRADER_GAMEPLAY_AI=1          (default ON — post-runtime gameplay intelligence pipeline)
+# AI_GRADER_EVIDENCE_REASONING=1   (default ON — Phase 4 evidence graph + multi-agent arbitration)
+# Phase 5 production infrastructure:
+# AI_GRADER_CELERY_ENABLED=1
+# AI_GRADER_ASYNC_REASONING=1      (queue reasoning on reasoning_jobs — non-blocking grading)
+# AI_GRADER_OBJECT_STORE=local|s3
+# AI_GRADER_S3_ENDPOINT=http://minio:9000
+# AI_GRADER_DOCKER_SANDBOX=1
+# AI_GRADER_RUNTIME_CPU_LIMIT=2
+# AI_GRADER_RUNTIME_MEMORY_MB=2048
+# AI_GRADER_RUNTIME_TIMEOUT=120
+# Phase 5 Sprint 5 — security hardening
+# AI_GRADER_VAULT_ADDR=https://vault.example.com
+# AI_GRADER_VAULT_TOKEN=...
+# AI_GRADER_MALWARE_SCAN=1
+# AI_GRADER_SECRETS_BACKEND=vault|kubernetes|env
+
+# =====================================================
+#  REMOVED (cleanup vs. the original requirements.txt):
+#   * google-generativeai  — was listed twice and never imported anywhere.
+#                            Gemini is accessed via openai client + base_url override.
+# =====================================================

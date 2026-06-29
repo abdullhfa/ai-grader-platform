@@ -1,0 +1,8 @@
+# Optional runtime dependencies — install for full L4 headless support.
+playwright>=1.40.0
+# Secondary fallback for PRO web browser automation:
+selenium>=4.15.0
+# PRO Android Emulator Farm UI automation (requires adb + emulator/device):
+Appium-Python-Client>=3.1.0
+# PRO Scratch VM (requires Node.js + npm install in app/runtime_engines/scratch/scripts):
+#   cd app/runtime_engines/scratch/scripts && npm install

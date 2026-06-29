@@ -1,0 +1,15 @@
+{
+  "schema": "runtime_cohort_human_labels_v1",
+  "description": "Teacher/human reference grades for cohort divergence — fill per submission",
+  "records": [
+    {
+      "submission_id": 1,
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade_level": null,
+      "overall_percentage": null,
+      "notes_ar": "يُملأ من مراجع بشري — Abdullah Unity",
+      "criteria": []
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "report_type": "runtime_cohort_v1",
+  "cohort_id": "runtime_cohort_v1",
+  "generated_at": "2026-05-26T13:10:24Z",
+  "config_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\runtime_cohort\\cohort_config_v1.json",
+  "entry_count": 1,
+  "summary": {
+    "deterministic_replay_stable_count": 1,
+    "deterministic_replay_unstable": [],
+    "replay_hash_stable_verification_failed": [
+      "unity_excellent"
+    ],
+    "runtime_actually_launched": [
+      "unity_excellent"
+    ],
+    "files_only_detection": [],
+    "ai_human_divergence": [],
+    "priority_flags": {
+      "replay_hash_unstable": false,
+      "replay_verification_mismatch": true,
+      "runtime_not_executed": false,
+      "human_labels_missing": true
+    }
+  },
+  "entries": [
+    {
+      "source_type": "db",
+      "submission_id": 1,
+      "student_name": "عبدالله العتوم",
+      "paths_resolved": 7,
+      "path_source": "fallback_root",
+      "batch_id": 1,
+      "metrics": {
+        "runtime_launch": "success",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "unknown",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": false,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 2,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": "gated"
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 33.3,
+          "total_score": 300,
+          "max_score": 900,
+          "achieved_criteria": [
+            "8/C.P5",
+            "8/C.P6"
+          ],
+          "achieved_count": 2
+        },
+        "human_grade": {
+          "available": false,
+          "overall_grade_level": null,
+          "overall_percentage": null,
+          "criteria": [],
+          "notes_ar": "يُملأ من مراجع بشري — Abdullah Unity",
+          "reviewer": null
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": false,
+          "semantic_stable": false,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "0470f556f0324c666b48f33d8b10805ba9fda3956748c9c9276c9f62db8a843b",
+              "replay_verified": false,
+              "semantic_replay_verified": false,
+              "protected_digest_match": false,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0470f556f0324c666b48f33d8b10805ba9fda3956748c9c9276c9f62db8a843b",
+              "replay_verified": false,
+              "semantic_replay_verified": false,
+              "protected_digest_match": false,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0470f556f0324c666b48f33d8b10805ba9fda3956748c9c9276c9f62db8a843b",
+              "replay_verified": false,
+              "semantic_replay_verified": false,
+              "protected_digest_match": false,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 4,
+          "interpretation_ar": "hash ثابت لكن verification فشل — drift في snapshot digest"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": true,
+          "files_only_detection": false,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "تشغيل فعلي في sandbox"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "completed"
+        },
+        "screenshot_evidence": {
+          "count": 4,
+          "valid": true
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "success",
+          "platform": "unity",
+          "sandbox_status": "completed",
+          "functional_smoke_pass": null,
+          "validation_status": "completed",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "unknown",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 4,
+          "sandbox_logs_captured": false,
+          "observation_summary": {}
+        },
+        "replay_disparity": {
+          "replay_unstable": true,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "runtime_only",
+            "runtime_only+partial_code_extraction"
+          ]
+        }
+      },
+      "slot_id": "unity_excellent",
+      "platform": "unity",
+      "tier": "excellent",
+      "label_ar": "Unity — مشروع مكتمل (Abdullah)"
+    }
+  ]
+}

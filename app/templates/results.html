@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Main Content -->
+<main class="container mx-auto px-6 py-10">
+    <div class="max-w-5xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <a href="/batch-results/{{ submission.batch_id }}"
+                class="print-hide text-secondary hover:text-blue-700 flex items-center gap-2 mb-3 text-sm font-semibold transition">
+                <i class="fa-solid fa-arrow-right"></i>
+                العودة للخلف
+            </a>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-2">تقرير النتيجة</h2>
+                    <p class="text-gray-500 text-lg flex items-center gap-2">
+                        الطالب: <span class="font-bold text-gray-800 bg-gray-100 px-3 py-1 rounded-lg">{{
+                            submission.student_name }}</span>
+                    </p>
+                </div>
+
+                <button onclick="window.print()"
+                    class="print-hide bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 font-medium text-sm flex items-center gap-2 shadow-sm transition">
+                    <i class="fa-solid fa-print"></i>
+                    طباعة التقرير
+                </button>
+                {% if has_runtime_replay %}
+                <a href="/runtime-replay/{{ submission.id }}"
+                    class="print-hide bg-violet-50 border border-violet-200 text-violet-800 px-4 py-2 rounded-lg hover:bg-violet-100 font-medium text-sm flex items-center gap-2 shadow-sm transition">
+                    <i class="fa-solid fa-clapperboard"></i>
+                    Runtime Replay
+                </a>
+                {% endif %}
+            </div>
+            {% if l5_playtest_status == 'complete_visual' %}
+            <p class="print-hide text-xs text-emerald-700 font-mono mt-2">
+                L5 playtest: complete_visual
+                {% if runtime_db_sync and runtime_db_sync.applied %} · runtime adjudication synced to DB{% endif %}
+            </p>
+            {% endif %}
+        </div>
+
+        <div class="space-y-8">
+            <!-- Overall Score Card -->
+            {% if summary %}
+            <div class="glass-card rounded-2xl p-8 border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                    <div class="flex-1">
+                        <h3 class="text-gray-500 font-bold mb-1 uppercase tracking-wider text-sm">التقدير العام</h3>
+                        {% set inst = (explainability.institutional_resolution or {}) if explainability else {} %}
+                        {% set btec = inst.btec_grade or (summary.grade_level or 'U') %}
+                        {% set short_grade = btec.split(' ')[0] if btec else 'U' %}
+                        {% if short_grade not in ['D', 'M', 'P', 'U'] %}{% set short_grade = 'U' %}{% endif %}
+                        <div class="flex flex-col gap-4">
+                            <!-- التقدير المعتمد -->
+                            <div class="rounded-xl border border-gray-200 bg-white/80 p-4">
+                                <p class="text-xs font-bold text-gray-500 mb-2">التقدير المعتمد</p>
+                                <div class="flex items-baseline gap-2">
+                                    {% if short_grade == 'D' %}
+                                    <span class="text-5xl font-extrabold text-green-600">D</span>
+                                    <span class="text-lg text-green-500 font-bold">BTEC Distinction</span>
+                                    {% elif short_grade == 'M' %}
+                                    <span class="text-5xl font-extrabold text-blue-600">M</span>
+                                    <span class="text-lg text-blue-500 font-bold">BTEC Merit</span>
+                                    {% elif short_grade == 'P' %}
+                                    <span class="text-5xl font-extrabold text-yellow-600">P</span>
+                                    <span class="text-lg text-yellow-500 font-bold">BTEC Pass</span>
+                                    {% else %}
+                                    <span class="text-5xl font-extrabold text-red-600">U</span>
+                                    <span class="text-lg text-red-500 font-bold">BTEC Unclassified</span>
+                                    {% endif %}
+                                </div>
+                                {% if btec_institutional_award and btec_institutional_award.reason_ar %}
+                                <p class="text-slate-600 text-sm mt-2 border-t border-gray-100 pt-2">
+                                    <span class="font-bold">سبب التقدير المؤسسي:</span>
+                                    {{ btec_institutional_award.reason_ar }}
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 w-full">
+                        <!-- Grade Level Indicator -->
+                        <div class="flex items-center justify-center gap-4">
+                            <div class="text-center px-4 py-2 rounded-lg {% if short_grade == 'U' %}bg-red-100 text-red-700 ring-2 ring-red-300{% else %}bg-gray-100 text-gray-400{% endif %} font-bold text-sm">U</div>
+                            <div class="text-center px-4 py-2 rounded-lg {% if short_grade == 'P' %}bg-yellow-100 text-yellow-700 ring-2 ring-yellow-300{% else %}bg-gray-100 text-gray-400{% endif %} font-bold text-sm">P</div>
+                            <div class="text-center px-4 py-2 rounded-lg {% if short_grade == 'M' %}bg-blue-100 text-blue-700 ring-2 ring-blue-300{% else %}bg-gray-100 text-gray-400{% endif %} font-bold text-sm">M</div>
+                            <div class="text-center px-4 py-2 rounded-lg {% if short_grade == 'D' %}bg-green-100 text-green-700 ring-2 ring-green-300{% else %}bg-gray-100 text-gray-400{% endif %} font-bold text-sm">D</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Criteria Results -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-1 h-6 bg-primary rounded-full"></div>
+                    <h3 class="text-2xl font-bold text-gray-900">تفاصيل المعايير</h3>
+                </div>
+
+                {% for result in results %}
+                <div
+                    class="glass-card rounded-xl border transition-all duration-300 hover:shadow-lg overflow-hidden
+                            {% if result.achieved %}border-green-100 bg-white{% else %}border-red-100 bg-red-50/10{% endif %}">
+
+                    <!-- Header of Card -->
+                    <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-sm
+                                        {% if result.achieved %}bg-green-100 text-green-600{% else %}bg-red-100 text-red-600{% endif %}">
+                                {% if result.achieved %}
+                                <i class="fa-solid fa-check"></i>
+                                {% else %}
+                                <i class="fa-solid fa-xmark"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800">{{ result.criteria_level }}{% if result.criteria_name %} - {{ result.criteria_name }}{% endif %}</h4>
+                                <span
+                                    class="text-sm {% if result.achieved %}text-green-600{% elif result.verdict_status == 'inconclusive' or result.requires_pro %}text-amber-600{% else %}text-red-500{% endif %} font-medium">
+                                    {% if result.achieved %}تحقق أكاديمياً{% elif result.verdict_status == 'inconclusive' or result.requires_pro %}غير حاسم — يتطلب PRO{% else %}لم يتحقق{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <span class="text-2xl font-extrabold text-gray-800">{{ result.score }}<span
+                                class="text-sm text-gray-400 font-normal">/100</span></span>
+                    </div>
+
+                        <!-- Body of Card -->
+                    <div class="p-6 bg-white">
+                        <!-- Feedback -->
+                        <div class="mb-5">
+                            <h5 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">الملاحظات</h5>
+                            <p
+                                class="text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm">
+                                {{ result.feedback }}
+                            </p>
+                        </div>
+
+                        <!-- Missing Points removed -->
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- AI Insights (Strengths & Improvements) -->
+            <div class="grid md:grid-cols-2 gap-6 pb-10">
+                {% if summary and summary.strengths %}
+                <div class="glass-card rounded-xl p-6 border-t-4 border-green-500">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-green-800">
+                        <i class="fa-solid fa-thumbs-up"></i>
+                        نقاط القوة
+                    </h3>
+                    <ul class="space-y-3">
+                        {% for strength in summary.strengths %}
+                        <li class="flex gap-3 text-sm text-gray-600">
+                            <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                            <span>{{ strength }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if summary and summary.improvements %}
+                <div class="glass-card rounded-xl p-6 border-t-4 border-yellow-500">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-yellow-800">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        التصحيح
+                    </h3>
+                    <ul class="space-y-3">
+                        {% for improvement in summary.improvements %}
+                        <li class="flex gap-3 text-sm text-gray-600">
+                            <i class="fa-solid fa-arrow-trend-up text-yellow-500 mt-1"></i>
+                            <span>{{ improvement }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Actions Footer -->
+            <div
+                class="print-hide fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-lg z-40 transform translate-y-0 transition-transform md:relative md:bg-transparent md:border-none md:shadow-none md:p-0">
+                <div class="container mx-auto max-w-5xl flex justify-center md:justify-end gap-4">
+                    <a href="/" class="px-6 py-3 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition">
+                        الخروج
+                    </a>
+                    <a href="/batch-grade/{{ submission.assignment_id }}"
+                        class="bg-primary text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-primary-light hover:shadow-xl transition flex items-center gap-2">
+                        <span>تصحيح الطالب التالي</span>
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Spacer for fixed footer on mobile -->
+            <div class="h-20 md:hidden"></div>
+        </div>
+    </div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const progressBar = document.getElementById('score-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = progressBar.getAttribute('data-width');
+            }
+        }, 300);
+    });
+</script>
+{% endblock %}

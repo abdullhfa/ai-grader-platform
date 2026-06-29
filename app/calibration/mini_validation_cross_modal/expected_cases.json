@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe cross_modal_corroboration windows and noise flags; diagnostic only.",
+  "cases": [
+    {
+      "case_id": "case_a_log_ocr_frame_window",
+      "expected_behavior": "When OCR runs: same temporal window may list runtime_log, video_frame, ocr_text (+ screenshot optional). overlap_strength strong with 3+ modalities.",
+      "cross_modal_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_screenshot_only_weak",
+      "expected_behavior": "Single gameplay screenshot, no log, no video → typically one weak window (runtime_screenshot only) unless OCR adds ocr_text in same window.",
+      "cross_modal_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_video_only",
+      "expected_behavior": "Video frames only → weak windows with video_frame; expect video_frames_present_without_temporal_overlap noise when no co-modalities.",
+      "cross_modal_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_logs_only",
+      "expected_behavior": "Runtime log lines only → windows with runtime_log only; diversity may reflect log presence without visuals.",
+      "cross_modal_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_modalities_split_windows",
+      "expected_behavior": "Video near t≈0, screenshot far (~8000s), log far (~9999) → multiple single-modality weak windows; union of modalities ≥3 → multimodal_presence_split_across_windows flag likely.",
+      "cross_modal_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

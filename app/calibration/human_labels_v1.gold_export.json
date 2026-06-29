@@ -1,0 +1,49 @@
+{
+  "schema": "human_labels_gold_export_v1",
+  "source": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_labels_v1.json",
+  "record_count": 3,
+  "records": [
+    {
+      "submission_id": "1",
+      "criterion": "P5",
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_notes": [
+        "Gameplay loop verified manually (L5 playtest corroboration)"
+      ],
+      "reviewer": "ABDULAHFA",
+      "student": "Abdullah",
+      "overall_grade_teacher": "M"
+    },
+    {
+      "submission_id": "1",
+      "criterion": "P6",
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_notes": [
+        "Mechanics interactively observed"
+      ],
+      "reviewer": "ABDULAHFA",
+      "student": "Abdullah",
+      "overall_grade_teacher": "M"
+    },
+    {
+      "submission_id": "1",
+      "criterion": "M3",
+      "teacher_result": {
+        "achieved": true,
+        "confidence": null
+      },
+      "teacher_notes": [
+        "pending"
+      ],
+      "reviewer": "ABDULAHFA",
+      "student": "Abdullah",
+      "overall_grade_teacher": "M"
+    }
+  ]
+}

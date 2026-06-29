@@ -1,0 +1,1755 @@
+{
+  "schema": "reliability_human_review_workshop_v1",
+  "workshop_title": "Structured Reliability Review — FP interpretability",
+  "purpose": "Assess whether system behavior is understandable and auditable — NOT whether achieved is academically correct.",
+  "source_report": "app/calibration/reports/cal_reliability_stress_v2.json",
+  "calibration_run_id": "cal_reliability_stress_v2",
+  "freeze_window_id": "freeze_reliability_stress_v2",
+  "cohort_note": "Stress cohort (synthetic); FP rows are partially intentional for adversarial testing.",
+  "reviewer_instructions": {
+    "do_not_ask": "هل النظام صح؟",
+    "do_ask": "هل behavior مفهوم وقابل للتدقيق؟",
+    "after_workshop": "Pick 1–2 operational friction points only; then freeze → run → diff."
+  },
+  "false_positives_available": 34,
+  "rows_selected": 14,
+  "archetypes_covered": [
+    "achievement_inflation_weak_code",
+    "borderline_sufficiency_near_pass",
+    "borderline_video_only_code",
+    "cross_modal_conflict",
+    "cross_modal_false_overlap",
+    "fake_runtime_fp_system",
+    "logs_without_systems",
+    "ocr_misleading_score100",
+    "ocr_video_without_corroboration",
+    "pattern_hints_only",
+    "runtime_fake_log_only",
+    "runtime_stale_no_temporal",
+    "screenshots_only",
+    "systems_without_runtime"
+  ],
+  "cases": [
+    {
+      "workshop_row": 1,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_040_achievement_inflation_weak_code",
+        "archetype": "achievement_inflation_weak_code",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:achievement_inflation_weak_code"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not",
+          "fp_collision_weak_execution_suspected"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 2,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "pattern_hints_without_semantic_code"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "high",
+        "human_review_reasons": [
+          "pattern_hints_without_semantic_code",
+          "rubric_sufficiency_shadow_not_met"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.1,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 2,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_045_borderline_sufficiency_near_pass",
+        "archetype": "borderline_sufficiency_near_pass",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "ambiguous",
+        "teacher_notes": [
+          "stress:borderline_sufficiency_near_pass"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not",
+          "fp_strong_collision_signal_teacher_rejected_borderline"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 3,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": true,
+        "insufficiency_flags": [],
+        "human_review_required": false,
+        "human_review_severity": "low",
+        "human_review_reasons": [],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.55,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 3,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_029_borderline_video_only_code",
+        "archetype": "borderline_video_only_code",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "collision_system in code; video only; no log/screenshot"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not",
+          "fp_strong_collision_signal_teacher_rejected_borderline"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 2,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "ocr_video_without_corroboration"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "insufficient_runtime_confirmation",
+          "rubric_sufficiency_shadow_not_met",
+          "video_only_windows"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.35,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 4,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_026_cross_modal_conflict",
+        "archetype": "cross_modal_conflict",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:cross_modal_conflict"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not",
+          "fp_strong_collision_signal_teacher_rejected_borderline"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 2,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "corroboration_conflict_detected"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "high",
+        "human_review_reasons": [
+          "corroboration_conflicts_detected",
+          "rubric_sufficiency_shadow_not_met"
+        ],
+        "corroboration_conflict_count": 2,
+        "cross_modal_diversity_score": 0.5,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 5,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_046_cross_modal_false_overlap",
+        "archetype": "cross_modal_false_overlap",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:cross_modal_false_overlap"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not",
+          "fp_pattern_only_collision_hint"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 3,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "pattern_hints_only_insufficient"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "high",
+        "human_review_reasons": [
+          "corroboration_conflicts_detected",
+          "pattern_hint_only_insufficient",
+          "rubric_sufficiency_shadow_not_met"
+        ],
+        "corroboration_conflict_count": 1,
+        "cross_modal_diversity_score": 0.45,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 6,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_038_fake_runtime_fp_system",
+        "archetype": "fake_runtime_fp_system",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:fake_runtime_fp_system"
+        ],
+        "reviewer_taxonomy": [
+          "confirmed_fp_stress"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 1,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "runtime_present_without_system_confirmation"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "rubric_sufficiency_shadow_not_met",
+          "runtime_present_without_system_confirmation"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.25,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 7,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_011_logs_without_systems",
+        "archetype": "logs_without_systems",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "weak",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:logs_without_systems"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 1,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "runtime_present_without_system_confirmation"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "rubric_sufficiency_shadow_not_met",
+          "runtime_present_without_system_confirmation"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.25,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 8,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_008_ocr_misleading_score100",
+        "archetype": "ocr_misleading_score100",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "weak",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:ocr_misleading_score100"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp",
+          "ocr_misleading"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 2,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "ocr_video_without_corroboration"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "rubric_sufficiency_shadow_not_met"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.15,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 9,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_034_ocr_video_without_corroboration",
+        "archetype": "ocr_video_without_corroboration",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:ocr_video_without_corroboration"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 2,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "ocr_video_without_corroboration"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "rubric_sufficiency_shadow_not_met"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.25,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 10,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_016_pattern_hints_only",
+        "archetype": "pattern_hints_only",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "weak",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:pattern_hints_only"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not",
+          "fp_pattern_only_collision_hint"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 1,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "pattern_hints_only_insufficient"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "high",
+        "human_review_reasons": [
+          "pattern_hint_only_insufficient",
+          "rubric_sufficiency_shadow_not_met",
+          "sparse_evidence_detected"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.0,
+        "pattern_hint_only": true,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 11,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_003_runtime_fake_log_only",
+        "archetype": "runtime_fake_log_only",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "weak",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:runtime_fake_log_only"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 1,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "runtime_present_without_system_confirmation"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "rubric_sufficiency_shadow_not_met",
+          "runtime_present_without_system_confirmation"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.25,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 12,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_047_runtime_stale_no_temporal",
+        "archetype": "runtime_stale_no_temporal",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:runtime_stale_no_temporal"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 2,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "runtime_present_without_system_confirmation"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "rubric_sufficiency_shadow_not_met",
+          "runtime_present_without_system_confirmation",
+          "video_only_windows"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.28,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 13,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_006_screenshots_only",
+        "archetype": "screenshots_only",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "weak",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:screenshots_only"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 2,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "pattern_hints_only_insufficient"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "high",
+        "human_review_reasons": [
+          "cross_modal_diversity_below_threshold",
+          "pattern_hint_only_insufficient",
+          "rubric_sufficiency_shadow_not_met"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.2,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    },
+    {
+      "workshop_row": 14,
+      "review_focus": "false_positive_interpretability",
+      "context": {
+        "submission_id": "STRESS_013_systems_without_runtime",
+        "archetype": "systems_without_runtime",
+        "criterion": "P3",
+        "teacher_achieved": false,
+        "system_achieved": true,
+        "teacher_evidence_strength": "moderate",
+        "review_complexity": "moderate",
+        "teacher_notes": [
+          "stress:systems_without_runtime"
+        ],
+        "reviewer_taxonomy": [
+          "stress_expected_fp"
+        ],
+        "taxonomy_suggested_tags": [
+          "fp_system_achieved_teacher_not",
+          "fp_strong_collision_signal_teacher_rejected_borderline"
+        ],
+        "system_reasoning_preview": "reliability stress cohort — LLM slice not exercised",
+        "evidence_item_count": 1,
+        "empty_evidence_layer": false,
+        "rubric_shadow_sufficient": false,
+        "insufficiency_flags": [
+          "missing_runtime_corroboration"
+        ],
+        "human_review_required": true,
+        "human_review_severity": "medium",
+        "human_review_reasons": [
+          "insufficient_runtime_confirmation",
+          "rubric_sufficiency_shadow_not_met"
+        ],
+        "corroboration_conflict_count": 0,
+        "cross_modal_diversity_score": 0.1,
+        "pattern_hint_only": false,
+        "video_only_windows": false
+      },
+      "structured_review": [
+        {
+          "id": "review_escalation_logical",
+          "question_ar": "هل تصعيد المراجعة البشرية منطقي لهذه الحالة؟",
+          "goal": "gate usefulness",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "reasoning_understandable",
+          "question_ar": "هل reasoning النظام مفهوم لمراجع بشري؟",
+          "goal": "interpretability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "insufficiency_clear",
+          "question_ar": "هل insufficiency / shadow flags واضحة أكاديمياً؟",
+          "goal": "academic explainability",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "conflict_flags_useful",
+          "question_ar": "هل conflict / corroboration flags مفيدة تشغيلياً؟",
+          "goal": "operational clarity",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "severity_appropriate",
+          "question_ar": "هل severity (low/medium/high/critical) مناسبة؟",
+          "goal": "escalation calibration",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        },
+        {
+          "id": "noisy_triggers",
+          "question_ar": "هل يوجد triggers أو reasons ضوضائية / مكررة؟",
+          "goal": "gate tuning later",
+          "answer": null,
+          "notes": ""
+        },
+        {
+          "id": "behavior_auditable",
+          "question_ar": "هل السلوك قابل للتدقيق (مفهوم + قابل للتتبع) — وليس هل النظام «صح»؟",
+          "goal": "institutional trust behavior",
+          "answer": null,
+          "scale": [
+            "yes",
+            "partial",
+            "no",
+            "unclear"
+          ]
+        }
+      ],
+      "friction_notes": "",
+      "operational_friction_tags": []
+    }
+  ]
+}

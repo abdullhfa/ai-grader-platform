@@ -1,0 +1,483 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10">
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-8">
+            <a href="/results/{{ submission.id }}"
+                class="text-secondary hover:text-blue-700 flex items-center gap-2 mb-3 text-sm font-semibold transition">
+                <i class="fa-solid fa-arrow-right"></i>
+                العودة للتقرير
+            </a>
+            <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Runtime Replay</h2>
+                    <p class="text-gray-500 text-sm mb-1">مراجعة أدلة runtime — L4 observational only</p>
+                    <p class="text-gray-700 font-medium">{{ submission.student_name }}</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    {% if replay.runtime_evidence_level %}
+                    <span class="text-xs font-mono bg-slate-100 text-slate-600 px-3 py-1 rounded-lg">
+                        L{{ replay.runtime_evidence_level }} runtime
+                    </span>
+                    {% endif %}
+                    {% if replay.runtime_session_id %}
+                    <span class="text-xs font-mono bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg">
+                        session: {{ replay.runtime_session_id }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if not replay.available and not playtest.playtest_available %}
+        <div class="glass-card rounded-2xl p-8 border border-amber-200 bg-amber-50 text-amber-900">
+            <p class="font-bold mb-2">لا توجد أدلة runtime ولا ملف تنفيذي للعبة.</p>
+            <p class="text-sm">أعد التصحيح مع ملف .exe Unity أو أرفع build كامل.</p>
+        </div>
+        {% else %}
+
+        {% if playtest.l4_gated and playtest.playtest_available %}
+        <div class="glass-card rounded-2xl p-6 border border-indigo-200 bg-indigo-50 text-indigo-950 mb-6">
+            <p class="font-bold text-sm mb-2">
+                <i class="fa-solid fa-lock ml-1"></i>
+                L4 sandbox مقفول — GOVERNANCE_FREEZE_v1
+            </p>
+            <p class="text-sm mb-2">
+                التشغيل الآلي معطّل بحكم الحوكمة. شغّل اللعبة يدوياً ثم أكمل <strong>Manual Playtest L5</strong> أدناه.
+            </p>
+            {% if playtest.game_executable_path %}
+            <p class="text-xs font-mono bg-white/70 rounded p-2 break-all">{{ playtest.game_executable_path }}</p>
+            {% endif %}
+            {% if playtest.governance_gate_reason %}
+            <p class="text-[10px] mt-2 opacity-70">{{ playtest.governance_gate_reason }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if replay.available %}
+
+        <div class="rounded-xl border p-4 mb-6 bg-amber-50 border-amber-300 text-amber-950">
+            <p class="font-bold text-sm mb-1">
+                <i class="fa-solid fa-triangle-exclamation ml-1"></i>
+                Guardrail — مراجعة بشرية مطلوبة
+            </p>
+            <p class="text-sm">{{ replay.guardrail_note_ar }}</p>
+            {% if replay.observation_summary_ar %}
+            <p class="text-xs mt-2 font-mono opacity-80">{{ replay.observation_summary_ar }}</p>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="glass-card rounded-xl p-4 border border-gray-100 text-center">
+                <p class="text-xs text-gray-500 mb-1">runtime_observed</p>
+                <p class="font-bold text-lg">{{ replay.runtime_observed | default('—') }}</p>
+            </div>
+            <div class="glass-card rounded-xl p-4 border border-gray-100 text-center">
+                <p class="text-xs text-gray-500 mb-1">runtime_verified</p>
+                <p class="font-bold text-lg">{{ replay.runtime_verified | default('—') }}</p>
+            </div>
+            <div class="glass-card rounded-xl p-4 border border-gray-100 text-center">
+                <p class="text-xs text-gray-500 mb-1">screenshots</p>
+                <p class="font-bold text-lg">{{ replay.runtime_screenshot_count | default(0) }}</p>
+            </div>
+            <div class="glass-card rounded-xl p-4 border border-gray-100 text-center">
+                <p class="text-xs text-gray-500 mb-1">visual confidence</p>
+                <p class="font-bold text-lg">{{ "%.0f"|format((replay.audit.visual_runtime_confidence | default(0)) * 100) }}%</p>
+            </div>
+        </div>
+
+        {% if replay.audit %}
+        <div class="glass-card rounded-2xl p-6 border border-gray-100 mb-6">
+            <h3 class="font-bold text-gray-900 mb-3">Visual Audit Summary</h3>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div>
+                    <p class="font-semibold text-gray-700 mb-1">observed_visual_elements</p>
+                    {% if replay.audit.observed_visual_elements %}
+                    <ul class="list-disc list-inside text-gray-600 space-y-0.5">
+                        {% for item in replay.audit.observed_visual_elements[:8] %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-gray-400">—</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-700 mb-1">unverified_gameplay</p>
+                    {% if replay.audit.unverified_gameplay %}
+                    <ul class="list-disc list-inside text-gray-600 space-y-0.5">
+                        {% for item in replay.audit.unverified_gameplay[:8] %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-gray-400">—</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-700 mb-1">human_validation_required</p>
+                    {% if replay.audit.human_validation_required %}
+                    <ul class="list-disc list-inside text-red-700 space-y-0.5">
+                        {% for item in replay.audit.human_validation_required[:8] %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-gray-400">—</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% if replay.audit.visual_states_observed %}
+            <p class="text-xs mt-3 font-mono text-gray-500">
+                states: {{ replay.audit.visual_states_observed | join(', ') }}
+                {% if replay.audit.black_screen_possible %} · black_screen_possible{% endif %}
+                {% if replay.audit.freeze_possible %} · freeze_possible{% endif %}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if replay.interaction_trace_summary %}
+        <div class="glass-card rounded-2xl p-6 border border-violet-100 mb-6">
+            <h3 class="font-bold text-gray-900 mb-3">Interaction Trace (L5 — advisory)</h3>
+            {% for trace in replay.interaction_trace_summary %}
+            <div class="rounded-xl border border-violet-200 p-4 mb-3 bg-violet-50/50 text-sm">
+                <div class="flex flex-wrap gap-2 mb-2 text-xs font-mono">
+                    <span>status={{ trace.status | default('—') }}</span>
+                    <span>inputs={{ trace.input_count | default(0) }}</span>
+                    <span>visual_response={{ trace.visual_response_to_input | default('unknown') }}</span>
+                    {% if trace.visual_delta_score is not none %}
+                    <span>delta={{ trace.visual_delta_score }}</span>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-violet-900">{{ trace.authority_note_ar | default('تفاعل آلي — لا يثبت gameplay') }}</p>
+                {% if trace.inputs_sent %}
+                <p class="text-xs font-mono mt-2 text-gray-600">
+                    keys:
+                    {% for inp in trace.inputs_sent[:8] %}
+                    {{ inp.key | default(inp.action) }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if replay.visual_timeline %}
+        <div class="glass-card rounded-2xl p-6 border border-gray-100 mb-6">
+            <h3 class="font-bold text-gray-900 mb-4">Visual Timeline</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for shot in replay.visual_timeline %}
+                <div class="rounded-xl border border-gray-200 overflow-hidden bg-white">
+                    {% if shot.url %}
+                    <a href="{{ shot.url }}" target="_blank" rel="noopener">
+                        <img src="{{ shot.url }}" alt="{{ shot.label | default('screenshot') }}"
+                            class="w-full h-40 object-cover bg-gray-900" loading="lazy">
+                    </a>
+                    {% else %}
+                    <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                        no image
+                    </div>
+                    {% endif %}
+                    <div class="p-3 text-xs space-y-1">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold">{{ shot.capture_type | default(shot.label) }}</span>
+                            <span class="font-mono opacity-60">{{ shot.timestamp_sec | default(shot.elapsed_seconds) }}s</span>
+                        </div>
+                        <p>
+                            <span class="inline-block px-2 py-0.5 rounded bg-indigo-50 text-indigo-800 font-mono">
+                                {{ shot.visual_state_label_ar | default(shot.visual_state) }}
+                            </span>
+                            {% if shot.visual_state_confidence %}
+                            <span class="opacity-60">({{ "%.0f"|format(shot.visual_state_confidence * 100) }}%)</span>
+                            {% endif %}
+                        </p>
+                        {% if shot.resolution %}
+                        <p class="font-mono opacity-60">{{ shot.resolution }} · window_visible={{ shot.window_visible }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% for exe in replay.executables %}
+        <div class="glass-card rounded-2xl p-6 border border-gray-100 mb-6">
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+                <h3 class="font-bold text-gray-900">{{ exe.artifact }}</h3>
+                {% if exe.engine %}
+                <span class="text-xs bg-purple-50 text-purple-800 px-2 py-0.5 rounded font-mono">{{ exe.engine }}</span>
+                {% endif %}
+                {% if exe.smoke_result %}
+                <span class="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono">smoke: {{ exe.smoke_result }}</span>
+                {% endif %}
+            </div>
+
+            {% if exe.player_log and exe.player_log.found %}
+            <div class="rounded-xl border border-gray-200 p-4 mb-4 bg-slate-50">
+                <p class="font-semibold text-sm mb-2">Player.log signals</p>
+                <p class="text-xs font-mono text-gray-600 mb-2 truncate" title="{{ exe.player_log.path }}">
+                    {{ exe.player_log.path }}
+                </p>
+                <div class="flex flex-wrap gap-3 text-xs font-mono mb-3">
+                    <span>Unity {{ exe.player_log.unity_version_hint | default('?') }}</span>
+                    <span>errors={{ exe.player_log.error_count }}</span>
+                    <span>exceptions={{ exe.player_log.exception_count }}</span>
+                    <span>crashes={{ exe.player_log.crash_signal_count }}</span>
+                </div>
+                {% if exe.player_log.crash_signals %}
+                <p class="text-xs font-semibold text-red-700 mb-1">Crash signals:</p>
+                <ul class="text-xs font-mono text-red-800 space-y-0.5 mb-2">
+                    {% for line in exe.player_log.crash_signals %}
+                    <li class="truncate">{{ line }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if exe.player_log.error_signals %}
+                <p class="text-xs font-semibold text-amber-800 mb-1">Error signals:</p>
+                <ul class="text-xs font-mono text-amber-900 space-y-0.5">
+                    {% for line in exe.player_log.error_signals %}
+                    <li class="truncate">{{ line }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% elif exe.engine == 'unity' %}
+            <p class="text-sm text-gray-500 mb-4">Player.log غير متوفر لهذه الجلسة.</p>
+            {% endif %}
+
+            {% if exe.process_restriction %}
+            <div class="rounded-xl border p-4 mb-2 {% if exe.process_restriction.suspicious_spawn_detected %}bg-red-50 border-red-200{% else %}bg-emerald-50 border-emerald-200{% endif %}">
+                <p class="font-semibold text-sm mb-1">Process Restriction</p>
+                <p class="text-xs font-mono">
+                    suspicious_spawn={{ exe.process_restriction.suspicious_spawn_detected | default(false) }}
+                    · processes_seen={{ (exe.process_restriction.processes_seen or []) | length }}
+                </p>
+                {% if exe.process_restriction.suspicious_processes %}
+                <ul class="text-xs mt-1 font-mono">
+                    {% for p in exe.process_restriction.suspicious_processes[:5] %}
+                    <li>{{ p }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        {% if replay.process_restriction and not replay.executables %}
+        <div class="glass-card rounded-2xl p-6 border border-gray-100 mb-6">
+            <h3 class="font-bold mb-2">Process Restriction</h3>
+            <pre class="text-xs font-mono overflow-x-auto">{{ replay.process_restriction | tojson(indent=2) }}</pre>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        {% if playtest.playtest_available %}
+        <div class="glass-card rounded-2xl p-6 border border-emerald-200 mb-6" id="playtest-panel">
+            <h3 class="font-bold text-gray-900 mb-2">Manual Playtest (L5 — human authority)</h3>
+            <p class="text-sm text-emerald-900 mb-3">{{ playtest.guardrail_note_ar }}</p>
+            {% if playtest.spec_invariant_ar %}
+            <p class="text-xs text-gray-600 mb-4">{{ playtest.spec_invariant_ar }}</p>
+            {% endif %}
+
+            <div id="playtest-status" class="text-sm font-mono mb-4">
+                {% if playtest.human_playtest_verified %}
+                <span class="text-emerald-700 font-bold">✓ playtest finalized — complete_visual</span>
+                {% elif playtest.active_pass %}
+                status: {{ playtest.active_pass.playtest_status | default('pending') }}
+                · pass_id: {{ playtest.active_pass.pass_id }}
+                {% else %}
+                لا يوجد playtest pass — ابدأ مراجعة بشرية بعد مشاهدة Runtime Replay.
+                {% endif %}
+            </div>
+
+            {% if playtest.runtime_criterion_support %}
+            {% set cp5 = playtest.runtime_criterion_support.get('C.P5', {}) %}
+            {% set cp6 = playtest.runtime_criterion_support.get('C.P6', {}) %}
+            <div class="rounded-lg border border-gray-200 p-3 mb-4 text-xs font-mono bg-slate-50">
+                C.P5 suggested_achieved={{ cp5.get('suggested_achieved') }}
+                · needs_human_playtest={{ cp5.get('needs_human_playtest') }}
+                · C.P6 suggested={{ cp6.get('suggested_achieved') }}
+            </div>
+            {% endif %}
+
+            {% if not playtest.active_pass %}
+            <button type="button" id="btn-start-playtest"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                {% if not playtest.playtest_available %}disabled title="لا exe ولا runtime evidence"{% endif %}>
+                بدء Playtest Pass
+            </button>
+            {% elif not playtest.human_playtest_verified %}
+            <div class="space-y-4" id="playtest-tests">
+                {% for test in playtest.active_pass.tests %}
+                <div class="rounded-xl border border-gray-200 p-4 bg-white" data-test-id="{{ test.test_id }}">
+                    <p class="font-semibold text-sm mb-1">[{{ test.test_id }}] {{ test.prompt_en }}</p>
+                    <p class="text-xs text-gray-500 mb-2">do_not_infer: {{ test.do_not_infer_en }}</p>
+                    {% if test.observed_en %}
+                    <p class="text-xs font-mono text-emerald-800 mb-2">observed: {{ test.observed_en }}</p>
+                    {% endif %}
+                    <textarea
+                        class="w-full border border-gray-200 rounded-lg p-2 text-sm playtest-observed"
+                        rows="2"
+                        placeholder="Record observable state only (English)…">{{ test.observed_en or '' }}</textarea>
+                    <button type="button"
+                        class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded text-xs btn-save-test">
+                        حفظ الملاحظة
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="btn-finalize-playtest"
+                class="mt-4 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                إنهاء Playtest (L5 advisory → snapshot)
+            </button>
+            {% elif playtest.active_pass %}
+            <ul class="text-xs space-y-1 font-mono text-gray-700">
+                {% for test in playtest.active_pass.tests %}
+                <li>[{{ test.test_id }}] {{ test.status }} — {{ test.observed_en or '—' }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if replay.runtime_adjudication_db_sync and replay.runtime_adjudication_db_sync.applied %}
+            <div class="mt-4 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-xs">
+                <p class="font-bold text-emerald-900 mb-1">✓ DB sync applied</p>
+                {% for ch in replay.runtime_adjudication_db_sync.row_changes or [] %}
+                <p class="font-mono">{{ ch.criteria_level }}: {{ ch.achieved_before }} → {{ ch.achieved_after }}</p>
+                {% endfor %}
+            </div>
+            {% elif playtest.human_playtest_verified %}
+            <button type="button" id="btn-apply-adjudication"
+                class="mt-4 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                تطبيق Runtime Adjudication على الدرجات (C.P5/C.P6)
+            </button>
+            {% endif %}
+            <p id="playtest-message" class="text-xs mt-3 text-gray-600"></p>
+        </div>
+        {% endif %}
+
+        {% if replay.language_note_ar %}
+        <p class="text-xs text-gray-500 font-mono text-center mt-4">{{ replay.language_note_ar }}</p>
+        {% endif %}
+
+        {% endif %}
+    </div>
+</main>
+
+<script>
+(function () {
+    const submissionId = {{ submission.id }};
+    const passId = {{ (playtest.active_pass.pass_id | tojson) if playtest.active_pass else 'null' }};
+
+    function msg(text, isError) {
+        const el = document.getElementById('playtest-message');
+        if (el) {
+            el.textContent = text;
+            el.className = 'text-xs mt-3 ' + (isError ? 'text-red-600' : 'text-emerald-700');
+        }
+    }
+
+    async function postJson(url, body) {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body || {}),
+        });
+        const data = await res.json().catch(function () { return {}; });
+        if (!res.ok) {
+            throw new Error(data.detail || res.statusText);
+        }
+        return data;
+    }
+
+    const startBtn = document.getElementById('btn-start-playtest');
+    if (startBtn) {
+        startBtn.addEventListener('click', async function () {
+            startBtn.disabled = true;
+            msg('جاري بدء playtest…');
+            try {
+                await postJson('/api/playtest/' + submissionId + '/start', {});
+                window.location.reload();
+            } catch (e) {
+                msg(String(e.message || e), true);
+                startBtn.disabled = false;
+            }
+        });
+    }
+
+    document.querySelectorAll('.btn-save-test').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+            const block = btn.closest('[data-test-id]');
+            if (!block || !passId) return;
+            const testId = block.getAttribute('data-test-id');
+            const observed = block.querySelector('.playtest-observed');
+            const text = observed ? observed.value.trim() : '';
+            if (!text) {
+                msg('أدخل observed_en', true);
+                return;
+            }
+            btn.disabled = true;
+            try {
+                await postJson('/api/playtest/' + submissionId + '/record', {
+                    pass_id: passId,
+                    test_id: testId,
+                    observed_en: text,
+                });
+                msg('تم حفظ ' + testId);
+            } catch (e) {
+                msg(String(e.message || e), true);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    });
+
+    const finalizeBtn = document.getElementById('btn-finalize-playtest');
+    if (finalizeBtn) {
+        finalizeBtn.addEventListener('click', async function () {
+            if (!passId) return;
+            if (!confirm('إنهاء Playtest وتحديث grading_snapshot (advisory فقط)؟')) return;
+            finalizeBtn.disabled = true;
+            msg('جاري الإنهاء…');
+            try {
+                const data = await postJson('/api/playtest/' + submissionId + '/finalize', {
+                    pass_id: passId,
+                    apply_to_grades: true,
+                });
+                if (data.db_sync && !data.db_sync.applied) {
+                    msg(data.db_sync.message_ar || data.db_sync.reason || 'snapshot only', true);
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                    return;
+                }
+                window.location.reload();
+            } catch (e) {
+                msg(String(e.message || e), true);
+                finalizeBtn.disabled = false;
+            }
+        });
+    }
+
+    const applyAdjBtn = document.getElementById('btn-apply-adjudication');
+    if (applyAdjBtn) {
+        applyAdjBtn.addEventListener('click', async function () {
+            if (!confirm('تطبيق runtime adjudication على C.P5/C.P6 في قاعدة البيانات؟')) return;
+            applyAdjBtn.disabled = true;
+            msg('جاري التطبيق…');
+            try {
+                await postJson('/api/submission/' + submissionId + '/apply-runtime-adjudication', {
+                    require_human_playtest: true,
+                });
+                window.location.reload();
+            } catch (e) {
+                msg(String(e.message || e), true);
+                applyAdjBtn.disabled = false;
+            }
+        });
+    }
+})();
+</script>
+{% endblock %}

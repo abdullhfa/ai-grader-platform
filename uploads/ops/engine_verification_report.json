@@ -1,0 +1,58 @@
+{
+  "failures": 0,
+  "warnings": 0,
+  "engines": [
+    {
+      "engine": "unity",
+      "sample": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\demos\\samples\\unity",
+      "checks": {},
+      "detect_score": 0.82,
+      "resolved_engine": "unity",
+      "session_status": "completed",
+      "session_engine": "unity",
+      "runtime_method": "unity_static_only",
+      "has_normalized": true,
+      "normalized_engine": "unity",
+      "status": "pass"
+    },
+    {
+      "engine": "godot",
+      "sample": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\demos\\samples\\godot",
+      "checks": {},
+      "detect_score": 0.92,
+      "resolved_engine": "godot",
+      "session_status": "completed",
+      "session_engine": "godot",
+      "runtime_method": "godot_static_analysis",
+      "has_normalized": true,
+      "normalized_engine": "godot",
+      "status": "pass"
+    },
+    {
+      "engine": "gamemaker",
+      "sample": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\demos\\samples\\gamemaker",
+      "checks": {},
+      "detect_score": 0.92,
+      "resolved_engine": "gamemaker",
+      "session_status": "completed",
+      "session_engine": "gamemaker",
+      "runtime_method": "gamemaker_artifact_analysis",
+      "has_normalized": true,
+      "normalized_engine": "gamemaker",
+      "status": "pass"
+    },
+    {
+      "engine": "web",
+      "sample": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\demos\\samples\\web",
+      "checks": {},
+      "detect_score": 1.0,
+      "resolved_engine": "web",
+      "session_status": "completed",
+      "session_engine": "web",
+      "runtime_method": "playwright_headless",
+      "has_normalized": true,
+      "normalized_engine": "web",
+      "status": "pass"
+    }
+  ]
+}

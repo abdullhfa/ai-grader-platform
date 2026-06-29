@@ -1,0 +1,38 @@
+groups:
+  - name: ai_grader_go_live
+    rules:
+      - alert: ReplayHashMismatch
+        expr: increase(replay_mismatch_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Replay hash mismatch detected
+          description: Truth anchor integrity compromised — stop rollout and preserve snapshots.
+
+      - alert: DeadLetterSpike
+        expr: increase(dead_letter_total[15m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Dead letter queue entries detected
+          description: Inspect uploads/audit/dead_letter.jsonl and worker logs.
+
+      - alert: RuntimeFailureRateHigh
+        expr: rate(runtime_crash_total[10m]) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Runtime failure rate elevated
+          description: Target runtime success >95% — investigate sandbox and queue health.
+
+      - alert: ApiDown
+        expr: up{job="ai-grader-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: AI Grader API unreachable
+          description: Prometheus cannot scrape /api/metrics — check api container health.

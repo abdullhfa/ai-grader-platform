@@ -1,0 +1,127 @@
+"""GameMaker runtime execution — EXE smoke + HTML5 delegation."""
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from app.runtime_engines.base import RuntimeSession, SessionStatus
+
+
+def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds: int) -> Dict[str, Any]:
+    try:
+        from app.runtime_engines.gamemaker.project_probe import assess_gamemaker_exe_launch
+        from app.runtime_observation_sandbox import resolve_smoke_timeout_seconds, smoke_test_windows_exe
+
+        exe = executable.resolve()
+        search_root = session.root if session.root else None
+        if search_root is not None:
+            for anc in [search_root, *list(search_root.parents)[:6]]:
+                if any(anc.rglob("*.yyp")) or any(anc.rglob("*.gml")):
+                    if any(anc.rglob("*.exe")):
+                        search_root = anc
+                        break
+        launch_assessment = assess_gamemaker_exe_launch(exe, search_root=search_root)
+        runtime_cwd = Path(launch_assessment.get("runtime_cwd") or exe.parent)
+        session.signals["gamemaker_runtime_cwd"] = str(runtime_cwd)
+        session.signals["gamemaker_launch_assessment"] = launch_assessment
+
+        if launch_assessment.get("is_gamemaker") and not launch_assessment.get("launch_allowed"):
+            observation = {
+                "status": "skipped",
+                "contract_id": "gamemaker_exe_smoke",
+                "runtime_screenshots": [],
+                "crash_detected": False,
+                "freeze_possible": False,
+                "analyses": [],
+                "gamemaker_runtime_cwd": str(runtime_cwd),
+                "skip_reason": launch_assessment.get("skip_reason") or "missing_data_win",
+                "errors": ["gamemaker_missing_data_win"],
+            }
+            session.signals["gamemaker_observation"] = observation
+            session.signals["runtime_method"] = "gamemaker_static_only"
+            session.status = SessionStatus.COMPLETED
+            return {
+                "success": True,
+                "observation": observation,
+                "skipped": True,
+                "reason": observation["skip_reason"],
+            }
+
+        smoke = smoke_test_windows_exe(
+            exe,
+            timeout=resolve_smoke_timeout_seconds("deep"),
+            capture_screenshots=True,
+            enable_interaction_trace=True,
+            session_ctx={
+                "student_name": session.submission_key,
+                "submission_root": str(search_root) if search_root else None,
+                "project_root": str(search_root) if search_root else None,
+            },
+            cwd=runtime_cwd,
+        )
+        smoke_ok = smoke.get("smoke_result") in ("stable_window", "launch_ok")
+        observation = {
+            "status": "completed" if smoke_ok else "partial",
+            "contract_id": "gamemaker_exe_smoke",
+            "runtime_screenshots": smoke.get("runtime_screenshots") or [],
+            "crash_detected": smoke.get("signals", {}).get("crash") == "detected",
+            "freeze_possible": bool((smoke.get("visual_observation") or {}).get("freeze_possible")),
+            "analyses": [smoke],
+            "gamemaker_runtime_cwd": str(runtime_cwd),
+        }
+        if smoke.get("errors"):
+            observation["errors"] = smoke["errors"]
+        if not smoke.get("attempted"):
+            observation["status"] = "skipped"
+    except Exception as exc:
+        session.status = SessionStatus.FAILED
+        session.errors.append(str(exc))
+        return {"success": False, "error": str(exc)}
+
+    session.signals["gamemaker_observation"] = observation
+    session.signals["runtime_method"] = "gamemaker_exe_smoke"
+    session.metrics.crash_detected = bool(observation.get("crash_detected"))
+    session.metrics.freeze_detected = bool(observation.get("freeze_possible"))
+
+    runtime_shots = observation.get("runtime_screenshots")
+    shots: List[Any] = (
+        runtime_shots if isinstance(runtime_shots, list) else []
+    )
+    for shot in shots:
+        if isinstance(shot, dict) and shot.get("path"):
+            session.screenshot_paths.append(Path(str(shot["path"])))
+
+    session.status = (
+        SessionStatus.COMPLETED
+        if observation.get("status") in ("completed", "partial")
+        else SessionStatus.FAILED
+    )
+    return {"success": session.status == SessionStatus.COMPLETED, "observation": observation}
+
+
+def run_html5_fallback(session: RuntimeSession, html_entry: Path, *, timeout_seconds: int) -> Dict[str, Any]:
+    from app.runtime_engines.web.playwright_runner import run_web_game_headless
+
+    shot_dir = session.workspace / "screenshots"
+    result = run_web_game_headless(
+        html_entry,
+        timeout_ms=min(timeout_seconds, 30) * 1000,
+        screenshot_dir=shot_dir,
+    )
+    session.signals.update(result.get("signals") or {})
+    session.signals["runtime_method"] = "gamemaker_html5_web_fallback"
+    session.screenshot_paths = [Path(p) for p in result.get("screenshots") or []]
+    session.metrics.frame_delta_score = float((result.get("signals") or {}).get("frame_delta_score") or 0.0)
+    session.metrics.freeze_detected = bool((result.get("signals") or {}).get("freeze_detected"))
+    session.metrics.input_responsive = session.metrics.frame_delta_score > 0.02
+
+    if result.get("success"):
+        session.status = SessionStatus.COMPLETED
+    elif result.get("method") == "static_only":
+        session.status = SessionStatus.COMPLETED
+    else:
+        session.status = SessionStatus.FAILED
+        if result.get("error"):
+            session.errors.append(str(result["error"]))
+
+    return result

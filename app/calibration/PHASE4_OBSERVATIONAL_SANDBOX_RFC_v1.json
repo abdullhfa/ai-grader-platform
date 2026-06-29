@@ -1,0 +1,109 @@
+{
+  "rfc_id": "PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1",
+  "status": "design_only",
+  "activation": false,
+  "grading_wire": false,
+  "authority_deployment": false,
+  "eligibility_basis": {
+    "artifact": "EPOCH_REREVIEW_PACKET_PATH_A_v1",
+    "verdict": "mitigation_containment_progress_accepted",
+    "note_en": "Phase 4 design eligibility derives from containment progress, not from authority readiness.",
+    "note_ar": "أهلية تصميم Phase 4 تستمد من تقدّم الاحتواء — لا من جاهزية السلطة."
+  },
+  "opening_declaration_en": "Phase 4 design eligibility derives from containment progress, not from authority readiness.",
+  "core_design_question_en": "Can the system observe authority formation without participating in it?",
+  "institutional_axiom_en": "L4 is permitted to witness epistemic formation, not to finalize it.",
+  "institutional_axiom_ar": "L4 مُخوّل بمشاهدة تشكّل المعرفة — لا بإنهائها.",
+  "sandbox_posture": "non-authoritative observational layer",
+  "not": ["assistant_grader", "verification_engine", "authority_deployment"],
+  "quarantine_invariant_en": "L4 may observe authority conditions. L4 may not grant authority conditions.",
+  "section_1_scope_boundary": {
+    "allowed": [
+      {"id": "observe", "description": "structural + runtime signal collection in isolated environment"},
+      {"id": "classify_epistemic_states", "description": "tag claims per AUTHORITY_TRIAD epistemic vocabulary"},
+      {"id": "detect_vocabulary_drift", "description": "flag forbidden authority shortcuts — advisory"},
+      {"id": "detect_quarantine_breaches", "description": "QB1–QB4 taxonomy signals — advisory"},
+      {"id": "produce_advisory_traces", "description": "epistemic audit residue — not grading records"},
+      {"id": "replay_analysis", "description": "provenance inspection · timing · continuity"}
+    ],
+    "forbidden": [
+      {"id": "grading_authority", "reason": "L4 ≠ criterion decision"},
+      {"id": "automatic_achieved_assignment", "reason": "runtime observed ≠ achieved"},
+      {"id": "quarantine_lifting", "reason": "constitutional boundary — human + full protocol only"},
+      {"id": "runtime_confirmation", "reason": "verified/confirmed language reserved"},
+      {"id": "governance_override", "reason": "no freeze/gate/HOLD bypass"},
+      {"id": "replay_bypass", "reason": "observation ≠ provenance replay substitute"}
+    ]
+  },
+  "section_2_epistemic_posture": {
+    "identity": "non-authoritative observational layer",
+    "required_output_tag": {
+      "layer": "L4_observational_advisory",
+      "authority_participation": false,
+      "grading_wire": false,
+      "quarantine_inherited": true
+    }
+  },
+  "section_3_quarantine_compatibility": {
+    "invariant_en": "L4 may observe authority conditions. L4 may not grant authority conditions.",
+    "rules": [
+      {"rule": "inherit_quarantine_state", "mandatory": true},
+      {"rule": "never_lift_quarantine", "mandatory": true},
+      {"rule": "no_linguistic_bypass", "mandatory": true}
+    ],
+    "forbidden_states": ["authority_granted", "quarantine_lifted"]
+  },
+  "section_4_failure_containment_assumptions": [
+    {"assumption": "semantic_leakage_will_recur", "response": "vocabulary drift detection mandatory"},
+    {"assumption": "vocabulary_drift_will_appear", "response": "triad language checks · QB taxonomy"},
+    {"assumption": "replay_shortcuts_will_occur", "response": "Gate 3 observability — not trust by default"},
+    {"assumption": "executable_temptation_persists", "response": "runtime_authority_gap tagging"},
+    {"assumption": "partial_legitimacy_will_form", "response": "audit residue · breach severity"}
+  ],
+  "mitigation_did_not_solve_problem": true,
+  "section_5_exit_criteria": {
+    "note_ar": "جميع المتطلبات إلزامية قبل activation — لا يُفعّل أي منها alone",
+    "requirements": [
+      {"id": "trusted_replay_discipline", "mandatory": true, "current_status": "incomplete"},
+      {"id": "automated_quarantine_enforcement", "mandatory": true, "current_status": "advisory_only"},
+      {"id": "breach_recurrence_reduction_evidence", "mandatory": true, "current_status": "not_demonstrated"},
+      {"id": "no_unresolved_qb3_qb4_patterns", "mandatory": true, "current_status": "unresolved"},
+      {"id": "independent_human_audit", "mandatory": true, "current_status": "pending"}
+    ],
+    "additional_gates": [
+      "GOVERNANCE_FREEZE_v2 RFC if L4 semantics change",
+      "RUNTIME_OBSERVATION_CONTRACT_v1 sign-off",
+      "signed epoch verdict beyond containment_progress alone"
+    ],
+    "activation_authorized": false
+  },
+  "prerequisite_artifacts": [
+    "REPLAY_GATE_DISCIPLINE_v1",
+    "AUTHORITY_TRIAD_LANGUAGE_v1",
+    "EPISTEMIC_QUARANTINE_CONTRACT_v1",
+    "EPOCH_REREVIEW_PACKET_PATH_A_v1",
+    "RUNTIME_OBSERVATION_CONTRACT_v1"
+  ],
+  "lineage_refs": [
+    "EPOCH_REREVIEW_PACKET_PATH_A_v1",
+    "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+    "replay_gate_session_3_submission_3.json",
+    "replay_gate_session_13_submission_13.json",
+    "led_d9fe03a80996"
+  ],
+  "explicit_non_goals": [
+    "autonomous_rubric_scoring",
+    "unsupervised_gameplay_agents",
+    "criterion_auto_achievement",
+    "quarantine_bypass_strong_evidence",
+    "implicit_freeze_v2_activation",
+    "conflate_rfc_acceptance_with_deployment"
+  ],
+  "rfc_acceptance": {
+    "meaning_en": "Phase 4 observational sandbox architecture is institutionally specified. Phase 4 operational activation is NOT authorized.",
+    "facilitator": "Eng.Abdulah",
+    "accepted_at": "2026-05-25T07:00:00Z",
+    "activation": false
+  },
+  "companion_md": "app/calibration/PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.md"
+}

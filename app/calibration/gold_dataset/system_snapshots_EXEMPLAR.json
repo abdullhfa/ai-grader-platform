@@ -1,0 +1,17 @@
+{
+  "submissions": {
+    "EXEMPLAR_replace_with_real_id": {
+      "criteria_results": [
+        {"criteria_level": "A.P3", "achieved": true, "score": 80},
+        {"criteria_level": "A.M1", "achieved": false, "score": 40}
+      ],
+      "evidence_layer": {"schema_version": "1.0", "items": []},
+      "assessment_trace": {"rubric_version": "unversioned"}
+    },
+    "EXEMPLAR_replace_with_real_id_2": {
+      "criteria_results": [
+        {"criteria_level": "B.M1", "achieved": true, "score": 70}
+      ]
+    }
+  }
+}

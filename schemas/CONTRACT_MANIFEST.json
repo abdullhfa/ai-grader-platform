@@ -1,0 +1,45 @@
+{
+  "schema": "platform_contract_manifest_v1",
+  "status": "frozen",
+  "frozen_at": "2026-05-27",
+  "platform_version": "1.0.0-institutional",
+  "contracts": {
+    "replay_snapshot": {
+      "version": "1.0",
+      "schema_file": "replay.schema.json",
+      "canonical_truth": true,
+      "layout": "uploads/replay_snapshots/{submission_key}/{session_id}/"
+    },
+    "evidence_graph": {
+      "version": "1.0",
+      "schema_file": "evidence.schema.json"
+    },
+    "gameplay_timeline": {
+      "version": "1.0",
+      "schema_file": "gameplay.schema.json"
+    },
+    "evidence_reasoning": {
+      "version": "1.0",
+      "schema_file": "reasoning.schema.json"
+    },
+    "governance_signoff": {
+      "version": "1.0",
+      "schema_file": "governance.schema.json"
+    },
+    "audit_event": {
+      "version": "1.0",
+      "schema_file": "audit.schema.json"
+    },
+    "tamper_verification": {
+      "version": "1.0",
+      "algorithm": "sha256_sorted_json",
+      "fields": ["artifact_type", "content_hash", "replay_hash", "signed_evaluation_hash"]
+    },
+    "api_surface": {
+      "version": "1.0",
+      "schema_file": "api_contracts_v1.json"
+    }
+  },
+  "breaking_change_policy": "major_version_bump_required",
+  "compatibility_guarantee": "replay_snapshots_v1_readable_indefinitely"
+}

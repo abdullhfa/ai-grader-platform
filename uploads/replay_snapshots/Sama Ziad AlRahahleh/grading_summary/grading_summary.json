@@ -1,0 +1,2354 @@
+{
+  "grade_level": "U",
+  "percentage": 65,
+  "criteria_results": [
+    {
+      "criteria_level": "B.P3",
+      "achieved": true,
+      "score": 70,
+      "feedback": "تم تحقيق المعيار. قدمت الطالبة وثائق تصميم فنية أساسية تغطي المتطلبات الجوهرية. تم تحديد الجمهور المستهدف (الأطفال 8-14 سنة) والغرض من اللعبة (الترفيه وتنمية التركيز) بوضوح. كما تم إنتاج جدول مصادر (Asset Table) مفصل يحدد الشخصيات والعناصر والأصوات ومصادرها، وهو ما يتوافق تماماً مع \"الدليل المطلوب\" في دليل المهمة.",
+      "decision_matrix": [
+        {
+          "requirement": "B.P3",
+          "met": true,
+          "evidence": "متطلبات الجمهور المستهدف : العمر: ويسكون لأعمار اللاعبين دور كبير على تصميم اللعبة... الغرض من اللعبة: الغرض هو السبب الذي من أجله تصنع لعبة الحاسوب... جدول الأصول: معرف الأصل | نوع الأصل | اسم الملف | نوع الملف | المصدر | الترخيص | التعديلات. 1 | شخصية | الضفدع | PNG | مكتبة Scratch | استخدام مجاني.",
+          "reasoning": "تم تحقيق المعيار. قدمت الطالبة وثائق تصميم فنية أساسية تغطي المتطلبات الجوهرية. تم تحديد الجمهور المستهدف (الأطفال 8-14 سنة) والغرض من اللعبة (الترفيه وتنمية التركيز) بوضوح. كما تم إنتاج جدول مصادر (Asset Table) مفصل يحدد الشخصيات والعناصر والأصوات ومصادرها، وهو ما يتوافق تماماً مع \"الدليل المطلوب\" في دليل المهمة."
+        }
+      ],
+      "covered_points": [
+        "متطلبات الجمهور المستهدف : العمر: ويسكون لأعمار اللاعبين دور كبير على تصميم اللعبة... الغرض من اللعبة: الغرض هو السبب الذي من أجله تصنع لعبة الحاسوب... جدول الأصول: معرف الأصل | نوع الأصل | اسم الملف | نوع الملف | المصدر | الترخيص | التعديلات. 1 | شخصية | الضفدع | PNG | مكتبة Scratch | استخدام مجاني."
+      ],
+      "missing_points": [],
+      "awardable": true,
+      "academic_snapshot": {
+        "criterion": "B.P3",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_achieved",
+        "rubric_shadow_result": {
+          "rubric_sufficiency_version": "1.0",
+          "shadow_mode": "observation_only",
+          "criterion": "P3",
+          "contract_id": "game_collision_p3",
+          "sufficiency_result": {
+            "criterion": "P3",
+            "contract_id": "game_collision_p3",
+            "sufficient": false,
+            "required_evidence_satisfied": false,
+            "required_pass_ratio": 0.0,
+            "required_pass_threshold": 1.0,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "missing_required:code_system:collision_system",
+              "insufficient_modalities:0<2",
+              "insufficient_cross_modal_diversity:0.0<0.4",
+              "insufficient_confidence:0.0<0.5"
+            ],
+            "rejected_evidence": [],
+            "modality_count": 0,
+            "cross_modal_diversity_score": 0.0
+          },
+          "sufficiency_reasoning": {
+            "reasoning": []
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "insufficient_modality_diversity"
+            },
+            {
+              "flag": "required_confidence_not_met"
+            }
+          ],
+          "required_details": [
+            {
+              "clause": {
+                "evidence_type": "code_system",
+                "system": "collision_system",
+                "min_confidence": 0.7,
+                "min_count": 1,
+                "execution_evidence": [
+                  "medium",
+                  "strong"
+                ]
+              },
+              "matched_count": 0,
+              "passing_count": 0,
+              "min_count": 1,
+              "passed": false,
+              "best_match": null,
+              "missing_token": "missing_required:code_system:collision_system"
+            }
+          ],
+          "supporting_details": [
+            {
+              "clause": {
+                "evidence_type": "runtime_log",
+                "system": "collision_system",
+                "min_count": 1
+              },
+              "matched_count": 0,
+              "passed": false
+            },
+            {
+              "clause": {
+                "evidence_type": "runtime_screenshot",
+                "min_count": 1
+              },
+              "matched_count": 0,
+              "passed": false
+            },
+            {
+              "clause": {
+                "evidence_type": "video_frame",
+                "min_count": 1
+              },
+              "matched_count": 0,
+              "passed": false
+            },
+            {
+              "clause": {
+                "evidence_type": "ocr_text",
+                "min_count": 1
+              },
+              "matched_count": 0,
+              "passed": false
+            }
+          ],
+          "limitations_ar": "تقييم كفاية الأدلة حتمي وظلّي (observation_only)؛ لا يغيّر achieved أو الدرجة.",
+          "criteria_level": "B.P3"
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "rubric_sufficiency_shadow_not_met",
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "declarative_sufficiency_contract_not_satisfied",
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.66,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "B.P3",
+        "deterministic_achieved": true,
+        "deterministic_score": 70,
+        "reason": "gdd_text_sufficient",
+        "authority": "DETERMINISTIC",
+        "verdict_status": "pass",
+        "rule_id": "gdd_document",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "B.P3",
+          "rule_id": "gdd_document",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "pass",
+          "authority": "DETERMINISTIC",
+          "reason": "gdd_text_sufficient",
+          "evidence_found": [
+            {
+              "rule_key": "gdd",
+              "match": "GDD",
+              "snippet": "جعات التصميم، تحديث GDD، جداول خطط الاختبار، تحليل تغذية راجعة موصوف) يمكن تقييمها من النص إن كان الطال"
+            }
+          ],
+          "evidence_missing": [],
+          "visual_evidence": {
+            "evidence_class": "hybrid",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 3,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "text_and_vision",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "B.P3",
+              "authority_profile": "hybrid",
+              "text_authority_required": true,
+              "visual_authority_required": false,
+              "runtime_authority_required": false,
+              "testing_authority_required": false,
+              "visual_authority_optional": true,
+              "text_authority_available": true,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": true,
+              "decision_basis": "text_and_vision",
+              "result": "PASS",
+              "result_ar": "متحقق",
+              "display_ar": "B.P3: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": false,
+            "visual_authority_available": true,
+            "result": "PASS",
+            "result_ar": "متحقق"
+          }
+        }
+      },
+      "verdict_status": "pass",
+      "rule_id": "gdd_document",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "B.P3",
+        "rule_id": "gdd_document",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "pass",
+        "authority": "DETERMINISTIC",
+        "reason": "gdd_text_sufficient",
+        "evidence_found": [
+          {
+            "rule_key": "gdd",
+            "match": "GDD",
+            "snippet": "جعات التصميم، تحديث GDD، جداول خطط الاختبار، تحليل تغذية راجعة موصوف) يمكن تقييمها من النص إن كان الطال"
+          }
+        ],
+        "evidence_missing": [],
+        "visual_evidence": {
+          "evidence_class": "hybrid",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 3,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "text_and_vision",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "B.P3",
+            "authority_profile": "hybrid",
+            "text_authority_required": true,
+            "visual_authority_required": false,
+            "runtime_authority_required": false,
+            "testing_authority_required": false,
+            "visual_authority_optional": true,
+            "text_authority_available": true,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": true,
+            "decision_basis": "text_and_vision",
+            "result": "PASS",
+            "result_ar": "متحقق",
+            "display_ar": "B.P3: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": false,
+          "visual_authority_available": true,
+          "result": "PASS",
+          "result_ar": "متحقق"
+        }
+      },
+      "achievement_authority": "DETERMINISTIC"
+    },
+    {
+      "criteria_level": "B.P4",
+      "achieved": true,
+      "score": 70,
+      "feedback": "تم تحقيق المعيار. أنتجت الطالبة تصميمات بصرية أساسية واضحة. تم وصف تسلسل الشاشات الرئيسية (الترحيب، التعليمات)، وتصميم عناصر واجهة المستخدم (العدادات، الأزرار)، وتخطيط المستويات (وصف المستوى الأول والثاني)، بالإضافة إلى تصميم شاشات الفوز والخسارة. هذه الأدلة تغطي متطلبات إنتاج تصميمات لمرئيات اللعبة الأساسية بشكل كافٍ.",
+      "decision_matrix": [
+        {
+          "requirement": "B.P4",
+          "met": true,
+          "evidence": "تسلسل تعليمات اللعبة: شاشة ترحيب, قائمة الرئيسية, شاشة التعليمات... تصميم المستوى و الخريطة: من المهم أن يعرف اللاعب مكانه داخل اللعبة... شكل شاشة الفوز وشاشة الخسارة: شاشة الفوز: لونها أخضر فاتح النص الرئيسي \"You Win!\"... العدادات | النقاط (أعلى يمين) الأرواح (أعلى يسار) الوقت (أعلى منتصف).",
+          "reasoning": "تم تحقيق المعيار. أنتجت الطالبة تصميمات بصرية أساسية واضحة. تم وصف تسلسل الشاشات الرئيسية (الترحيب، التعليمات)، وتصميم عناصر واجهة المستخدم (العدادات، الأزرار)، وتخطيط المستويات (وصف المستوى الأول والثاني)، بالإضافة إلى تصميم شاشات الفوز والخسارة. هذه الأدلة تغطي متطلبات إنتاج تصميمات لمرئيات اللعبة الأساسية بشكل كافٍ."
+        }
+      ],
+      "covered_points": [
+        "تسلسل تعليمات اللعبة: شاشة ترحيب, قائمة الرئيسية, شاشة التعليمات... تصميم المستوى و الخريطة: من المهم أن يعرف اللاعب مكانه داخل اللعبة... شكل شاشة الفوز وشاشة الخسارة: شاشة الفوز: لونها أخضر فاتح النص الرئيسي \"You Win!\"... العدادات | النقاط (أعلى يمين) الأرواح (أعلى يسار) الوقت (أعلى منتصف)."
+      ],
+      "missing_points": [],
+      "awardable": true,
+      "academic_snapshot": {
+        "criterion": "B.P4",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_achieved",
+        "rubric_shadow_result": {
+          "shadow_mode": "observation_only",
+          "criterion": "P4",
+          "contract_id": null,
+          "sufficiency_result": {
+            "criterion": "B.P4",
+            "sufficient": null,
+            "required_evidence_satisfied": null,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "no_contract_registered"
+            ],
+            "rejected_evidence": []
+          },
+          "sufficiency_reasoning": {
+            "reasoning": [
+              "no_contract_registered"
+            ]
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "no_rubric_contract"
+            }
+          ]
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.78,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "B.P4",
+        "deterministic_achieved": true,
+        "deterministic_score": 70,
+        "reason": "peer_review_evidence",
+        "authority": "DETERMINISTIC",
+        "verdict_status": "pass",
+        "rule_id": "questionnaire_or_survey",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "B.P4",
+          "rule_id": "questionnaire_or_survey",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "pass",
+          "authority": "DETERMINISTIC",
+          "reason": "peer_review_evidence",
+          "evidence_found": [
+            {
+              "rule_key": "استطلاع",
+              "match": "استطلاع",
+              "snippet": "بذلك عن طريق إجراء استطلاع أو مجموعة تركيز. العمر: ويسكون لأعمار اللاعبين دور كبير على تصميم اللعبة وسيتم"
+            },
+            {
+              "rule_key": "ملاحظات",
+              "match": "ملاحظات",
+              "snippet": "لتقنية ليتم تسجيل الملاحظات و الآراء التي تساعد على تطوير اللعبة تصميم شكل اللعبة و طريقة انتشارها حتى يتم"
+            }
+          ],
+          "evidence_missing": [],
+          "visual_evidence": {
+            "evidence_class": "text_sufficient",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 0,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "text",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "B.P4",
+              "authority_profile": "text_sufficient",
+              "text_authority_required": true,
+              "visual_authority_required": false,
+              "runtime_authority_required": false,
+              "testing_authority_required": false,
+              "visual_authority_optional": false,
+              "text_authority_available": true,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": true,
+              "decision_basis": "text",
+              "result": "PASS",
+              "result_ar": "متحقق",
+              "display_ar": "B.P4: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": false,
+            "visual_authority_available": true,
+            "result": "PASS",
+            "result_ar": "متحقق"
+          }
+        }
+      },
+      "verdict_status": "pass",
+      "rule_id": "questionnaire_or_survey",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "B.P4",
+        "rule_id": "questionnaire_or_survey",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "pass",
+        "authority": "DETERMINISTIC",
+        "reason": "peer_review_evidence",
+        "evidence_found": [
+          {
+            "rule_key": "استطلاع",
+            "match": "استطلاع",
+            "snippet": "بذلك عن طريق إجراء استطلاع أو مجموعة تركيز. العمر: ويسكون لأعمار اللاعبين دور كبير على تصميم اللعبة وسيتم"
+          },
+          {
+            "rule_key": "ملاحظات",
+            "match": "ملاحظات",
+            "snippet": "لتقنية ليتم تسجيل الملاحظات و الآراء التي تساعد على تطوير اللعبة تصميم شكل اللعبة و طريقة انتشارها حتى يتم"
+          }
+        ],
+        "evidence_missing": [],
+        "visual_evidence": {
+          "evidence_class": "text_sufficient",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 0,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "text",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "B.P4",
+            "authority_profile": "text_sufficient",
+            "text_authority_required": true,
+            "visual_authority_required": false,
+            "runtime_authority_required": false,
+            "testing_authority_required": false,
+            "visual_authority_optional": false,
+            "text_authority_available": true,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": true,
+            "decision_basis": "text",
+            "result": "PASS",
+            "result_ar": "متحقق",
+            "display_ar": "B.P4: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": false,
+          "visual_authority_available": true,
+          "result": "PASS",
+          "result_ar": "متحقق"
+        }
+      },
+      "achievement_authority": "DETERMINISTIC"
+    },
+    {
+      "criteria_level": "C.P5",
+      "achieved": false,
+      "score": 0,
+      "feedback": "لم يتم تحقيق المعيار. يتطلب هذا المعيار بشكل صريح \"إنتاج نموذج أولي\" وتقديم \"ملف قابل للتشغيل\" كدليل أساسي. بناءً على التحليل الآلي للملفات المرفقة، لم يتم تقديم أي ملف قابل للتشغيل (مثل .sb3 أو .exe). على الرغم من أن الطالبة وصفت النموذج الأولي بشكل مفصل جداً في التقرير، إلا أن الوصف النظري لا يغني عن تقديم المنتج الفعلي حسب قواعد BTEC. غياب الدليل العملي الأساسي يمنع تحقيق هذا المعيار.",
+      "decision_matrix": [
+        {
+          "requirement": "C.P5",
+          "met": false,
+          "evidence": "تحتوي اللعبة حاليا على مستوى واحد فقط حيث يقوم اللاعب بالتحكم بالشخصية وجمع العناصر المطلوبة للحصول على النقاط. وفي المستقبل أخطط لإضافة مستوى ثان يتضمن تحديات جديدة وعقبات أكثر صعوبة حتى تصبح اللعبة أكثر متعة وتشويقا.",
+          "reasoning": "لم يتم تحقيق المعيار. يتطلب هذا المعيار بشكل صريح \"إنتاج نموذج أولي\" وتقديم \"ملف قابل للتشغيل\" كدليل أساسي. بناءً على التحليل الآلي للملفات المرفقة، لم يتم تقديم أي ملف قابل للتشغيل (مثل .sb3 أو .exe). على الرغم من أن الطالبة وصفت النموذج الأولي بشكل مفصل جداً في التقرير، إلا أن الوصف النظري لا يغني عن تقديم المنتج الفعلي حسب قواعد BTEC. غياب الدليل العملي الأساسي يمنع تحقيق هذا المعيار."
+        }
+      ],
+      "covered_points": [],
+      "missing_points": [
+        "لم يتم تحقيق المعيار. يتطلب هذا المعيار بشكل صريح \"إنتاج نموذج أولي\" وتقديم \"ملف قابل للتشغيل\" كدليل أساسي. بناءً على التحليل الآلي للملفات المرفقة، لم يتم تقديم أي ملف قابل للتشغيل (مثل .sb3 أو .exe). على الرغم من أن الطالبة وصفت النموذج الأولي بشكل مفصل جداً في التقرير، إلا أن الوصف النظري لا يغني عن تقديم المنتج الفعلي حسب قواعد BTEC. غياب الدليل العملي الأساسي يمنع تحقيق هذا المعيار."
+      ],
+      "awardable": false,
+      "award_block_reason": "criterion_not_met",
+      "award_block_reason_ar": "المعيار لم يتحقق أكاديمياً",
+      "academic_snapshot": {
+        "criterion": "C.P5",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_not_achieved",
+        "rubric_shadow_result": {
+          "shadow_mode": "observation_only",
+          "criterion": "P5",
+          "contract_id": null,
+          "sufficiency_result": {
+            "criterion": "C.P5",
+            "sufficient": null,
+            "required_evidence_satisfied": null,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "no_contract_registered"
+            ],
+            "rejected_evidence": []
+          },
+          "sufficiency_reasoning": {
+            "reasoning": [
+              "no_contract_registered"
+            ]
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "no_rubric_contract"
+            }
+          ]
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.78,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "C.P5",
+        "deterministic_achieved": false,
+        "deterministic_score": 0,
+        "reason": "no_code_evidence",
+        "authority": "DETERMINISTIC",
+        "verdict_status": "fail",
+        "rule_id": "no_code_evidence",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "C.P5",
+          "rule_id": "no_code_evidence",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "fail",
+          "authority": "DETERMINISTIC",
+          "reason": "no_code_evidence",
+          "evidence_found": [],
+          "evidence_missing": [],
+          "visual_evidence": {
+            "evidence_class": "visual_dependent",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 0,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "none",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "C.P5",
+              "authority_profile": "visual_dependent",
+              "text_authority_required": false,
+              "visual_authority_required": true,
+              "runtime_authority_required": true,
+              "testing_authority_required": false,
+              "visual_authority_optional": false,
+              "text_authority_available": false,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": false,
+              "decision_basis": "none",
+              "result": "FAIL",
+              "result_ar": "غير متحقق",
+              "display_ar": "C.P5: FAIL — text=✗ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": true,
+            "visual_authority_available": true,
+            "result": "FAIL",
+            "result_ar": "غير متحقق"
+          }
+        }
+      },
+      "verdict_status": "fail",
+      "rule_id": "no_code_evidence",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "C.P5",
+        "rule_id": "no_code_evidence",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "fail",
+        "authority": "DETERMINISTIC",
+        "reason": "no_code_evidence",
+        "evidence_found": [],
+        "evidence_missing": [],
+        "visual_evidence": {
+          "evidence_class": "visual_dependent",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 0,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "none",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "C.P5",
+            "authority_profile": "visual_dependent",
+            "text_authority_required": false,
+            "visual_authority_required": true,
+            "runtime_authority_required": true,
+            "testing_authority_required": false,
+            "visual_authority_optional": false,
+            "text_authority_available": false,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": false,
+            "decision_basis": "none",
+            "result": "FAIL",
+            "result_ar": "غير متحقق",
+            "display_ar": "C.P5: FAIL — text=✗ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": true,
+          "visual_authority_available": true,
+          "result": "FAIL",
+          "result_ar": "غير متحقق"
+        }
+      },
+      "achievement_authority": "DETERMINISTIC"
+    },
+    {
+      "criteria_level": "C.P6",
+      "achieved": true,
+      "score": 75,
+      "feedback": "تم تحقيق المعيار. يسمح دليل المهمة باستخدام \"تقرير عمل\" كطريقة مناسبة لتوصيل الفكرة لجمهور تقني. المستند الذي قدمته الطالبة يعمل كتقرير تقني شامل ومفصل. لقد غطت جميع النقاط المطلوبة: التفاصيل الفنية (منصة Scratch، أنواع الأكواد)، الميزات الرئيسية (نظام النقاط، الأرواح، المؤقت)، والاعتبارات الأوسع (الجمهور المستهدف، سبب اختيار المنصة). المحتوى مناسب تماماً لجمهور تقني.",
+      "decision_matrix": [
+        {
+          "requirement": "C.P6",
+          "met": true,
+          "evidence": "قمت أيضا بإعداد عرض تقديمي يحتوي على معلومات تقنية عن اللعبة مثل اسم اللعبة والجمهور المستهدف والغرض منها وطريقة التحكم وآلية احتساب النقاط والشخصيات المستخدمة... تبرير اختيار المنصة Scratch... الأكواد المستخدمة في Scratch... شروط الفوز والخسارة.",
+          "reasoning": "تم تحقيق المعيار. يسمح دليل المهمة باستخدام \"تقرير عمل\" كطريقة مناسبة لتوصيل الفكرة لجمهور تقني. المستند الذي قدمته الطالبة يعمل كتقرير تقني شامل ومفصل. لقد غطت جميع النقاط المطلوبة: التفاصيل الفنية (منصة Scratch، أنواع الأكواد)، الميزات الرئيسية (نظام النقاط، الأرواح، المؤقت)، والاعتبارات الأوسع (الجمهور المستهدف، سبب اختيار المنصة). المحتوى مناسب تماماً لجمهور تقني."
+        }
+      ],
+      "covered_points": [
+        "قمت أيضا بإعداد عرض تقديمي يحتوي على معلومات تقنية عن اللعبة مثل اسم اللعبة والجمهور المستهدف والغرض منها وطريقة التحكم وآلية احتساب النقاط والشخصيات المستخدمة... تبرير اختيار المنصة Scratch... الأكواد المستخدمة في Scratch... شروط الفوز والخسارة."
+      ],
+      "missing_points": [],
+      "awardable": true,
+      "academic_snapshot": {
+        "criterion": "C.P6",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_achieved",
+        "rubric_shadow_result": {
+          "shadow_mode": "observation_only",
+          "criterion": "P6",
+          "contract_id": null,
+          "sufficiency_result": {
+            "criterion": "C.P6",
+            "sufficient": null,
+            "required_evidence_satisfied": null,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "no_contract_registered"
+            ],
+            "rejected_evidence": []
+          },
+          "sufficiency_reasoning": {
+            "reasoning": [
+              "no_contract_registered"
+            ]
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "no_rubric_contract"
+            }
+          ]
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.78,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "C.P6",
+        "deterministic_achieved": true,
+        "deterministic_score": 75,
+        "reason": "test_plan_documented_pro_mode",
+        "authority": "DETERMINISTIC_DOCUMENTARY",
+        "verdict_status": "pass",
+        "rule_id": "test_doc_pro_deliverable",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "C.P6",
+          "rule_id": "test_doc_pro_deliverable",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "pass",
+          "authority": "DETERMINISTIC_DOCUMENTARY",
+          "reason": "test_plan_documented_pro_mode",
+          "evidence_found": [],
+          "evidence_missing": [],
+          "visual_evidence": {
+            "evidence_class": "visual_dependent",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 3,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "vision",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "C.P6",
+              "authority_profile": "visual_dependent",
+              "text_authority_required": false,
+              "visual_authority_required": false,
+              "runtime_authority_required": false,
+              "testing_authority_required": true,
+              "visual_authority_optional": true,
+              "text_authority_available": false,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": true,
+              "decision_basis": "vision",
+              "result": "PASS",
+              "result_ar": "متحقق",
+              "display_ar": "C.P6: PASS — text=✗ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": false,
+            "visual_authority_available": true,
+            "result": "PASS",
+            "result_ar": "متحقق"
+          }
+        }
+      },
+      "verdict_status": "pass",
+      "rule_id": "test_doc_pro_deliverable",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "C.P6",
+        "rule_id": "test_doc_pro_deliverable",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "pass",
+        "authority": "DETERMINISTIC_DOCUMENTARY",
+        "reason": "test_plan_documented_pro_mode",
+        "evidence_found": [],
+        "evidence_missing": [],
+        "visual_evidence": {
+          "evidence_class": "visual_dependent",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 3,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "vision",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "C.P6",
+            "authority_profile": "visual_dependent",
+            "text_authority_required": false,
+            "visual_authority_required": false,
+            "runtime_authority_required": false,
+            "testing_authority_required": true,
+            "visual_authority_optional": true,
+            "text_authority_available": false,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": true,
+            "decision_basis": "vision",
+            "result": "PASS",
+            "result_ar": "متحقق",
+            "display_ar": "C.P6: PASS — text=✗ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": false,
+          "visual_authority_available": true,
+          "result": "PASS",
+          "result_ar": "متحقق"
+        }
+      },
+      "achievement_authority": "DETERMINISTIC_DOCUMENTARY"
+    },
+    {
+      "criteria_level": "B.M2",
+      "achieved": true,
+      "score": 70,
+      "feedback": "تم تحقيق المعيار. أنتجت الطالبة تصميمات فنية ومرئية مفصلة وفعالة تتجاوز المستوى الأساسي. الدليل على ذلك هو تقديم تفاصيل دقيقة مثل قيم السرعة المتغيرة بين المستويات، وتحديد لون الخلفية باستخدام رمز HEX، وإنشاء جدول مقارنة واضح بين المستويين، مما يدل على تصميم متناسق ومدروس يعزز تجربة اللعب ويزيد من التحدي. هذا المستوى من التفصيل يحقق متطلبات Merit.",
+      "decision_matrix": [
+        {
+          "requirement": "B.M2",
+          "met": true,
+          "evidence": "ادلة الأنماط: دليل النمط هو وثيقة تحتوي على مجموعة من القواعد التي تستخدم في جميع أجزاء اللعبة... الفرق بين المستوى الأول والمستوى الثاني : الخاصية | المستوى الأول | المستوى الثاني. الوقت | 30 ثانية | 25 ثانية. سرعة سقوط النجوم | 5 خطوات لكل إطار | 8 خطوات لكل إطار... وصف خريطة المستوى الثاني: الخلفية | فضاء عميق باللون البنفسجي الغامق (#2B0054) مع نجوم لامعة متعددة.",
+          "reasoning": "تم تحقيق المعيار. أنتجت الطالبة تصميمات فنية ومرئية مفصلة وفعالة تتجاوز المستوى الأساسي. الدليل على ذلك هو تقديم تفاصيل دقيقة مثل قيم السرعة المتغيرة بين المستويات، وتحديد لون الخلفية باستخدام رمز HEX، وإنشاء جدول مقارنة واضح بين المستويين، مما يدل على تصميم متناسق ومدروس يعزز تجربة اللعب ويزيد من التحدي. هذا المستوى من التفصيل يحقق متطلبات Merit."
+        }
+      ],
+      "covered_points": [
+        "ادلة الأنماط: دليل النمط هو وثيقة تحتوي على مجموعة من القواعد التي تستخدم في جميع أجزاء اللعبة... الفرق بين المستوى الأول والمستوى الثاني : الخاصية | المستوى الأول | المستوى الثاني. الوقت | 30 ثانية | 25 ثانية. سرعة سقوط النجوم | 5 خطوات لكل إطار | 8 خطوات لكل إطار... وصف خريطة المستوى الثاني: الخلفية | فضاء عميق باللون البنفسجي الغامق (#2B0054) مع نجوم لامعة متعددة."
+      ],
+      "missing_points": [],
+      "awardable": false,
+      "award_block_reason": "missing_pass_criteria",
+      "award_block_reason_ar": "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Pass ناقصة)",
+      "academic_snapshot": {
+        "criterion": "B.M2",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_achieved",
+        "rubric_shadow_result": {
+          "shadow_mode": "observation_only",
+          "criterion": "M2",
+          "contract_id": null,
+          "sufficiency_result": {
+            "criterion": "B.M2",
+            "sufficient": null,
+            "required_evidence_satisfied": null,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "no_contract_registered"
+            ],
+            "rejected_evidence": []
+          },
+          "sufficiency_reasoning": {
+            "reasoning": [
+              "no_contract_registered"
+            ]
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "no_rubric_contract"
+            }
+          ]
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.78,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "B.M2",
+        "deterministic_achieved": true,
+        "deterministic_score": 70,
+        "reason": "merit_analysis_present",
+        "authority": "DETERMINISTIC",
+        "verdict_status": "pass",
+        "rule_id": "merit_analysis",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "B.M2",
+          "rule_id": "merit_analysis",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "pass",
+          "authority": "DETERMINISTIC",
+          "reason": "merit_analysis_present",
+          "evidence_found": [
+            {
+              "rule_key": "analysis",
+              "match": "تحليل",
+              "snippet": "ملخص بنية المشروع (تحليل آلي محلي، بدون إرسال الملفات الخام كاملة)] استخدم هذا كخريطة تقنية: أنواع المحر"
+            }
+          ],
+          "evidence_missing": [],
+          "visual_evidence": {
+            "evidence_class": "text_sufficient",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 0,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "text",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "B.M2",
+              "authority_profile": "text_sufficient",
+              "text_authority_required": true,
+              "visual_authority_required": false,
+              "runtime_authority_required": false,
+              "testing_authority_required": false,
+              "visual_authority_optional": false,
+              "text_authority_available": true,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": true,
+              "decision_basis": "text",
+              "result": "PASS",
+              "result_ar": "متحقق",
+              "display_ar": "B.M2: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": false,
+            "visual_authority_available": true,
+            "result": "PASS",
+            "result_ar": "متحقق"
+          }
+        }
+      },
+      "verdict_status": "pass",
+      "rule_id": "merit_analysis",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "B.M2",
+        "rule_id": "merit_analysis",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "pass",
+        "authority": "DETERMINISTIC",
+        "reason": "merit_analysis_present",
+        "evidence_found": [
+          {
+            "rule_key": "analysis",
+            "match": "تحليل",
+            "snippet": "ملخص بنية المشروع (تحليل آلي محلي، بدون إرسال الملفات الخام كاملة)] استخدم هذا كخريطة تقنية: أنواع المحر"
+          }
+        ],
+        "evidence_missing": [],
+        "visual_evidence": {
+          "evidence_class": "text_sufficient",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 0,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "text",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "B.M2",
+            "authority_profile": "text_sufficient",
+            "text_authority_required": true,
+            "visual_authority_required": false,
+            "runtime_authority_required": false,
+            "testing_authority_required": false,
+            "visual_authority_optional": false,
+            "text_authority_available": true,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": true,
+            "decision_basis": "text",
+            "result": "PASS",
+            "result_ar": "متحقق",
+            "display_ar": "B.M2: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": false,
+          "visual_authority_available": true,
+          "result": "PASS",
+          "result_ar": "متحقق"
+        }
+      },
+      "achievement_authority": "DETERMINISTIC"
+    },
+    {
+      "criteria_level": "C.M3",
+      "achieved": true,
+      "score": 65,
+      "feedback": "لم يتم تحقيق المعيار. مثل معيار C.P5، يعتمد هذا المعيار بشكل جوهري على \"عرض نموذج أولي فعال بشكل أساسي للعبة\". بما أن النموذج الأولي نفسه لم يتم تقديمه كملف قابل للتشغيل، فلا يمكن تقييم فعاليته. وبالتالي، فإن أحد المكونين الرئيسيين للمعيار مفقود بالكامل، مما يمنع تحقيقه.",
+      "decision_matrix": [
+        {
+          "requirement": "C.M3",
+          "met": false,
+          "evidence": "أظهرت عملية اختبار اللعبة أن فكرتها مناسبة للفئة المستهدفة وأن طريقة التحكم سهلة وواضحة... ومن التحسينات المستقبلية التي يمكن إضافتها إنشاء مستوى ثان أكثر صعوبة وإضافة شخصيات جديدة...",
+          "reasoning": "لم يتم تحقيق المعيار. مثل معيار C.P5، يعتمد هذا المعيار بشكل جوهري على \"عرض نموذج أولي فعال بشكل أساسي للعبة\". بما أن النموذج الأولي نفسه لم يتم تقديمه كملف قابل للتشغيل، فلا يمكن تقييم فعاليته. وبالتالي، فإن أحد المكونين الرئيسيين للمعيار مفقود بالكامل، مما يمنع تحقيقه."
+        }
+      ],
+      "covered_points": [],
+      "missing_points": [
+        "لم يتم تحقيق المعيار. مثل معيار C.P5، يعتمد هذا المعيار بشكل جوهري على \"عرض نموذج أولي فعال بشكل أساسي للعبة\". بما أن النموذج الأولي نفسه لم يتم تقديمه كملف قابل للتشغيل، فلا يمكن تقييم فعاليته. وبالتالي، فإن أحد المكونين الرئيسيين للمعيار مفقود بالكامل، مما يمنع تحقيقه."
+      ],
+      "awardable": false,
+      "award_block_reason": "criterion_not_met",
+      "award_block_reason_ar": "المعيار لم يتحقق أكاديمياً",
+      "academic_snapshot": {
+        "criterion": "C.M3",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_not_achieved",
+        "rubric_shadow_result": {
+          "shadow_mode": "observation_only",
+          "criterion": "M3",
+          "contract_id": null,
+          "sufficiency_result": {
+            "criterion": "C.M3",
+            "sufficient": null,
+            "required_evidence_satisfied": null,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "no_contract_registered"
+            ],
+            "rejected_evidence": []
+          },
+          "sufficiency_reasoning": {
+            "reasoning": [
+              "no_contract_registered"
+            ]
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "no_rubric_contract"
+            }
+          ]
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.78,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "C.M3",
+        "deterministic_achieved": true,
+        "deterministic_score": 65,
+        "reason": "presentation_evidence",
+        "authority": "DETERMINISTIC",
+        "verdict_status": "pass",
+        "rule_id": "presentation_evidence",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "C.M3",
+          "rule_id": "presentation_evidence",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "pass",
+          "authority": "DETERMINISTIC",
+          "reason": "presentation_evidence",
+          "evidence_found": [
+            {
+              "rule_key": "presentation",
+              "match": "عرض",
+              "snippet": "تم رؤية طريقة عملها عرض فكرة اللعبة و النموذج الأولي على الأشخاص الذي لديهم الخبرة بالتقنية ليتم تسجيل"
+            }
+          ],
+          "evidence_missing": [],
+          "visual_evidence": {
+            "evidence_class": "text_sufficient",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 0,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "text",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "C.M3",
+              "authority_profile": "text_sufficient",
+              "text_authority_required": true,
+              "visual_authority_required": false,
+              "runtime_authority_required": false,
+              "testing_authority_required": false,
+              "visual_authority_optional": false,
+              "text_authority_available": true,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": true,
+              "decision_basis": "text",
+              "result": "PASS",
+              "result_ar": "متحقق",
+              "display_ar": "C.M3: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": false,
+            "visual_authority_available": true,
+            "result": "PASS",
+            "result_ar": "متحقق"
+          }
+        }
+      },
+      "verdict_status": "pass",
+      "rule_id": "presentation_evidence",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "C.M3",
+        "rule_id": "presentation_evidence",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "pass",
+        "authority": "DETERMINISTIC",
+        "reason": "presentation_evidence",
+        "evidence_found": [
+          {
+            "rule_key": "presentation",
+            "match": "عرض",
+            "snippet": "تم رؤية طريقة عملها عرض فكرة اللعبة و النموذج الأولي على الأشخاص الذي لديهم الخبرة بالتقنية ليتم تسجيل"
+          }
+        ],
+        "evidence_missing": [],
+        "visual_evidence": {
+          "evidence_class": "text_sufficient",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 0,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "text",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "C.M3",
+            "authority_profile": "text_sufficient",
+            "text_authority_required": true,
+            "visual_authority_required": false,
+            "runtime_authority_required": false,
+            "testing_authority_required": false,
+            "visual_authority_optional": false,
+            "text_authority_available": true,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": true,
+            "decision_basis": "text",
+            "result": "PASS",
+            "result_ar": "متحقق",
+            "display_ar": "C.M3: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": false,
+          "visual_authority_available": true,
+          "result": "PASS",
+          "result_ar": "متحقق"
+        }
+      },
+      "ai_proposed_achieved": false,
+      "achievement_authority": "DETERMINISTIC"
+    },
+    {
+      "criteria_level": "B.D2",
+      "achieved": false,
+      "score": 0,
+      "feedback": "تم تحقيق المعيار. أنتجت الطالبة تصميمات شاملة مع تبرير واضح للخيارات التصميمية. قسم \"تبرير اختيار المنصة Scratch\" وقسم \"ما يميز اللعبة\" يقدمان تحليلاً يربط الخيارات التقنية والتصميمية بالجمهور المستهدف والغرض من اللعبة. مستوى التفصيل في الجداول والأوصاف يجعل الوثيقة قابلة للاستخدام من قبل طرف ثالث لتنفيذ فكرة اللعبة، وهو ما يحقق متطلبات Distinction.",
+      "decision_matrix": [
+        {
+          "requirement": "B.D2",
+          "met": true,
+          "evidence": "تبرير اختيار المنصة Scratch: السبب الأول: سهولة البرمجة... السبب الثاني: سرعة التطوير... السبب الخامس: مناسب للمبتدئين... ما يميز اللعبة (لماذا سيستخدمها الناس؟): النقطة الأولى: سهلة التعلم... النقطة الثانية: جلسات قصيرة... النقطة السادسة: تطور المهارات...",
+          "reasoning": "تم تحقيق المعيار. أنتجت الطالبة تصميمات شاملة مع تبرير واضح للخيارات التصميمية. قسم \"تبرير اختيار المنصة Scratch\" وقسم \"ما يميز اللعبة\" يقدمان تحليلاً يربط الخيارات التقنية والتصميمية بالجمهور المستهدف والغرض من اللعبة. مستوى التفصيل في الجداول والأوصاف يجعل الوثيقة قابلة للاستخدام من قبل طرف ثالث لتنفيذ فكرة اللعبة، وهو ما يحقق متطلبات Distinction."
+        }
+      ],
+      "covered_points": [
+        "تبرير اختيار المنصة Scratch: السبب الأول: سهولة البرمجة... السبب الثاني: سرعة التطوير... السبب الخامس: مناسب للمبتدئين... ما يميز اللعبة (لماذا سيستخدمها الناس؟): النقطة الأولى: سهلة التعلم... النقطة الثانية: جلسات قصيرة... النقطة السادسة: تطور المهارات..."
+      ],
+      "missing_points": [],
+      "awardable": false,
+      "award_block_reason": "missing_pass_criteria",
+      "award_block_reason_ar": "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Pass ناقصة)",
+      "academic_snapshot": {
+        "criterion": "B.D2",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_achieved",
+        "rubric_shadow_result": {
+          "shadow_mode": "observation_only",
+          "criterion": "D2",
+          "contract_id": null,
+          "sufficiency_result": {
+            "criterion": "B.D2",
+            "sufficient": null,
+            "required_evidence_satisfied": null,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "no_contract_registered"
+            ],
+            "rejected_evidence": []
+          },
+          "sufficiency_reasoning": {
+            "reasoning": [
+              "no_contract_registered"
+            ]
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "no_rubric_contract"
+            }
+          ]
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.78,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "B.D2",
+        "deterministic_achieved": false,
+        "deterministic_score": 0,
+        "reason": "distinction_evaluation_missing",
+        "authority": "DETERMINISTIC",
+        "verdict_status": "fail",
+        "rule_id": "distinction_evaluation",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "B.D2",
+          "rule_id": "distinction_evaluation",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "fail",
+          "authority": "DETERMINISTIC",
+          "reason": "distinction_evaluation_missing",
+          "evidence_found": [],
+          "evidence_missing": [
+            "evaluation"
+          ],
+          "visual_evidence": {
+            "evidence_class": "text_sufficient",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 0,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "none",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "B.D2",
+              "authority_profile": "text_sufficient",
+              "text_authority_required": true,
+              "visual_authority_required": false,
+              "runtime_authority_required": false,
+              "testing_authority_required": false,
+              "visual_authority_optional": false,
+              "text_authority_available": false,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": false,
+              "decision_basis": "none",
+              "result": "FAIL",
+              "result_ar": "غير متحقق",
+              "display_ar": "B.D2: FAIL — text=✗ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": false,
+            "visual_authority_available": true,
+            "result": "FAIL",
+            "result_ar": "غير متحقق"
+          }
+        }
+      },
+      "verdict_status": "fail",
+      "rule_id": "distinction_evaluation",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "B.D2",
+        "rule_id": "distinction_evaluation",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "fail",
+        "authority": "DETERMINISTIC",
+        "reason": "distinction_evaluation_missing",
+        "evidence_found": [],
+        "evidence_missing": [
+          "evaluation"
+        ],
+        "visual_evidence": {
+          "evidence_class": "text_sufficient",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 0,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "none",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "B.D2",
+            "authority_profile": "text_sufficient",
+            "text_authority_required": true,
+            "visual_authority_required": false,
+            "runtime_authority_required": false,
+            "testing_authority_required": false,
+            "visual_authority_optional": false,
+            "text_authority_available": false,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": false,
+            "decision_basis": "none",
+            "result": "FAIL",
+            "result_ar": "غير متحقق",
+            "display_ar": "B.D2: FAIL — text=✗ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": false,
+          "visual_authority_available": true,
+          "result": "FAIL",
+          "result_ar": "غير متحقق"
+        }
+      },
+      "ai_proposed_achieved": true,
+      "achievement_authority": "DETERMINISTIC"
+    },
+    {
+      "criteria_level": "C.D3",
+      "achieved": true,
+      "score": 65,
+      "feedback": "لم يتم تحقيق المعيار. يتطلب هذا المعيار عرض \"نموذج أولي مقنع وفعّال للغاية\". نظراً لعدم تقديم النموذج الأولي، لا يوجد أي دليل على وجود منتج مقنع وفعال يمكن عرضه. على الرغم من أن التبريرات المكتوبة في التقرير مقنعة، إلا أنها لا يمكن أن تعوض غياب الدليل العملي الأساسي والمطلوب بشكل صريح في المعيار.",
+      "decision_matrix": [
+        {
+          "requirement": "C.D3",
+          "met": false,
+          "evidence": "ما يميز اللعبة (لماذا سيستخدمها الناس؟) النقطة الأولى: سهلة التعلم - تحتاج أقل من دقيقة لفهم طريقة اللعب... النقطة السادسة: تطور المهارات - تحسن سرعة رد الفعل والتنسيق بين العين واليد.",
+          "reasoning": "لم يتم تحقيق المعيار. يتطلب هذا المعيار عرض \"نموذج أولي مقنع وفعّال للغاية\". نظراً لعدم تقديم النموذج الأولي، لا يوجد أي دليل على وجود منتج مقنع وفعال يمكن عرضه. على الرغم من أن التبريرات المكتوبة في التقرير مقنعة، إلا أنها لا يمكن أن تعوض غياب الدليل العملي الأساسي والمطلوب بشكل صريح في المعيار."
+        }
+      ],
+      "covered_points": [],
+      "missing_points": [
+        "لم يتم تحقيق المعيار. يتطلب هذا المعيار عرض \"نموذج أولي مقنع وفعّال للغاية\". نظراً لعدم تقديم النموذج الأولي، لا يوجد أي دليل على وجود منتج مقنع وفعال يمكن عرضه. على الرغم من أن التبريرات المكتوبة في التقرير مقنعة، إلا أنها لا يمكن أن تعوض غياب الدليل العملي الأساسي والمطلوب بشكل صريح في المعيار."
+      ],
+      "awardable": false,
+      "award_block_reason": "criterion_not_met",
+      "award_block_reason_ar": "المعيار لم يتحقق أكاديمياً",
+      "academic_snapshot": {
+        "criterion": "C.D3",
+        "systems_semantic": [],
+        "pattern_hints": [],
+        "runtime_evidence": {
+          "runtime_screenshot_items": 0,
+          "runtime_log_items": 0,
+          "video_frame_items": 0,
+          "ocr_text_items": 0,
+          "log_mentions_collision": false,
+          "log_mentions_scene_load": false,
+          "log_mentions_save": false
+        },
+        "runtime_corroboration": {},
+        "corroboration_summary": {
+          "strongly_corroborated_systems": [],
+          "weakly_corroborated_systems": []
+        },
+        "missing_runtime_corroboration_flags": [],
+        "corroboration_conflicts": [],
+        "temporal_alignment_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "temporal_alignment_strength": "weak",
+          "temporal_event_count": 0,
+          "temporal_group_count": 0,
+          "temporal_alignment_conflicts": [],
+          "temporal_reasoning": []
+        },
+        "cross_modal_observation": {
+          "version": "1.0",
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_window_count": 0,
+          "cross_modal_noise_flags": [],
+          "cross_modal_reasoning": []
+        },
+        "ui_token_observation": {
+          "version": "1.0",
+          "window_seconds": 5.0,
+          "token_group_count": 0,
+          "token_noise_flags": [],
+          "token_reasoning": [],
+          "tokens_strength_summary": []
+        },
+        "submission_intake_observation": {
+          "version": 1,
+          "source": "relative_paths_plus_disk",
+          "submission_noise_flags": [],
+          "upload_diagnostics": {
+            "total_files_uploaded": 4,
+            "ignored_files": 0,
+            "effective_analysis_files": 4,
+            "ignore_ratio": 0.0,
+            "relative_path_files": 4,
+            "on_disk_files": 3
+          }
+        },
+        "packet_tracer_topology_items": 0,
+        "network_evidence_summary": {},
+        "spreadsheet_semantic_items": 0,
+        "spreadsheet_semantic_summary": {},
+        "manual_flags": [],
+        "ai_reasoning_summary": "",
+        "final_recommendation": "likely_not_achieved",
+        "rubric_shadow_result": {
+          "shadow_mode": "observation_only",
+          "criterion": "D3",
+          "contract_id": null,
+          "sufficiency_result": {
+            "criterion": "C.D3",
+            "sufficient": null,
+            "required_evidence_satisfied": null,
+            "supporting_evidence_count": 0,
+            "missing_evidence": [
+              "no_contract_registered"
+            ],
+            "rejected_evidence": []
+          },
+          "sufficiency_reasoning": {
+            "reasoning": [
+              "no_contract_registered"
+            ]
+          },
+          "insufficiency_flags": [
+            {
+              "flag": "no_rubric_contract"
+            }
+          ]
+        },
+        "human_review_required": {
+          "required": true,
+          "severity": "high",
+          "reasons": [
+            "sparse_evidence_detected"
+          ]
+        },
+        "review_reasoning": {
+          "reasoning": [
+            "minimal_extracted_evidence_for_reliable_automation"
+          ]
+        },
+        "review_confidence": 0.78,
+        "review_categories": [
+          "evidence_sufficiency"
+        ]
+      },
+      "deterministic_rubric": {
+        "criteria_level": "C.D3",
+        "deterministic_achieved": true,
+        "deterministic_score": 65,
+        "reason": "presentation_evidence",
+        "authority": "DETERMINISTIC",
+        "verdict_status": "pass",
+        "rule_id": "presentation_evidence",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "evidence_registry": {
+          "criterion": "C.D3",
+          "rule_id": "presentation_evidence",
+          "rule_version": "2026.05",
+          "execution_mode": "PRO",
+          "decision_provenance": {
+            "rule_version": "2026.05",
+            "authority_version": "v1",
+            "engine_version": "deterministic_rubric_v2",
+            "governance_freeze": "GOVERNANCE_FREEZE_v2",
+            "execution_mode": "PRO",
+            "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+          },
+          "runtime": "none",
+          "result": "pass",
+          "authority": "DETERMINISTIC",
+          "reason": "presentation_evidence",
+          "evidence_found": [
+            {
+              "rule_key": "presentation",
+              "match": "عرض",
+              "snippet": "تم رؤية طريقة عملها عرض فكرة اللعبة و النموذج الأولي على الأشخاص الذي لديهم الخبرة بالتقنية ليتم تسجيل"
+            }
+          ],
+          "evidence_missing": [],
+          "visual_evidence": {
+            "evidence_class": "text_sufficient",
+            "images_found": 3,
+            "images_submitted": 3,
+            "images_analyzed": 3,
+            "images_used_in_decision": 0,
+            "video_keyframes_analyzed": 0,
+            "runtime_verified": false,
+            "decision_basis": "text",
+            "vision_status": "analysed",
+            "authority": {
+              "version": 1,
+              "criterion": "C.D3",
+              "authority_profile": "text_sufficient",
+              "text_authority_required": true,
+              "visual_authority_required": false,
+              "runtime_authority_required": false,
+              "testing_authority_required": false,
+              "visual_authority_optional": false,
+              "text_authority_available": true,
+              "visual_authority_available": true,
+              "runtime_authority_available": false,
+              "testing_authority_available": true,
+              "authority_sufficient": true,
+              "decision_basis": "text",
+              "result": "PASS",
+              "result_ar": "متحقق",
+              "display_ar": "C.D3: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+              "decision_provenance": {
+                "rule_version": "2026.05",
+                "authority_version": "v1",
+                "engine_version": "deterministic_rubric_v2",
+                "governance_freeze": "GOVERNANCE_FREEZE_v2",
+                "execution_mode": "PRO",
+                "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+                "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+              }
+            },
+            "visual_authority_required": false,
+            "visual_authority_available": true,
+            "result": "PASS",
+            "result_ar": "متحقق"
+          }
+        }
+      },
+      "verdict_status": "pass",
+      "rule_id": "presentation_evidence",
+      "rule_version": "2026.05",
+      "evidence_registry": {
+        "criterion": "C.D3",
+        "rule_id": "presentation_evidence",
+        "rule_version": "2026.05",
+        "execution_mode": "PRO",
+        "decision_provenance": {
+          "rule_version": "2026.05",
+          "authority_version": "v1",
+          "engine_version": "deterministic_rubric_v2",
+          "governance_freeze": "GOVERNANCE_FREEZE_v2",
+          "execution_mode": "PRO",
+          "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3"
+        },
+        "runtime": "none",
+        "result": "pass",
+        "authority": "DETERMINISTIC",
+        "reason": "presentation_evidence",
+        "evidence_found": [
+          {
+            "rule_key": "presentation",
+            "match": "عرض",
+            "snippet": "تم رؤية طريقة عملها عرض فكرة اللعبة و النموذج الأولي على الأشخاص الذي لديهم الخبرة بالتقنية ليتم تسجيل"
+          }
+        ],
+        "evidence_missing": [],
+        "visual_evidence": {
+          "evidence_class": "text_sufficient",
+          "images_found": 3,
+          "images_submitted": 3,
+          "images_analyzed": 3,
+          "images_used_in_decision": 0,
+          "video_keyframes_analyzed": 0,
+          "runtime_verified": false,
+          "decision_basis": "text",
+          "vision_status": "analysed",
+          "authority": {
+            "version": 1,
+            "criterion": "C.D3",
+            "authority_profile": "text_sufficient",
+            "text_authority_required": true,
+            "visual_authority_required": false,
+            "runtime_authority_required": false,
+            "testing_authority_required": false,
+            "visual_authority_optional": false,
+            "text_authority_available": true,
+            "visual_authority_available": true,
+            "runtime_authority_available": false,
+            "testing_authority_available": true,
+            "authority_sufficient": true,
+            "decision_basis": "text",
+            "result": "PASS",
+            "result_ar": "متحقق",
+            "display_ar": "C.D3: PASS — text=✓ visual=✓ runtime=✗ testing=✓",
+            "decision_provenance": {
+              "rule_version": "2026.05",
+              "authority_version": "v1",
+              "engine_version": "deterministic_rubric_v2",
+              "governance_freeze": "GOVERNANCE_FREEZE_v2",
+              "execution_mode": "PRO",
+              "bundle_hash": "e8b71e609bdf926094cd469c8ec8cb73d7d591d1ef94bb14fc79cb064fb1f0d3",
+              "evidence_hash": "197f0e74e05fe0d7611ed7b13a95a32887c0a47b6ac67f04cb02efa91aeb3a9f"
+            }
+          },
+          "visual_authority_required": false,
+          "visual_authority_available": true,
+          "result": "PASS",
+          "result_ar": "متحقق"
+        }
+      },
+      "ai_proposed_achieved": false,
+      "achievement_authority": "DETERMINISTIC"
+    }
+  ]
+}

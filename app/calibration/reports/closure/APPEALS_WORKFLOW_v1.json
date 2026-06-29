@@ -1,0 +1,39 @@
+{
+  "schema": "appeals_workflow_v1",
+  "status": "scaffold_ready",
+  "description_ar": "مسار الاعتراض والمراجعة البشرية — Phase 7",
+  "student_rights": [
+    "view_grading_snapshot_summary",
+    "view_replay_verification_status",
+    "view_artifact_inventory",
+    "request_human_moderation",
+    "submit_appeal_with_evidence"
+  ],
+  "appeal_states": [
+    "submitted",
+    "under_human_review",
+    "replay_audit_requested",
+    "upheld",
+    "partially_modified",
+    "rejected_with_rationale"
+  ],
+  "api_endpoints_existing": [
+    "GET /api/batch-grade-latest/{assignment_id}",
+    "GET /api/batch-grade-progress/{assignment_id}",
+    "GET /api/metrics"
+  ],
+  "api_endpoints_pending_product": [
+    "POST /api/appeals/submit",
+    "GET /api/appeals/{submission_id}/status",
+    "GET /api/submissions/{id}/replay-summary"
+  ],
+  "operational_workaround_until_api": {
+    "step_1": "Student emails teacher with submission_id",
+    "step_2": "Teacher opens batch-results + replay audit export",
+    "step_3": "Human decision logged in moderation_queue.json follow-up"
+  },
+  "immutable_audit": {
+    "replay_audit_export": "app/calibration/reports/closure/replay_audit_export.json",
+    "note": "Replay hash stable — use for appeal defensibility"
+  }
+}

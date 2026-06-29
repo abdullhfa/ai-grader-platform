@@ -1,0 +1,46 @@
+{
+  "id": "GOVERNANCE_FREEZE_v1",
+  "status": "frozen",
+  "date": "2026-05-22",
+  "core_axioms": [
+    "ingestion semantics ≠ grading authority",
+    "runtime observation ≠ criterion authority",
+    "video raises plausibility not authority",
+    "contradictions downgrade authority not automatic failure"
+  ],
+  "max_auto_runtime_level": 3,
+  "reserved_levels": [4, 5],
+  "frozen_modules": [
+    "app/artifact_inventory.py",
+    "app/evidence_authority_mapping.py",
+    "app/cross_artifact_consistency.py",
+    "app/gameplay_video_inference.py",
+    "app/temporal_consistency_governance.py",
+    "app/evidence_trace_graph.py",
+    "app/authority_replay.py"
+  ],
+  "forbidden_claims_en": [
+    "game verified",
+    "gameplay verified",
+    "criterion confirmed",
+    "runtime validated",
+    "game works",
+    "testing completed"
+  ],
+  "allowed_claims_en_sample": [
+    "runtime_capable_artifact_exists",
+    "gameplay activity inferred",
+    "mechanic visually suggested",
+    "runtime hints observed",
+    "evidence partially supports"
+  ],
+  "explicit_non_goals": [
+    "auto_run_executables",
+    "executable_to_achieved",
+    "vision_gameplay_narration_authority",
+    "contradiction_auto_not_achieved",
+    "shadow_sufficiency_wires_achieved"
+  ],
+  "claim_authority_flags_schema_version": 1,
+  "evidence_trace_graph_version": 1
+}

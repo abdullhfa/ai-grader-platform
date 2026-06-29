@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10 max-w-3xl">
+    <h1 class="text-2xl font-extrabold text-rose-950 mb-4">Governance expansion locked</h1>
+    <p class="text-gray-800 mb-6">{{ message_ar }}</p>
+    {% if batch_id %}
+    <div class="flex flex-wrap gap-3">
+        <a href="/governance-pilot/batch/{{ batch_id }}"
+            class="bg-indigo-600 text-white text-sm font-bold px-4 py-2 rounded-lg">
+            Phase 2 Observatory
+        </a>
+        <a href="/governance-pilot/batch/{{ batch_id }}/ritual-reading"
+            class="bg-violet-700 text-white text-sm font-bold px-4 py-2 rounded-lg">
+            Ritual Reading
+        </a>
+        <a href="/api/governance-pilot/phase2/cohort/{{ batch_id }}"
+            class="text-sm text-indigo-600 underline self-center">
+            workflow state
+        </a>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

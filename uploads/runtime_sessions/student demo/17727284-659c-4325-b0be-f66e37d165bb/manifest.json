@@ -1,0 +1,415 @@
+{
+  "session_id": "17727284-659c-4325-b0be-f66e37d165bb",
+  "engine": "godot",
+  "submission_key": "student demo",
+  "status": "completed",
+  "capabilities": {
+    "supports_headless": true,
+    "supports_input_simulation": true,
+    "supports_screenshots": true,
+    "supports_video_capture": false,
+    "supports_network_isolation": false,
+    "supports_gpu": false,
+    "supports_audio": false,
+    "supports_build_from_source": true,
+    "supports_playmode_tests": false,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "signals": {
+    "enable_web_browser_automation": true,
+    "enable_android_emulator_automation": true,
+    "enable_gamemaker_runtime_verification": true,
+    "enable_scratch_runtime_verification": true,
+    "pck_pairing": {
+      "paired": true,
+      "native_pair": true,
+      "pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck",
+      "donor_exe": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe",
+      "paired_executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe"
+    },
+    "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo",
+    "godot_layout": {
+      "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo",
+      "has_project_godot": false,
+      "has_export_presets": false,
+      "student_executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe",
+      "student_pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck",
+      "paired_executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe"
+    },
+    "executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe",
+    "paired_executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe",
+    "pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck",
+    "pck_smoke": {
+      "success": false,
+      "error": "godot_binary_not_configured",
+      "hint": "Set AI_GRADER_GODOT_BIN to your Godot 4 editor executable path"
+    },
+    "legacy_observation": {
+      "status": "partial",
+      "observation_mode": "godot_pck_pairing_smoke",
+      "runtime_observed": true,
+      "runtime_verified": false,
+      "partial_runtime_verified": false,
+      "runtime_screenshots": [],
+      "runtime_evidence_promotion": {
+        "version": 1,
+        "partial_runtime_verified": false,
+        "strong_partial": false,
+        "stable_window": false,
+        "screenshot_count": 0,
+        "gameplay_candidate_count": 0,
+        "min_confidence_tier": null,
+        "summary_ar": "",
+        "examiner_signoff_recommended": true
+      },
+      "observation_summary_ar": "لم يُثبت تشغيل مستقر",
+      "smoke_result": "launch_error",
+      "artifact_analyses": [
+        {
+          "artifact": "game.exe",
+          "type": "exe",
+          "attempted": true,
+          "signals": {
+            "runtime_launch_attempted": true,
+            "crash": "observed"
+          },
+          "runtime_screenshots": [],
+          "interaction_trace": null,
+          "runtime_session_id": "17727284-659c-4325-b0be-f66e37d165bb",
+          "errors": [
+            "[WinError 216] This version of %1 is not compatible with the version of Windows you're running. Check your computer's system information and then contact the software publisher"
+          ],
+          "gamemaker_launch_assessment": {
+            "is_gamemaker": false,
+            "launch_allowed": true,
+            "runtime_cwd": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe",
+            "data_win_path": null,
+            "skip_reason": null
+          },
+          "launch_cwd": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe",
+          "smoke_result": "launch_error",
+          "visual_observation": {
+            "runtime_screenshot_count": 0,
+            "runtime_screenshots": [],
+            "visual_runtime_evidence": "unavailable",
+            "black_screen_possible": false,
+            "visual_states_observed": [],
+            "visual_runtime_confidence": 0.0,
+            "freeze_possible": false,
+            "observed_visual_elements": [],
+            "unverified_gameplay": [
+              "player_input_response",
+              "score_system",
+              "collision_events",
+              "win_loss_flow",
+              "level_progression"
+            ],
+            "human_validation_required": [
+              "gameplay_correctness",
+              "criterion_achievement",
+              "menu_to_gameplay_transition"
+            ],
+            "visual_audit_summary": {
+              "observed_visual_elements": [],
+              "unverified_gameplay": [
+                "player_input_response",
+                "score_system",
+                "collision_events",
+                "win_loss_flow",
+                "level_progression"
+              ],
+              "human_validation_required": [
+                "gameplay_correctness",
+                "criterion_achievement",
+                "menu_to_gameplay_transition"
+              ],
+              "visual_states_observed": [],
+              "visual_runtime_confidence": 0.0,
+              "freeze_detection": {
+                "freeze_possible": false,
+                "compared_pairs": 0,
+                "note_ar": "لا توجد لقطات كافية لمقارنة freeze."
+              }
+            },
+            "authority_note_ar": "لقطات runtime + visual_state استشاريان على ظهور output فقط — لا تثبت جودة gameplay أو تحقق معايير C.P5/C.P6."
+          }
+        }
+      ],
+      "pck_pairing": {
+        "paired": true,
+        "native_pair": true,
+        "pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck",
+        "donor_exe": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe",
+        "paired_executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe"
+      },
+      "crash_detected": true,
+      "target_pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck",
+      "pck_smoke": {
+        "success": false,
+        "error": "godot_binary_not_configured",
+        "hint": "Set AI_GRADER_GODOT_BIN to your Godot 4 editor executable path"
+      },
+      "visual_observation": {
+        "runtime_screenshot_count": 0,
+        "runtime_screenshots": [],
+        "visual_runtime_evidence": "unavailable",
+        "black_screen_possible": false,
+        "visual_states_observed": [],
+        "visual_runtime_confidence": 0.0,
+        "freeze_possible": false,
+        "observed_visual_elements": [],
+        "unverified_gameplay": [
+          "player_input_response",
+          "score_system",
+          "collision_events",
+          "win_loss_flow",
+          "level_progression"
+        ],
+        "human_validation_required": [
+          "gameplay_correctness",
+          "criterion_achievement",
+          "menu_to_gameplay_transition"
+        ],
+        "visual_audit_summary": {
+          "observed_visual_elements": [],
+          "unverified_gameplay": [
+            "player_input_response",
+            "score_system",
+            "collision_events",
+            "win_loss_flow",
+            "level_progression"
+          ],
+          "human_validation_required": [
+            "gameplay_correctness",
+            "criterion_achievement",
+            "menu_to_gameplay_transition"
+          ],
+          "visual_states_observed": [],
+          "visual_runtime_confidence": 0.0,
+          "freeze_detection": {
+            "freeze_possible": false,
+            "compared_pairs": 0,
+            "note_ar": "لا توجد لقطات كافية لمقارنة freeze."
+          }
+        },
+        "authority_note_ar": "لقطات runtime + visual_state استشاريان على ظهور output فقط — لا تثبت جودة gameplay أو تحقق معايير C.P5/C.P6."
+      }
+    },
+    "godot_observation": {
+      "status": "partial",
+      "observation_mode": "godot_pck_pairing_smoke",
+      "runtime_observed": true,
+      "runtime_verified": false,
+      "partial_runtime_verified": false,
+      "runtime_screenshots": [],
+      "runtime_evidence_promotion": {
+        "version": 1,
+        "partial_runtime_verified": false,
+        "strong_partial": false,
+        "stable_window": false,
+        "screenshot_count": 0,
+        "gameplay_candidate_count": 0,
+        "min_confidence_tier": null,
+        "summary_ar": "",
+        "examiner_signoff_recommended": true
+      },
+      "observation_summary_ar": "لم يُثبت تشغيل مستقر",
+      "smoke_result": "launch_error",
+      "artifact_analyses": [
+        {
+          "artifact": "game.exe",
+          "type": "exe",
+          "attempted": true,
+          "signals": {
+            "runtime_launch_attempted": true,
+            "crash": "observed"
+          },
+          "runtime_screenshots": [],
+          "interaction_trace": null,
+          "runtime_session_id": "17727284-659c-4325-b0be-f66e37d165bb",
+          "errors": [
+            "[WinError 216] This version of %1 is not compatible with the version of Windows you're running. Check your computer's system information and then contact the software publisher"
+          ],
+          "gamemaker_launch_assessment": {
+            "is_gamemaker": false,
+            "launch_allowed": true,
+            "runtime_cwd": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe",
+            "data_win_path": null,
+            "skip_reason": null
+          },
+          "launch_cwd": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe",
+          "smoke_result": "launch_error",
+          "visual_observation": {
+            "runtime_screenshot_count": 0,
+            "runtime_screenshots": [],
+            "visual_runtime_evidence": "unavailable",
+            "black_screen_possible": false,
+            "visual_states_observed": [],
+            "visual_runtime_confidence": 0.0,
+            "freeze_possible": false,
+            "observed_visual_elements": [],
+            "unverified_gameplay": [
+              "player_input_response",
+              "score_system",
+              "collision_events",
+              "win_loss_flow",
+              "level_progression"
+            ],
+            "human_validation_required": [
+              "gameplay_correctness",
+              "criterion_achievement",
+              "menu_to_gameplay_transition"
+            ],
+            "visual_audit_summary": {
+              "observed_visual_elements": [],
+              "unverified_gameplay": [
+                "player_input_response",
+                "score_system",
+                "collision_events",
+                "win_loss_flow",
+                "level_progression"
+              ],
+              "human_validation_required": [
+                "gameplay_correctness",
+                "criterion_achievement",
+                "menu_to_gameplay_transition"
+              ],
+              "visual_states_observed": [],
+              "visual_runtime_confidence": 0.0,
+              "freeze_detection": {
+                "freeze_possible": false,
+                "compared_pairs": 0,
+                "note_ar": "لا توجد لقطات كافية لمقارنة freeze."
+              }
+            },
+            "authority_note_ar": "لقطات runtime + visual_state استشاريان على ظهور output فقط — لا تثبت جودة gameplay أو تحقق معايير C.P5/C.P6."
+          }
+        }
+      ],
+      "pck_pairing": {
+        "paired": true,
+        "native_pair": true,
+        "pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck",
+        "donor_exe": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe",
+        "paired_executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.exe"
+      },
+      "crash_detected": true,
+      "target_pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck",
+      "pck_smoke": {
+        "success": false,
+        "error": "godot_binary_not_configured",
+        "hint": "Set AI_GRADER_GODOT_BIN to your Godot 4 editor executable path"
+      },
+      "visual_observation": {
+        "runtime_screenshot_count": 0,
+        "runtime_screenshots": [],
+        "visual_runtime_evidence": "unavailable",
+        "black_screen_possible": false,
+        "visual_states_observed": [],
+        "visual_runtime_confidence": 0.0,
+        "freeze_possible": false,
+        "observed_visual_elements": [],
+        "unverified_gameplay": [
+          "player_input_response",
+          "score_system",
+          "collision_events",
+          "win_loss_flow",
+          "level_progression"
+        ],
+        "human_validation_required": [
+          "gameplay_correctness",
+          "criterion_achievement",
+          "menu_to_gameplay_transition"
+        ],
+        "visual_audit_summary": {
+          "observed_visual_elements": [],
+          "unverified_gameplay": [
+            "player_input_response",
+            "score_system",
+            "collision_events",
+            "win_loss_flow",
+            "level_progression"
+          ],
+          "human_validation_required": [
+            "gameplay_correctness",
+            "criterion_achievement",
+            "menu_to_gameplay_transition"
+          ],
+          "visual_states_observed": [],
+          "visual_runtime_confidence": 0.0,
+          "freeze_detection": {
+            "freeze_possible": false,
+            "compared_pairs": 0,
+            "note_ar": "لا توجد لقطات كافية لمقارنة freeze."
+          }
+        },
+        "authority_note_ar": "لقطات runtime + visual_state استشاريان على ظهور output فقط — لا تثبت جودة gameplay أو تحقق معايير C.P5/C.P6."
+      }
+    },
+    "runtime_method": "godot_pck_pairing_smoke",
+    "runtime_evidence_promotion": {
+      "version": 1,
+      "partial_runtime_verified": false,
+      "strong_partial": false,
+      "stable_window": false,
+      "screenshot_count": 0,
+      "gameplay_candidate_count": 0,
+      "min_confidence_tier": null,
+      "summary_ar": "",
+      "examiner_signoff_recommended": true
+    }
+  },
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": true,
+    "freeze_detected": false,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782645309.7466605,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "godot",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo"
+      }
+    },
+    {
+      "timestamp": 1782645309.9262114,
+      "type": "godot_pck_smoke",
+      "severity": "info",
+      "source": "godot_engine",
+      "payload": {
+        "success": false,
+        "pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck"
+      }
+    }
+  ],
+  "screenshots": [],
+  "logs": [],
+  "errors": [],
+  "artifacts": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

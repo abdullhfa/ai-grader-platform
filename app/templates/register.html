@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب جديد - BTEC Teacher Assistance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/background_grading.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'tajawal': ['Tajawal', 'sans-serif'],
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+            background: #1E3A8A;
+        }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            from {
+                box-shadow: 0 0 20px rgba(45, 212, 191, 0.4);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(45, 212, 191, 0.8);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+        
+        .step-active {
+            background: linear-gradient(135deg, #2DD4BF, #14B8A6);
+        }
+        
+        .step-completed {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="font-tajawal">
+    <!-- Background -->
+    <div class="min-h-screen gradient-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        
+        <div class="relative max-w-lg w-full space-y-8 fade-in-up" x-data="registerForm()">
+            <div class="glass-effect rounded-xl shadow-2xl p-8">
+                <div class="text-center mb-8">
+                    <div class="mb-6">
+                        <h1 class="text-4xl font-black text-white mb-2">BTEC</h1>
+                        <h2 class="text-2xl font-bold text-teal-400">Teacher Assistance</h2>
+                        <p class="text-gray-300 mt-3">انضم إلى منصتنا التعليمية</p>
+                    </div>
+                </div>
+                
+                <!-- Step Indicator -->
+                <div class="flex items-center justify-center mb-8">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center">
+                            <div class="step-indicator w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                                 :class="currentStep >= 1 ? (currentStep === 1 ? 'step-active' : 'step-completed') : 'bg-gray-600'">
+                                <span x-show="currentStep === 1 || currentStep > 1">1</span>
+                                <svg x-show="currentStep > 1" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="mr-2 text-sm text-gray-300">البيانات الأساسية</span>
+                        </div>
+                        
+                        <div class="w-8 h-0.5 bg-gray-600" :class="currentStep >= 2 ? 'bg-teal-400' : 'bg-gray-600'"></div>
+                        
+                        <div class="flex items-center">
+                            <div class="step-indicator w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                                 :class="currentStep >= 2 ? (currentStep === 2 ? 'step-active' : 'step-completed') : 'bg-gray-600'">
+                                <span x-show="currentStep <= 2">2</span>
+                                <svg x-show="currentStep > 2" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="mr-2 text-sm text-gray-300">تحقق الإيميل</span>
+                        </div>
+                        
+                        <div class="w-8 h-0.5 bg-gray-600" :class="currentStep >= 3 ? 'bg-teal-400' : 'bg-gray-600'"></div>
+                        
+                        <div class="flex items-center">
+                            <div class="step-indicator w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                                 :class="currentStep >= 3 ? 'step-active' : 'bg-gray-600'">
+                                <span>3</span>
+                            </div>
+                            <span class="mr-2 text-sm text-gray-300">مكتمل</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 1: Basic Information -->
+                <div x-show="currentStep === 1" x-transition>
+                    <h2 class="text-2xl font-bold text-white mb-6 text-center">إنشاء حساب جديد</h2>
+                    
+                    {% if error %}
+                    <div class="bg-red-500 bg-opacity-20 border border-red-500 text-white px-4 py-3 rounded-lg mb-6 text-center">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                    
+                    <form action="/register" method="POST" class="space-y-6">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <!-- Full Name -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">
+                                    الاسم الأول <span class="text-red-500">*</span>
+                                </label>
+                                <input 
+                                    id="firstName" 
+                                    name="first_name"
+                                    type="text" 
+                                    required 
+                                    x-model="form.firstName"
+                                    class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                                    placeholder="أحمد"
+                                >
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-medium text-gray-300 mb-2">
+                                    اسم العائلة <span class="text-red-500">*</span>
+                                </label>
+                                <input 
+                                    id="lastName" 
+                                    name="last_name"
+                                    type="text" 
+                                    required 
+                                    x-model="form.lastName"
+                                    class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                                    placeholder="العلي"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                                البريد الإلكتروني <span class="text-red-500">*</span>
+                            </label>
+                            <input 
+                                id="email" 
+                                name="email"
+                                type="email" 
+                                required 
+                                x-model="form.email"
+                                class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                                placeholder="ahmed@example.com"
+                            >
+                        </div>
+                        
+                        <!-- Phone Number -->
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">
+                                رقم الهاتف <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex">
+                                <select x-model="form.countryCode" name="country_code" class="bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-r-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400 px-3">
+                                    <option value="+962">+962</option>
+                                    <option value="+966">🇸🇦 +966</option>
+                                    <option value="+971">🇦🇪 +971</option>
+                                    <option value="+965">🇰🇼 +965</option>
+                                </select>
+                                <input 
+                                    id="phone" 
+                                    name="phone"
+                                    type="tel" 
+                                    required 
+                                    x-model="form.phone"
+                                    class="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-l-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                                    placeholder="791234567"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Password -->
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                                كلمة المرور <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    id="password" 
+                                    name="password"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    required 
+                                    x-model="form.password"
+                                    @input="checkPasswordStrength"
+                                    class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                                    placeholder="كلمة مرور قوية"
+                                >
+                                <button 
+                                    type="button"
+                                    @click="showPassword = !showPassword"
+                                    class="absolute inset-y-0 left-3 flex items-center text-gray-400 hover:text-white transition-colors"
+                                >
+                                    <svg x-show="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <svg x-show="showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Password Strength Indicator -->
+                            <div x-show="form.password" class="mt-2">
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-xs text-gray-400">قوة كلمة المرور</span>
+                                    <span class="text-xs" :class="passwordStrengthColor" x-text="passwordStrengthText"></span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="h-2 rounded-full transition-all duration-300" 
+                                         :style="'width: ' + passwordStrength + '%; background-color: ' + passwordStrengthColorHex"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Confirm Password -->
+                        <div>
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
+                                تأكيد كلمة المرور <span class="text-red-500">*</span>
+                            </label>
+                            <input 
+                                id="confirmPassword" 
+                                name="confirm_password"
+                                :type="showPassword ? 'text' : 'password'"
+                                required 
+                                x-model="form.confirmPassword"
+                                class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                                placeholder="أعد كتابة كلمة المرور"
+                            >
+                            <p x-show="form.confirmPassword && form.password !== form.confirmPassword" class="text-red-400 text-xs mt-1">
+                                كلمات المرور غير متطابقة
+                            </p>
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="flex items-center">
+                            <input 
+                                id="agreeToTerms" 
+                                type="checkbox" 
+                                required
+                                x-model="form.agreeToTerms"
+                                class="h-4 w-4 text-teal-400 focus:ring-teal-400 border-gray-300 rounded bg-transparent"
+                            >
+                            <label for="agreeToTerms" class="mr-2 block text-sm text-gray-300">
+                                أوافق على 
+                                <a href="#" class="text-teal-400 hover:text-teal-300">الشروط والأحكام</a> 
+                                و
+                                <a href="#" class="text-teal-400 hover:text-teal-300">سياسة الخصوصية</a>
+                            </label>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div>
+                            <button 
+                                type="submit" 
+                                :disabled="!canProceedToStep2"
+                                class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-400 transform transition-all duration-300 hover:scale-105 pulse-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                التالي
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Step 2: Email Verification -->
+                <div x-show="currentStep === 2" x-transition>
+                    <h2 class="text-2xl font-bold text-white mb-6 text-center">تحقق من بريدك الإلكتروني</h2>
+                    
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-gray-300 mb-2">تم إرسال رمز التحقق إلى:</p>
+                        <p class="text-teal-400 font-bold" x-text="form.email"></p>
+                        <p class="text-gray-400 text-sm mt-2">يرجى إدخال الرمز المكون من 6 أرقام</p>
+                    </div>
+                    
+                    <form @submit.prevent="submitStep2" class="space-y-6">
+                        <!-- Verification Code Input -->
+                        <div class="flex justify-center space-x-2">
+                            <template x-for="(digit, index) in verificationCode" :key="index">
+                                <input 
+                                    type="text" 
+                                    maxlength="1"
+                                    x-model="verificationCode[index]"
+                                    @input="handleCodeInput(index, $event)"
+                                    @keydown.backspace="handleBackspace(index, $event)"
+                                    @paste="handlePaste($event)"
+                                    class="w-12 h-12 text-center text-xl font-bold bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                                    :id="'code-' + index"
+                                >
+                            </template>
+                        </div>
+                        
+                        <!-- Resend Code -->
+                        <div class="text-center">
+                            <p class="text-gray-400 text-sm mb-2">لم تستلم الرمز؟</p>
+                            <button 
+                                type="button"
+                                @click="resendCode"
+                                :disabled="resendCooldown > 0"
+                                class="text-teal-400 hover:text-teal-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <span x-show="resendCooldown === 0">إعادة إرسال الرمز</span>
+                                <span x-show="resendCooldown > 0">إعادة الإرسال خلال (<span x-text="resendCooldown"></span>)</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="space-y-3">
+                            <button 
+                                type="submit" 
+                                :disabled="!isCodeComplete || isVerifying"
+                                class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-400 transform transition-all duration-300 hover:scale-105 pulse-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <span x-show="!isVerifying">تحقق من الرمز</span>
+                                <span x-show="isVerifying" class="flex items-center">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    جاري التحقق...
+                                </span>
+                            </button>
+                            
+                            <button 
+                                type="button"
+                                @click="currentStep = 1"
+                                class="w-full py-3 px-4 border border-gray-300 border-opacity-30 text-sm font-medium rounded-lg text-gray-300 hover:text-white hover:border-opacity-50 transition-all duration-300"
+                            >
+                                العودة للخطوة السابقة
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Step 3: Success -->
+                <div x-show="currentStep === 3" x-transition>
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        
+                        <h2 class="text-2xl font-bold text-white mb-4">مرحباً بك في BTEC Teacher Assistance!</h2>
+                        <p class="text-gray-300 mb-6">تم إنشاء حسابك بنجاح. يمكنك الآن الاستفادة من جميع خدماتنا التعليمية.</p>
+                        
+                        <div class="space-y-4">
+                            <button 
+                                @click="goToLogin"
+                                class="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 pulse-glow"
+                            >
+                                تسجيل الدخول
+                            </button>
+                            
+                            <button 
+                                @click="goToHome"
+                                class="w-full border border-gray-300 border-opacity-30 text-gray-300 hover:text-white hover:border-opacity-50 font-bold py-3 px-6 rounded-lg transition-all duration-300"
+                            >
+                                العودة للصفحة الرئيسية
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sign in link -->
+                <div class="text-center mt-6" x-show="currentStep === 1">
+                    <p class="text-gray-300">
+                        لديك حساب بالفعل؟
+                        <a href="/login" class="font-medium text-teal-400 hover:text-teal-300 transition-colors">
+                            سجل الدخول
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="text-center text-sm text-gray-400 mt-8">
+                <p>© 2024 BTEC Teacher Assistance. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function registerForm() {
+            return {
+                currentStep: 1,
+                form: {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phone: '',
+                    countryCode: '+962',
+                    password: '',
+                    confirmPassword: '',
+                    agreeToTerms: false
+                },
+                verificationCode: ['', '', '', '', '', ''],
+                showPassword: false,
+                passwordStrength: 0,
+                passwordStrengthText: 'ضعيفة',
+                passwordStrengthColor: 'text-red-400',
+                passwordStrengthColorHex: '#f87171',
+                isVerifying: false,
+                resendCooldown: 0,
+                
+                get canProceedToStep2() {
+                    return this.form.firstName && 
+                           this.form.lastName && 
+                           this.form.email && 
+                           this.form.phone && 
+                           this.form.password && 
+                           this.form.confirmPassword && 
+                           this.form.password === this.form.confirmPassword &&
+                           this.form.agreeToTerms &&
+                           this.passwordStrength >= 60; // At least medium strength
+                },
+                
+                get isCodeComplete() {
+                    return this.verificationCode.every(digit => digit !== '');
+                },
+                
+                async submitStep1() {
+                    if (!this.canProceedToStep2) {
+                        alert('يرجى إكمال جميع البيانات المطلوبة');
+                        return;
+                    }
+                    
+                    // Simulate sending verification email
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    this.currentStep = 2;
+                    this.startResendCooldown();
+                },
+                
+                async submitStep2() {
+                    const code = this.verificationCode.join('');
+                    if (code.length !== 6) {
+                        alert('يرجى إدخال الرمز كاملاً');
+                        return;
+                    }
+                    
+                    this.isVerifying = true;
+                    
+                    try {
+                        // Simulate verification
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        
+                        // For demo purposes, accept any 6-digit code
+                        this.currentStep = 3;
+                        
+                    } catch (error) {
+                        alert('رمز التحقق غير صحيح');
+                        this.verificationCode = ['', '', '', '', '', ''];
+                        document.getElementById('code-0').focus();
+                    } finally {
+                        this.isVerifying = false;
+                    }
+                },
+                
+                handleCodeInput(index, event) {
+                    const value = event.target.value;
+                    
+                    if (value.match(/[^0-9]/)) {
+                        event.target.value = '';
+                        this.verificationCode[index] = '';
+                        return;
+                    }
+                    
+                    this.verificationCode[index] = value;
+                    
+                    if (value && index < 5) {
+                        document.getElementById(`code-${index + 1}`).focus();
+                    }
+                },
+                
+                handleBackspace(index, event) {
+                    if (!event.target.value && index > 0) {
+                        document.getElementById(`code-${index - 1}`).focus();
+                    }
+                },
+                
+                handlePaste(event) {
+                    event.preventDefault();
+                    const pastedData = event.clipboardData.getData('text');
+                    const numbers = pastedData.replace(/[^0-9]/g, '').slice(0, 6);
+                    
+                    for (let i = 0; i < numbers.length; i++) {
+                        this.verificationCode[i] = numbers[i];
+                    }
+                    
+                    if (numbers.length > 0) {
+                        const lastIndex = Math.min(numbers.length - 1, 5);
+                        document.getElementById(`code-${lastIndex}`).focus();
+                    }
+                },
+                
+                checkPasswordStrength() {
+                    const password = this.form.password;
+                    let strength = 0;
+                    
+                    if (password.length >= 8) strength += 25;
+                    if (password.match(/[a-z]/)) strength += 25;
+                    if (password.match(/[A-Z]/)) strength += 25;
+                    if (password.match(/[0-9]/)) strength += 15;
+                    if (password.match(/[^a-zA-Z0-9]/)) strength += 10;
+                    
+                    this.passwordStrength = strength;
+                    
+                    if (strength < 40) {
+                        this.passwordStrengthText = 'ضعيفة';
+                        this.passwordStrengthColor = 'text-red-400';
+                        this.passwordStrengthColorHex = '#f87171';
+                    } else if (strength < 70) {
+                        this.passwordStrengthText = 'متوسطة';
+                        this.passwordStrengthColor = 'text-yellow-400';
+                        this.passwordStrengthColorHex = '#fbbf24';
+                    } else {
+                        this.passwordStrengthText = 'قوية';
+                        this.passwordStrengthColor = 'text-green-400';
+                        this.passwordStrengthColorHex = '#4ade80';
+                    }
+                },
+                
+                async resendCode() {
+                    // Simulate resending code
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    this.startResendCooldown();
+                    alert('تم إرسال الرمز مرة أخرى');
+                },
+                
+                startResendCooldown() {
+                    this.resendCooldown = 60;
+                    const interval = setInterval(() => {
+                        this.resendCooldown--;
+                        if (this.resendCooldown <= 0) {
+                            clearInterval(interval);
+                        }
+                    }, 1000);
+                },
+                
+                goToLogin() {
+                    window.location.href = '/login';
+                },
+                
+                goToHome() {
+                    window.location.href = '/';
+                }
+            }
+        }
+    </script>
+    <script src="/static/js/background_grading.js"></script>
+</body>
+</html>

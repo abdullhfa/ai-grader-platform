@@ -1,0 +1,98 @@
+{
+  "schema_id": "EPISTEMIC_TRACE_CAPTURE_SCHEMA_v1",
+  "status": "active",
+  "mode": "epistemic_trace_capture",
+  "not": ["grading", "pass_fail", "achievement_semantics", "authority_assignment"],
+  "ui_invariant_en": "This interface records epistemic state transitions. It does not assign authority.",
+  "ui_invariant_ar": "هذه الواجهة تسجّل انتقالات الحالة المعرفية. لا تمنح سلطة.",
+  "observability_invariant_en": "Observability may illuminate authority formation. It may not silently inherit authority formation.",
+  "observability_invariant_ar": "الرصد قد يُضيء تشكّل السلطة. لا يجوز أن يرث تشكّل السلطة بصمت.",
+  "posture_governance": "app/calibration/human_cohort_workshop/OBSERVATORY_POSTURE_GOVERNANCE_v1.json",
+  "implementation": "app/epistemic_trace_capture.py",
+  "ledger_path": "app/calibration/human_cohort_workshop/epistemic_trace_captures.jsonl",
+  "dry_run": {
+    "script": "app/calibration/human_cohort_workshop/run_epistemic_trace_dry_run.py",
+    "report": "app/calibration/human_cohort_workshop/epistemic_trace_dry_run_submission_6.json",
+    "observer_drift_check": "app/calibration/human_cohort_workshop/OBSERVER_ROLE_DRIFT_CHECK_v1.json"
+  },
+  "observer_role_drift_check": {
+    "artifact": "app/calibration/human_cohort_workshop/OBSERVER_ROLE_DRIFT_CHECK_v1.json",
+    "ledger": "app/calibration/human_cohort_workshop/observer_role_drift_checks.jsonl",
+    "required_after": "first_live_vocabulary_hint_session"
+  },
+  "field_groups": [
+    {
+      "id": "replay_chronology",
+      "label_ar": "تسلسل replay",
+      "feeds_metric": "M1_replay_before_judgment_rate",
+      "fields": [
+        "replay_opened_at",
+        "replay_consulted_at",
+        "authority_language_first_seen_at",
+        "replay_precedes_authority"
+      ]
+    },
+    {
+      "id": "authority_formation_markers",
+      "label_ar": "علامات تشكّل السلطة",
+      "fields": [
+        "verification_lexicon_detected",
+        "closure_trigger_detected",
+        "temptation_classification",
+        "authority_formation_altered"
+      ],
+      "advisory_only": {
+        "possible_vocabulary_escalation_hint": {
+          "implementation": "app/possible_vocabulary_escalation_hint.py",
+          "api": "/api/governance-pilot/possible-vocabulary-escalation-hint",
+          "non_binding": true,
+          "human_confirmation_required": true,
+          "never_auto_populate_verification_lexicon_detected": true,
+          "escalation_notice_invariant_en": "The system may notice epistemic escalation. It may not silently conclude it.",
+          "epistemic_firewall": "possible_vocabulary_escalation_hint ≠ verification_lexicon_detected",
+          "source_fields_only": [
+            "reviewer_language_samples_ar",
+            "facilitator_epistemic_notes_ar",
+            "notes_ar"
+          ]
+        }
+      }
+    },
+    {
+      "id": "quarantine_state_capture",
+      "label_ar": "حالة الحجر المعرفي",
+      "feeds_metric": "M2_qb_recurrence",
+      "fields": [
+        "quarantine_state",
+        "qb_level",
+        "quarantine_breach_reason",
+        "restraint_anchor_detected"
+      ]
+    },
+    {
+      "id": "provenance_continuity",
+      "label_ar": "استمرارية المصدر",
+      "feeds_metric": "M5_provenance_continuity_success",
+      "fields": [
+        "exe_present",
+        "exe_identity_matches_submission",
+        "runtime_corroborated",
+        "provenance_continuity_state"
+      ]
+    },
+    {
+      "id": "counterfactual_capture",
+      "label_ar": "التقاط counterfactual",
+      "pilot": "TRUSTED_REPLAY_DISCIPLINE_PILOT_v1",
+      "fields": [
+        "counterfactual_without_replay",
+        "intuition_closure_detected",
+        "replay_changed_outcome"
+      ]
+    }
+  ],
+  "companion_tracks": [
+    "EXIT_CRITERIA_TRACKING_WORKSHOP_v1",
+    "TRUSTED_REPLAY_DISCIPLINE_PILOT_v1"
+  ]
+}

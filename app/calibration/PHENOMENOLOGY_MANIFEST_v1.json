@@ -1,0 +1,107 @@
+{
+  "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+  "merge_principle_en": "Merge by compression, not abstraction.",
+  "purpose_en": "Fewer surfaces carrying the same constitutional meaning — what appeared, not what it means.",
+  "assigns_legitimacy": false,
+  "supersedes": [
+    "EXECUTION_PHENOMENOLOGY_SCHEMA_v1",
+    "REPLAY_PHENOMENOLOGY_SCHEMA_v1"
+  ],
+  "domains": {
+    "execution": {
+      "invariant_en": "Visible execution is not equivalent to validated execution.",
+      "descriptors": [
+        "process_launched",
+        "window_detected",
+        "frames_rendered",
+        "input_responded",
+        "telemetry_stream_active",
+        "execution_continuity_observed",
+        "executable_persisted",
+        "replay_captured",
+        "crash_observed",
+        "timeout_reached"
+      ],
+      "forbidden_escalations": [
+        "game_works",
+        "gameplay_verified",
+        "mechanics_validated",
+        "rubric_achieved",
+        "game_confirmed",
+        "runtime_truth_established",
+        "provenance_validated",
+        "success_inferred"
+      ],
+      "escalation_pairs": [
+        {"phenomenology": "process_launched", "forbidden": "game_works"},
+        {"phenomenology": "frames_rendered", "forbidden": "gameplay_verified"},
+        {"phenomenology": "input_responded", "forbidden": "mechanics_validated"},
+        {"phenomenology": "executable_persisted", "forbidden": "rubric_achieved"},
+        {"phenomenology": "window_detected", "forbidden": "game_confirmed"},
+        {"phenomenology": "telemetry_stream_active", "forbidden": "runtime_truth_established"},
+        {"phenomenology": "replay_captured", "forbidden": "provenance_validated"}
+      ]
+    },
+    "interactive": {
+      "invariant_en": "Mechanic observation does not imply pedagogical or rubric inference.",
+      "descriptors": [
+        "mechanic_observed_without_pedagogical_inference",
+        "start_state_transition_observed",
+        "start_state_transition_not_observed",
+        "jump_response_observed",
+        "score_change_observed",
+        "level_transition_observed",
+        "level_transition_failed",
+        "timer_expired_no_consequence_observed",
+        "respawn_observed",
+        "game_over_panel_observed",
+        "input_conflict_observed"
+      ],
+      "forbidden_escalations": [
+        "gameplay_verified",
+        "mechanics_validated",
+        "rubric_achieved",
+        "rubric_failed",
+        "project_invalid",
+        "gameplay_broken",
+        "achievement_impossible",
+        "pedagogical_success",
+        "legitimacy_granted"
+      ],
+      "escalation_pairs": [
+        {"phenomenology": "mechanic_observed_without_pedagogical_inference", "forbidden": "mechanics_validated"},
+        {"phenomenology": "level_transition_observed", "forbidden": "gameplay_verified"},
+        {"phenomenology": "level_transition_failed", "forbidden": "project_invalid"},
+        {"phenomenology": "score_change_observed", "forbidden": "rubric_achieved"},
+        {"phenomenology": "timer_expired_no_consequence_observed", "forbidden": "rubric_failed"},
+        {"phenomenology": "input_conflict_observed", "forbidden": "gameplay_broken"}
+      ]
+    },
+    "replay": {
+      "invariant_en": "Replay is evidence of reproducibility, not evidence of validity.",
+      "descriptors": [
+        "replay_captured",
+        "replay_deterministic",
+        "replay_reproducible",
+        "replay_continuous",
+        "replay_fragmented",
+        "replay_timeout",
+        "replay_checksum_recorded"
+      ],
+      "forbidden_escalations": [
+        "gameplay_verified",
+        "submission_authentic",
+        "rubric_satisfied",
+        "mechanics_validated",
+        "provenance_validated",
+        "game_confirmed"
+      ],
+      "escalation_pairs": [
+        {"phenomenology": "replay_captured", "forbidden": "gameplay_verified"},
+        {"phenomenology": "replay_deterministic", "forbidden": "submission_authentic"},
+        {"phenomenology": "replay_reproducible", "forbidden": "rubric_satisfied"},
+        {"phenomenology": "replay_continuous", "forbidden": "mechanics_validated"}
+      ]
+    }
+  }
+}

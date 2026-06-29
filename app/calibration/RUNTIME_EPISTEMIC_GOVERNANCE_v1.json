@@ -1,0 +1,91 @@
+{
+  "spec_id": "RUNTIME_EPISTEMIC_GOVERNANCE_v1",
+  "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "step": 5,
+  "status": "design_only",
+  "activation": false,
+  "extends": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1",
+  "primary_invariant_en": "Governed runtime observation is still not runtime understanding.",
+  "primary_invariant_ar": "runtime observation المحكوم ما يزال ليس runtime understanding.",
+  "governance_comprehension_split_en": "runtime governance ≠ runtime comprehension",
+  "governance_comprehension_split_ar": "حوكمة runtime ≠ فهم runtime",
+  "supreme_risk_en": "governance-induced execution legitimacy",
+  "supreme_risk_ar": "وجود quarantine hooks و L4 contracts → وهم فهم gameplay",
+  "overconfidence_risk_en": "phenomenological overconfidence",
+  "overconfidence_risk_ar": "كثافة traces + replay continuity → إحساس فهم بينما meaning غير مثبت",
+  "execution_opacity_preservation_en": "Even with dense telemetry, gameplay meaning · pedagogical meaning · rubric satisfaction remain partially opaque.",
+  "execution_opacity_preservation_ar": "حتى مع telemetry كثيفة — gameplay · pedagogical · rubric-wise ما يزال opaque جزئيًا",
+  "l4_phenomenology_clause_en": "L4 may observe runtime phenomenology. L4 may not infer gameplay legitimacy.",
+  "l4_phenomenology_clause_ar": "L4 may يراقب runtime phenomenology — L4 may not يستنتج gameplay legitimacy.",
+  "three_layer_architecture": {
+    "auto_merge_forbidden": true,
+    "layers": [
+      {
+        "layer_id": "runtime_phenomenology",
+        "function_en": "what appeared",
+        "assigns_meaning": false,
+        "assigns_legitimacy": false
+      },
+      {
+        "layer_id": "provenance_governance",
+        "function_en": "what can be linked",
+        "assigns_authenticity": false,
+        "assigns_legitimacy": false
+      },
+      {
+        "layer_id": "legitimacy_governance",
+        "function_en": "blocked by default",
+        "default_state": "blocked",
+        "unlock_requires": "human_governed_explicit_gate"
+      }
+    ]
+  },
+  "runtime_quarantine_states": {
+    "schema": "RUNTIME_QUARANTINE_STATES_v1.json",
+    "states": [
+      {
+        "state_id": "runtime_observed",
+        "meaning_en": "process activity detected",
+        "infers_legitimacy": false
+      },
+      {
+        "state_id": "runtime_continuous",
+        "meaning_en": "execution continuity observed",
+        "infers_legitimacy": false
+      },
+      {
+        "state_id": "runtime_reproducible",
+        "meaning_en": "replay stable",
+        "infers_validity": false
+      },
+      {
+        "state_id": "runtime_provenance_partial",
+        "meaning_en": "identity incomplete",
+        "infers_authenticity": false
+      },
+      {
+        "state_id": "runtime_epistemically_unverified",
+        "meaning_en": "gameplay meaning unknown",
+        "default_for_dense_telemetry": true
+      },
+      {
+        "state_id": "runtime_legitimacy_blocked",
+        "meaning_en": "no achievement inference",
+        "always_present": true
+      }
+    ]
+  },
+  "forbidden_auto_merges": [
+    "phenomenology + provenance → legitimacy",
+    "quarantine hooks + L4 contract → comprehension",
+    "dense telemetry + governance bundle → gameplay understood"
+  ],
+  "implementation_module": "app/runtime_epistemic_governance.py",
+  "l4_clause_canonical": "app/runtime_observation_contract.py#get_l4_phenomenology_clause",
+  "companions": [
+    "RUNTIME_QUARANTINE_STATES_v1.json",
+    "TELEMETRY_REPLAY_CAPTURE_WIRING_v1.json",
+    "RUNTIME_OBSERVATION_CONTRACT_v1.md",
+    "EPISTEMIC_QUARANTINE_CONTRACT_v1.md"
+  ]
+}

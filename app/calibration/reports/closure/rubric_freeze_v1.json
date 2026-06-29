@@ -1,0 +1,13 @@
+{
+  "schema": "rubric_freeze_v1",
+  "rubric_version": "BTEC_8_GAME_DEV_v1",
+  "frozen_at": null,
+  "status": "pre_pilot_pending_signature",
+  "frozen_components": [
+    "deterministic_rubric_weights",
+    "replay_normalization",
+    "governance_scoring_epoch_2",
+    "evidence_completeness_gate_v1"
+  ],
+  "note_ar": "التجميد المؤسسي يتطلب توقيع pilot — لا fake sign-off"
+}

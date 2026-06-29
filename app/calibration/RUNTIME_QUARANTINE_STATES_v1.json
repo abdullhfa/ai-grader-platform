@@ -1,0 +1,47 @@
+{
+  "schema_id": "RUNTIME_QUARANTINE_STATES_v1",
+  "spec_id": "RUNTIME_EPISTEMIC_GOVERNANCE_v1",
+  "purpose_en": "Execution-domain quarantine states — prevent telemetry → meaning collapse",
+  "assigns_legitimacy": false,
+  "states": [
+    {
+      "state_id": "runtime_observed",
+      "meaning_en": "process activity detected",
+      "infers_legitimacy": false,
+      "infers_comprehension": false
+    },
+    {
+      "state_id": "runtime_continuous",
+      "meaning_en": "execution continuity observed",
+      "infers_legitimacy": false,
+      "infers_comprehension": false
+    },
+    {
+      "state_id": "runtime_reproducible",
+      "meaning_en": "replay stable",
+      "infers_validity": false,
+      "infers_reproducibility_only": true
+    },
+    {
+      "state_id": "runtime_provenance_partial",
+      "meaning_en": "identity incomplete",
+      "infers_authenticity": false
+    },
+    {
+      "state_id": "runtime_epistemically_unverified",
+      "meaning_en": "gameplay meaning unknown",
+      "default_for_dense_telemetry": true,
+      "infers_comprehension": false
+    },
+    {
+      "state_id": "runtime_legitimacy_blocked",
+      "meaning_en": "no achievement inference",
+      "always_present": true,
+      "mandatory": true
+    }
+  ],
+  "mandatory_states": [
+    "runtime_epistemically_unverified",
+    "runtime_legitimacy_blocked"
+  ]
+}

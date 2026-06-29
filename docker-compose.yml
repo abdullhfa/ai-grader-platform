@@ -1,0 +1,7 @@
+# Root compose — one-command market/staging deploy
+# Usage: docker compose up --build -d
+
+include:
+  - path: infra/docker/docker-compose.yml
+  - path: infra/docker/docker-compose.ops.yml
+  - path: infra/docker/docker-compose.staging.yml

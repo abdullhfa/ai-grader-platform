@@ -1,0 +1,11 @@
+{
+  "schema": "kappa_report_v1",
+  "generated_at": "2026-05-26T23:02:45Z",
+  "run_id": "institutional_closure_2026-05-26T230244Z",
+  "gold_rows_used": 3,
+  "cohens_kappa": 0.0,
+  "agreement_rate": 0.6666666666666666,
+  "accuracy": 0.6667,
+  "note_ar": "Kappa كامل يتطلب ملء human_labels — لا تُختلق قرارات",
+  "status": "partial"
+}

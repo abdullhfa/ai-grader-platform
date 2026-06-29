@@ -1,0 +1,177 @@
+{
+  "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "phase_name_en": "Runtime Observability Preparation",
+  "phase_name_not_en": "Runtime Authority",
+  "status": "capability_complete",
+  "mode": "observability_only",
+  "started_at": "2026-05-25T14:00:00Z",
+  "institutional_question_en": "Can runtime evidence be observed without prematurely becoming legitimacy?",
+  "institutional_question_ar": "هل يمكن مراقبة أدلة runtime دون أن تصبح legitimacy مبكرًا؟",
+  "supreme_invariant_en": "Runtime observation does not imply runtime legitimacy.",
+  "supreme_invariant_ar": "مراقبة runtime لا تعني legitimacy لـ runtime.",
+  "not_goal": [
+    "system_corrects_the_game",
+    "runtime_grading",
+    "auto_achieved",
+    "runtime_authority_inference",
+    "legitimacy_from_activity"
+  ],
+  "goal": "build_observability_capability_without_granting_legitimacy",
+  "capability_vs_legitimacy_en": "Building capability ≠ granting legitimacy.",
+  "capability_vs_legitimacy_ar": "بناء القدرة ≠ منح الشرعية.",
+  "supreme_risk_en": "runtime activity → legitimacy (successor to good narrative → legitimacy)",
+  "supreme_risk_ar": "مجرد أن اللعبة اشتغلت → الشعور بأن المشروع ناجح",
+  "forbidden_shortcut_en": "game ran → therefore project succeeded",
+  "forbidden_shortcut_ar": "اللعبة اشتغلت → إذًا المشروع ناجح",
+  "layer_build_matrix": {
+    "runtime_telemetry": "yes",
+    "execution_sandbox": "yes",
+    "gameplay_capture": "yes",
+    "deterministic_replay": "yes",
+    "provenance_continuity_tracking": "yes",
+    "runtime_observation_ledger": "yes",
+    "runtime_authority_inference": "no",
+    "runtime_grading": "no",
+    "auto_achieved": "no"
+  },
+  "allowed_now": [
+    "design_only",
+    "observability_only",
+    "advisory_runtime_tooling"
+  ],
+  "forbidden_now": [
+    "authority_activation",
+    "grading_escalation",
+    "auto_achieved_language",
+    "runtime_legitimacy_inference",
+    "l4_operational_pilot",
+    "trusted_runtime_corroboration_activation"
+  ],
+  "master_sequence": [
+    {
+      "step": 1,
+      "phase_id": "LIVE_CONSTITUTIONAL_VALIDATION_v1",
+      "label_en": "Single-observer constitutional pilot",
+      "status": "prepared_awaiting_reviewers",
+      "gate": "human_posture_evidence_required"
+    },
+    {
+      "step": 2,
+      "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+      "label_en": "Runtime observability preparation",
+      "status": "active_design",
+      "gate": "capability_build_only"
+    },
+    {
+      "step": 3,
+      "label_en": "Provenance-aware execution sandbox",
+      "status": "spec_complete",
+      "artifact": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1.json",
+      "gate": "within_step_2"
+    },
+    {
+      "step": 4,
+      "label_en": "Telemetry + replay capture",
+      "status": "wiring_complete",
+      "artifact": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1.json",
+      "gate": "within_step_2"
+    },
+    {
+      "step": 5,
+      "label_en": "Runtime epistemic governance",
+      "status": "design_complete",
+      "artifact": "RUNTIME_EPISTEMIC_GOVERNANCE_v1.json",
+      "gate": "within_step_2"
+    },
+    {
+      "step": 6,
+      "label_en": "Limited runtime validation",
+      "status": "blocked",
+      "gate": "live_constitutional_evidence_required"
+    }
+  ],
+  "sub_sequence_ordered": [
+    {
+      "step": 1,
+      "action_en": "Freeze runtime observation ledger schema",
+      "artifact": "RUNTIME_OBSERVATION_LEDGER_SCHEMA_v1.json"
+    },
+    {
+      "step": 2,
+      "action_en": "Provenance-aware execution sandbox spec",
+      "artifact": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1.json",
+      "status": "complete",
+      "note_en": "execution phenomenology layer · simulation confidence drift watch"
+    },
+    {
+      "step": 3,
+      "action_en": "Telemetry graph + replay capture wiring",
+      "module": "app/telemetry_replay_capture.py",
+      "artifact": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1.json",
+      "status": "complete",
+      "note_en": "two-layer telemetry · replay phenomenology · epistemic interpretation blocked"
+    },
+    {
+      "step": 4,
+      "action_en": "Runtime epistemic governance hooks",
+      "module": "app/runtime_epistemic_governance.py",
+      "artifact": "RUNTIME_EPISTEMIC_GOVERNANCE_v1.json",
+      "status": "complete",
+      "note_en": "three layers · runtime quarantine states · execution opacity preservation"
+    },
+    {
+      "step": 5,
+      "action_en": "Limited runtime validation pilot",
+      "gate": "live_constitutional_validation_pass"
+    }
+  ],
+  "expansion_gate_question_en": "Does this illuminate runtime? Or grant runtime legitimacy?",
+  "expansion_gate_question_ar": "هل هذا يُضيء runtime؟ أم يمنح legitimacy؟",
+  "if_legitimacy_drift_detected": {
+    "action_en": "reduce runtime instrumentation — do not expand authority surface",
+    "action_ar": "قلّل أدوات runtime — لا توسّع سطح السلطة"
+  },
+  "relationship_to_prior_phase": {
+    "phase_id": "LIVE_CONSTITUTIONAL_VALIDATION_v1",
+    "relationship_en": "parallel capability track — constitutional pilot gates limited runtime validation, not observability design",
+    "relationship_ar": "مسار قدرة متوازٍ — pilot دستوري يحكم validation المحدود لا تصميم المراقبة"
+  },
+  "prerequisites": [
+    "RUNTIME_OBSERVATION_CONTRACT_v1.md",
+    "PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.md",
+    "EPISTEMIC_QUARANTINE_CONTRACT_v1.md",
+    "GOVERNANCE_FREEZE_v1.md"
+  ],
+  "blocked_until_live_pass": [
+    "limited_runtime_validation_pilot",
+    "trusted_runtime_corroboration_layer",
+    "l4_operational_pilot",
+    "runtime_grading_wire"
+  ],
+  "implementation_stubs": [
+    "app/runtime_observation_contract.py",
+    "app/runtime_observation_sandbox.py",
+    "app/runtime_telemetry_graph.py",
+    "app/runtime_observation_ledger.py",
+    "app/execution_phenomenology.py",
+    "app/telemetry_replay_capture.py",
+    "app/runtime_epistemic_governance.py"
+  ],
+  "step_3_spec": "app/calibration/PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1.json",
+  "step_4_spec": "app/calibration/TELEMETRY_REPLAY_CAPTURE_WIRING_v1.json",
+  "step_5_spec": "app/calibration/RUNTIME_EPISTEMIC_GOVERNANCE_v1.json",
+  "manifest_index_en": "Canonical step specs — MD companions paused; merge target for protective redundancy",
+  "step_specs_index": [
+    {"step": 3, "json": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1.json", "md_paused": true},
+    {"step": 4, "json": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1.json", "md_paused": true},
+    {"step": 5, "json": "RUNTIME_EPISTEMIC_GOVERNANCE_v1.json", "md_paused": true}
+  ],
+  "state_file": "app/calibration/human_cohort_workshop/runtime_observability_preparation_state.json",
+  "ledger_path": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+  "ledger_schema": "app/calibration/RUNTIME_OBSERVATION_LEDGER_SCHEMA_v1.json",
+  "companions": [
+    "LIVE_CONSTITUTIONAL_VALIDATION_v1.json",
+    "RUNTIME_OBSERVATION_CONTRACT_v1.md",
+    "PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.json"
+  ]
+}

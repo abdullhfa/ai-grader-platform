@@ -1,0 +1,14 @@
+{
+  "name": "whatsapp-service",
+  "version": "1.0.0",
+  "description": "WhatsApp Web.js service for AI Grader",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "whatsapp-web.js": "^1.26.1",
+    "qrcode": "^1.5.4"
+  }
+}

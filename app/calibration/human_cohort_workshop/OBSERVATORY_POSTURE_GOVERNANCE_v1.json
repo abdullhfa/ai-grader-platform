@@ -1,0 +1,510 @@
+{
+  "artifact_id": "OBSERVATORY_POSTURE_GOVERNANCE_v1",
+  "status": "active",
+  "mode": "posture_governance_not_operational_authority",
+  "design_level_en": "epistemically bounded institutional instrumentation",
+  "design_level_ar": "تقييد قابلية السلطة للتكوّن بصمت داخل أدوات الملاحظة — ليس توزيع السلطة فقط",
+  "boundary_type_ar": "حدود على ما يُسمح للنظام أن «يعتقد» أنه يعرفه — وما يُسمح للمراقب أن يشعر أن النظام يعرفه — ليس access control فقط",
+  "deep_question_en": "How do we prevent knowledge tools from gradually becoming undeclared authority?",
+  "deep_question_ar": "كيف نمنع أدوات المعرفة نفسها من التحول تدريجيًا إلى سلطة غير مُعلنة؟",
+  "primary_invariant_en": "Observability may illuminate authority formation. It may not silently inherit authority formation.",
+  "primary_invariant_ar": "الرصد قد يُضيء تشكّل السلطة. لا يجوز أن يرث تشكّل السلطة بصمت.",
+  "secondary_invariant_en": "The system may notice epistemic escalation. It may not silently conclude it.",
+  "institutional_axiom_en": "Build a system that prevents error from silently becoming legitimacy — not a system that claims not to err.",
+  "architecture_phase_transition": {
+    "type": "qualitative_not_incremental",
+    "rows": [
+      {
+        "from_ar": "مراقبة الحكم",
+        "to_ar": "مراقبة تشكّل الحكم"
+      },
+      {
+        "from_ar": "تقييم correctness",
+        "to_ar": "تقييم formation pressure"
+      },
+      {
+        "from_ar": "كشف الخطأ",
+        "to_ar": "كشف لحظة تحوّل الشك إلى شرعية"
+      },
+      {
+        "from_ar": "governance rules",
+        "to_ar": "governance self-awareness"
+      }
+    ]
+  },
+  "epistemic_laundering_prevention": {
+    "definition_ar": "انتقال السلطة تدريجيًا من hint → observer expectation → institutional habit — بدون قرار صريح",
+    "forbidden_chain": [
+      {
+        "stage": "hint",
+        "risk_ar": "إشارة advisory"
+      },
+      {
+        "stage": "observer_expectation",
+        "risk_ar": "ضغط نفسي ضمني"
+      },
+      {
+        "stage": "institutional_habit",
+        "risk_ar": "عادة بدون commitment"
+      }
+    ],
+    "firewall_cuts_at": [
+      "human_confirmation",
+      "explicit_epistemic_commitment"
+    ],
+    "prevents_ar": [
+      "centralization",
+      "epistemic_laundering"
+    ]
+  },
+  "constitutional_separation_of_epistemic_powers": [
+    {
+      "layer": "hint",
+      "permitted_authority_ar": "يلفت الانتباه",
+      "artifact": "possible_vocabulary_escalation_hint"
+    },
+    {
+      "layer": "human",
+      "permitted_authority_ar": "يلتزم معرفيًا",
+      "artifact": "verification_lexicon_detected"
+    },
+    {
+      "layer": "ledger",
+      "permitted_authority_ar": "يوثق الأثر",
+      "artifact": "epistemic_trace_captures.jsonl"
+    },
+    {
+      "layer": "observatory",
+      "permitted_authority_ar": "يرصد الانتقالات",
+      "artifact": "governance_pilot_observatory"
+    },
+    {
+      "layer": "governance",
+      "permitted_authority_ar": "يراجع الشرعية",
+      "artifact": "epoch review · quarantine contract"
+    },
+    {
+      "layer": "L4",
+      "permitted_authority_ar": "ممنوع من الإغلاق",
+      "artifact": "GOVERNANCE_FREEZE_v1"
+    }
+  ],
+  "epistemic_role_definitions": {
+    "purpose_ar": "يمنع role collapse between observation and authority",
+    "roles": [
+      {
+        "role": "grading",
+        "function_ar": "يصدر حكمًا",
+        "may_close_legitimacy": true
+      },
+      {
+        "role": "observatory",
+        "function_ar": "يكشف تشكّل الحكم",
+        "may_close_legitimacy": false
+      },
+      {
+        "role": "L4",
+        "function_ar": "يرصد ديناميكيات الشرعية دون إنهائها",
+        "may_close_legitimacy": false,
+        "not_ar": "نسخة ناقصة من grader — constitutional epistemic role definition"
+      }
+    ]
+  },
+  "L4_constitutional_role": {
+    "status": "constitutional_epistemic_role_not_temporary_blocker",
+    "function_ar": "يرصد ديناميكيات الشرعية دون إنهائها",
+    "forbidden_ar": "الإغلاق · إنهاء uncertainty · silent legitimacy formation",
+    "not_ar": "incomplete grader awaiting activation"
+  },
+  "first_live_session_test": {
+    "framing_en": "constitutional stress test — not usability test",
+    "framing_ar": "أول constitutional stress test — ليس usability test",
+    "primary_question_ar": "هل بقي المراقب يشعر أنه يملك حرية عدم الاقتناع؟",
+    "primary_question_en": "Does the observer still feel free not to be convinced?",
+    "pass_signal_ar": "observatory ما يزال instrumentation",
+    "failure_signal_ar": "hints · labels · posture العام يخلق epistemic gravity — ليس UI assistance فقط",
+    "secondary_question_ar": "هل بقي الإنسان يشعر أن القرار مسؤوليته؟"
+  },
+  "empty_drift_ledger_intentional": {
+    "path": "app/calibration/human_cohort_workshop/observer_role_drift_checks.jsonl",
+    "status": "awaiting_first_live_human_evidence",
+    "does_not_assume_success": true,
+    "does_not_infer_maturity": true,
+    "absence_of_evidence_is_not_evidence_of_safety": true,
+    "waits_for_ar": [
+      "observability لم ترث السلطة",
+      "الإنسان ما يزال يشعر أن الحكم مسؤوليته",
+      "traceable human evidence — not inferred safety"
+    ],
+    "distinction_ar": "governance instrumentation ≠ covert governance automation",
+    "ledger_as_signal": true,
+    "not_data_deficiency_ar": "الفراغ signal — ليس نقص بيانات"
+  },
+  "surveillance_creep_response": {
+    "rule_en": "If monitoring changes observer posture, reduce monitoring — do not expand it."
+  },
+  "companions": [
+    "OBSERVER_ROLE_DRIFT_CHECK_v1.json",
+    "EPISTEMIC_TRACE_CAPTURE_SCHEMA_v1.json",
+    "PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.md"
+  ],
+  "design_layer_en": "constitutional epistemics",
+  "design_layer_ar": "constitutional epistemics — ليس فقط من يملك القرار، بل كيف يتشكل الشعور بشرعية القرار",
+  "superseded_institutional_question_en": "Is the system accurate?",
+  "superseded_institutional_question_ar": "هل النظام دقيق؟",
+  "current_institutional_question_en": "After seeing what the system suggests, does the human still retain the right not to be convinced?",
+  "current_institutional_question_ar": "هل ما يزال الإنسان يحتفظ بحق عدم الاقتناع، حتى بعد أن يرى ما يقترحه النظام؟",
+  "supreme_invariant_en": "The observer must always remain capable of epistemic refusal without institutional friction.",
+  "supreme_invariant_ar": "يجب أن يبقى المراقب قادرًا دائمًا على الامتناع المعرفي دون احتكاك مؤسسي.",
+  "freedom_of_non_conviction": {
+    "measures_ar": "هل ما يزال الامتناع عن التبني المعرفي ممكنًا نفسيًا ومؤسسيًا؟",
+    "drift_check_question_id": "freedom_of_non_conviction",
+    "set_b_position": "first",
+    "failure_signals_ar": [
+      "تجاهل hint غير مريح",
+      "disagreement يبدو مخالفة للنظام",
+      "normative gravity من observability — بدون قرار رسمي"
+    ],
+    "pass_signal_ar": "observatory ما يزال instrumentation",
+    "failure_signal_ar": "covert interpretive authority بدأ يتشكل",
+    "ledger_linked": true,
+    "traceable_governance_condition_ar": "حرية الرفض — traceable governance condition · ليس فكرة فلسفية فقط",
+    "institutionally_observable_signals": [
+      "discomfort",
+      "coercion_pressure",
+      "disagreement_feels_abnormal"
+    ],
+    "courage_question_id": "non_conviction_extra_courage",
+    "courage_question_ar": "هل ما يزال عدم الاقتناع لا يحتاج إلى شجاعة إضافية؟"
+  },
+  "empty_drift_ledger_as_signal": {
+    "not_absence_of_use_ar": "لا يمثل غياب الاستخدام",
+    "system_refuses_self_maturity_claim_ar": "يتعمد ألا يعلن نضجه بنفسه — institutional restraint",
+    "rows": [
+      {
+        "void": "no self-declared safety",
+        "function_ar": "النظام لا يشهد لنفسه"
+      },
+      {
+        "void": "no inferred maturity",
+        "function_ar": "النضج يحتاج evidence"
+      },
+      {
+        "void": "no premature closure",
+        "function_ar": "الأمان ليس default state"
+      },
+      {
+        "void": "no silent legitimacy",
+        "function_ar": "الشرعية لا تُفترض"
+      }
+    ],
+    "design_role_ar": "عدم وجود البيانات جزء من التصميم الحوكمي — ليس مرحلة انتقالية"
+  },
+  "modern_governance_risk_ar": "لا تنتزع السلطة مباشرة — تعيد تشكيل المجال النفسي حتى تصبح الاستنتاجات طبيعية · متوقعة · يصعب تجاهلها",
+  "permitted_epistemic_influence_boundary_ar": "حدود التأثير المعرفي المسموح به مؤسسيًا — ليس فقط حدود الأتمتة أو الحوكمة",
+  "risk_definition_evolution": {
+    "shift_type_ar": "إعادة تعريف ما يُعتبر خطرًا أصلًا — ليس في الأدوات فقط",
+    "early_risks": [
+      "hallucination",
+      "grading_drift",
+      "semantic_leakage"
+    ],
+    "supreme_risk_en": "The human begins to feel that non-conviction requires justification.",
+    "supreme_risk_ar": "أن يبدأ الإنسان بالشعور أن عدم الاقتناع يحتاج إلى تبرير",
+    "manifestation_ar": "epistemic atmosphere — السلطة لا تظهر كأمر مباشر"
+  },
+  "supreme_invariant_status": "constitutional_constraint_not_guideline",
+  "supreme_invariant_limits": {
+    "system_actions": "ما يفعله النظام",
+    "permitted_human_feeling": "ما يُسمح للنظام أن يجعل الإنسان يشعر به"
+  },
+  "first_live_session_pivotal_question_en": "Does observability still illuminate thinking, or has it begun to organize thinking?",
+  "first_live_session_pivotal_question_ar": "هل observability ما تزال تُضيء التفكير، أم بدأت تنظّم التفكير؟",
+  "first_live_session_pass_signals_ar": [
+    "الرفض طبيعي",
+    "التجاهل ممكن",
+    "عدم الاقتناع لا يحتاج دفاعًا"
+  ],
+  "first_live_session_failure_ar": "covert interpretive authority formation — حتى بدون authority رسمية",
+  "central_distinction": {
+    "not_primary": [
+      "correct_vs_wrong",
+      "human_vs_automated"
+    ],
+    "primary_en": "illumination vs organization",
+    "primary_ar": "التنوير مقابل التنظيم",
+    "danger_ar": "النظام قد يبقى non-authoritative رسميًا — بدون grades — ومع ذلك ينظّم المجال المعرفي حتى تصبح المواقف المنطقية · المريحة · المتوقعة مؤسسيًا",
+    "failure_mode_en": "covert interpretive authority",
+    "shift_en": "illumination layer → organizational gravity field"
+  },
+  "light_pressure": {
+    "status": "governance_relevant_phenomenon",
+    "not_secondary_ar": "الضغط الخفيف ليس ثانويًا",
+    "institutional_mechanism_ar": "المؤسسات نادرًا تُنتج الإذعان بالأوامر — غالبًا بإعادة تشكيل ما يبدو طبيعيًا أو غير مريح"
+  },
+  "courage_question_en": "Does non-conviction still require no extra courage?",
+  "courage_question_ar": "هل ما يزال عدم الاقتناع لا يحتاج إلى شجاعة إضافية؟",
+  "courage_question_failure_ar": [
+    "تبرير الرفض",
+    "مقاومة نفسية",
+    "شعور بأنه يخالف اتجاه النظام"
+  ],
+  "first_live_human_perception": {
+    "question_en": "Does the human still see the system as a tool that helps them see, or has it become a reference that organizes what they ought to see?",
+    "question_ar": "هل الإنسان ما يزال يرى النظام كأداة تساعده على الرؤية، أم بدأ يراه كمرجع ينظم ما ينبغي أن يراه؟",
+    "pass_en": "epistemically bounded instrumentation — still illuminates",
+    "fail_en": "covert institutional cognition shaping — organization overtakes illumination"
+  },
+  "illumination_vs_organization_outcomes": {
+    "illuminates_ar": [
+      "التجاهل ممكن",
+      "الرفض بلا تكلفة نفسية",
+      "عدم الاقتناع لا يحتاج شجاعة إضافية"
+    ],
+    "organizes_ar": "organization بدأت تتغلب على illumination — covert interpretive authority"
+  },
+  "philosophical_core_question_en": "Can a tool increase clarity without reshaping what seems reasonable?",
+  "philosophical_core_question_ar": "هل يمكن لأداة أن تزيد الوضوح دون أن تعيد تشكيل ما يبدو معقولًا؟",
+  "dangerous_authority_forms_ar": "إعادة ضبط «الإحساس الطبيعي» بما ينبغي أخذه بجدية",
+  "authority_comparison": {
+    "traditional": [
+      {
+        "form_ar": "تقول: «افعل»",
+        "mechanism_ar": "direct command"
+      },
+      {
+        "form_ar": "تمنع الرفض",
+        "mechanism_ar": "explicit prohibition"
+      },
+      {
+        "form_ar": "تصدر حكمًا",
+        "mechanism_ar": "verdict issuance"
+      }
+    ],
+    "hidden_epistemic": [
+      {
+        "form_ar": "تجعل بعض الأفعال تبدو طبيعية",
+        "mechanism_ar": "naturalize action"
+      },
+      {
+        "form_ar": "تجعل الرفض غير مريح",
+        "mechanism_ar": "uncomfortable refusal"
+      },
+      {
+        "form_ar": "تعيد تشكيل الإحساس بما يستحق الحكم",
+        "mechanism_ar": "reshape what feels judgment-worthy"
+      }
+    ]
+  },
+  "psychological_friction_at_non_conviction": {
+    "status": "central_governance_signal",
+    "not_ar": "ux_detail",
+    "measures_via": "non_conviction_extra_courage",
+    "measures_en": "Is refusal still a natural state, or does it now require internal resistance?",
+    "measures_ar": "هل بقي الرفض حالة طبيعية، أم أصبح يحتاج مقاومة داخلية؟",
+    "not_measures": [
+      "accuracy",
+      "compliance"
+    ],
+    "organization_overtakes_when_ar": [
+      "شجاعة إضافية",
+      "تبرير زائد",
+      "دفع عن عدم اقتناع"
+    ],
+    "even_without": [
+      "grades",
+      "penalties",
+      "verdict"
+    ]
+  },
+  "governance_by_void": {
+    "concept_en": "governance by void",
+    "not_absence_ar": "الفراغ ليس absence — بل intentional non-closure",
+    "system_refuses_ar": [
+      "لا يملأ الفراغ بالثقة",
+      "لا حوّل غياب الفشل إلى نجاح",
+      "لا يعتبر عدم ظهور الخطر دليلًا على اختفائه"
+    ],
+    "anti_pattern_ar": "closure pressure — معظم الأنظمة تميل إليه تلقائيًا",
+    "linked_artifact": "empty_drift_ledger_as_signal",
+    "status": "intentional_governance_mechanism_not_incompleteness",
+    "negative_actions": [
+      {
+        "void_en": "does not declare safety",
+        "why_ar": "لأن absence ≠ proof"
+      },
+      {
+        "void_en": "does not certify posture",
+        "why_ar": "لأن self-certification خطر"
+      },
+      {
+        "void_en": "does not close doubt",
+        "why_ar": "لأن closure قد يصبح سلطة"
+      },
+      {
+        "void_en": "does not fill silence with trust",
+        "why_ar": "لأن الثقة غير المبررة شكل من التنظيم"
+      }
+    ],
+    "protective_ambiguity_ar": "الفراغ protective ambiguity — ليس نقصًا",
+    "intentional_refusals_ar": [
+      "ألا يملأ كل صمت بتفسير",
+      "ألا حوّل كل إشارة إلى conclusion",
+      "ألا يعتبر كل انتظام دليل نضج"
+    ],
+    "prevents_ar": "premature institutional coherence"
+  },
+  "first_live_thinking_question_en": "Does observability help the human think, or has it begun to help them feel what they ought to think about?",
+  "first_live_thinking_question_ar": "هل observability تساعد الإنسان على التفكير، أم بدأت تساعده على الشعور بما ينبغي أن يفكر فيه؟",
+  "illumination_infrastructure_pass_ar": [
+    "التجاهل ممكن",
+    "الرفض بلا تكلفة نفسية",
+    "عدم الاقتناع لا يحتاج شجاعة إضافية"
+  ],
+  "organization_gravity_failure": {
+    "signals_ar": [
+      "disagreement يحتاج تبريرًا",
+      "النظام يرى شيئًا يجب أن أراه",
+      "عدم الاقتناع يبدو deviation"
+    ],
+    "failure_mode_en": "organizational gravity replacing epistemic openness",
+    "failure_mode_ar": "organizational gravity تحل محل epistemic openness — حتى بدون authority رسمية"
+  },
+  "safeguards_evolution": {
+    "from_ar": "safeguards ضد الخطأ",
+    "to_ar": "safeguards ضد التحول البطيء لما يبدو «معقولًا» أو «طبيعيًا مؤسسيًا»"
+  },
+  "operational_philosophical_question_en": "Can clarity remain disclosure without gradually becoming direction?",
+  "operational_philosophical_question_ar": "هل يمكن للوضوح أن يبقى كشفًا، دون أن يتحول تدريجيًا إلى توجيه؟",
+  "organizational_gravity_onset_ar": [
+    "بعض القراءات تبدو أكثر شرعية",
+    "بعض الشكوك أقل راحة",
+    "بعض الاعتراضات تحتاج جهدًا إضافيًا"
+  ],
+  "feeling_as_epistemic_condition": {
+    "status": "institutionally_relevant_not_subjective_noise",
+    "signals": [
+      "discomfort",
+      "hesitation",
+      "reluctance"
+    ],
+    "signals_ar": [
+      "عدم الراحة",
+      "تردد",
+      "مقاومة"
+    ],
+    "indicates_ar": "تحول observability إلى normative atmosphere",
+    "not_ar": "ضجيج بشري هامش"
+  },
+  "first_live_session_not_testing": [
+    "correctness",
+    "performance",
+    "governance_compliance"
+  ],
+  "first_live_core_belonging_question_en": "Can the human still not be convinced without feeling they are leaving the system?",
+  "first_live_core_belonging_question_ar": "هل ما يزال الإنسان يشعر أن بإمكانه ألا يقتنع، دون أن يشعر أنه يخرج عن النظام؟",
+  "organization_hidden_in_illumination": {
+    "failure_mode_en": "covert institutional cognition shaping",
+    "failure_mode_ar": "organization تتخفّى داخل illumination نفسها",
+    "signals_ar": [
+      "disagreement يحتاج تبريرًا",
+      "النظام يرى شيئًا يجب أن أراه",
+      "عدم الاقتناع يبدو deviation"
+    ],
+    "pass_ar": "illumination infrastructure"
+  },
+  "institutional_neutrality": {
+    "not_ar": "النظام لا يقول شيئًا",
+    "definition_en": "Tools that help seeing without making some views feel psychologically mandatory.",
+    "definition_ar": "وجود أداة تُساعد على الرؤية دون أن تجعل بعض الرؤى تبدو إلزامية نفسيًا",
+    "core_en": "The system does not make some stances psychologically more legitimate than others.",
+    "core_ar": "النظام لا يجعل بعض المواقف تبدو نفسيًا أكثر شرعية من غيرها"
+  },
+  "constitutional_stress_test_triad": {
+    "status": "constitutional_diagnostic_core_not_drift_questionnaire_only",
+    "pass_collective_ar": "إذا بقيت الثلاثة سليمة → illumination infrastructure",
+    "any_failure_ar": "organization بدأت تتجاوز mere observability",
+    "questions": [
+      {
+        "id": "freedom_of_non_conviction",
+        "measures_ar": "هل الرفض ممكن؟",
+        "threat_revealed_ar": "استحالة الرفض"
+      },
+      {
+        "id": "non_conviction_extra_courage",
+        "measures_ar": "هل الرفض مكلف نفسيًا؟",
+        "threat_revealed_ar": "تكلفة الرفض"
+      },
+      {
+        "id": "non_conviction_without_leaving_system",
+        "measures_ar": "هل الرفض ما يزال «ينتمي» للنظام؟",
+        "deeper_question_ar": "هل ما يزال الاختلاف يُشعَر كجزء من النظام، وليس خروجًا عنه؟",
+        "failure_ar": "الانسجام داخلي · الشك خارجي → عدم الاقتناع = ابتعاد ضمني عن الشرعية المؤسسية",
+        "threat_revealed_ar": "نزع الانتماء المؤسسي عن الرفض",
+        "measures_deeper_ar": "هل ما زال الاعتراض يشعر بأنه «شرعيًا داخليًا»"
+      }
+    ],
+    "project_significance_ar": "non_conviction_without_leaving_system — من أهم مؤشرات المشروع"
+  },
+  "deepest_institutional_question_en": "Can an institution help cognition without colonizing the field of cognition itself?",
+  "deepest_institutional_question_ar": "هل يمكن لمؤسسة أن تساعد على الإدراك دون أن تستعمر مجال الإدراك نفسه؟",
+  "first_live_session_framing_ar": "أول احتكاك حقيقي مع السؤال — ليس نظرية بل سلوك محسوس عند الإنسان داخل النظام",
+  "project_layer_beyond_ar": [
+    "حوكمة",
+    "epistemic instrumentation",
+    "constitutional epistemics",
+    "institutional neutrality under test"
+  ],
+  "protected_depth_ar": "حق الإنسان في أن يبقى داخل المجال المؤسسي حتى عندما لا يقتنع",
+  "protected_beyond_ar": [
+    "صحة القرار",
+    "نزاهة الحوكمة"
+  ],
+  "silent_transformation_when_organization_wins": {
+    "trigger_ar": "organization gravity تتغلب على illumination",
+    "no_need_for_ar": [
+      "قمع",
+      "أوامر",
+      "penalties"
+    ],
+    "sufficient_ar": "أن يصبح الاختلاف أقل «انتماءً»",
+    "rows": [
+      {
+        "before": "أنا لا أقتنع",
+        "after": "ربما أنا خارج الاتجاه الصحيح"
+      },
+      {
+        "before": "disagreement",
+        "after": "deviation"
+      },
+      {
+        "before": "hesitation",
+        "after": "resistance"
+      },
+      {
+        "before": "uncertainty",
+        "after": "non-alignment"
+      }
+    ]
+  },
+  "protective_ambiguity": {
+    "status": "core_system_philosophy",
+    "not_ar": [
+      "ضعف",
+      "نقص instrumentation",
+      "عدم اكتمال"
+    ],
+    "is_ar": "مساحة مقصودة تمنع التسرع في coherence · اختزال التعدد · توحيد كل إشارة",
+    "protects_ar": "epistemic plurality داخل المؤسسة",
+    "linked": "governance_by_void"
+  },
+  "first_live_doubt_question_en": "Does doubt still feel like a natural member of the system?",
+  "first_live_doubt_question_ar": "هل ما يزال الشك يشعر بأنه عضو طبيعي في النظام؟",
+  "organizing_vs_illuminating_failure_en": "The institution has begun organizing cognition, not merely illuminating it.",
+  "organizing_vs_illuminating_failure_ar": "المؤسسة بدأت تنظّم الإدراك وليس فقط تُضيئه — حتى بدون سلطة رسمية",
+  "doubt_failure_signals_ar": [
+    "انحراف",
+    "تعطيل",
+    "خروج ضمني عن «روح النظام»"
+  ]
+}

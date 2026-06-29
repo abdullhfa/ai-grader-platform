@@ -1,0 +1,669 @@
+{
+  "pipeline_version": "ai_reasoning_v1",
+  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+  "session_id": null,
+  "criterion_graphs": [
+    {
+      "criterion": "B.D2",
+      "criterion_level": "B.D2",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "B.M2",
+      "criterion_level": "B.M2",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "B.P3",
+      "criterion_level": "B.P3",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "B.P4",
+      "criterion_level": "B.P4",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "C.D3",
+      "criterion_level": "C.D3",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "C.M3",
+      "criterion_level": "C.M3",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "C.P5",
+      "criterion_level": "C.P5",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "C.P6",
+      "criterion_level": "C.P6",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "D2",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "D3",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "M2",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "M3",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "P3",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "P4",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "P5",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "P6",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "game_launch",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "gameplay_loop",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "lose_health",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "testing_evidence",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    },
+    {
+      "criterion": "win_lose_state",
+      "criterion_level": "",
+      "evidence_nodes": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "corroboration_strength": "weak",
+      "node_count": 0
+    }
+  ],
+  "agent_opinions": [
+    {
+      "agent_id": "gameplay_agent",
+      "verdict": "uncertain",
+      "confidence": 0.45,
+      "summary": "Insufficient gameplay motion evidence.",
+      "evidence_refs": [],
+      "concerns": [
+        "no_clear_motion"
+      ]
+    },
+    {
+      "agent_id": "runtime_agent",
+      "verdict": "uncertain",
+      "confidence": 0.4,
+      "summary": "No runtime observation artifacts.",
+      "evidence_refs": [],
+      "concerns": [
+        "no_runtime_observation"
+      ]
+    },
+    {
+      "agent_id": "academic_agent",
+      "verdict": "uncertain",
+      "confidence": 0.42,
+      "summary": "BTEC operational evidence incomplete for mapped criteria.",
+      "evidence_refs": [],
+      "concerns": [
+        "weak_evidence:B.D2",
+        "weak_evidence:B.M2",
+        "weak_evidence:B.P3",
+        "weak_evidence:B.P4",
+        "weak_evidence:C.D3",
+        "weak_evidence:C.M3"
+      ]
+    },
+    {
+      "agent_id": "integrity_agent",
+      "verdict": "support",
+      "confidence": 0.8,
+      "summary": "No major integrity flags in artifact cross-check.",
+      "evidence_refs": [],
+      "concerns": []
+    },
+    {
+      "agent_id": "reflection_agent",
+      "verdict": "support",
+      "confidence": 0.75,
+      "summary": "No critical contradictions across agent opinions.",
+      "evidence_refs": [],
+      "concerns": []
+    }
+  ],
+  "final_decisions": {
+    "overall": {
+      "decision": "insufficient_evidence",
+      "weighted_confidence": 0.528,
+      "requires_manual_review": false,
+      "reasoning_rejected": true,
+      "agent_opinions": [
+        {
+          "agent_id": "gameplay_agent",
+          "verdict": "uncertain",
+          "confidence": 0.45,
+          "summary": "Insufficient gameplay motion evidence.",
+          "evidence_refs": [],
+          "concerns": [
+            "no_clear_motion"
+          ]
+        },
+        {
+          "agent_id": "runtime_agent",
+          "verdict": "uncertain",
+          "confidence": 0.4,
+          "summary": "No runtime observation artifacts.",
+          "evidence_refs": [],
+          "concerns": [
+            "no_runtime_observation"
+          ]
+        },
+        {
+          "agent_id": "academic_agent",
+          "verdict": "uncertain",
+          "confidence": 0.42,
+          "summary": "BTEC operational evidence incomplete for mapped criteria.",
+          "evidence_refs": [],
+          "concerns": [
+            "weak_evidence:B.D2",
+            "weak_evidence:B.M2",
+            "weak_evidence:B.P3",
+            "weak_evidence:B.P4",
+            "weak_evidence:C.D3",
+            "weak_evidence:C.M3"
+          ]
+        },
+        {
+          "agent_id": "integrity_agent",
+          "verdict": "support",
+          "confidence": 0.8,
+          "summary": "No major integrity flags in artifact cross-check.",
+          "evidence_refs": [],
+          "concerns": []
+        },
+        {
+          "agent_id": "reflection_agent",
+          "verdict": "support",
+          "confidence": 0.75,
+          "summary": "No critical contradictions across agent opinions.",
+          "evidence_refs": [],
+          "concerns": []
+        }
+      ],
+      "arbitration_notes": []
+    }
+  },
+  "hallucination_flags": [
+    {
+      "claim": "runtime_observed",
+      "reason": "unverified_claim_runtime_observed",
+      "reasoning_rejected": true
+    }
+  ],
+  "status": "completed",
+  "criterion_mapping": [
+    {
+      "criterion": "B.D2",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "B.M2",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "B.P3",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "B.P4",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "C.D3",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "C.M3",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "C.P5",
+      "required_evidence": [
+        "runtime_observed",
+        "movement_detected",
+        "manual_playtest"
+      ],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "C.P6",
+      "required_evidence": [
+        "testing_documentation",
+        "input_simulated",
+        "manual_playtest"
+      ],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "D2",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "D3",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "M2",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "M3",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "P3",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "P4",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "P5",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "P6",
+      "required_evidence": [],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "game_launch",
+      "required_evidence": [
+        "motion_detected",
+        "menu_ui_detected",
+        "scene_loaded",
+        "runtime_observed"
+      ],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "gameplay_loop",
+      "required_evidence": [
+        "movement_detected",
+        "progression_detected",
+        "score_hud_detected"
+      ],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "lose_health",
+      "required_evidence": [
+        "death_detected",
+        "score_hud_detected"
+      ],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "testing_evidence",
+      "required_evidence": [
+        "input_simulated",
+        "fps_ok",
+        "testing_documentation"
+      ],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion": "win_lose_state",
+      "required_evidence": [
+        "win_detected",
+        "lose_detected"
+      ],
+      "supporting_events": [],
+      "contradicting_events": [],
+      "confidence": 0.35,
+      "evidence_sufficient": false,
+      "corroboration_strength": "weak"
+    }
+  ],
+  "validation": {
+    "evidence_graphs": {
+      "valid": false,
+      "issues": [
+        "empty_nodes:B.D2",
+        "empty_nodes:B.M2",
+        "empty_nodes:B.P3",
+        "empty_nodes:B.P4",
+        "empty_nodes:C.D3",
+        "empty_nodes:C.M3",
+        "empty_nodes:C.P5",
+        "empty_nodes:C.P6",
+        "empty_nodes:D2",
+        "empty_nodes:D3",
+        "empty_nodes:M2",
+        "empty_nodes:M3",
+        "empty_nodes:P3",
+        "empty_nodes:P4",
+        "empty_nodes:P5",
+        "empty_nodes:P6",
+        "empty_nodes:game_launch",
+        "empty_nodes:gameplay_loop",
+        "empty_nodes:lose_health",
+        "empty_nodes:testing_evidence",
+        "empty_nodes:win_lose_state"
+      ],
+      "graph_count": 21
+    },
+    "timeline": {
+      "valid": false,
+      "event_count": 0,
+      "duration_seconds": 0,
+      "issues": [
+        "empty_timeline"
+      ]
+    }
+  },
+  "hallucination_guard": {
+    "claims_detected": [
+      "runtime_observed"
+    ],
+    "flags": [
+      {
+        "claim": "runtime_observed",
+        "reason": "unverified_claim_runtime_observed",
+        "reasoning_rejected": true
+      }
+    ],
+    "reasoning_rejected": true,
+    "guard_version": "hallucination_guard_v1"
+  },
+  "final_decision": {
+    "decision": "insufficient_evidence",
+    "weighted_confidence": 0.528,
+    "requires_manual_review": false,
+    "reasoning_rejected": true,
+    "agent_opinions": [
+      {
+        "agent_id": "gameplay_agent",
+        "verdict": "uncertain",
+        "confidence": 0.45,
+        "summary": "Insufficient gameplay motion evidence.",
+        "evidence_refs": [],
+        "concerns": [
+          "no_clear_motion"
+        ]
+      },
+      {
+        "agent_id": "runtime_agent",
+        "verdict": "uncertain",
+        "confidence": 0.4,
+        "summary": "No runtime observation artifacts.",
+        "evidence_refs": [],
+        "concerns": [
+          "no_runtime_observation"
+        ]
+      },
+      {
+        "agent_id": "academic_agent",
+        "verdict": "uncertain",
+        "confidence": 0.42,
+        "summary": "BTEC operational evidence incomplete for mapped criteria.",
+        "evidence_refs": [],
+        "concerns": [
+          "weak_evidence:B.D2",
+          "weak_evidence:B.M2",
+          "weak_evidence:B.P3",
+          "weak_evidence:B.P4",
+          "weak_evidence:C.D3",
+          "weak_evidence:C.M3"
+        ]
+      },
+      {
+        "agent_id": "integrity_agent",
+        "verdict": "support",
+        "confidence": 0.8,
+        "summary": "No major integrity flags in artifact cross-check.",
+        "evidence_refs": [],
+        "concerns": []
+      },
+      {
+        "agent_id": "reflection_agent",
+        "verdict": "support",
+        "confidence": 0.75,
+        "summary": "No critical contradictions across agent opinions.",
+        "evidence_refs": [],
+        "concerns": []
+      }
+    ],
+    "arbitration_notes": []
+  }
+}

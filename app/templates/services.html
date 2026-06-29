@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدماتنا — BTEC Teachers</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/background_grading.css">
+
+    <style>
+        :root {
+            --black: #000000;
+            --gold: #FFA500;
+            --gold-dark: #E08C00;
+            --blue: #3B82F6;
+            --blue-dark: #2563EB;
+            --green: #10B981;
+            --purple: #8B5CF6;
+            --pink: #EC4899;
+            --cyan: #06B6D4;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0a0a0a;
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background-color: var(--black);
+            height: 116px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+            border-bottom: 1px solid #222;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 12px; }
+
+        .logo-image { height: 108px; width: auto; object-fit: contain; }
+
+        .logo-text {
+            font-family: 'Cairo', sans-serif;
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .nav-center { display: flex; gap: 32px; }
+
+        .nav-link {
+            color: #999;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover { color: var(--gold); }
+        .nav-link.active { color: var(--white); font-weight: 700; }
+
+        .nav-right { color: var(--gold); font-size: 16px; font-weight: 600; }
+
+        /* --- HERO --- */
+        .services-hero {
+            position: relative;
+            padding: 90px 20px 50px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .services-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background:
+                radial-gradient(circle at 25% 50%, rgba(255,165,0,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 30%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,92,246,0.06) 0%, transparent 50%);
+            animation: heroGlow 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroGlow {
+            0% { transform: translate(0,0) scale(1); }
+            100% { transform: translate(-2%,1%) scale(1.04); }
+        }
+
+        .services-hero h1 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 52px;
+            font-weight: 900;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--gold), #fff, var(--gold));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .services-hero p {
+            font-size: 18px;
+            color: #888;
+            margin-top: 14px;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        /* --- CATEGORY TABS --- */
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 40px auto 60px;
+            flex-wrap: wrap;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cat-tab {
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+            border: 1px solid #333;
+            background: rgba(255,255,255,0.03);
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cat-tab:hover { border-color: var(--gold); color: var(--gold); }
+
+        .cat-tab.active {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(255,165,0,0.3);
+        }
+
+        /* --- SERVICES GRID --- */
+        .services-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        /* --- SERVICE CARD --- */
+        .service-card {
+            background: linear-gradient(145deg, #111118, #16162a);
+            border: 1px solid #1e1e30;
+            border-radius: 28px;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .service-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 165, 0, 0.3);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .service-card.coming-soon { opacity: 0.6; }
+        .service-card.coming-soon.visible { opacity: 0.6; }
+        .service-card.coming-soon:hover { transform: translateY(-5px); }
+
+        /* Card Top Banner */
+        .card-banner {
+            height: 160px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+            transition: opacity 0.4s;
+        }
+
+        .service-card:hover .card-banner::before { opacity: 0.25; }
+
+        .banner-gold::before { background: linear-gradient(135deg, #FFB300, #FF8C00); }
+        .banner-blue::before { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+        .banner-green::before { background: linear-gradient(135deg, #10B981, #059669); }
+        .banner-purple::before { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .banner-pink::before { background: linear-gradient(135deg, #EC4899, #DB2777); }
+        .banner-cyan::before { background: linear-gradient(135deg, #06B6D4, #0891B2); }
+
+        .card-banner .card-emoji {
+            font-size: 64px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .service-card:hover .card-emoji { transform: scale(1.15) rotate(-5deg); }
+
+        /* Ribbon */
+        .card-ribbon {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            z-index: 2;
+        }
+
+        .ribbon-active {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+        }
+
+        .ribbon-soon {
+            background: rgba(255,255,255,0.1);
+            color: #888;
+            border: 1px solid #333;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 30px 28px 32px;
+        }
+
+        .card-body h3 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            transition: color 0.3s;
+        }
+
+        .card-body p {
+            font-size: 14.5px;
+            color: #888;
+            line-height: 1.9;
+            margin-bottom: 24px;
+        }
+
+        /* Card Features */
+        .card-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .feature-tag {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid #2a2a3e;
+            color: #aaa;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover .feature-tag {
+            border-color: rgba(255,165,0,0.2);
+            color: #ccc;
+        }
+
+        /* Card Button */
+        .card-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%,-50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .card-btn:hover::after { width: 250px; height: 250px; }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+            box-shadow: 0 4px 20px rgba(255,165,0,0.25);
+        }
+        .btn-gold:hover { box-shadow: 0 8px 30px rgba(255,165,0,0.45); transform: translateY(-2px); }
+
+        .btn-blue {
+            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.25);
+        }
+        .btn-blue:hover { box-shadow: 0 8px 30px rgba(59,130,246,0.45); transform: translateY(-2px); }
+
+        .btn-green {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.35);
+        }
+        .btn-green:hover { box-shadow: 0 8px 30px rgba(16,185,129,0.45); transform: translateY(-2px); }
+
+        .card-btn.disabled {
+            background: rgba(255,255,255,0.05);
+            color: #666;
+            cursor: default;
+            box-shadow: none;
+        }
+        .card-btn.disabled:hover { transform: none; box-shadow: none; }
+        .card-btn.disabled::after { display: none; }
+
+        /* --- STATS SECTION --- */
+        .stats-section {
+            max-width: 1200px;
+            margin: 0 auto 80px;
+            padding: 0 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #111118, #16162a);
+            border: 1px solid #1e1e30;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,165,0,0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--gold), var(--gold-dark)); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--blue), var(--blue-dark)); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--green), #059669); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--purple), #7C3AED); }
+
+        .stat-number {
+            font-family: 'Cairo', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-card:nth-child(2) .stat-number {
+            background: linear-gradient(135deg, var(--blue), #93C5FD);
+            -webkit-background-clip: text;
+        }
+
+        .stat-card:nth-child(3) .stat-number {
+            background: linear-gradient(135deg, var(--green), #6EE7B7);
+            -webkit-background-clip: text;
+        }
+
+        .stat-card:nth-child(4) .stat-number {
+            background: linear-gradient(135deg, var(--purple), #C4B5FD);
+            -webkit-background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #888;
+            font-weight: 500;
+        }
+
+        /* --- HOW IT WORKS --- */
+        .how-section {
+            max-width: 900px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .how-section h2 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            color: var(--white);
+        }
+
+        .how-section .how-sub {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 50px;
+        }
+
+        .steps-timeline {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .steps-timeline::before {
+            content: '';
+            position: absolute;
+            right: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--gold), var(--blue), var(--green));
+            border-radius: 2px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .step-dot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 900;
+            font-family: 'Cairo', sans-serif;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+            color: #000;
+        }
+
+        .step-item:nth-child(1) .step-dot { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); }
+        .step-item:nth-child(2) .step-dot { background: linear-gradient(135deg, var(--blue), var(--blue-dark)); }
+        .step-item:nth-child(3) .step-dot { background: linear-gradient(135deg, var(--green), #059669); }
+
+        .step-content {
+            text-align: right;
+            flex: 1;
+            padding-top: 8px;
+        }
+
+        .step-content h4 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.8;
+        }
+
+        /* --- CTA BANNER --- */
+        .cta-banner {
+            max-width: 1100px;
+            margin: 0 auto 80px;
+            padding: 0 20px;
+        }
+
+        .cta-inner {
+            background: linear-gradient(135deg, #111118, #16162a);
+            border: 1px solid #222;
+            border-radius: 28px;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-inner::before {
+            content: '';
+            position: absolute;
+            top: -60%; left: -20%;
+            width: 140%; height: 200%;
+            background: radial-gradient(circle, rgba(255,165,0,0.06), transparent 60%);
+            animation: ctaPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes ctaPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .cta-inner h2 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 34px;
+            font-weight: 900;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-inner p {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 44px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Cairo', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+            box-shadow: 0 6px 30px rgba(255,165,0,0.3);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255,165,0,0.5);
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            background: var(--black);
+            padding: 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .services-hero h1 { font-size: 34px; }
+            .services-grid { grid-template-columns: 1fr; padding: 0 16px 60px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .navbar { padding: 0 16px; height: 86px; }
+            .logo-image { height: 76px; }
+            .logo-text { font-size: 18px; }
+            .nav-center { display: none; }
+            .cta-inner { padding: 40px 20px; }
+            .cta-inner h2 { font-size: 26px; }
+            .how-section h2 { font-size: 28px; }
+            .steps-timeline::before { right: 24px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .category-tabs { gap: 8px; }
+            .cat-tab { padding: 8px 18px; font-size: 13px; }
+        }
+
+        /* --- FLOATING PARTICLES --- */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gold);
+            opacity: 0.04;
+            animation: float-particle linear infinite;
+        }
+
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* --- ANIMATED ORB --- */
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.07;
+            animation: orbFloat 12s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -50px); }
+            66% { transform: translate(-20px, 30px); }
+            100% { transform: translate(10px, -20px); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div><img src="/static/images/logo.png" alt="BTEC Teachers" class="logo-image"></div>
+            <div class="logo-text"><span style="color:#FFA500;font-weight:900">BTEC</span> Teachers</div>
+        </div>
+        <div class="nav-center">
+            <a href="/dashboard" class="nav-link">الصفحة الرئيسية</a>
+            <a href="/services" class="nav-link active">الخدمات</a>
+            {% if subscription and subscription.has_subscription %}<a href="/model-answers" class="nav-link">دليل المعلم</a>{% endif %}
+            <a href="/dashboard#packages" class="nav-link">الباقات</a>
+            <a href="/contact" class="nav-link">تواصل معنا</a>
+        </div>
+        <div class="nav-right">
+            {% if user %}
+                <span style="color: var(--gold); margin-left: 16px;">أهلاً، {{ user.first_name or user.name or user.email }} 👋</span>
+                <a href="/logout" style="color: #ccc; text-decoration: none; font-size: 15px;">تسجيل خروج</a>
+            {% else %}
+                <a href="/login" style="color: inherit; text-decoration: none;">دخول / تسجيل</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="services-hero">
+        <div class="floating-orb" style="width:400px;height:400px;background:var(--gold);top:-100px;right:10%;"></div>
+        <div class="floating-orb" style="width:300px;height:300px;background:var(--blue);bottom:-50px;left:5%;animation-delay:-6s;"></div>
+        <h1>خدماتنا الذكية</h1>
+        <p>أدوات متقدمة مدعومة بالذكاء الاصطناعي لمساعدة المعلمين على تقييم واجبات <span style="color: var(--gold); font-weight: 700;">BTEC</span> بكفاءة ودقة عالية</p>
+    </section>
+
+    <!-- CATEGORY TABS -->
+    <div class="category-tabs">
+        <button class="cat-tab active" data-filter="all">الكل</button>
+        <button class="cat-tab" data-filter="active">متاح الآن</button>
+        <button class="cat-tab" data-filter="soon">قريباً</button>
+    </div>
+
+    <!-- SERVICES GRID -->
+    <div class="services-grid" id="servicesGrid">
+
+        <!-- 1: إنشاء دليل المهمة -->
+        <div class="service-card" data-category="active">
+            <div class="card-banner banner-blue">
+                <span class="card-ribbon ribbon-active">✅ متاح الآن</span>
+                <span class="card-emoji">📖</span>
+            </div>
+            <div class="card-body">
+                <h3 style="color: var(--blue);">إنشاء دليل المهمة</h3>
+                <p>
+                    شرح تفصيلي للمهمة مع ذكر أمثلة عليها وفق معايير ومتطلبات <span style="color: var(--gold); font-weight: 600;">BTEC</span> بيرسون،
+                    بأسلوب مبسّط يوضح المطلوب من الطالب ويساعد المعلم على تقديم توجيهات دقيقة تضمن تغطية جميع المعايير.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">إنشاء دليل</span>
+                    <span class="feature-tag">نقاط التقييم</span>
+                    <span class="feature-tag">دليل المعلم</span>
+                    <span class="feature-tag">توجيهات دقيقة</span>
+                </div>
+                <a href="/create-assignment" class="card-btn btn-blue">إنشاء دليل ←</a>
+            </div>
+        </div>
+
+        <!-- 2: التقييم الذكي -->
+        <div class="service-card" data-category="active">
+            <div class="card-banner banner-gold">
+                <span class="card-ribbon ribbon-active">✅ متاح الآن</span>
+                <span class="card-emoji">📝</span>
+            </div>
+            <div class="card-body">
+                <h3 style="color: var(--gold);">التقييم الذكي</h3>
+                <p>
+                    صحّح واجبات طلابك تلقائياً بدقة عالية وفق معايير <span style="color: var(--gold); font-weight: 600;">BTEC</span> المعتمدة.
+                    ارفع الواجب واحصل على تقرير تفصيلي بالنتائج والملاحظات لكل معيار خلال ثوانٍ مع دعم كامل للغة العربية.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">تصحيح تلقائي</span>
+                    <span class="feature-tag">تقرير مفصّل</span>
+                    <span class="feature-tag">معايير BTEC</span>
+                    <span class="feature-tag">دعم عربي كامل</span>
+                </div>
+                <a href="/smart-grader" class="card-btn btn-gold">ابدأ التقييم ←</a>
+            </div>
+        </div>
+
+        <!-- 3: سجلات التقييم -->
+        <div class="service-card" data-category="active">
+            <div class="card-banner banner-green">
+                <span class="card-ribbon ribbon-active">✅ متاح الآن</span>
+                <span class="card-emoji">📊</span>
+            </div>
+            <div class="card-body">
+                <h3 style="color: var(--green);">سجلات التقييم</h3>
+                <p>
+                    أنشئ سجلات التقييم الرسمية تلقائياً وتشمل <strong>Assessment Record</strong> لتوثيق نتائج الطلاب
+                    و<strong>IV Assessment</strong> لمراجعة المهام والمعايير و<strong>IV Assessment Decisions</strong>
+                    لتسجيل قرارات التقييم النهائية وفق معايير <span style="color: var(--green); font-weight: 600;">BTEC</span>.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">IV Decisions</span>
+                    <span class="feature-tag">IV Assessment</span>
+                    <span class="feature-tag">Assessment Record</span>
+                </div>
+                <a href="/graded-students" class="card-btn btn-green">عرض السجلات ←</a>
+            </div>
+        </div>
+
+        <!-- 4: شرح الوحدة -->
+        <div class="service-card coming-soon" data-category="soon">
+            <div class="card-banner banner-cyan">
+                <span class="card-ribbon ribbon-soon">🕐 قريباً</span>
+                <span class="card-emoji">🖥️</span>
+            </div>
+            <div class="card-body">
+                <h3 style="color: var(--cyan);">شرح الوحدة</h3>
+                <p>
+                    فيديوهات تعليمية متكاملة لشرح الوحدة كاملة بأسلوب مبسّط،
+                    لتوضيح المطلوب ومساعدة المعلم والطلاب.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">فيديوهات مشروحة</span>
+                    <span class="feature-tag">الوحدة كاملة</span>
+                    <span class="feature-tag">توجيهات دقيقة</span>
+                </div>
+                <span class="card-btn disabled">قريباً...</span>
+            </div>
+        </div>
+
+        <!-- 5: المهام الدراسية -->
+        <div class="service-card coming-soon" data-category="soon">
+            <div class="card-banner banner-pink">
+                <span class="card-ribbon ribbon-soon">🕐 قريباً</span>
+                <span class="card-emoji">📋</span>
+            </div>
+            <div class="card-body">
+                <h3 style="color: var(--pink);">المهام الدراسية</h3>
+                <p>
+                    بنك شامل للمهام الدراسية الجاهزة مصنّف حسب الوحدة والمعيار
+                    مع إمكانية تخصيصها وتوزيعها على الطلاب بسهولة تامة.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">بنك مهام</span>
+                    <span class="feature-tag">تصنيف ذكي</span>
+                    <span class="feature-tag">تخصيص المهام</span>
+                </div>
+                <span class="card-btn disabled">قريباً...</span>
+            </div>
+        </div>
+
+        <!-- 6: الكتب والمراجع -->
+        <div class="service-card coming-soon" data-category="soon">
+            <div class="card-banner banner-purple">
+                <span class="card-ribbon ribbon-soon">🕐 قريباً</span>
+                <span class="card-emoji">📚</span>
+            </div>
+            <div class="card-body">
+                <h3 style="color: var(--purple);">الكتب والمراجع</h3>
+                <p>
+                    مكتبة رقمية متكاملة تضم الكتب المرجعية والمواد التعليمية
+                    المعتمدة لبرنامج BTEC لسهولة الوصول والاطلاع في أي وقت.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">مكتبة رقمية</span>
+                    <span class="feature-tag">مراجع معتمدة</span>
+                    <span class="feature-tag">وصول فوري</span>
+                </div>
+                <span class="card-btn disabled">قريباً...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- STATS SECTION -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" data-target="500">0</div>
+                <div class="stat-label">واجب تم تقييمه</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="50">0</div>
+                <div class="stat-label">معلم مسجّل</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="6">0</div>
+                <div class="stat-label">خدمة ذكية</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="98">0</div>
+                <div class="stat-label">% دقة التقييم</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="how-section">
+        <h2>كيف تعمل المنصة؟</h2>
+        <p class="how-sub">ثلاث خطوات بسيطة للحصول على تقييم ذكي ودقيق</p>
+
+        <div class="steps-timeline">
+            <div class="step-item">
+                <div class="step-dot">1</div>
+                <div class="step-content">
+                    <h4>ارفع المهمة والواجب</h4>
+                    <p>ارفع ملف المهمة (Assignment Brief) وملف واجب الطالب بصيغة PDF أو Word أو صور — المنصة تستخرج النص تلقائياً.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-dot">2</div>
+                <div class="step-content">
+                    <h4>التحليل بالذكاء الاصطناعي</h4>
+                    <p>يقوم المحرك الذكي بتحليل الواجب وربط المحتوى بمعايير BTEC المطلوبة (P, M, D) وتحديد مستوى التحقق.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-dot">3</div>
+                <div class="step-content">
+                    <h4>احصل على التقرير</h4>
+                    <p>تقرير مفصّل يوضح المعايير المحققة والناقصة مع ملاحظات وتوصيات لتحسين أداء الطالب — جاهز للطباعة والتحميل.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA BANNER -->
+    <div class="cta-banner">
+        <div class="cta-inner">
+            <h2>جاهز لتجربة التقييم الذكي؟ 🚀</h2>
+            <p>انضم لمئات المعلمين الذين يستخدمون منصتنا لتوفير الوقت وتحسين جودة التقييم</p>
+            <a href="/smart-grader" class="cta-btn">
+                ابدأ الآن مجاناً
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2025 <span style="color:#FFA500;font-weight:900">BTEC</span> Teachers — جميع الحقوق محفوظة | <a href="/contact">تواصل معنا</a></p>
+    </footer>
+
+    <script>
+        // --- Particles ---
+        (function () {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 6 + 2;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                if (Math.random() > 0.5) p.style.background = '#3B82F6';
+                container.appendChild(p);
+            }
+        })();
+
+        // --- Card reveal on scroll ---
+        const cards = document.querySelectorAll('.service-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, i * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        cards.forEach(c => observer.observe(c));
+
+        // --- Category Filter ---
+        const tabs = document.querySelectorAll('.cat-tab');
+        const allCards = document.querySelectorAll('.service-card');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const filter = tab.dataset.filter;
+
+                allCards.forEach(card => {
+                    const cat = card.dataset.category;
+                    if (filter === 'all' || cat === filter) {
+                        card.style.display = '';
+                        // Re-trigger animation
+                        card.classList.remove('visible');
+                        setTimeout(() => card.classList.add('visible'), 50);
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // --- Counter Animation ---
+        function animateCounters() {
+            document.querySelectorAll('.stat-number').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                const duration = 2000;
+                const start = performance.now();
+
+                function update(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                    el.textContent = Math.floor(target * eased) + '+';
+                    if (progress < 1) requestAnimationFrame(update);
+                }
+
+                requestAnimationFrame(update);
+            });
+        }
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) statsObserver.observe(statsSection);
+    </script>
+    <script src="/static/js/background_grading.js"></script>
+
+</body>
+</html>

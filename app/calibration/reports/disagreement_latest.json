@@ -1,0 +1,485 @@
+{
+  "report_type": "disagreement_report_v1",
+  "generated_at": "2026-05-26T16:20:15Z",
+  "run_id": "institutional_validation_2026-05-26T162014Z",
+  "inputs": {
+    "human_labels": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_labels_v1.json",
+    "systems": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\system_snapshots_latest.json",
+    "cohort_report": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\batch5_runtime_coverage.json"
+  },
+  "summary": {
+    "agreement_rate": 1.0,
+    "cohens_kappa": 1.0,
+    "weighted_rubric_accuracy": 1.0,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "ai_overclaim_rate": 0.0,
+    "criterion_mismatch_count": 0,
+    "replay_mismatch_count": 0,
+    "runtime_mismatch_count": 1,
+    "evidence_flag_count": 12,
+    "gold_rows_used": 2
+  },
+  "calibration": {
+    "reliability_run": {
+      "generated_at_utc": "2026-05-26T16:20:15+00:00",
+      "run_id": "institutional_validation_2026-05-26T162014Z",
+      "freeze_window_id": null,
+      "rubric_version": null,
+      "extractor_version": null,
+      "inputs": {
+        "gold_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_labels_v1.gold_export.json",
+        "systems_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\system_snapshots_latest.json"
+      },
+      "gold_dataset_schema": "human_labels_gold_export_v1",
+      "gold_dataset_synthetic": null,
+      "report_schemas": {
+        "false_positive_density": "fp_density_v2",
+        "taxonomy_suggestions": "0.3",
+        "shadow_metrics": "shadow_metrics_v1"
+      },
+      "calibration_policy": {
+        "shadow_drives_achieved": false,
+        "analyze_false_positives_first": true,
+        "threshold_changes_allowed_in_run": false
+      },
+      "temporal_diff_hint": "Diff reliability_run + metrics + shadow_dashboard across run_id within same freeze_window."
+    },
+    "cohort_summary": {
+      "rows_gold": 2,
+      "pairs_compared": 2,
+      "missing_system_snapshot": 0,
+      "missing_criterion_in_system": 0,
+      "unique_submissions_gold": 1,
+      "unique_submissions_matched": 1
+    },
+    "metrics": {
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "true_negatives": 0,
+      "accuracy": 1.0,
+      "cohens_kappa": 1.0,
+      "precision_achieved_class": 1.0,
+      "recall_achieved_class": 1.0,
+      "f1_achieved_class": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "calibration_priority": {
+      "analyze_false_positives_first": true,
+      "rationale": "System awarding a criterion the teacher rejected is higher academic risk than withholding."
+    },
+    "error_taxonomy_suggested_counts": {},
+    "reviewer_taxonomy_confirmed_counts": {},
+    "review_complexity_distribution": {},
+    "false_positive_density_report": {
+      "schema": "fp_density_v2",
+      "false_positives_total": 0,
+      "fp_rows_with_empty_evidence_layer": 0,
+      "fp_empty_evidence_layer_ratio": null,
+      "by_system": [],
+      "interpretation_notes": [
+        "Percentiles (incl. p5/p95) surface tail risk; means can hide bimodal or rare catastrophic FP.",
+        "Histogram bins are coarse defaults; adjust as N grows.",
+        "Correlate with gold review_complexity; narrow samples (one teacher, one difficulty band) bias calibration."
+      ]
+    },
+    "shadow_dashboard": {
+      "schema": "shadow_metrics_v1",
+      "review_gate_dashboard": {
+        "schema": "review_gate_dashboard_v1",
+        "rows_evaluated": 2,
+        "human_review_required_count": 2,
+        "human_review_required_rate": 1.0,
+        "severity_distribution": {
+          "high": 2
+        },
+        "top_review_reasons": {
+          "corroboration_conflicts_detected": 2,
+          "insufficient_runtime_confirmation": 2
+        },
+        "interpretation_notes": [
+          "Rates above ~0.6 on a balanced cohort suggest review gate inflation.",
+          "Severity skew toward high/critical without FP correlation also warrants trigger audit."
+        ]
+      },
+      "sufficiency_shadow_dashboard": {
+        "schema": "sufficiency_shadow_dashboard_v1",
+        "rows_evaluated": 2,
+        "rows_with_shadow_sufficient_label": 0,
+        "shadow_sufficient_rate": null,
+        "insufficiency_flag_counts": {
+          "no_rubric_contract": 2
+        },
+        "teacher_shadow_agreement": {
+          "rows_with_both_labels": 0,
+          "agreement_rate": null,
+          "disagreement_rate": null,
+          "note": "Shadow sufficiency vs teacher achieved — observational only; do not wire to grading."
+        }
+      },
+      "corroboration_dashboard": {
+        "schema": "corroboration_dashboard_v1",
+        "rows_evaluated": 2,
+        "pattern_hint_only_rate": 0.0,
+        "empty_evidence_layer_rate": 0.0,
+        "rows_with_corroboration_conflicts_rate": 1.0,
+        "video_only_windows_rate": 0.0,
+        "mean_cross_modal_diversity_score": 0.0
+      }
+    },
+    "human_reviewer_agreement_notes": {
+      "description": "Compare reviewer_taxonomy on FP/FN rows with taxonomy_suggestion; high divergence may indicate human inconsistency.",
+      "rows_with_reviewer_taxonomy": 0
+    },
+    "false_positive_rows": [],
+    "false_negative_rows": [],
+    "missing_system_snapshot": [],
+    "missing_criterion_in_system": [],
+    "per_row": [
+      {
+        "submission_id": "1",
+        "criterion": "P5",
+        "teacher_achieved": true,
+        "system_achieved": true,
+        "match": true,
+        "teacher_confidence": 0.9,
+        "teacher_evidence_strength": null,
+        "review_complexity": null,
+        "reviewer_taxonomy": null,
+        "teacher_notes": [
+          "Gameplay loop verified manually (L5 playtest corroboration)"
+        ],
+        "accepted_evidence": null,
+        "rejected_evidence": null,
+        "taxonomy_suggestion": {
+          "taxonomy_version": "0.3",
+          "suggested_tags": [],
+          "kind": "match",
+          "evidence_density": {
+            "total_item_rows": 5,
+            "by_system": {
+              "collision_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "code_system": 1
+                },
+                "evidence_count_sum": 4,
+                "sources_len_sum": 4,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": 0.78,
+                "mean_confidence": 0.78
+              },
+              "input_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "code_system": 1
+                },
+                "evidence_count_sum": 2,
+                "sources_len_sum": 2,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": 0.43,
+                "mean_confidence": 0.43
+              },
+              "ui_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "code_system": 1
+                },
+                "evidence_count_sum": 2,
+                "sources_len_sum": 2,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": 0.43,
+                "mean_confidence": 0.43
+              },
+              "physics_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "pattern_hint": 1
+                },
+                "evidence_count_sum": 0,
+                "sources_len_sum": 0,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": null,
+                "mean_confidence": null
+              },
+              "scene_flow": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "pattern_hint": 1
+                },
+                "evidence_count_sum": 0,
+                "sources_len_sum": 0,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": null,
+                "mean_confidence": null
+              }
+            }
+          },
+          "taxonomy_tag_confidence": {}
+        },
+        "shadow_signals": {
+          "criterion": "P5",
+          "evidence_item_count": 5,
+          "empty_evidence_layer": false,
+          "pattern_hint_only": false,
+          "has_code_collision_system": true,
+          "rubric_shadow_sufficient": null,
+          "insufficiency_flags": [
+            "no_rubric_contract"
+          ],
+          "human_review_required": true,
+          "human_review_severity": "high",
+          "human_review_reasons": [
+            "corroboration_conflicts_detected",
+            "insufficient_runtime_confirmation"
+          ],
+          "corroboration_conflict_count": 5,
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_noise_flags": [],
+          "video_only_windows": false
+        }
+      },
+      {
+        "submission_id": "1",
+        "criterion": "P6",
+        "teacher_achieved": true,
+        "system_achieved": true,
+        "match": true,
+        "teacher_confidence": 0.9,
+        "teacher_evidence_strength": null,
+        "review_complexity": null,
+        "reviewer_taxonomy": null,
+        "teacher_notes": [
+          "Mechanics interactively observed"
+        ],
+        "accepted_evidence": null,
+        "rejected_evidence": null,
+        "taxonomy_suggestion": {
+          "taxonomy_version": "0.3",
+          "suggested_tags": [],
+          "kind": "match",
+          "evidence_density": {
+            "total_item_rows": 5,
+            "by_system": {
+              "collision_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "code_system": 1
+                },
+                "evidence_count_sum": 4,
+                "sources_len_sum": 4,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": 0.78,
+                "mean_confidence": 0.78
+              },
+              "input_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "code_system": 1
+                },
+                "evidence_count_sum": 2,
+                "sources_len_sum": 2,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": 0.43,
+                "mean_confidence": 0.43
+              },
+              "ui_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "code_system": 1
+                },
+                "evidence_count_sum": 2,
+                "sources_len_sum": 2,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": 0.43,
+                "mean_confidence": 0.43
+              },
+              "physics_system": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "pattern_hint": 1
+                },
+                "evidence_count_sum": 0,
+                "sources_len_sum": 0,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": null,
+                "mean_confidence": null
+              },
+              "scene_flow": {
+                "item_row_count": 1,
+                "by_evidence_type": {
+                  "pattern_hint": 1
+                },
+                "evidence_count_sum": 0,
+                "sources_len_sum": 0,
+                "evidence_type_kind_count": 1,
+                "evidence_diversity_score": 0.0,
+                "max_confidence": null,
+                "mean_confidence": null
+              }
+            }
+          },
+          "taxonomy_tag_confidence": {}
+        },
+        "shadow_signals": {
+          "criterion": "P6",
+          "evidence_item_count": 5,
+          "empty_evidence_layer": false,
+          "pattern_hint_only": false,
+          "has_code_collision_system": true,
+          "rubric_shadow_sufficient": null,
+          "insufficiency_flags": [
+            "no_rubric_contract"
+          ],
+          "human_review_required": true,
+          "human_review_severity": "high",
+          "human_review_reasons": [
+            "corroboration_conflicts_detected",
+            "insufficient_runtime_confirmation"
+          ],
+          "corroboration_conflict_count": 5,
+          "cross_modal_diversity_score": 0.0,
+          "cross_modal_noise_flags": [],
+          "video_only_windows": false
+        }
+      }
+    ]
+  },
+  "criterion_mismatches": [],
+  "replay_mismatches": [],
+  "runtime_mismatches": [
+    {
+      "submission_id": "1",
+      "runtime_status": "gated",
+      "runtime_verified": null,
+      "human_playtest_verified": true,
+      "executable_count": 1,
+      "runtime_evidence_level": 0
+    }
+  ],
+  "evidence_flags": [
+    {
+      "submission_id": "14",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "15",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "16",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "17",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "18",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "19",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "20",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "21",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "22",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "23",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "24",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    },
+    {
+      "submission_id": "25",
+      "has_gaps": true,
+      "missing_artifacts": [],
+      "hallucination_risk": null,
+      "ai_confidence": null
+    }
+  ],
+  "confidence_mismatches": [],
+  "cohort_summary": {
+    "deterministic_replay_stable_count": 12,
+    "deterministic_replay_unstable": [],
+    "replay_hash_stable_verification_failed": [],
+    "runtime_actually_launched": [],
+    "files_only_detection": [
+      "batch5_sub_14",
+      "batch5_sub_15",
+      "batch5_sub_16",
+      "batch5_sub_17",
+      "batch5_sub_18",
+      "batch5_sub_19",
+      "batch5_sub_20",
+      "batch5_sub_21",
+      "batch5_sub_22",
+      "batch5_sub_23",
+      "batch5_sub_24",
+      "batch5_sub_25"
+    ],
+    "ai_human_divergence": [],
+    "priority_flags": {
+      "replay_hash_unstable": false,
+      "replay_verification_mismatch": false,
+      "runtime_not_executed": true,
+      "human_labels_missing": true
+    }
+  }
+}

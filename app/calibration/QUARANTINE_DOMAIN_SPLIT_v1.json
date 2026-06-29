@@ -1,0 +1,20 @@
+{
+  "ref_id": "QUARANTINE_DOMAIN_SPLIT_v1",
+  "purpose_en": "Cross-reference only — linguistic and runtime quarantine are not epistemically equivalent.",
+  "merge_forbidden": true,
+  "false_equivalence_risk_en": "false epistemic equivalence between language uncertainty and execution uncertainty",
+  "domains": [
+    {
+      "domain_id": "linguistic_quarantine",
+      "artifact": "app/epistemic_quarantine_contract.py",
+      "spec": "app/calibration/EPISTEMIC_QUARANTINE_CONTRACT_v1.json",
+      "uncertainty_type_en": "language · narrative · verification lexicon"
+    },
+    {
+      "domain_id": "runtime_quarantine",
+      "artifact": "app/calibration/RUNTIME_QUARANTINE_STATES_v1.json",
+      "uncertainty_type_en": "execution · telemetry · replay · process activity"
+    }
+  ],
+  "relationship_en": "Both contain authority — neither subsumes the other. Cross-reference at governance boundaries only."
+}

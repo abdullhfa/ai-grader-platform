@@ -1,0 +1,109 @@
+{
+  "parallel_tracks_id": "POST_RFC_EPISTEMIC_EVIDENCE_v1",
+  "status": "active",
+  "current_phase": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "current_phase_artifact": "app/calibration/CONSTITUTIONAL_MAINTENANCE_v1.json",
+  "current_phase_state": "app/calibration/human_cohort_workshop/constitutional_maintenance_state.json",
+  "hardening_phase_complete": "ARCHITECTURAL_HARDENING_v1",
+  "hardening_gate_review": "app/calibration/HARDENING_GATE_REVIEW_v1.json",
+  "capability_phase_complete": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "capability_phase_state": "app/calibration/human_cohort_workshop/runtime_observability_preparation_state.json",
+  "paused_phase": "LIVE_CONSTITUTIONAL_VALIDATION_v1",
+  "paused_phase_artifact": "app/calibration/LIVE_CONSTITUTIONAL_VALIDATION_v1.json",
+  "paused_phase_state": "app/calibration/human_cohort_workshop/live_constitutional_validation_state.json",
+  "parallel_phase": null,
+  "master_sequence_note_en": "Constitutional maintenance active. Hardening gate review passed. Step 6 blocked. Path decision pending facilitator.",
+  "mode": "non_operational_evidence_accumulation",
+  "institutional_invariant_en": "Containment evidence is not activation evidence.",
+  "tracks": [
+    {
+      "track_id": "live_constitutional_validation",
+      "artifact": "app/calibration/LIVE_CONSTITUTIONAL_VALIDATION_v1.json",
+      "state": "app/calibration/human_cohort_workshop/live_constitutional_validation_state.json",
+      "cohort_template": "app/calibration/human_cohort_workshop/live_constitutional_validation_cohort_template.json",
+      "cohort_1": "app/calibration/human_cohort_workshop/live_constitutional_validation_cohort_1.json",
+      "status": "paused_intentionally",
+      "paused_at": "2026-05-25T16:00:00Z",
+      "pause_reason_en": "Focus on runtime observability preparation — resume requires explicit decision",
+      "primary_metric_en": "Can humans comfortably disagree with the system?",
+      "blocks_until_pass": ["l4_operational_pilot", "limited_runtime_validation_pilot", "trusted_runtime_corroboration"]
+    },
+    {
+      "track_id": "runtime_observability_preparation",
+      "artifact": "app/calibration/RUNTIME_OBSERVABILITY_PREPARATION_v1.json",
+      "state": "app/calibration/human_cohort_workshop/runtime_observability_preparation_state.json",
+      "ledger": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+      "status": "capability_complete",
+      "step_5_complete": true,
+      "step_6": "blocked_constitutionally",
+      "step_3_artifact": "app/calibration/PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1.json",
+      "step_4_artifact": "app/calibration/TELEMETRY_REPLAY_CAPTURE_WIRING_v1.json",
+      "step_5_artifact": "app/calibration/RUNTIME_EPISTEMIC_GOVERNANCE_v1.json",
+      "mode": "observability_only",
+      "supreme_invariant_en": "Runtime observation does not imply runtime legitimacy.",
+      "primary_question_en": "Can runtime evidence be observed without prematurely becoming legitimacy?",
+      "not": ["runtime_authority", "runtime_grading", "auto_achieved"],
+      "parallel_to": "live_constitutional_validation",
+      "blocks_until_live_pass": ["limited_runtime_validation_pilot", "l4_operational_pilot", "runtime_grading_wire"]
+    },
+    {
+      "track_id": "architectural_hardening",
+      "artifact": "app/calibration/ARCHITECTURAL_HARDENING_v1.json",
+      "state": "app/calibration/human_cohort_workshop/architectural_hardening_state.json",
+      "constitutional_core": "app/calibration/CONSTITUTIONAL_CORE_INVARIANTS_v1.json",
+      "redundancy_audit": "app/calibration/REDUNDANCY_AUDIT_v1.json",
+      "audit_status": "complete_review_only",
+      "status": "gate_review_complete",
+      "mode": "clarity_under_restraint",
+      "hardening_gate_review": "app/calibration/HARDENING_GATE_REVIEW_v1.json",
+      "primary_question_en": "Can the architecture become smaller without losing its constitutional protections?",
+      "not": ["feature_expansion", "step_6_activation", "ledger_self_certification"]
+    },
+    {
+      "track_id": "constitutional_maintenance",
+      "artifact": "app/calibration/CONSTITUTIONAL_MAINTENANCE_v1.json",
+      "state": "app/calibration/human_cohort_workshop/constitutional_maintenance_state.json",
+      "hardening_gate_review": "app/calibration/HARDENING_GATE_REVIEW_v1.json",
+      "status": "active",
+      "mode": "maintaining_restraint_reducing_weight",
+      "primary_question_en": "Does the architecture now require less belief to trust its restraint?",
+      "supreme_success_en": "We still refuse to declare ourselves justified.",
+      "path_decision": "pending_facilitator",
+      "not": ["step_6", "feature_expansion", "doctrine_expansion", "ledger_self_certification"]
+    },
+    {
+      "track_id": "exit_criteria_tracking",
+      "artifact": "app/calibration/EXIT_CRITERIA_TRACKING_WORKSHOP_v1.json",
+      "purpose_ar": "قياس هل mitigation يغيّر السلوك عبر الزمن",
+      "metrics_ledger": "app/calibration/human_cohort_workshop/exit_criteria_metrics.jsonl",
+      "ui_hook": "app/calibration/EPISTEMIC_TRACE_CAPTURE_SCHEMA_v1.json",
+      "baseline_recorded": true
+    },
+    {
+      "track_id": "observatory_posture_governance",
+      "artifact": "app/calibration/human_cohort_workshop/OBSERVATORY_POSTURE_GOVERNANCE_v1.json",
+      "purpose_ar": "مراقبة drift داخل المراقبة — observer discomfort كإشارة حوكمة",
+      "drift_check": "OBSERVER_ROLE_DRIFT_CHECK_v1.json",
+      "first_live_session_required": true
+    },
+    {
+      "track_id": "trusted_replay_discipline_pilot",
+      "artifact": "app/calibration/TRUSTED_REPLAY_DISCIPLINE_PILOT_v1.json",
+      "purpose_ar": "هل replay timing يغيّر authority formation behaviour",
+      "ui_hook": "governance_pilot_observatory Section F",
+      "dry_run_completed": "epistemic_trace_dry_run_submission_6.json",
+      "observer_drift_check_required": "OBSERVER_ROLE_DRIFT_CHECK_v1.json#first_live_vocabulary_hint",
+      "not": "grading_pilot"
+    }
+  ],
+  "blocked_until_evidence": [
+    "l4_operational_pilot",
+    "governance_freeze_v2",
+    "grading_wire",
+    "trusted_replay_certification",
+    "limited_runtime_validation_pilot",
+    "runtime_grading_wire"
+  ],
+  "facilitator": "Eng.Abdulah",
+  "activated_at": "2026-05-25T08:00:00Z"
+}

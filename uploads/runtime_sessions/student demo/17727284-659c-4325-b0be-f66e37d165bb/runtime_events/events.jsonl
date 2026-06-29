@@ -1,0 +1,2 @@
+{"timestamp": 1782645309.7466605, "type": "session_created", "severity": "info", "source": "runtime", "payload": {"engine": "godot", "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo"}}
+{"timestamp": 1782645309.9262114, "type": "godot_pck_smoke", "severity": "info", "source": "godot_engine", "payload": {"success": false, "pck": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpq5uhwzps\\student demo\\exe\\game.pck"}}

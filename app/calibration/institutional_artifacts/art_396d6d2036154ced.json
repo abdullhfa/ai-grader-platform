@@ -1,0 +1,74 @@
+{
+  "artifact_type": "signed_institutional_artifact",
+  "artifact_version": "signed_institutional_artifact_v1",
+  "artifact_id": "art_396d6d2036154ced",
+  "artifact_kind": "epoch_workshop_verdict",
+  "content_hash": "396d6d2036154ced3f0de6091df832a2ef30c41d7f1a96ce1141dcd6696a93cd",
+  "signed_at": "2026-05-25T00:28:31Z",
+  "signatory": {
+    "name": "Eng.Abdulah",
+    "role": "governance_facilitator",
+    "institution_affirmation": true,
+    "affirmation_ar": "أؤكد أن هذا verdict مؤسسي — وليس رأياً شخصياً — ويُستخدم في freeze transition provenance."
+  },
+  "governance_context": {
+    "freeze_epoch_id": "epoch_1",
+    "freeze_id": "GOVERNANCE_FREEZE_v1"
+  },
+  "provenance_refs": [
+    "led_68c1fc879165",
+    "led_c1e6d8a1b4dd",
+    "led_94aa18fb4d83",
+    "led_c743f51f961a"
+  ],
+  "artifact_body": {
+    "workshop_version": "EPOCH_WORKSHOP_REVIEW_v1",
+    "current_epoch": {
+      "epoch_id": "epoch_1",
+      "freeze_id": "GOVERNANCE_FREEZE_v1",
+      "label_ar": "الخط الأساسي — L0–L3 frozen"
+    },
+    "proposed_epoch": {
+      "epoch_id": "epoch_2",
+      "freeze_id": "GOVERNANCE_FREEZE_v2",
+      "label_ar": "RFC مستقبلي — post-pilot",
+      "status": "planned"
+    },
+    "assignment_id": null,
+    "transition_verdict": "not_yet_requires_mitigation",
+    "question_verdicts": [
+      {
+        "id": "replay_trusted",
+        "verdict": "no",
+        "notes_ar": "replay بقي procedural أكثر من كونه canonical provenance. رغم فتح replay في جميع الحالات تقريبًا، إلا أن معظمها كان replay جزئيًا أو متأخرًا بعد تشكل الحكم الأولي. لم تصل الورشة إلى trusted replay discipline مؤسسي فعلي."
+      },
+      {
+        "id": "authority_boundaries_stable",
+        "verdict": "partial",
+        "notes_ar": "حدود السلطة أصبحت أوضح من المراحل السابقة، خصوصًا مع بقاء contradictions مرئية ووجود HOLD universal، لكن semantic leakage ما زال حاضرًا في عدد ملحوظ من الحالات حيث مُنح authority للسرد أو الـ GDD رغم غياب runtime corroboration الكامل."
+      },
+      {
+        "id": "mitigation_loops_work",
+        "verdict": "partial",
+        "notes_ar": "الورشة أثبتت أن mitigation loops لا تمنع drift بالكامل لكنها تكشفه وتبطئه. HOLD، replay traces، والقراءة الطقسية نجحت في إبقاء uncertainty ظاهرًا بدل تحوله إلى silent authority، لكن التصحيح الذاتي ما زال غير كافٍ لإزالة semantic leakage بالكامل."
+      },
+      {
+        "id": "canonical_drift_decreased",
+        "verdict": "yes",
+        "notes_ar": "ظهرت مؤشرات واضحة على انخفاض canonical drift مقارنة بالمراحل السابقة، خصوصًا مع استقرار outcomes المتشابهة للحالات المتقاربة وغياب silent S5 escalation. ما يزال drift موجودًا، لكنه أصبح observable وقابلًا للتتبع مؤسسيًا."
+      },
+      {
+        "id": "reviewers_understand_l3",
+        "verdict": "partial",
+        "notes_ar": "المراجعين أصبحوا أكثر وعيًا بحدود L3 وضرورة الفصل بين observation وverification، لكن 14/21 حالة ما زالت تُظهر انتقالًا جزئيًا من evidence وصفي إلى authority ضمني. الفهم تحسن، لكنه لم يصل بعد إلى containment مستقر."
+      },
+      {
+        "id": "no_unresolved_s5",
+        "verdict": "no",
+        "notes_ar": "لم تظهر داخل الورشة أي حالات silent S5 أو authority collapse غير مرئي. جميع التناقضات الجوهرية بقيت قابلة للرصد والمناقشة، ما يجعل المخاطر الحالية ضمن نطاق observable institutional drift وليس silent catastrophic failure."
+      }
+    ],
+    "workshop_notes_ar": ""
+  },
+  "provenance_purpose_ar": "جزء من governance provenance — freeze transitions · RFC legitimacy · epoch review"
+}

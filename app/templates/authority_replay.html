@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10">
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+            <a href="/results/{{ submission.id }}"
+                class="text-secondary hover:text-blue-700 flex items-center gap-2 mb-3 text-sm font-semibold transition">
+                <i class="fa-solid fa-arrow-right"></i>
+                العودة للتقرير
+            </a>
+            <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Authority Replay</h2>
+                    <p class="text-gray-500 text-sm mb-1">إعادة بناء provenance — {{ replay.governance_freeze }}</p>
+                    <p class="text-gray-700 font-medium">{{ submission.student_name }}</p>
+                </div>
+                <span class="text-xs font-mono bg-slate-100 text-slate-600 px-3 py-1 rounded-lg">
+                    L{{ replay.runtime_evidence_level | default('?') }} runtime
+                </span>
+            </div>
+        </div>
+
+        {% if not replay.steps %}
+        <div class="glass-card rounded-2xl p-8 border border-amber-200 bg-amber-50 text-amber-900">
+            <p class="font-bold mb-2">لا توجد بيانات provenance لهذا التسليم.</p>
+            <p class="text-sm">أعد التصحيح بعد تفعيل artifact governance للحصول على Authority Replay.</p>
+        </div>
+        {% else %}
+
+        {% if drift.governance_responses %}
+        <div class="rounded-xl border p-4 mb-6 bg-indigo-50 border-indigo-200 text-indigo-950">
+            <p class="font-bold text-sm mb-1">
+                Governance Response — {{ drift.governance_responses.max_severity }}
+                {% if drift.governance_responses.human_review_required %}
+                <span class="text-red-700">(مراجعة بشرية مطلوبة)</span>
+                {% endif %}
+            </p>
+            <p class="text-sm">{{ drift.governance_responses.summary_ar }}</p>
+            <p class="text-xs mt-1 font-mono">
+                export: {{ drift.governance_responses.export_policy.gate }}
+                — {{ drift.governance_responses.export_policy.message_ar }}
+            </p>
+            {% if drift.governance_responses.responses %}
+            <ul class="text-xs mt-2 space-y-1">
+                {% for r in drift.governance_responses.responses[:4] %}
+                <li>{{ r.failure_mode_id }} [{{ r.severity_level }}]: {{ r.response_summary_ar }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if drift %}
+        <div class="rounded-xl border p-4 mb-6 {% if drift.status == 'clean' %}bg-emerald-50 border-emerald-200 text-emerald-900{% else %}bg-amber-50 border-amber-300 text-amber-950{% endif %}">
+            <p class="font-bold text-sm mb-1">Governance Drift Monitor — {{ drift.freeze_id }}</p>
+            <p class="text-sm">{{ drift.summary_ar }}</p>
+            {% if drift.drift_signals %}
+            <ul class="text-xs mt-2 space-y-1 font-mono">
+                {% for sig in drift.drift_signals[:5] %}
+                <li>[{{ sig.severity }}] {{ sig.failure_mode_id | default(sig.code) }}: {{ sig.message_ar }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% if drift.failure_taxonomy and drift.failure_taxonomy.top_modes %}
+            <p class="text-xs mt-2 font-semibold">Failure modes:</p>
+            <ul class="text-xs space-y-0.5 font-mono">
+                {% for m in drift.failure_taxonomy.top_modes %}
+                <li>{{ m.mode_id }} (×{{ m.count }})</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="glass-card rounded-2xl p-6 border border-gray-100 mb-6">
+            <p class="text-sm text-gray-600">{{ replay.note_ar }}</p>
+            {% if replay.graph_summary.trace_summary_ar %}
+            <p class="text-xs text-gray-500 mt-2 font-mono">{{ replay.graph_summary.trace_summary_ar }}</p>
+            {% endif %}
+        </div>
+
+        <div class="relative border-r-2 border-indigo-200 mr-4 pr-8 space-y-0">
+            {% for step in replay.steps %}
+            {% set phase = step.phase %}
+            {% if phase == 'artifact' %}
+                {% set badge = 'bg-slate-100 text-slate-700 border-slate-300' %}
+                {% set icon = 'fa-file' %}
+            {% elif phase == 'hint' %}
+                {% set badge = 'bg-blue-50 text-blue-800 border-blue-200' %}
+                {% set icon = 'fa-lightbulb' %}
+            {% elif phase == 'corroboration' %}
+                {% set badge = 'bg-emerald-50 text-emerald-800 border-emerald-200' %}
+                {% set icon = 'fa-link' %}
+            {% elif phase == 'authority' %}
+                {% set badge = 'bg-indigo-50 text-indigo-800 border-indigo-200' %}
+                {% set icon = 'fa-shield-halved' %}
+            {% elif phase == 'contradiction' %}
+                {% set badge = 'bg-amber-50 text-amber-900 border-amber-300' %}
+                {% set icon = 'fa-triangle-exclamation' %}
+            {% elif phase == 'claim_boundary' %}
+                {% set badge = 'bg-purple-50 text-purple-800 border-purple-200' %}
+                {% set icon = 'fa-border-all' %}
+            {% else %}
+                {% set badge = 'bg-red-50 text-red-800 border-red-200' %}
+                {% set icon = 'fa-flag' %}
+            {% endif %}
+
+            <div class="relative pb-8 last:pb-0">
+                <div class="absolute -right-[calc(2rem+5px)] top-1 w-3 h-3 rounded-full bg-indigo-500 ring-4 ring-white"></div>
+                <div class="rounded-xl border p-4 {{ badge }}">
+                    <div class="flex items-start gap-3">
+                        <span class="text-xs font-bold opacity-60 mt-0.5">#{{ step.display_order }}</span>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                <i class="fa-solid {{ icon }} text-sm opacity-70"></i>
+                                <span class="font-bold text-sm">{{ step.title_ar }}</span>
+                                <span class="text-[10px] uppercase tracking-wider opacity-60 font-mono">{{ phase }}</span>
+                            </div>
+                            <p class="text-sm leading-relaxed opacity-90">{{ step.detail_ar }}</p>
+                            {% if step.meta.corroborated_by %}
+                            <p class="text-xs mt-2 font-mono opacity-70">corroborated_by: {{ step.meta.corroborated_by | join(', ') }}</p>
+                            {% endif %}
+                            {% if step.meta.effect %}
+                            <p class="text-xs mt-1 font-semibold">effect: {{ step.meta.effect }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-8 p-4 rounded-xl bg-gray-50 border border-gray-200 text-xs text-gray-500 font-mono">
+            artifact → hint → corroboration → authority → contradiction → claim_boundary → governance_flags
+        </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

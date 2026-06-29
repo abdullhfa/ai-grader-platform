@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-grader-worker-runtime
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-grader-worker-runtime
+  template:
+    metadata:
+      labels:
+        app: ai-grader-worker-runtime
+    spec:
+      containers:
+        - name: worker
+          image: ai-grader/worker-runtime:latest
+          env:
+            - name: AI_GRADER_REDIS_URL
+              value: redis://redis:6379/0
+            - name: AI_GRADER_RUNTIME_CPU_LIMIT
+              value: "2"
+            - name: AI_GRADER_RUNTIME_MEMORY_MB
+              value: "4096"
+            - name: AI_GRADER_RUNTIME_TIMEOUT
+              value: "180"
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-grader-worker-cv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-grader-worker-cv
+  template:
+    metadata:
+      labels:
+        app: ai-grader-worker-cv
+    spec:
+      containers:
+        - name: worker
+          image: ai-grader/worker-cv:latest
+          env:
+            - name: AI_GRADER_REDIS_URL
+              value: redis://redis:6379/0
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+              nvidia.com/gpu: "1"
+            requests:
+              cpu: 500m
+              memory: 1Gi

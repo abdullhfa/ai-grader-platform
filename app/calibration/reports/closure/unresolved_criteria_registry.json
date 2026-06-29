@@ -1,0 +1,1705 @@
+{
+  "schema": "unresolved_criteria_registry_v1",
+  "generated_at": "2026-05-26T23:02:45Z",
+  "pending_count": 246,
+  "records": [
+    {
+      "submission_id": 1,
+      "student": "عبدالله العتوم",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": null
+    },
+    {
+      "submission_id": 1,
+      "student": "عبدالله العتوم",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": null
+    },
+    {
+      "submission_id": 1,
+      "student": "عبدالله العتوم",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": null
+    },
+    {
+      "submission_id": 1,
+      "student": "عبدالله العتوم",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": null
+    },
+    {
+      "submission_id": 1,
+      "student": "عبدالله العتوم",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": null
+    },
+    {
+      "submission_id": 1,
+      "student": "عبدالله العتوم",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": null
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": true
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P4",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P5",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P6",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "P7",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "M2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "M3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "D2",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "D3",
+      "status": "PENDING_HUMAN_VALIDATION",
+      "ai_system_achieved": false
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "criterion": "__overall_grade__",
+      "status": "PENDING_HUMAN_VALIDATION"
+    }
+  ]
+}

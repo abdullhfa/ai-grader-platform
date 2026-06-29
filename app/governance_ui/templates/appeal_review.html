@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Appeal Review — {{ app_title }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/governance-ui/static/css/examiner.css">
+<main class="container mx-auto px-6 py-10">
+  <div class="max-w-5xl mx-auto">
+    <a href="/governance/examiner" class="text-primary text-sm font-semibold mb-4 inline-block">← Dashboard</a>
+    <h2 class="text-2xl font-extrabold mb-6">Appeals Queue</h2>
+
+    {% if appeals %}
+    {% for case in appeals %}
+    <div class="gov-panel mb-4">
+      <div class="flex justify-between flex-wrap gap-2">
+        <div>
+          <p class="font-bold">{{ case.case_id }}</p>
+          <p class="text-xs font-mono text-gray-500">{{ case.submission_key }} / {{ case.session_id }}</p>
+        </div>
+        <span class="gov-badge badge-replay">{{ case.status }}</span>
+      </div>
+      <p class="text-sm mt-2">{{ case.reason }}</p>
+      <p class="text-xs text-gray-400 mt-1">replay: {{ case.replay_hash or '—' }}</p>
+      <a href="/governance/examiner/review/{{ case.submission_key }}/{{ case.session_id }}"
+         class="inline-block mt-3 text-primary font-semibold text-sm">Open replay investigation →</a>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="gov-panel text-gray-600">
+      <p>No appeal cases yet.</p>
+      <p class="text-xs mt-2">Students submit via <code>POST /api/appeals/submit</code> (requires replay snapshot).</p>
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,14 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV AI_GRADER_ENV=production \
+    AI_GRADER_EVIDENCE_REASONING=1 \
+    AI_GRADER_CELERY_ENABLED=1
+
+CMD ["celery", "-A", "app.tasks.celery_app:celery_app", "worker", "-Q", "reasoning_jobs,replay_jobs,report_jobs,ai_grading", "--loglevel=info", "--concurrency=2"]

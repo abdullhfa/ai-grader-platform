@@ -1,0 +1,7 @@
+{
+  "status": "superseded_by_compression",
+  "superseded_at": "2026-05-25T20:00:00Z",
+  "canonical": "app/runtime_observation_contract.py",
+  "function": "get_l4_phenomenology_clause",
+  "merge_id": "HARDENING_MERGE_1"
+}

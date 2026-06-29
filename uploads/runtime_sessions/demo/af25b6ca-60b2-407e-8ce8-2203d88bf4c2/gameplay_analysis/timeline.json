@@ -1,0 +1,40 @@
+{
+  "duration_seconds": 1782646581.4897635,
+  "event_count": 3,
+  "events": [
+    {
+      "timestamp": 0.0,
+      "type": "pipeline_started",
+      "severity": "info",
+      "source": "gameplay_ai",
+      "confidence": 0.5,
+      "payload": {
+        "frame_count": 5
+      }
+    },
+    {
+      "timestamp": 4.0,
+      "type": "freeze_detected",
+      "severity": "warning",
+      "source": "gameplay_ai",
+      "confidence": 0.88,
+      "payload": {}
+    },
+    {
+      "timestamp": 1782646581.4897635,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "confidence": 0.9,
+      "payload": {
+        "engine": "web",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpclli2ksw"
+      }
+    }
+  ],
+  "summary_lines": [
+    "00s pipeline_started (0.50)",
+    "04s freeze_detected (0.88)",
+    "1782646581s session_created (0.90)"
+  ]
+}

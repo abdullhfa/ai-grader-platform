@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10">
+    <div class="max-w-5xl mx-auto">
+        <div class="mb-8">
+            {% if batch_id %}
+            <a href="/governance-pilot/batch/{{ batch_id }}"
+                class="text-secondary hover:text-blue-700 flex items-center gap-2 mb-3 text-sm font-semibold transition">
+                <i class="fa-solid fa-arrow-right"></i>
+                العودة لـ Pilot Observatory
+            </a>
+            {% endif %}
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">L4 Institutional Decision Point</h2>
+            <p class="text-sm text-gray-600 mb-1">{{ package.decision_point_id }}</p>
+            <p class="text-amber-900 bg-amber-50 border border-amber-300 rounded-lg px-4 py-3 text-sm mt-3">
+                {{ package.purpose_ar }}
+            </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-red-200 bg-red-50/40">
+            <h3 class="text-lg font-bold text-red-900 mb-2">تحذير: confidence acceleration</h3>
+            <p class="text-sm text-red-800">{{ package.confidence_acceleration_warning.message_ar }}</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-indigo-200">
+            <h3 class="text-xl font-bold mb-2">السؤال المؤسسي</h3>
+            <p class="font-mono text-indigo-900 bg-indigo-50 px-3 py-2 rounded-lg text-sm mb-4">
+                {{ package.core_question }}
+            </p>
+            <p class="text-sm text-gray-700">
+                <strong>من:</strong> {{ package.transformation_ar.from }}<br>
+                <strong>إلى:</strong> {{ package.transformation_ar.to }}<br>
+                <strong>قاعدة:</strong> {{ package.transformation_ar.human_rule_ar }}
+            </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 mb-8 border {% if package.l4_gate.l4_sandbox_permitted %}border-emerald-300 bg-emerald-50/30{% else %}border-slate-300{% endif %}">
+            <h3 class="text-xl font-bold mb-2">L4 Gate Status</h3>
+            <p class="text-sm mb-2">{{ package.l4_gate.gate_reason_ar }}</p>
+            <p class="text-xs font-mono text-gray-600">
+                active: {{ package.l4_gate.active_freeze_id }} ·
+                sandbox permitted: {{ package.l4_gate.l4_sandbox_permitted }} ·
+                signed verdicts: {{ package.l4_gate.signed_v2_verdict_count }}
+            </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-violet-200">
+            <h3 class="text-xl font-bold mb-4">Epoch Review — جدول المراجعة</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b bg-violet-50">
+                            <th class="text-right p-2">البُعد</th>
+                            <th class="text-right p-2">السؤال</th>
+                            <th class="text-right p-2">auto band</th>
+                            <th class="text-right p-2">satisfied</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in package.review_table %}
+                        <tr class="border-b">
+                            <td class="p-2 font-mono text-xs">{{ row.dimension }}</td>
+                            <td class="p-2">{{ row.question_ar }}</td>
+                            <td class="p-2 font-bold {% if row.auto_band == 'green' %}text-emerald-600{% elif row.auto_band == 'amber' %}text-amber-600{% elif row.auto_band == 'red' %}text-red-600{% else %}text-gray-500{% endif %}">
+                                {{ row.auto_band }}
+                            </td>
+                            <td class="p-2">{{ row.satisfied }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-gray-500 mt-3">
+                auto readiness: red={{ package.auto_readiness.red_signals }},
+                unknown={{ package.auto_readiness.unknown_signals }} —
+                {{ package.auto_readiness.note_ar }}
+            </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-slate-200">
+            <h3 class="text-xl font-bold mb-4">الترتيب المؤسسي (8 خطوات)</h3>
+            <ol class="space-y-2 text-sm">
+                {% for step in package.ordered_steps %}
+                <li class="flex items-start gap-3 border rounded-lg p-3 {% if step.status == 'complete' %}bg-emerald-50 border-emerald-200{% elif step.status == 'ready_for_facilitator' %}bg-amber-50 border-amber-200{% else %}bg-gray-50{% endif %}">
+                    <span class="font-mono font-bold text-gray-500">{{ step.step }}.</span>
+                    <div>
+                        <p class="font-semibold">{{ step.label_ar }}</p>
+                        <p class="text-xs font-mono text-gray-600">{{ step.id }} · status: {{ step.status }}</p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        {% if package.epistemic_behavioural_evidence %}
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-violet-200">
+            <h3 class="text-xl font-bold mb-2">Epistemic Behavioural Evidence</h3>
+            <p class="text-xs text-gray-600 mb-3">{{ package.epistemic_behavioural_evidence.not }}</p>
+            {% if package.epistemic_behavioural_evidence.facilitator_interpretation_ar %}
+            <ul class="text-sm space-y-1 list-disc pr-5">
+                {% for line in package.epistemic_behavioural_evidence.facilitator_interpretation_ar %}
+                <li>{{ line }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="grid md:grid-cols-2 gap-4 mb-8">
+            <a href="{{ package.workshop_review.url }}"
+                class="glass-card rounded-2xl p-5 border border-indigo-300 hover:bg-indigo-50 transition block">
+                <h4 class="font-bold text-indigo-900">1. Epoch Workshop Review</h4>
+                <p class="text-xs text-gray-600 mt-1">Governance Epoch Workshop — signed artifact</p>
+            </a>
+            <div class="glass-card rounded-2xl p-5 border border-slate-300">
+                <h4 class="font-bold">3. GOVERNANCE_FREEZE_v2 (draft)</h4>
+                <p class="text-xs text-gray-600 mt-1">app/calibration/GOVERNANCE_FREEZE_v2.md — بعد signed verdict فقط</p>
+            </div>
+        </div>
+
+        {% if package.signed_verdicts %}
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-emerald-200">
+            <h3 class="text-lg font-bold mb-2">Signed Verdicts</h3>
+            <ul class="text-xs font-mono space-y-1">
+                {% for v in package.signed_verdicts %}
+                <li>
+                    <a href="/api/governance/artifact/{{ v.artifact_id }}" class="text-indigo-700 hover:underline">
+                        {{ v.artifact_id }}
+                    </a>
+                    — {{ v.transition_verdict }} ({{ v.logged_at }})
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <p class="text-xs font-mono text-gray-500">
+            API: /api/governance/l4-decision/package{% if batch_id %}?batch_id={{ batch_id }}{% endif %}
+            · freeze: /api/governance/freeze-registry
+        </p>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,47 @@
+{
+  "template_id": "LIVE_CONSTITUTIONAL_VALIDATION_COHORT_v1",
+  "status": "template_not_activated",
+  "phase": "LIVE_CONSTITUTIONAL_VALIDATION_v1",
+  "mode": "posture_observation_only",
+  "cohort_label": "live_validation_cohort_1",
+  "batch_id": null,
+  "facilitator": null,
+  "reviewers": {
+    "target_count": "3-5",
+    "roles": ["institutional_observer", "reviewer_with_disagreement_encouraged"],
+    "not": ["accuracy_benchmark_pool", "compliance_training_cohort"]
+  },
+  "submissions": {
+    "target_count": "5-10",
+    "source": "real_corpus",
+    "require_real_disagreement": true,
+    "not": ["synthetic_only", "consensus_smoothing"]
+  },
+  "sessions_per_reviewer": "1-3",
+  "worksheet": "governance_pilot_observatory",
+  "sections_required": ["B", "E", "F_optional_with_hint"],
+  "after_each_session": {
+    "required": [
+      "OBSERVER_ROLE_DRIFT_CHECK_v1#first_live_vocabulary_hint",
+      "constitutional_stress_test_triad"
+    ],
+    "ledger": "observer_role_drift_checks.jsonl"
+  },
+  "forbidden_during_phase": [
+    "l4_activation",
+    "grading_wire",
+    "observability_feature_expansion",
+    "auto_populate_verification_lexicon",
+    "cohort_size_over_5_reviewers_without_posture_review"
+  ],
+  "success_not_defined_as": ["accuracy", "pass_rate", "verdict_agreement"],
+  "success_defined_as_ar": "disagreement comfortable · triad pass · no organizational gravity signals",
+  "activation_checklist": [
+    "facilitator assigned",
+    "3-5 reviewers confirmed",
+    "real submissions selected",
+    "observer_role_drift_checks.jsonl empty acknowledged",
+    "expansion gate understood by all participants",
+    "L4 remains blocked — acknowledged"
+  ]
+}

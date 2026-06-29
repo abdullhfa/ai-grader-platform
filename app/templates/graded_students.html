@@ -1,0 +1,1339 @@
+{% extends "base.html" %}
+{% block nav_graded %}active{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ══════════════════════════════════════════
+       PREMIUM DARK DESIGN — AI GRADER
+    ══════════════════════════════════════════ */
+    .bg-page {
+        background: #080e1a;
+        min-height: calc(100vh - 80px);
+        position: relative; overflow: hidden;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+
+    /* Subtle ambient glow blobs */
+    .bg-blob { position:absolute; border-radius:50%; filter:blur(130px); opacity:.18; z-index:0;
+        animation:blobFloat 22s ease-in-out infinite alternate; pointer-events:none; }
+    .bg-blob-1 { width:600px; height:600px; background:#0ea5e9; top:-180px; right:-120px; }
+    .bg-blob-2 { width:480px; height:480px; background:#6366f1; bottom:-180px; left:-100px; animation-delay:-8s; }
+    .bg-blob-3 { width:300px; height:300px; background:#10b981; top:40%; left:50%; transform:translate(-50%,-50%); animation-delay:-4s; opacity:.10; }
+    @keyframes blobFloat {
+        0%  { transform:translate(0,0) scale(1); }
+        50% { transform:translate(30px,-25px) scale(1.06); }
+        100%{ transform:translate(15px,20px) scale(1.03); }
+    }
+
+    /* ── Subject sections ── */
+    .subject-section { margin-bottom:24px; --c:16,185,129; --ch:#10b981; }
+
+    .subject-header {
+        display:flex; align-items:center; gap:14px; padding:18px 22px;
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(255,255,255,.08);
+        border-bottom: 2px solid rgba(var(--c),.45);
+        border-radius:16px 16px 0 0; cursor:pointer; user-select:none;
+        transition: background .22s, box-shadow .22s;
+        backdrop-filter: blur(12px);
+    }
+    .subject-header:hover {
+        background: rgba(var(--c),.06);
+        box-shadow: 0 4px 30px rgba(var(--c),.08);
+    }
+
+    .subject-icon {
+        width:42px; height:42px; border-radius:11px; flex-shrink:0;
+        background: linear-gradient(135deg, rgba(var(--c),.25), rgba(var(--c),.08));
+        border: 1px solid rgba(var(--c),.35);
+        display:flex; align-items:center; justify-content:center;
+        color:var(--ch); font-size:17px;
+        box-shadow: 0 0 14px rgba(var(--c),.18);
+    }
+
+    .subject-title { font-size:16px; font-weight:900; color:#f1f5f9; margin:0; letter-spacing:.3px; }
+    .subject-unit  { font-size:11.5px; color:rgba(255,255,255,.35); margin-top:3px; }
+
+    .subject-body {
+        border: 1px solid rgba(255,255,255,.07);
+        border-top: none;
+        border-radius: 0 0 16px 16px;
+        overflow: hidden;
+        background: rgba(255,255,255,.015);
+        backdrop-filter: blur(10px);
+    }
+
+    .chevron { color:rgba(255,255,255,.3); font-size:13px; transition:transform .3s; }
+
+    /* ── Batch card ── */
+    .batch-card {
+        border-bottom: 1px solid rgba(255,255,255,.05);
+        transition: background .2s;
+    }
+    .batch-card:last-child { border-bottom:none; border-radius:0 0 15px 15px; }
+
+    .batch-topbar {
+        display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+        padding:13px 22px; border-bottom:1px solid rgba(255,255,255,.04);
+        background: rgba(255,255,255,.02);
+    }
+    .batch-info-row { display:flex; align-items:center; gap:10px; }
+    .batch-folder {
+        width:32px; height:32px; border-radius:8px; flex-shrink:0;
+        background:rgba(var(--c),.10); border:1px solid rgba(var(--c),.22);
+        display:flex; align-items:center; justify-content:center; color:var(--ch); font-size:14px;
+    }
+    .batch-name { font-size:13.5px; font-weight:800; color:#e2e8f0; }
+    .batch-meta { font-size:11px; color:rgba(255,255,255,.3); display:flex; gap:10px; flex-wrap:wrap; margin-top:2px; }
+
+    /* ── Assessment bar ── */
+    .assessment-bar {
+        display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+        padding:10px 22px;
+        background: linear-gradient(90deg, rgba(var(--c),.05), transparent);
+        border-bottom: 1px solid rgba(var(--c),.10);
+    }
+    .sel-controls { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .sel-link {
+        font-size:11.5px; color:var(--ch); cursor:pointer;
+        text-decoration:none; opacity:.8; transition:opacity .2s;
+    }
+    .sel-link:hover { opacity:1; }
+    .sel-count { font-size:11.5px; color:rgba(255,255,255,.35); font-weight:700; }
+
+    /* ── Student rows ── */
+    .students-list { padding:10px 22px 16px; display:flex; flex-direction:column; gap:5px; }
+
+    .student-row {
+        display:flex; align-items:center; gap:10px;
+        padding:10px 14px;
+        background: rgba(255,255,255,.028);
+        border: 1px solid rgba(255,255,255,.06);
+        border-radius:11px; transition: all .18s;
+    }
+    .student-row:hover {
+        background: rgba(255,255,255,.055);
+        border-color: rgba(var(--c),.22);
+        transform: translateX(-2px);
+    }
+    .student-row.selected {
+        background: rgba(var(--c),.07);
+        border-color: rgba(var(--c),.30);
+    }
+    .student-row input[type=checkbox] {
+        accent-color:var(--ch); width:15px; height:15px; cursor:pointer; flex-shrink:0;
+    }
+    .student-row-name {
+        font-size:13px; font-weight:700; color:#e2e8f0; flex:1; min-width:0;
+        letter-spacing:.2px;
+    }
+
+    /* ── Grade badges ── */
+    .grade-badge {
+        display:inline-flex; align-items:center; padding:2px 10px;
+        border-radius:20px; font-size:10.5px; font-weight:800; flex-shrink:0;
+        letter-spacing:.4px;
+    }
+    .grade-d { background:rgba(16,185,129,.14); color:#34d399; border:1px solid rgba(16,185,129,.28); }
+    .grade-m { background:rgba(99,102,241,.14); color:#818cf8; border:1px solid rgba(99,102,241,.28); }
+    .grade-p { background:rgba(245,158,11,.14); color:#fbbf24; border:1px solid rgba(245,158,11,.28); }
+    .grade-u { background:rgba(239,68,68,.14); color:#f87171; border:1px solid rgba(239,68,68,.28); }
+
+    /* ── Action buttons per student ── */
+    .student-actions { display:flex; gap:5px; flex-shrink:0; align-items:center; }
+    .act-btn {
+        display:inline-flex; align-items:center; gap:4px;
+        padding:5px 10px; border-radius:7px; font-size:11px; font-weight:700;
+        border:1px solid; cursor:pointer; text-decoration:none;
+        transition: all .18s; white-space:nowrap;
+    }
+    .act-pdf   { background:rgba(239,68,68,.07); border-color:rgba(239,68,68,.22); color:#f87171; }
+    .act-pdf:hover  { background:rgba(239,68,68,.18); border-color:rgba(239,68,68,.4); }
+    .act-word  { background:rgba(99,102,241,.07); border-color:rgba(99,102,241,.22); color:#818cf8; }
+    .act-word:hover { background:rgba(99,102,241,.18); border-color:rgba(99,102,241,.4); }
+    .act-view  { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.10); color:rgba(255,255,255,.6); }
+    .act-view:hover { background:rgba(255,255,255,.09); color:#fff; }
+    .act-evidence { background:rgba(255,140,60,.08); border-color:rgba(255,140,60,.28); color:#ffb347; }
+    .act-evidence:hover { background:rgba(255,140,60,.18); border-color:rgba(255,140,60,.45); color:#ffd699; }
+    .act-del   { background:rgba(239,68,68,.05); border-color:rgba(239,68,68,.15); color:rgba(239,68,68,.55); padding:5px 8px; }
+    .act-del:hover { background:rgba(239,68,68,.18); color:#f87171; }
+
+    /* ── Buttons ── */
+    .gbtn {
+        padding:8px 16px; border-radius:9px; font-size:12.5px; font-weight:700;
+        border:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+        transition: all .22s; text-decoration:none; letter-spacing:.2px;
+    }
+    .gbtn-green {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        box-shadow: 0 3px 14px rgba(16,185,129,.35);
+    }
+    .gbtn-green:hover { filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 5px 18px rgba(16,185,129,.45); }
+    .gbtn-blue  { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); color:#818cf8; }
+    .gbtn-blue:hover  { background:rgba(99,102,241,.22); }
+    .gbtn-ghost { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); color:rgba(255,255,255,.6); }
+    .gbtn-ghost:hover { background:rgba(255,255,255,.09); color:#fff; }
+
+    /* ── Count badge ── */
+    .count-badge {
+        background: rgba(var(--c),.12);
+        border: 1px solid rgba(var(--c),.28);
+        color: var(--ch);
+        font-size:11px; padding:3px 12px; border-radius:20px; font-weight:800; flex-shrink:0;
+        letter-spacing:.3px;
+    }
+
+    /* ── Subject header "Assessment Record Template" button ── */
+    .subject-header .rec-btn {
+        display: inline-flex; align-items:center; gap:6px;
+        padding: 7px 14px; border-radius:8px; font-size:11.5px; font-weight:700;
+        background: rgba(var(--c),.10);
+        border: 1px solid rgba(var(--c),.30);
+        color: var(--ch);
+        cursor:pointer; transition: all .2s;
+        box-shadow: 0 0 10px rgba(var(--c),.10);
+        letter-spacing:.2px;
+    }
+    .subject-header .rec-btn:hover {
+        background: rgba(var(--c),.22);
+        border-color: rgba(var(--c),.55);
+        box-shadow: 0 0 18px rgba(var(--c),.22);
+        transform: translateY(-1px);
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+        display:none; position:fixed; inset:0; z-index:9999;
+        background: rgba(0,0,0,.82);
+        backdrop-filter: blur(12px);
+        align-items:center; justify-content:center; padding:16px;
+    }
+    .modal-box {
+        background: linear-gradient(155deg, #0f1c2e, #0d1825);
+        border: 1px solid rgba(255,255,255,.10);
+        border-top: 1px solid rgba(255,255,255,.18);
+        border-radius:20px;
+        padding:32px; width:100%; max-width:580px; max-height:88vh; overflow-y:auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+    }
+    .modal-title { font-size:19px; font-weight:900; color:#f1f5f9; margin-bottom:4px; letter-spacing:.3px; }
+    .modal-sub   { font-size:12.5px; color:rgba(255,255,255,.38); margin-bottom:24px; }
+    .form-label  { font-size:12.5px; font-weight:700; color:rgba(255,255,255,.6); margin-bottom:6px; display:block; }
+    .form-input  {
+        width:100%; padding:11px 14px;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius:9px; color:#f1f5f9; font-size:13.5px; font-family:inherit;
+        outline:none; transition: border .2s, box-shadow .2s; box-sizing:border-box;
+    }
+    .form-input:focus {
+        border-color: rgba(16,185,129,.45);
+        box-shadow: 0 0 0 3px rgba(16,185,129,.08);
+    }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+
+    .modal-student-list {
+        max-height:200px; overflow-y:auto;
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius:10px; padding:6px; margin-bottom:16px;
+        background: rgba(0,0,0,.2);
+    }
+    .modal-student-item {
+        display:flex; align-items:center; gap:10px; padding:8px 10px;
+        border-radius:8px; cursor:pointer; transition:background .18s;
+    }
+    .modal-student-item:hover { background:rgba(255,255,255,.05); }
+    .modal-student-item input[type=checkbox] { accent-color:#10b981; width:15px; height:15px; cursor:pointer; }
+    .modal-student-name { font-size:13px; color:rgba(255,255,255,.80); font-weight:600; }
+
+    .modal-status {
+        display:none; padding:12px 16px; border-radius:10px;
+        font-size:13.5px; font-weight:600; margin-bottom:16px;
+    }
+
+    /* ── Empty state ── */
+    .empty-state { text-align:center; padding:60px 20px; }
+    .empty-icon  {
+        width:76px; height:76px; background:rgba(255,255,255,.04);
+        border:1px solid rgba(255,255,255,.08);
+        border-radius:50%; display:flex; align-items:center; justify-content:center;
+        margin:0 auto 20px; color:rgba(255,255,255,.18); font-size:30px;
+    }
+    .divider { height:1px; background:rgba(255,255,255,.04); margin:0; }
+
+    /* ── Assessment bar button uses subject colour ── */
+    .assessment-bar .gbtn-green {
+        background: rgba(var(--c),.12);
+        border: 1px solid rgba(var(--c),.30);
+        color: var(--ch);
+        box-shadow: 0 0 10px rgba(var(--c),.12);
+    }
+    .assessment-bar .gbtn-green:hover {
+        background: rgba(var(--c),.22);
+        border-color: rgba(var(--c),.50);
+        box-shadow: 0 0 16px rgba(var(--c),.22);
+        transform: translateY(-1px);
+    }
+    .subject-section .sel-link { color: var(--ch); }
+    .subject-section .sel-count { color: rgba(var(--c),.75); }
+    .subject-section .batch-folder { background:rgba(var(--c),.10); border-color:rgba(var(--c),.22); color:var(--ch); }
+
+    /* ── Scrollbar styling ── */
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:rgba(255,255,255,.03); border-radius:4px; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:4px; }
+    ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,.2); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-page">
+<div class="bg-blob bg-blob-1"></div>
+<div class="bg-blob bg-blob-2"></div>
+<div class="bg-blob bg-blob-3"></div>
+<div style="position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:48px 20px 60px;">
+
+    <div style="margin-bottom:32px;">
+        <h1 style="font-size:28px;font-weight:900;color:#fff;margin-bottom:8px;">
+            إنشاء سجلات التقييم
+        </h1>
+        {% if pearson_global %}
+        <div style="margin-top:16px;padding:14px 18px;border-radius:14px;
+                    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+                <span style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85);">
+                    <i class="fa-solid fa-file-word" style="color:#60a5fa;margin-left:6px;"></i>
+                    قوالب Pearson BTEC
+                </span>
+                <span style="font-size:12px;font-weight:700;
+                             color:{% if pearson_global.all_ready %}#38ef7d{% else %}#fbbf24{% endif %};">
+                    {{ pearson_global.ready_count }}/{{ pearson_global.total_count }} جاهزة
+                </span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                {% for item in pearson_global['items'] %}
+                <span title="{{ item.label_en }}"
+                      style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;
+                             {% if item.ready %}background:rgba(56,239,125,.10);border:1px solid rgba(56,239,125,.28);color:#38ef7d;
+                             {% else %}background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#f87171;{% endif %}">
+                    <i class="fa-solid fa-{% if item.ready %}check{% else %}xmark{% endif %}"></i>
+                    {{ item.label_ar }}
+                </span>
+                {% endfor %}
+            </div>
+            {% if pearson_global.missing %}
+            <p style="margin:10px 0 0;font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;">
+                {% if 'BTEC IV Assessment Decisions' in pearson_global.missing %}
+                لإكمال زر <strong style="color:#fbbf24;">IV Assessment Decisions</strong>، ارفع
+                <code style="color:#93c5fd;">iv_assessment_decisions_template.docx</code>
+                إلى <code style="color:#93c5fd;">uploads/templates/</code>
+                {% else %}
+                القوالب الناقصة: {{ pearson_global.missing|join('، ') }}
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if assignments_map|length == 0 %}
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px;">
+        <div class="empty-state">
+            <div class="empty-icon"><i class="fa-solid fa-inbox"></i></div>
+            <p style="color:rgba(255,255,255,.5);font-weight:700;font-size:18px;margin-bottom:8px;">لا توجد دفعات مُصحَّحة</p>
+            <p style="color:rgba(255,255,255,.35);font-size:14px;">ابدأ بتصحيح دفعة جديدة من صفحة المُقيّم الذكي</p>
+            <a href="/smart-grader" class="gbtn gbtn-green" style="margin-top:20px;display:inline-flex;">
+                <i class="fa-solid fa-plus"></i> تصحيح جديد
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% set _palette = [
+        ('56,239,125',  '#38ef7d'),
+        ('96,165,250',  '#60a5fa'),
+        ('249,115,22',  '#f97316'),
+        ('251,146,60',  '#fb923c'),
+        ('244,114,182', '#f472b6'),
+        ('34,211,238',  '#22d3ee'),
+        ('251,191,36',  '#fbbf24'),
+    ] %}
+    {% for asgn_data in assignments_map %}
+    {% set asgn_idx = loop.index %}
+    {% set _ci = loop.index0 % (_palette|length) %}
+    {% set _clr = _palette[_ci] %}
+    <div class="subject-section" style="--c:{{ _clr[0] }};--ch:{{ _clr[1] }}">
+
+        <!-- Subject Header -->
+        <div class="subject-header" onclick="toggleSubject('subj-{{ asgn_idx }}','chev-{{ asgn_idx }}')">
+            <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:rgba(255,255,255,.05);padding:4px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.1);" 
+                       onclick="event.stopPropagation();">
+                    <input type="checkbox"
+                           id="selall-{{ asgn_idx }}"
+                           checked
+                           onclick="subjectSelAll('subj-{{ asgn_idx }}', 'selall-{{ asgn_idx }}')"
+                           style="width:18px;height:18px;accent-color:var(--ch);cursor:pointer;"
+                           title="تحديد كل طلاب المادة">
+                    <span style="font-size:12px;color:#fff;font-weight:700;">تحديد الكل</span>
+                </label>
+                <div>
+                    <div class="subject-title">{{ asgn_data.assignment_title }}</div>
+                    {% if asgn_data.unit_info %}
+                    <div class="subject-unit">{{ asgn_data.unit_info }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+                {% set ns = namespace(cnt=0) %}
+                {% for bd in asgn_data.batches %}{% set ns.cnt = ns.cnt + bd.students|length %}{% endfor %}
+                
+                <span class="count-badge">{{ ns.cnt }} {% if ns.cnt >= 3 and ns.cnt <= 10 %}طلاب{% else %}طالب{% endif %}</span>
+
+                <button class="rec-btn"
+                        style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.3);color:#fbbf24;
+                               {% if pearson_global and not pearson_global['items'][2].ready %}opacity:.45;cursor:not-allowed;{% endif %}"
+                        title="{% if pearson_global and not pearson_global['items'][2].ready %}قالب IV Assessment Decisions غير موجود{% else %}BTEC IV Assessment Decisions{% endif %}"
+                        {% if pearson_global and not pearson_global['items'][2].ready %}disabled{% else %}onclick="event.stopPropagation();openIVDecisionsModal({{ asgn_data.batches[0].batch.id if asgn_data.batches|length > 0 else 0 }})"{% endif %}>
+                    BTEC IV Assessment Decisions
+                </button>
+                <button class="rec-btn" style="background:rgba(99,102,241,.10);border-color:rgba(99,102,241,.30);color:#818cf8;"
+                        onclick="event.stopPropagation();openIVModal({{ asgn_data.assignment_id }})">
+                    BTEC IV of Assignment Brief
+                </button>
+                <button class="rec-btn" onclick="event.stopPropagation();openSubjectRecordModal('subj-{{ asgn_idx }}')">
+                    BTEC Assessment Record
+                </button>
+                <button class="rec-btn"
+                        style="background:rgba(255,140,60,.10);border-color:rgba(255,140,60,.35);color:#ffb347;"
+                        title="Evidance - IT + نموذج ربط أدلة المتعلم (Pearson)"
+                        onclick="event.stopPropagation();openSubjectEvidenceModal('subj-{{ asgn_idx }}', {{ asgn_data.batches[0].batch.id if asgn_data.batches|length > 0 else 0 }})">
+                    <i class="fa-solid fa-folder-open"></i> Pearson Evidence
+                </button>
+                
+                <i class="fa-solid fa-chevron-down chevron" id="chev-{{ asgn_idx }}" style="transform:rotate(-90deg)"></i>
+            </div>
+        </div>
+
+        <!-- Subject Body -->
+        <div class="subject-body" id="subj-{{ asgn_idx }}" style="display:none">
+            {% for batch_data in asgn_data.batches %}
+            {% set batch = batch_data.batch %}
+            {% set students = batch_data.students %}
+            <div class="batch-card">
+
+                {% if students|length > 0 %}
+                <!-- Students list: name + PDF + Word + View -->
+                <div class="students-list" id="grid-{{ batch.id }}" data-subject-idx="{{ asgn_idx }}">
+                    {% for s in students %}
+                    <div class="student-row" id="chip-{{ s.submission.id }}">
+
+                        <!-- Student checkbox -->
+                        <input type="checkbox" checked
+                               class="student-cb"
+                               data-subject-idx="{{ asgn_idx }}"
+                               data-submission-id="{{ s.submission.id }}"
+                               data-batch-id="{{ batch.id }}"
+                               data-has-record="{{ '1' if s.has_record else '0' }}"
+                               data-has-evidence="{{ '1' if s.has_evidence else '0' }}"
+                               style="width:16px;height:16px;accent-color:var(--ch);cursor:pointer;flex-shrink:0;"
+                               onchange="syncSubjectSelAll('{{ asgn_idx }}')">
+
+                        <!-- Index number -->
+                        <span style="width:22px;height:22px;border-radius:6px;background:rgba(var(--c),.12);border:1px solid rgba(var(--c),.22);
+                                     display:inline-flex;align-items:center;justify-content:center;
+                                     color:var(--ch);font-size:10px;font-weight:800;flex-shrink:0;">{{ loop.index }}</span>
+
+                        <!-- Name -->
+                        <span class="student-row-name">{{ s.submission.student_name }}</span>
+
+                        <!-- Assessment record badge -->
+                        <span id="rec-badge-{{ s.submission.id }}"
+                              data-sub-id="{{ s.submission.id }}"
+                              title="{% if s.has_record %}سجل التقييم موجود{% else %}لم يُنشأ سجل التقييم بعد{% endif %}"
+                              style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0;
+                                     {% if s.has_record %}background:rgba(56,239,125,.12);border:1px solid rgba(56,239,125,.3);color:#38ef7d;
+                                     {% else %}background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);{% endif %}">
+                            سجل: {{ '1' if s.has_record else '0' }}
+                        </span>
+                        <span id="ev-badge-{{ s.submission.id }}"
+                              title="{% if s.has_evidence %}ملفات Evidence جاهزة{% else %}لم تُنشأ ملفات Evidence بعد{% endif %}"
+                              style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0;
+                                     {% if s.has_evidence %}background:rgba(255,180,80,.12);border:1px solid rgba(255,180,80,.35);color:#ffb347;
+                                     {% else %}background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);{% endif %}">
+                            أدلة: {{ '2' if s.has_evidence else '0' }}
+                        </span>
+
+                        <!-- Download / View actions -->
+                        <div class="student-actions">
+                            <button type="button" class="act-btn act-evidence"
+                                    title="إنشاء Evidence (Evidance IT + ربط LA)"
+                                    onclick="generateStudentEvidence({{ s.submission.id }}, this)">
+                                <i class="fa-solid fa-file-circle-check"></i> Evidence
+                            </button>
+                            <a href="/api/download-report/{{ s.submission.id }}"
+                               class="act-btn act-pdf" title="تحميل التصحيح PDF"
+                               onclick="event.preventDefault(); aiGrader.downloadReportFile(this.href, 'report_{{ s.submission.id }}.pdf');">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </a>
+                            <a href="/api/download-report-word/{{ s.submission.id }}"
+                               class="act-btn act-word" title="تحميل التصحيح Word"
+                               onclick="event.preventDefault(); aiGrader.downloadReportFile(this.href, 'report_{{ s.submission.id }}.docx');">
+                                <i class="fa-solid fa-file-word"></i> Word
+                            </a>
+                            <a href="/batch-results/{{ batch.id }}#submission-{{ s.submission.id }}"
+                               class="act-btn act-view" title="عرض التصحيح">
+                                <i class="fa-solid fa-eye"></i> عرض
+                            </a>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% else %}
+                <div style="text-align:center;padding:24px;color:rgba(255,255,255,.3);font-size:13px;">
+                    <i class="fa-solid fa-inbox" style="margin-left:6px;"></i> لا يوجد طلاب في هذه الدفعة
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+</div>
+
+<!-- ════ Assessment Record Modal ════ -->
+<div class="modal-overlay" id="recordModal" onclick="if(event.target===this)closeModal()">
+<div class="modal-box">
+    <div class="modal-title"><i class="fa-solid fa-file-word" style="color:#60a5fa;margin-left:8px;"></i> إنشاء سجلات التقييم</div>
+    <div class="modal-sub" id="modalSubTitle">حدد الطلاب واملأ بيانات التقييم</div>
+    <input type="hidden" id="modalBatchId" value="">
+
+    <!-- Student checklist in modal -->
+    <label class="form-label">
+        <i class="fa-solid fa-users" style="margin-left:4px;color:#60a5fa;"></i> الطلاب المحددون
+        &nbsp;<span class="sel-link" onclick="modalSelAll(true)">تحديد الكل</span>
+        <span style="color:rgba(255,255,255,.2);margin:0 4px;">|</span>
+        <span class="sel-link" onclick="modalSelAll(false)">إلغاء الكل</span>
+    </label>
+    <div class="modal-student-list" id="modalStudentList"></div>
+
+    <!-- Assessor name -->
+    <div style="margin-bottom:16px;">
+        <label class="form-label"><i class="fa-solid fa-user-tie" style="margin-left:4px;color:#fbbf24;"></i> اسم المُقيّم *</label>
+        <input type="text" class="form-input" id="modalAssessorName" placeholder="اسم المُقيّم"
+               value="{{ user.name if user and user.name else '' }}">
+    </div>
+
+    <!-- Dates -->
+    <div class="form-row">
+        <div>
+            <label class="form-label"><i class="fa-solid fa-calendar-check" style="margin-left:4px;"></i> تاريخ التقييم</label>
+            <input type="text" class="form-input" id="modalAssessmentDate" placeholder="dd/mm/yyyy">
+        </div>
+        <div>
+            <label class="form-label"><i class="fa-solid fa-calendar-plus" style="margin-left:4px;"></i> تاريخ التسليم</label>
+            <input type="text" class="form-input" id="modalSubmissionDate" placeholder="dd/mm/yyyy">
+        </div>
+    </div>
+    <div style="margin-bottom:16px;">
+        <label class="form-label"><i class="fa-solid fa-calendar-xmark" style="margin-left:4px;"></i> الموعد النهائي</label>
+        <input type="text" class="form-input" id="modalDeadlineDate" placeholder="dd/mm/yyyy">
+    </div>
+
+    <!-- Student IDs (optional) -->
+    <div style="margin-bottom:20px;">
+        <label class="form-label"><i class="fa-solid fa-id-card" style="margin-left:4px;color:rgba(255,255,255,.4);"></i> أرقام الطلاب (اختياري)</label>
+        <div id="modalStudentIdFields" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+
+    <!-- Progress bar (shown during generation) -->
+    <div id="modalProgress" style="display:none;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:13px;color:rgba(255,255,255,.7);" id="modalProgressLabel">جاري معالجة الطلاب...</span>
+            <span style="font-size:13px;font-weight:700;color:#38ef7d;" id="modalProgressPct">0%</span>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:8px;height:10px;overflow:hidden;">
+            <div id="modalProgressBar"
+                 style="height:100%;width:0%;background:linear-gradient(90deg,#38ef7d,#60a5fa);border-radius:8px;
+                        transition:width .4s ease;box-shadow:0 0 8px rgba(56,239,125,.5);"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+            <span style="font-size:11px;color:rgba(255,255,255,.4);" id="modalProgressCount">0 / 0 طالب</span>
+            <span style="font-size:11px;color:rgba(255,255,255,.4);" id="modalProgressTime">يُقدَّر: ...</span>
+        </div>
+    </div>
+
+    <div class="modal-status" id="modalStatus"></div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="gbtn gbtn-ghost" onclick="closeModal()">إلغاء</button>
+        <button class="gbtn gbtn-green" id="modalSubmitBtn" onclick="submitModal()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> إنشاء السجلات
+        </button>
+    </div>
+</div>
+</div>
+
+<!-- ════ Pearson Evidence Modal ════ -->
+<div class="modal-overlay" id="evidenceModal" onclick="if(event.target===this)closeEvidenceModal()">
+<div class="modal-box">
+    <div class="modal-title"><i class="fa-solid fa-folder-open" style="color:#ffb347;margin-left:8px;"></i> إنشاء سجلات Pearson Evidence</div>
+    <div class="modal-sub">
+        يُنشئ ملفين Word لكل طالب:<br>
+        <strong>Evidance - IT</strong> (سطر لكل معيار) +
+        <strong>نموذج ربط أدلة المتعلم بأهداف التعلّم</strong>
+    </div>
+    <input type="hidden" id="evidenceBatchId" value="">
+    <div class="modal-student-list" id="evidenceStudentList"></div>
+    <div class="modal-status" id="evidenceModalStatus"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="gbtn gbtn-ghost" onclick="closeEvidenceModal()">إلغاء</button>
+        <button class="gbtn gbtn-green" id="evidenceSubmitBtn" style="background:linear-gradient(135deg,#ff8c42,#ff6b35);" onclick="submitEvidenceModal()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> إنشاء Evidence
+        </button>
+    </div>
+</div>
+</div>
+
+<script>
+/* ── Accordion ─────────────────────────── */
+function toggleSubject(bodyId, chevId) {
+    const body = document.getElementById(bodyId);
+    const chev = document.getElementById(chevId);
+    const open = body.style.display !== 'none';
+    body.style.display    = open ? 'none' : '';
+    chev.style.transform  = open ? 'rotate(-90deg)' : '';
+}
+
+/* ── Subject select-all checkbox ───────── */
+function subjectSelAll(bodyId, selAllId) {
+    const state = document.getElementById(selAllId).checked;
+    const body  = document.getElementById(bodyId);
+    if (!body) return;
+    
+    // Update all student checkboxes and their container rows
+    body.querySelectorAll('.student-row').forEach(row => {
+        row.classList.toggle('selected', state);
+        const cb = row.querySelector('input[type=checkbox]');
+        if (cb) cb.checked = state;
+    });
+
+    // Also update selection counts for each batch in this subject
+    body.querySelectorAll('.students-list').forEach(grid => {
+        const batchIdStr = grid.id.replace('grid-', '');
+        const batchId = parseInt(batchIdStr);
+        if (!isNaN(batchId)) {
+            updateSelCount(batchId);
+        }
+    });
+}
+
+/* ── Sync select-all when individual changes */
+function syncSubjectSelAll(idx) {
+    const body   = document.getElementById('subj-' + idx);
+    const selAll = document.getElementById('selall-' + idx);
+    if (!body || !selAll) return;
+    const cbs  = body.querySelectorAll('.student-cb');
+    const allC = Array.from(cbs).every(cb => cb.checked);
+    selAll.checked = allC;
+}
+
+/* ── Row selection ─────────────────────── */
+function toggleRow(row, batchId) {
+    const cb  = row.querySelector('input[type=checkbox]');
+    const sel = !row.classList.contains('selected');
+    row.classList.toggle('selected', sel);
+    if (cb) cb.checked = sel;
+    updateSelCount(batchId);
+}
+function syncCb(cb, batchId) {
+    cb.closest('.student-row').classList.toggle('selected', cb.checked);
+    updateSelCount(batchId);
+}
+function selectAll(gridId, state) {
+    const grid    = document.getElementById(gridId);
+    const batchId = parseInt(gridId.replace('grid-',''));
+    if (!grid) return;
+    grid.querySelectorAll('.student-row').forEach(row => {
+        row.classList.toggle('selected', state);
+        const cb = row.querySelector('input[type=checkbox]');
+        if (cb) cb.checked = state;
+    });
+    updateSelCount(batchId);
+}
+function updateSelCount(batchId) {
+    const grid = document.getElementById('grid-'+batchId);
+    const el   = document.getElementById('sel-count-'+batchId);
+    if (!grid || !el) return;
+    const total = grid.querySelectorAll('.student-row').length;
+    const sel   = grid.querySelectorAll('.student-row.selected').length;
+    el.textContent = sel+' من '+total+' محدد';
+}
+
+/* ── Delete student ────────────────────── */
+async function deleteStudent(id, name, batchId) {
+    if (!confirm('هل أنت متأكد من حذف "'+name+'"?')) return;
+    try {
+        const res  = await fetch('/api/submissions/'+id, {method:'DELETE'});
+        const data = await res.json();
+        if (data.status === 'success') {
+            const row = document.getElementById('chip-'+id);
+            if (row) {
+                row.style.transition = 'all .3s';
+                row.style.opacity    = '0';
+                row.style.transform  = 'scale(.95)';
+                setTimeout(() => { row.remove(); updateSelCount(batchId); }, 300);
+            }
+        } else { alert(data.message || 'حدث خطأ'); }
+    } catch(e) { alert('خطأ في الاتصال: '+e.message); }
+}
+
+/* ── Modal student data ────────────────── */
+const batchStudentData = {};
+{% for asgn_data in assignments_map %}
+{% for bd in asgn_data.batches %}
+{% set b = bd.batch %}
+batchStudentData[{{ b.id }}] = [
+    {% for s in bd.students %}
+    {id:{{ s.submission.id }},name:{{ s.submission.student_name|tojson }}}{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+{% endfor %}
+{% endfor %}
+
+/* ── Open modal from subject header (across all batches in subject) ── */
+function openSubjectRecordModal(subjBodyId) {
+    const body = document.getElementById(subjBodyId);
+    if (!body) return;
+
+    const checkedCbs = Array.from(body.querySelectorAll('.student-cb:checked'));
+    if (checkedCbs.length === 0) {
+        alert('يرجى تحديد طالب واحد على الأقل');
+        return;
+    }
+
+    // Build a flat name lookup across ALL batches
+    const nameLookup = {};
+    Object.values(batchStudentData).forEach(arr =>
+        arr.forEach(st => { nameLookup[st.id] = st.name; })
+    );
+
+    // Use first batch as the API target (backend handles filtering by selIds)
+    const batchId = checkedCbs[0].dataset.batchId;
+
+    // Fill modal manually (bypass openRecordModal's single-batch logic)
+    document.getElementById('modalBatchId').value = batchId;
+
+    const today = new Date();
+    const fmt   = d => String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+    document.getElementById('modalAssessmentDate').value = fmt(today);
+    document.getElementById('modalSubmissionDate').value = '';
+    document.getElementById('modalDeadlineDate').value   = '';
+
+    const listEl = document.getElementById('modalStudentList');
+    const idsEl  = document.getElementById('modalStudentIdFields');
+    listEl.innerHTML = '';
+    idsEl.innerHTML  = '';
+
+    checkedCbs.forEach(cb => {
+        const sid      = parseInt(cb.dataset.submissionId);
+        const name     = nameLookup[sid] || ('طالب ' + sid);
+        const hasRec   = cb.dataset.hasRecord === '1';
+
+        const lbl = document.createElement('label');
+        lbl.className = 'modal-student-item';
+        lbl.innerHTML = '<input type="checkbox" data-sid="'+sid+'" data-has-record="'+(hasRec?'1':'0')+'" checked>'
+                      + '<span class="modal-student-name">'+name+'</span>'
+                      + (hasRec ? '<span style="font-size:10px;color:#38ef7d;margin-right:4px;"><i class="fa-solid fa-circle-check"></i> سجل موجود</span>' : '');
+        listEl.appendChild(lbl);
+
+        const idRow = document.createElement('div');
+        idRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
+        idRow.innerHTML = '<span style="min-width:160px;font-size:12px;color:rgba(255,255,255,.55);text-align:right;">'+name+'</span>'
+                        + '<input type="text" class="form-input" style="flex:1;padding:8px 12px;font-size:13px;" placeholder="رقم الطالب" data-student-name="'+name.replace(/"/g,'\\"')+'">';
+        idsEl.appendChild(idRow);
+    });
+
+    document.getElementById('modalStatus').style.display = 'none';
+    document.getElementById('modalProgress').style.display = 'none';
+    document.getElementById('recordModal').style.display = 'flex';
+}
+
+/* ── Open modal (optionally with pre-selected submission IDs) ── */
+function openRecordModal(batchId, preSelIds) {
+    document.getElementById('modalBatchId').value = batchId;
+
+    const today = new Date();
+    const fmt   = d => String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+    document.getElementById('modalAssessmentDate').value = fmt(today);
+    document.getElementById('modalSubmissionDate').value = '';
+    document.getElementById('modalDeadlineDate').value   = '';
+
+    const grid  = document.getElementById('grid-'+batchId);
+    const listEl = document.getElementById('modalStudentList');
+    const idsEl  = document.getElementById('modalStudentIdFields');
+    listEl.innerHTML = '';
+    idsEl.innerHTML  = '';
+
+    const allStudents = batchStudentData[batchId] || [];
+    const selectedIds = preSelIds ? new Set(preSelIds) : new Set(allStudents.map(s => s.id));
+
+    allStudents.forEach(st => {
+        const checked = selectedIds.size === 0 || selectedIds.has(st.id);
+        const lbl = document.createElement('label');
+        lbl.className = 'modal-student-item';
+        lbl.innerHTML = '<input type="checkbox" data-sid="'+st.id+'" '+(checked?'checked':'')+'>'
+                      + '<span class="modal-student-name">'+st.name+'</span>';
+        listEl.appendChild(lbl);
+
+        const idRow = document.createElement('div');
+        idRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
+        idRow.innerHTML = '<span style="min-width:160px;font-size:12px;color:rgba(255,255,255,.55);text-align:right;">'+st.name+'</span>'
+                        + '<input type="text" class="form-input" style="flex:1;padding:8px 12px;font-size:13px;" placeholder="رقم الطالب" data-student-name="'+st.name.replace(/"/g,'\\"')+'">';
+        idsEl.appendChild(idRow);
+    });
+
+    document.getElementById('modalStatus').style.display = 'none';
+    document.getElementById('modalProgress').style.display = 'none';
+    document.getElementById('recordModal').style.display = 'flex';
+}
+function closeModal() {
+    document.getElementById('recordModal').style.display = 'none';
+    document.getElementById('modalProgress').style.display = 'none';
+}
+function modalSelAll(state) {
+    document.querySelectorAll('#modalStudentList input[type=checkbox]').forEach(cb => cb.checked = state);
+}
+
+/* ── Submit modal ──────────────────────── */
+async function submitModal() {
+    const batchId  = document.getElementById('modalBatchId').value;
+    const assessor = document.getElementById('modalAssessorName').value.trim();
+    const aDate    = document.getElementById('modalAssessmentDate').value.trim();
+    const sDate    = document.getElementById('modalSubmissionDate').value.trim();
+    const dDate    = document.getElementById('modalDeadlineDate').value.trim();
+    const btn      = document.getElementById('modalSubmitBtn');
+
+    if (!assessor) { showStatus('يرجى إدخال اسم المُقيّم', false); return; }
+
+    const selIds = [];
+    const alreadyHasRecord = [];
+    document.querySelectorAll('#modalStudentList input[type=checkbox]:checked').forEach(cb => {
+        selIds.push(parseInt(cb.dataset.sid));
+        if (cb.dataset.hasRecord === '1') alreadyHasRecord.push(parseInt(cb.dataset.sid));
+    });
+    if (selIds.length === 0) { showStatus('يرجى تحديد طالب واحد على الأقل', false); return; }
+
+    // Block if all selected already have records
+    if (alreadyHasRecord.length === selIds.length) {
+        showStatus('<i class="fa-solid fa-circle-info" style="margin-left:6px;color:#fbbf24;"></i> جميع الطلاب المحددين لديهم سجلات تقييم بالفعل. لا حاجة لإعادة الإنشاء.', false);
+        return;
+    }
+
+    // Warn if some already have records — filter them out
+    const newSelIds = selIds.filter(id => !alreadyHasRecord.includes(id));
+    if (alreadyHasRecord.length > 0) {
+        // Uncheck already-recorded students in modal list silently
+        document.querySelectorAll('#modalStudentList input[type=checkbox]').forEach(cb => {
+            if (alreadyHasRecord.includes(parseInt(cb.dataset.sid))) cb.checked = false;
+        });
+    }
+
+    const studentIds = {};
+    document.querySelectorAll('#modalStudentIdFields input[data-student-name]').forEach(inp => {
+        const v = inp.value.trim();
+        if (v) studentIds[inp.dataset.studentName] = v;
+    });
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...';
+    document.getElementById('modalStatus').style.display = 'none';
+
+    // ── Start progress animation ──
+    const total = selIds.length;
+    const estSecs = Math.max(total * 4, 5);   // ~4s per student
+    const progEl   = document.getElementById('modalProgress');
+    const barEl    = document.getElementById('modalProgressBar');
+    const pctEl    = document.getElementById('modalProgressPct');
+    const cntEl    = document.getElementById('modalProgressCount');
+    const lblEl    = document.getElementById('modalProgressLabel');
+    const timeEl   = document.getElementById('modalProgressTime');
+
+    progEl.style.display = 'block';
+    barEl.style.width    = '0%';
+    pctEl.textContent    = '0%';
+    cntEl.textContent    = '0 / '+total+' طالب';
+    timeEl.textContent   = 'يُقدَّر: ~'+estSecs+' ث';
+
+    let progPct = 0;
+    let fake = 0;
+    const interval = setInterval(() => {
+        // Simulate per-student progress (cap at 90% until real response)
+        const step = 90 / (estSecs * 5);   // tick every 200ms
+        progPct = Math.min(progPct + step, 90);
+        barEl.style.width = progPct.toFixed(1) + '%';
+        pctEl.textContent = Math.round(progPct) + '%';
+        const done = Math.min(Math.floor((progPct / 90) * total), total - 1);
+        cntEl.textContent = done + ' / ' + total + ' طالب';
+        const remaining = Math.round((90 - progPct) / (90 / estSecs));
+        timeEl.textContent = remaining > 0 ? 'متبقي: ~'+remaining+' ث' : 'على وشك الانتهاء...';
+        lblEl.textContent  = done > 0 ? 'تمت معالجة '+done+' طالب...' : 'جاري معالجة الطلاب...';
+    }, 200);
+
+    try {
+        const fd = new FormData();
+        fd.append('assessor_name', assessor);
+        fd.append('assessment_date', aDate);
+        fd.append('submission_date', sDate);
+        fd.append('deadline_date', dDate);
+        fd.append('student_ids_json', JSON.stringify(studentIds));
+        fd.append('selected_submission_ids_json', JSON.stringify(newSelIds.length > 0 ? newSelIds : selIds));
+
+        const res  = await fetch('/api/fill-assessment-records/'+batchId, {method:'POST', body:fd});
+        clearInterval(interval);
+        // Jump to 100%
+        barEl.style.width = '100%';
+        pctEl.textContent = '100%';
+        cntEl.textContent = total + ' / ' + total + ' طالب';
+        timeEl.textContent = 'اكتملت العملية';
+        lblEl.textContent  = 'تم إنشاء جميع السجلات!';
+
+        const data = await res.json();
+
+        if (data.success) {
+            let links = '';
+            if (data.zip_url) {
+                links = '<br><a href="'+data.zip_url+'" download style="color:#60a5fa;text-decoration:underline;display:inline-block;margin-top:8px;">'
+                      + '<i class="fa-solid fa-file-zipper"></i> تحميل الكل (ZIP)</a>';
+            } else if (data.file_url) {
+                links = '<br><a href="'+data.file_url+'" download style="color:#60a5fa;text-decoration:underline;display:inline-block;margin-top:8px;">'
+                      + '<i class="fa-solid fa-file-word"></i> تحميل الملف</a>';
+            }
+            if (data.files && data.files.length > 0 && data.files.length <= 15) {
+                links += '<div style="margin-top:8px;">';
+                data.files.forEach(f => {
+                    links += '<a href="/api/download-assessment-record/'+encodeURIComponent(f)+'" download '
+                           + 'style="color:#60a5fa;display:block;margin:3px 0;font-size:12px;">'
+                           + '<i class="fa-solid fa-file-word" style="margin-left:4px;"></i>'+f+'</a>';
+                });
+                links += '</div>';
+            }
+            showStatus('<i class="fa-solid fa-circle-check" style="margin-left:6px;"></i>'+data.message+links, true);
+            // Update badges for newly created records
+            updateRecordBadges(newSelIds.length > 0 ? newSelIds : selIds);
+        } else {
+            showStatus(data.error || 'حدث خطأ غير متوقع', false);
+        }
+    } catch(e) {
+        clearInterval(interval);
+        progEl.style.display = 'none';
+        showStatus('خطأ في الاتصال: '+e.message, false);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> إنشاء السجلات';
+    }
+}
+/* ── Update record badges after successful generation ── */
+function updateRecordBadges(submissionIds) {
+    submissionIds.forEach(sid => {
+        const badge = document.getElementById('rec-badge-' + sid);
+        if (!badge) return;
+        badge.style.background = 'rgba(56,239,125,.12)';
+        badge.style.border     = '1px solid rgba(56,239,125,.3)';
+        badge.style.color      = '#38ef7d';
+        badge.title            = 'سجل التقييم موجود';
+        badge.innerHTML        = 'سجل: 1';
+    });
+}
+
+function showStatus(msg, ok) {
+    const el = document.getElementById('modalStatus');
+    el.style.display    = 'block';
+    el.style.background = ok ? 'rgba(56,239,125,.1)'  : 'rgba(239,68,68,.1)';
+    el.style.border     = ok ? '1px solid rgba(56,239,125,.3)' : '1px solid rgba(239,68,68,.3)';
+    el.style.color      = ok ? '#38ef7d' : '#f87171';
+    el.innerHTML        = msg;
+}
+
+/* ── IV of Assignment Brief ─────────────── */
+function openIVModal(assignmentId) {
+    document.getElementById('ivAssignmentId').value = assignmentId;
+    document.getElementById('ivStatus').style.display = 'none';
+    document.getElementById('ivSubmitBtn').disabled   = false;
+    document.getElementById('ivSubmitBtn').innerHTML  = '<i class="fa-solid fa-file-signature"></i> إنشاء الملف';
+    // Pre-fill today's date
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2,'0');
+    const mm = String(today.getMonth()+1).padStart(2,'0');
+    const yyyy = today.getFullYear();
+    document.getElementById('ivDate').value = `${dd}/${mm}/${yyyy}`;
+    document.getElementById('ivModal').style.display = 'flex';
+}
+function closeIVModal() {
+    document.getElementById('ivModal').style.display = 'none';
+}
+
+async function submitIVModal() {
+    const assignmentId = document.getElementById('ivAssignmentId').value;
+    const assessorName = document.getElementById('ivAssessorName').value.trim();
+    const ivName       = document.getElementById('ivName').value.trim();
+    const ivDate       = document.getElementById('ivDate').value.trim();
+
+    if (!assessorName) { showIVStatus('يرجى إدخال اسم المُقيّم', false); return; }
+    if (!ivName)       { showIVStatus('يرجى إدخال اسم المُدقق الداخلي', false); return; }
+
+    const btn = document.getElementById('ivSubmitBtn');
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ الإنشاء...';
+    showIVStatus('', true);
+
+    const fd = new FormData();
+    fd.append('assignment_id', assignmentId);
+    fd.append('assessor_name', assessorName);
+    fd.append('iv_name',       ivName);
+    fd.append('assessment_date', ivDate);
+
+    try {
+        const resp = await fetch('/api/fill-iv-assignment-brief', { method: 'POST', body: fd });
+        const data = await resp.json();
+        if (data.success) {
+            showIVStatus(
+                `✅ ${data.message}<br>
+                 <a href="${data.file_url}" download="${data.filename}"
+                    style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 16px;
+                           background:rgba(56,239,125,.15);border:1px solid rgba(56,239,125,.4);
+                           color:#38ef7d;border-radius:8px;text-decoration:none;font-size:13px;">
+                   <i class="fa-solid fa-download"></i> تنزيل الملف
+                 </a>`,
+                true
+            );
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> تم';
+        } else {
+            showIVStatus(data.error || 'حدث خطأ غير متوقع', false);
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> إنشاء الملف';
+        }
+    } catch (e) {
+        showIVStatus('خطأ في الاتصال بالخادم', false);
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> إنشاء الملف';
+    }
+}
+
+function showIVStatus(msg, ok) {
+    const el = document.getElementById('ivStatus');
+    el.style.display    = msg ? 'block' : 'none';
+    el.style.background = ok ? 'rgba(56,239,125,.1)'  : 'rgba(239,68,68,.1)';
+    el.style.border     = ok ? '1px solid rgba(56,239,125,.3)' : '1px solid rgba(239,68,68,.3)';
+    el.style.color      = ok ? '#38ef7d' : '#f87171';
+    el.innerHTML        = msg;
+}
+</script>
+
+<!-- ── IV of Assignment Brief Modal ── -->
+<div class="modal-overlay" id="ivModal" onclick="if(event.target===this)closeIVModal()"
+     style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.65);
+            backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+    <div class="modal-box" style="max-width:520px;width:95%;">
+        <div class="modal-title">
+            <i class="fa-solid fa-file-signature" style="color:#818cf8;margin-left:8px;"></i>
+            BTEC IV of Assignment Brief
+        </div>
+        <div class="modal-sub">إنشاء وثيقة التحقق الداخلي من موجز المهمة</div>
+        <input type="hidden" id="ivAssignmentId">
+
+        <div style="margin-bottom:16px;">
+            <label class="form-label"><i class="fa-solid fa-user-tie" style="margin-left:4px;color:#fbbf24;"></i> اسم المُقيّم *</label>
+            <input type="text" class="form-input" id="ivAssessorName" placeholder="اسم المُقيّم"
+                   value="{{ user.name if user and user.name else '' }}">
+        </div>
+        <div style="margin-bottom:16px;">
+            <label class="form-label"><i class="fa-solid fa-user-check" style="margin-left:4px;color:#818cf8;"></i> اسم المُدقق الداخلي (IV) *</label>
+            <input type="text" class="form-input" id="ivName" placeholder="اسم المُدقق الداخلي">
+        </div>
+        <div style="margin-bottom:20px;">
+            <label class="form-label"><i class="fa-solid fa-calendar-check" style="margin-left:4px;"></i> تاريخ التقييم</label>
+            <input type="text" class="form-input" id="ivDate" placeholder="dd/mm/yyyy">
+        </div>
+
+        <div class="modal-status" id="ivStatus" style="display:none;padding:12px 16px;border-radius:10px;
+             margin-bottom:16px;font-size:13px;line-height:1.6;"></div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button class="gbtn gbtn-ghost" onclick="closeIVModal()">إلغاء</button>
+            <button class="gbtn" id="ivSubmitBtn" onclick="submitIVModal()"
+                    style="background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;border:none;">
+                <i class="fa-solid fa-file-signature"></i> إنشاء الملف
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ── IV Assessment Decisions Modal ── -->
+<div class="modal-overlay" id="ivDecisionsModal" onclick="if(event.target===this)closeIVDecisionsModal()"
+     style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.65);
+            backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+    <div class="modal-box" style="max-width:560px;width:95%;">
+        <div class="modal-title">
+            <i class="fa-solid fa-clipboard-check" style="color:#fbbf24;margin-left:8px;"></i>
+            BTEC IV Assessment Decisions
+        </div>
+        <div class="modal-sub">إنشاء وثيقة قرارات التحقق الداخلي لكل طالب في الدفعة</div>
+        <input type="hidden" id="ivDecisionsBatchId">
+
+        <label class="form-label">
+            <i class="fa-solid fa-users" style="margin-left:4px;color:#fbbf24;"></i> الطلاب المحددون
+            &nbsp;<span class="sel-link" onclick="ivDecisionsSelAll(true)">تحديد الكل</span>
+            <span style="color:rgba(255,255,255,.2);margin:0 4px;">|</span>
+            <span class="sel-link" onclick="ivDecisionsSelAll(false)">إلغاء الكل</span>
+        </label>
+        <div class="modal-student-list" id="ivDecisionsStudentList"></div>
+
+        <div class="modal-status" id="ivDecisionsStatus"
+             style="display:none;padding:12px 16px;border-radius:10px;
+                    margin-bottom:16px;font-size:13px;line-height:1.6;"></div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+            <button class="gbtn gbtn-ghost" onclick="closeIVDecisionsModal()">إلغاء</button>
+            <button class="gbtn" id="ivDecisionsSubmitBtn" onclick="submitIVDecisionsModal()"
+                    style="background:linear-gradient(135deg,#d97706,#fbbf24);color:#fff;border:none;">
+                <i class="fa-solid fa-clipboard-check"></i> إنشاء الوثائق
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ── IV Assessment Decisions Modal ── */
+function openIVDecisionsModal(batchId) {
+    document.getElementById('ivDecisionsBatchId').value = batchId;
+    document.getElementById('ivDecisionsStatus').style.display = 'none';
+    var btn = document.getElementById('ivDecisionsSubmitBtn');
+    btn.disabled  = false;
+    btn.innerHTML = '<i class="fa-solid fa-clipboard-check"></i> إنشاء الوثائق';
+
+    var listEl = document.getElementById('ivDecisionsStudentList');
+    listEl.innerHTML = '';
+
+    var students = batchStudentData[batchId] || [];
+    students.forEach(function(st) {
+        var lbl = document.createElement('label');
+        lbl.className = 'modal-student-item';
+        lbl.innerHTML = '<input type="checkbox" data-sid="' + st.id + '" checked>'
+                      + '<span class="modal-student-name">' + st.name + '</span>';
+        listEl.appendChild(lbl);
+    });
+
+    document.getElementById('ivDecisionsModal').style.display = 'flex';
+}
+function closeIVDecisionsModal() {
+    document.getElementById('ivDecisionsModal').style.display = 'none';
+}
+function ivDecisionsSelAll(state) {
+    document.querySelectorAll('#ivDecisionsStudentList input[type=checkbox]')
+            .forEach(function(cb) { cb.checked = state; });
+}
+
+async function submitIVDecisionsModal() {
+    var batchId = document.getElementById('ivDecisionsBatchId').value;
+    var btn     = document.getElementById('ivDecisionsSubmitBtn');
+
+    var selIds = [];
+    document.querySelectorAll('#ivDecisionsStudentList input[type=checkbox]:checked')
+            .forEach(function(cb) { selIds.push(parseInt(cb.dataset.sid)); });
+
+    if (selIds.length === 0) {
+        showIVDecisionsStatus('يرجى تحديد طالب واحد على الأقل', false);
+        return;
+    }
+
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ الإنشاء...';
+    showIVDecisionsStatus('', true);
+
+    var fd = new FormData();
+    fd.append('selected_submission_ids_json', JSON.stringify(selIds));
+
+    try {
+        var resp = await fetch('/api/fill-iv-assessment-decisions/' + batchId,
+                               { method: 'POST', body: fd });
+        var data = await resp.json();
+
+        if (data.success) {
+            var links = '';
+            if (data.zip_url) {
+                links = '<br><a href="' + data.zip_url + '" download '
+                      + 'style="color:#fbbf24;text-decoration:underline;display:inline-block;margin-top:8px;">'
+                      + '<i class="fa-solid fa-file-zipper"></i> تحميل الكل (ZIP)</a>';
+            } else if (data.file_url) {
+                links = '<br><a href="' + data.file_url + '" download="' + (data.filename||'') + '" '
+                      + 'style="color:#fbbf24;text-decoration:underline;display:inline-block;margin-top:8px;">'
+                      + '<i class="fa-solid fa-file-word"></i> تحميل الملف</a>';
+            }
+            if (data.files && data.files.length > 0 && data.files.length <= 15) {
+                links += '<div style="margin-top:8px;">';
+                data.files.forEach(function(f) {
+                    links += '<a href="/api/download-assessment-record/' + encodeURIComponent(f) + '" download '
+                           + 'style="color:#fbbf24;display:block;margin:3px 0;font-size:12px;">'
+                           + '<i class="fa-solid fa-file-word" style="margin-left:4px;"></i>' + f + '</a>';
+                });
+                links += '</div>';
+            }
+            showIVDecisionsStatus(
+                '<i class="fa-solid fa-circle-check" style="margin-left:6px;"></i>' + data.message + links,
+                true
+            );
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> تم';
+        } else {
+            showIVDecisionsStatus(data.error || 'حدث خطأ غير متوقع', false);
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fa-solid fa-clipboard-check"></i> إنشاء الوثائق';
+        }
+    } catch (e) {
+        showIVDecisionsStatus('خطأ في الاتصال بالخادم: ' + e.message, false);
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fa-solid fa-clipboard-check"></i> إنشاء الوثائق';
+    }
+}
+
+function showIVDecisionsStatus(msg, ok) {
+    var el = document.getElementById('ivDecisionsStatus');
+    el.style.display    = msg ? 'block' : 'none';
+    el.style.background = ok ? 'rgba(251,191,36,.1)'  : 'rgba(239,68,68,.1)';
+    el.style.border     = ok ? '1px solid rgba(251,191,36,.3)' : '1px solid rgba(239,68,68,.3)';
+    el.style.color      = ok ? '#fbbf24' : '#f87171';
+    el.innerHTML        = msg;
+}
+
+/* ── Pearson Evidence (Evidance IT + LA mapping) ── */
+function openSubjectEvidenceModal(subjBodyId, batchId) {
+    const body = document.getElementById(subjBodyId);
+    if (!body || !batchId) return;
+    const checkedCbs = Array.from(body.querySelectorAll('.student-cb:checked'));
+    if (checkedCbs.length === 0) {
+        alert('يرجى تحديد طالب واحد على الأقل');
+        return;
+    }
+    document.getElementById('evidenceBatchId').value = batchId;
+    const listEl = document.getElementById('evidenceStudentList');
+    listEl.innerHTML = '';
+    const nameLookup = {};
+    Object.values(batchStudentData).forEach(arr =>
+        arr.forEach(st => { nameLookup[st.id] = st.name; })
+    );
+    checkedCbs.forEach(cb => {
+        const sid = parseInt(cb.dataset.submissionId);
+        const name = nameLookup[sid] || ('طالب ' + sid);
+        const hasEv = cb.dataset.hasEvidence === '1';
+        const lbl = document.createElement('label');
+        lbl.className = 'modal-student-item';
+        lbl.innerHTML = '<input type="checkbox" data-sid="' + sid + '" checked>'
+            + '<span class="modal-student-name">' + name + '</span>'
+            + (hasEv ? '<span style="font-size:10px;color:#ffb347;margin-right:4px;"><i class="fa-solid fa-circle-check"></i> Evidence جاهز</span>' : '');
+        listEl.appendChild(lbl);
+    });
+    document.getElementById('evidenceModalStatus').style.display = 'none';
+    document.getElementById('evidenceModal').style.display = 'flex';
+}
+function closeEvidenceModal() {
+    document.getElementById('evidenceModal').style.display = 'none';
+}
+function showEvidenceStatus(msg, ok) {
+    const el = document.getElementById('evidenceModalStatus');
+    el.style.display = msg ? 'block' : 'none';
+    el.style.background = ok ? 'rgba(255,180,80,.1)' : 'rgba(239,68,68,.1)';
+    el.style.border = ok ? '1px solid rgba(255,180,80,.35)' : '1px solid rgba(239,68,68,.3)';
+    el.style.color = ok ? '#ffb347' : '#f87171';
+    el.innerHTML = msg;
+}
+async function submitEvidenceModal() {
+    const batchId = document.getElementById('evidenceBatchId').value;
+    const btn = document.getElementById('evidenceSubmitBtn');
+    const selIds = [];
+    document.querySelectorAll('#evidenceStudentList input[type=checkbox]:checked').forEach(cb => {
+        selIds.push(parseInt(cb.dataset.sid));
+    });
+    if (selIds.length === 0) {
+        showEvidenceStatus('يرجى تحديد طالب واحد على الأقل', false);
+        return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...';
+    showEvidenceStatus('', true);
+    try {
+        const fd = new FormData();
+        fd.append('selected_submission_ids_json', JSON.stringify(selIds));
+        const res = await fetch('/api/fill-evidence-records/' + batchId, { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.success) {
+            let links = '';
+            if (data.zip_url) {
+                links = '<br><a href="' + data.zip_url + '" download style="color:#ffb347;text-decoration:underline;display:inline-block;margin-top:8px;">'
+                    + '<i class="fa-solid fa-file-zipper"></i> تحميل Evidence (ZIP)</a>';
+            }
+            showEvidenceStatus('<i class="fa-solid fa-circle-check" style="margin-left:6px;"></i>' + data.message + links, true);
+            selIds.forEach(sid => {
+                const badge = document.getElementById('ev-badge-' + sid);
+                if (badge) {
+                    badge.textContent = 'أدلة: 2';
+                    badge.style.background = 'rgba(255,180,80,.12)';
+                    badge.style.border = '1px solid rgba(255,180,80,.35)';
+                    badge.style.color = '#ffb347';
+                }
+                const cb = document.querySelector('.student-cb[data-submission-id="' + sid + '"]');
+                if (cb) cb.dataset.hasEvidence = '1';
+            });
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> تم';
+        } else {
+            showEvidenceStatus(data.error || 'فشل إنشاء Evidence', false);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> إنشاء Evidence';
+        }
+    } catch (e) {
+        showEvidenceStatus('خطأ في الاتصال: ' + e.message, false);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> إنشاء Evidence';
+    }
+}
+async function generateStudentEvidence(submissionId, btnEl) {
+    if (!confirm('إنشاء ملفي Evidence Pearson لهذا الطالب؟')) return;
+    const orig = btnEl.innerHTML;
+    btnEl.disabled = true;
+    btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    try {
+        const res = await fetch('/api/fill-evidence-records-for-student/' + submissionId, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            const badge = document.getElementById('ev-badge-' + submissionId);
+            if (badge) {
+                badge.textContent = 'أدلة: 2';
+                badge.style.background = 'rgba(255,180,80,.12)';
+                badge.style.border = '1px solid rgba(255,180,80,.35)';
+                badge.style.color = '#ffb347';
+            }
+            const cb = document.querySelector('.student-cb[data-submission-id="' + submissionId + '"]');
+            if (cb) cb.dataset.hasEvidence = '1';
+            if (data.zip_url) {
+                window.location.href = data.zip_url;
+            }
+            btnEl.innerHTML = '<i class="fa-solid fa-check"></i> Evidence';
+        } else {
+            alert(data.error || 'فشل إنشاء Evidence');
+            btnEl.innerHTML = orig;
+            btnEl.disabled = false;
+        }
+    } catch (e) {
+        alert('خطأ: ' + e.message);
+        btnEl.innerHTML = orig;
+        btnEl.disabled = false;
+    }
+}
+</script>
+
+{% endblock %}

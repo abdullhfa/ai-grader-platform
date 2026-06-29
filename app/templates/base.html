@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ app_title }}{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0d9488',      /* Teal 700 - Green */
+                        'primary-light': '#14b8a6', /* Teal 500 */
+                        secondary: '#f97316',    /* Orange 500 - Energetic Action */
+                        accent: '#f59e0b',       /* Amber/Gold */
+                        surface: '#FFFFFF',
+                        border: '#e2e8f0',
+                        'text-main': '#1e293b',  /* Slate 800 */
+                        'text-muted': '#64748b', /* Slate 500 */
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Shared Styles -->
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-light: #14b8a6;
+            --secondary: #f97316;
+            --bg-light: #f8fafc;
+            --black: #000000;
+            --cream: #F5EDE0;
+            --gold: #FFA500;
+            --gold-dark: #E08C00;
+            --card-dark: #0D0D0D;
+            --dark-text: #1A1728;
+            --gray-text: #999999;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background-color: var(--bg-light);
+            color: #1F2937;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-hover-effect:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ═══════════════════════════════════════════════════════ */
+        /* UNIFIED DARK NAVBAR                                     */
+        /* ═══════════════════════════════════════════════════════ */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background-color: var(--black);
+            height: 104px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+            border-bottom: 1px solid #222;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-left a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-image {
+            height: 98px;
+            width: auto;
+            object-fit: contain;
+            mix-blend-mode: screen;
+            filter: brightness(1.1);
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: var(--gold);
+            font-size: 15px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 165, 0, 0.12);
+        }
+
+        .nav-link.active {
+            color: var(--white);
+            font-weight: 700;
+            background-color: rgba(255, 165, 0, 0.15);
+        }
+
+        .nav-right {
+            color: var(--gold);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-right a {
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .nav-right a:hover {
+            opacity: 0.85;
+        }
+
+        .remaining-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(56, 239, 125, 0.15);
+            color: #38ef7d;
+            border: 1px solid rgba(56, 239, 125, 0.3);
+            white-space: nowrap;
+        }
+        .remaining-badge.low {
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+            border-color: rgba(251, 146, 60, 0.3);
+        }
+        .remaining-badge.empty {
+            background: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.3);
+        }
+
+        /* BURGER MENU (Mobile) */
+        .burger-menu {
+            display: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 8px;
+        }
+
+        /* Mobile Nav Overlay */
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .mobile-nav-overlay.active {
+            display: flex;
+        }
+
+        .mobile-nav-overlay .nav-link {
+            font-size: 20px;
+            padding: 12px 24px;
+        }
+
+        .mobile-nav-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .navbar {
+                padding: 0 20px;
+                height: 80px;
+            }
+
+            .logo-image {
+                height: 66px;
+            }
+
+            .logo-text {
+                font-size: 17px;
+            }
+
+            .nav-center,
+            .nav-right {
+                display: none;
+            }
+
+            .burger-menu {
+                display: block;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════ */
+        /* PRINT STYLES                                            */
+        /* ═══════════════════════════════════════════════════════ */
+        @media print {
+            /* Hide non-printable elements */
+            .navbar,
+            .burger-menu,
+            .mobile-menu,
+            .print-hide,
+            [class*="fixed bottom-8"],
+            [class*="animate-bounce"],
+            button[onclick*="print"],
+            a[href*="batch-grade"],
+            [class*="fixed bottom-0"] {
+                display: none !important;
+            }
+
+            /* Reset layout for printing */
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 12pt !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            /* Fix overflow-hidden clipping content */
+            .glass-card,
+            [class*="overflow-hidden"],
+            .overflow-hidden {
+                overflow: visible !important;
+            }
+
+            /* Remove shadows and unnecessary decorations */
+            .shadow-lg, .shadow-xl, .shadow-sm, .shadow {
+                box-shadow: none !important;
+            }
+
+            /* Ensure backgrounds print */
+            .bg-green-100, .bg-red-100, .bg-yellow-100, .bg-blue-100,
+            .bg-gray-100, .bg-green-50, .bg-red-50 {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Page break management */
+            .space-y-8 > div {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Remove fixed/sticky positioning */
+            * {
+                position: static !important;
+            }
+
+            main, main * {
+                position: relative !important;
+            }
+
+            /* Remove decorative blurs */
+            [class*="blur-"] {
+                display: none !important;
+            }
+
+            /* Remove spacers for fixed footers */
+            .h-20 {
+                display: none !important;
+            }
+
+            /* Ensure full width */
+            .container, .max-w-5xl {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            /* Remove hover/transition effects */
+            * {
+                transition: none !important;
+                transform: none !important;
+            }
+        }
+
+        a.pro-upgrade-link,
+        a.diag-status-pro {
+            color: #fbbf24;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        a.pro-upgrade-link:hover,
+        a.diag-status-pro:hover {
+            color: #fde68a;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/static/css/background_grading.css?v=20260529b">
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="min-h-screen">
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- UNIFIED DARK NAVBAR                                     -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    {% block navbar %}
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/dashboard">
+                <div class="logo-box">
+                    <img src="/static/images/logo.png" alt="BTEC Teachers" class="logo-image">
+                </div>
+                <div class="logo-text"><span style="color:#FFA500;font-weight:900">BTEC</span> Teachers</div>
+            </a>
+        </div>
+        <div class="nav-center">
+            <a href="/dashboard" class="nav-link {% block nav_home %}{% endblock %}">الصفحة الرئيسية</a>
+            {% if subscription and subscription.has_subscription %}<a href="/model-answers" class="nav-link {% block nav_model_answers %}{% endblock %}">إنشاء دليل حل المهمة</a>{% endif %}
+            <a href="/smart-grader" class="nav-link {% block nav_create %}{% endblock %}">المقيم الذكي</a>
+            <a href="/graded-students" class="nav-link {% block nav_graded %}{% endblock %}">إنشاء سجلات التقييم</a>
+            {% if user and user.role and user.role.value == 'admin' %}
+                <a href="/settings" class="nav-link {% block nav_settings %}{% endblock %}">الإعدادات</a>
+            {% endif %}
+        </div>
+        <div class="nav-right">
+            {% if user %}
+                {% if user.role and user.role.value == 'admin' %}
+                    <a href="/admin" style="color: #FFB300; font-weight: 700;">لوحة الإدارة</a>
+                {% endif %}
+                {% if subscription and subscription.has_subscription and user.role and user.role.value != 'admin' %}
+                    {% if subscription.grading_mode %}
+                        {% set _is_fast = subscription.grading_mode == 'fast' %}
+                        <span title="{{ subscription.grading_profile_description or subscription.grading_profile_label or '' }}" style="display:inline-flex; align-items:center; gap:6px; margin-left:10px; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700; border:1px solid {% if _is_fast %}rgba(251,191,36,.45){% else %}rgba(56,239,125,.45){% endif %}; color:{% if _is_fast %}#fcd34d{% else %}#86efac{% endif %}; background:{% if _is_fast %}rgba(251,191,36,.12){% else %}rgba(56,239,125,.12){% endif %}; cursor:help; max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            {{ subscription.grading_profile_label or (_is_fast and 'Basic — سريع' or 'Pro — موثّق') }}
+                        </span>
+                    {% endif %}
+                    {% if subscription.subject_details and subscription.subject_details|length > 0 %}
+                        <span style="display:inline-flex; flex-direction:column; align-items:flex-end; gap:2px; margin-left:12px;">
+                        {% for sd in subscription.subject_details %}
+                            {% set _sd_rem = sd.remaining|default(0) %}
+                            <span class="remaining-badge{% if _sd_rem <= 0 %} empty{% elif _sd_rem <= 2 %} low{% endif %}" style="font-size:11px; padding:2px 8px;">
+                                {{ sd.subject }}: {{ _sd_rem }} متبقي
+                            </span>
+                        {% endfor %}
+                        </span>
+                    {% else %}
+                        {% set _rem = subscription.remaining|default(0) %}
+                        <span class="remaining-badge{% if _rem <= 0 %} empty{% elif _rem <= 2 %} low{% endif %}" style="margin-left: 12px;">
+                            <i class="fa-solid fa-file-lines" style="font-size: 11px;"></i>
+                            الرصيد {{ _rem }} تصحيح
+                        </span>
+                    {% endif %}
+                {% endif %}
+                <span style="color: #FFB300;">أهلاً، {{ user.first_name or user.name or user.email }}</span>
+                <a href="/logout" style="color: #999; font-size: 14px;">تسجيل خروج</a>
+            {% else %}
+                <a href="/login" style="color: var(--gold);">دخول / تسجيل</a>
+            {% endif %}
+        </div>
+        <button class="burger-menu" onclick="document.getElementById('mobileNav').classList.add('active')">
+            ☰
+        </button>
+    </nav>
+
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNav">
+        <button class="mobile-nav-close" onclick="document.getElementById('mobileNav').classList.remove('active')">✕</button>
+        <a href="/dashboard" class="nav-link">الصفحة الرئيسية</a>
+        {% if subscription and subscription.has_subscription %}<a href="/model-answers" class="nav-link">إنشاء دليل حل المهمة</a>{% endif %}
+        <a href="/smart-grader" class="nav-link">المقيم الذكي</a>
+        <a href="/graded-students" class="nav-link">إنشاء سجلات التقييم</a>
+        {% if user and user.role and user.role.value == 'admin' %}
+            <a href="/settings" class="nav-link">الإعدادات</a>
+        {% endif %}
+        {% if user %}
+            {% if user.role and user.role.value == 'admin' %}
+                <a href="/admin" class="nav-link" style="color: #FFB300;">لوحة الإدارة</a>
+            {% endif %}
+            {% if subscription and subscription.has_subscription and user.role and user.role.value != 'admin' %}
+                {% if subscription.grading_mode %}
+                    {% set _is_fast_mobile = subscription.grading_mode == 'fast' %}
+                    <span title="{{ subscription.grading_profile_description or subscription.grading_profile_label or '' }}" style="display:inline-flex; align-items:center; gap:6px; margin:6px 0 8px 0; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:700; border:1px solid {% if _is_fast_mobile %}rgba(251,191,36,.45){% else %}rgba(56,239,125,.45){% endif %}; color:{% if _is_fast_mobile %}#fcd34d{% else %}#86efac{% endif %}; background:{% if _is_fast_mobile %}rgba(251,191,36,.12){% else %}rgba(56,239,125,.12){% endif %}; cursor:help;">
+                        {{ subscription.grading_profile_label or (_is_fast_mobile and 'Basic — سريع' or 'Pro — موثّق') }}
+                    </span>
+                {% endif %}
+                {% if subscription.subject_details and subscription.subject_details|length > 0 %}
+                    {% for sd in subscription.subject_details %}
+                        {% set _sd_rem2 = sd.remaining|default(0) %}
+                        <span class="remaining-badge{% if _sd_rem2 <= 0 %} empty{% elif _sd_rem2 <= 2 %} low{% endif %}" style="font-size: 14px; padding: 6px 16px;">
+                            {{ sd.subject }}: {{ _sd_rem2 }} متبقي
+                        </span>
+                    {% endfor %}
+                {% else %}
+                    {% set _rem2 = subscription.remaining|default(0) %}
+                    <span class="remaining-badge{% if _rem2 <= 0 %} empty{% elif _rem2 <= 2 %} low{% endif %}" style="font-size: 14px; padding: 6px 16px;">
+                        <i class="fa-solid fa-file-lines"></i>
+                        الرصيد {{ _rem2 }} تصحيح
+                    </span>
+                {% endif %}
+            {% endif %}
+            <span style="color: #FFB300; font-size: 16px;">أهلاً، {{ user.first_name or user.name or user.email }}</span>
+            <a href="/logout" class="nav-link" style="color: #999;">تسجيل خروج</a>
+        {% else %}
+            <a href="/login" class="nav-link">دخول / تسجيل</a>
+        {% endif %}
+    </div>
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+
+    <!-- Custom JS -->
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/background_grading.js?v=20260529b"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

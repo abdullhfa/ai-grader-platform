@@ -1,0 +1,22 @@
+{
+  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+  "session_id": "a1a32110-a4da-41bb-8142-229afd9af391",
+  "snapshot_root": "uploads\\replay_snapshots\\Memory_Game_Design_Document_COMPLETE\\a1a32110-a4da-41bb-8142-229afd9af391",
+  "sections": [
+    "runtime",
+    "gameplay",
+    "timeline",
+    "evidence",
+    "ai_reasoning",
+    "grading_summary"
+  ],
+  "replay_schema_version": "1.0",
+  "reasoning_schema_version": "1.0",
+  "audit_schema_version": "1.0",
+  "evidence_schema_version": "1.0",
+  "gameplay_schema_version": "1.0",
+  "governance_schema_version": "1.0",
+  "platform_version": "1.0.0-institutional",
+  "truth_anchor": "replay_snapshot_canonical",
+  "deterministic_hash": "48fb5fae08413a447327a8c28b183ae3ce34666945b5c68d4b16a81bf6ab2dd2"
+}

@@ -1,0 +1,40 @@
+{
+  "run_purpose": "Video presence & frame extraction only — no vision semantics.",
+  "cases": [
+    {
+      "case_id": "case_a_gameplay_video",
+      "expected_note": "Named like gameplay + Unity collision code; frames extract into runtime_video_frames; corroboration should list video_frame modality with low tier.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_b_menu_only_video",
+      "expected_note": "menu in filename; pipeline still extracts frames; observe noise flags vs screenshots/logs.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_c_static_video",
+      "expected_note": "Uniform frames only; extraction count > 0 if OpenCV/ffmpeg works.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_d_very_short_video",
+      "expected_note": "Very few frames in source; expect low frame_count_extracted.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_e_video_no_other_runtime",
+      "expected_note": "Video only — expect video_noise_flags / corroboration_noise re linkage.",
+      "corroboration_observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": ""
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+{"timestamp": 1782646576.1584406, "type": "session_created", "severity": "info", "source": "runtime", "payload": {"engine": "unity", "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpb0gb86bf"}}
+{"timestamp": 1782646576.1584523, "type": "test_event", "severity": "info", "source": "runtime", "payload": {}}

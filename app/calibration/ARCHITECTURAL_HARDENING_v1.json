@@ -1,0 +1,104 @@
+{
+  "phase_id": "ARCHITECTURAL_HARDENING_v1",
+  "phase_name_en": "Architectural Hardening",
+  "phase_name_not_en": "Feature Expansion",
+  "status": "recommended_active",
+  "mode": "clarity_under_restraint",
+  "started_at": "2026-05-25T18:00:00Z",
+  "follows": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "precedes": [
+    "LIVE_CONSTITUTIONAL_VALIDATION_v1_resume",
+    "LIMITED_RUNTIME_VALIDATION_v1"
+  ],
+  "institutional_question_en": "Can the architecture become smaller without losing its constitutional protections?",
+  "institutional_question_ar": "هل يمكن للـ architecture أن تصغر دون فقدان الحماية الدستورية؟",
+  "supreme_risk_en": "epistemic architecture overload",
+  "supreme_risk_ar": "كثرة layers · invariants · quarantine states → organizational gravity",
+  "need_en": "clarity under restraint — not more intelligence",
+  "need_ar": "وضوح تحت القيد — لا ذكاء أكثر",
+  "capability_vs_legitimacy_en": "Technically ready for Step 6 capability — constitutionally not ready for legitimacy.",
+  "not_now": [
+    "step_6_limited_runtime_validation",
+    "major_new_features",
+    "observability_expansion",
+    "auto_inference",
+    "confidence_escalation",
+    "ai_validated_runtime",
+    "self_certification_via_ledger_population"
+  ],
+  "allowed_now": [
+    "invariant_distillation",
+    "artifact_consolidation",
+    "complexity_reduction",
+    "duplicate_removal",
+    "hardening_review",
+    "constitutional_core_freeze"
+  ],
+  "two_paths_forward": [
+    {
+      "path_id": "hardening_first",
+      "label_en": "Architectural hardening / simplification",
+      "recommended": true,
+      "goal_en": "Reduce complexity without losing constitutional protections"
+    },
+    {
+      "path_id": "constitutional_pilot_resume",
+      "label_en": "Resume constitutional pilot",
+      "recommended": false,
+      "until": "hardening_review_complete_or_explicit_waiver",
+      "goal_en": "Live human posture evidence before runtime validation"
+    }
+  ],
+  "step_6_blocked_evidence_gaps": [
+    {"requirement_en": "live constitutional evidence", "status": "paused"},
+    {"requirement_en": "human disagreement evidence", "status": "absent"},
+    {"requirement_en": "non-coercive observability proof", "status": "absent"},
+    {"requirement_en": "runtime psychological posture evidence", "status": "absent"},
+    {"requirement_en": "evidence against organizational gravity", "status": "absent"}
+  ],
+  "runtime_observability_prep_status": "capability_complete",
+  "step_6_status": "blocked_constitutionally",
+  "ledger_discipline_en": "runtime_observation_ledger.jsonl remains intentionally empty — refusal of self-certification",
+  "hardening_invariant_en": "Constitutional protection must remain comprehensible.",
+  "audit_question_en": "What currently exists only because earlier uncertainty was unresolved?",
+  "redundancy_audit": "app/calibration/REDUNDANCY_AUDIT_v1.json",
+  "hardening_actions_ordered": [
+    {
+      "step": 1,
+      "action_en": "Freeze constitutional core invariants (8 distilled)",
+      "artifact": "CONSTITUTIONAL_CORE_INVARIANTS_v1.json"
+    },
+    {
+      "step": 2,
+      "action_en": "Redundancy audit — unresolved uncertainty framing",
+      "artifact": "REDUNDANCY_AUDIT_v1.json",
+      "status": "complete",
+      "module": "app/redundancy_audit.py"
+    },
+    {
+      "step": 3,
+      "action_en": "Execute merge on protective_redundancy only",
+      "mode": "pending_facilitator_review",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "action_en": "Hardening gate review — illuminate vs organize",
+      "gate": "OBSERVATORY_POSTURE_GOVERNANCE_v1"
+    },
+    {
+      "step": 5,
+      "action_en": "Only then — decide constitutional pilot resume OR remain in restraint",
+      "gate": "explicit_facilitator_decision"
+    }
+  ],
+  "expansion_gate_en": "Does simplification illuminate? Or does complexity itself organize cognition?",
+  "if_overload_detected_en": "reduce surface area — do not add layers",
+  "state_file": "app/calibration/human_cohort_workshop/architectural_hardening_state.json",
+  "companions": [
+    "CONSTITUTIONAL_CORE_INVARIANTS_v1.json",
+    "REDUNDANCY_AUDIT_v1.json",
+    "RUNTIME_OBSERVABILITY_PREPARATION_v1.json",
+    "LIVE_CONSTITUTIONAL_VALIDATION_v1.json"
+  ]
+}

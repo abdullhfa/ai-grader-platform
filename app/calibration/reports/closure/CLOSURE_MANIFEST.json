@@ -1,0 +1,169 @@
+{
+  "schema": "institutional_closure_manifest_v1",
+  "generated_at": "2026-05-26T23:03:01Z",
+  "run_id": "institutional_closure_2026-05-26T230244Z",
+  "engineering_phases": "CLOSED",
+  "institutional_phases": "SCAFFOLDED_PENDING_HUMAN",
+  "trust_scores": {
+    "engineering_completion": 0.93,
+    "operational_readiness": 0.84,
+    "institutional_trust": 0.68,
+    "production_candidate": 0.86,
+    "note": "Institutional trust capped until human labels + pilot moderation"
+  },
+  "phases": {
+    "A": {
+      "status": "closed",
+      "submission_count": 25,
+      "paths": {
+        "systems": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\system_snapshots_all.json",
+        "disagreement": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\phase_a_disagreement.json",
+        "unresolved": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\unresolved_criteria_registry.json",
+        "kappa": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\kappa_report.json"
+      },
+      "summary": {
+        "agreement_rate": 0.6666666666666666,
+        "cohens_kappa": 0.0,
+        "weighted_rubric_accuracy": 0.6667,
+        "false_positives": 0,
+        "false_negatives": 1,
+        "ai_overclaim_rate": 0.0,
+        "criterion_mismatch_count": 2,
+        "replay_mismatch_count": 0,
+        "runtime_mismatch_count": 1,
+        "evidence_flag_count": 24,
+        "gold_rows_used": 3
+      },
+      "human_labels_seed": {
+        "record_count": 25,
+        "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_labels_v1.json"
+      }
+    },
+    "B": {
+      "status": "closed",
+      "batch_ids": [
+        1,
+        4,
+        5
+      ],
+      "taxonomy_counts": {
+        "missing_artifacts": 3,
+        "source_only": 22
+      },
+      "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\runtime_coverage_dashboard.json"
+    },
+    "C": {
+      "status": "closed",
+      "stable": "25/25",
+      "stable_rate": 1.0,
+      "paths": {
+        "audit": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\replay_audit_export.json",
+        "mismatches": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\replay_mismatch_registry.json"
+      }
+    },
+    "governance_calibration": {
+      "status": "partial_data",
+      "pilot_ready": false,
+      "taxonomy_matrix": [
+        {
+          "taxonomy_type": "no_runtime_build",
+          "count": 1,
+          "governance_decision": "submission policy",
+          "pct_of_mismatches": 50.0
+        },
+        {
+          "taxonomy_type": "overall_grade_mismatch",
+          "count": 1,
+          "governance_decision": "moderation review",
+          "pct_of_mismatches": 50.0
+        }
+      ],
+      "paths": {
+        "json": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\GOVERNANCE_CALIBRATION_CYCLE_v1.json",
+        "markdown": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\GOVERNANCE_CALIBRATION_CYCLE.md"
+      }
+    },
+    "D": {
+      "status": "closed",
+      "ok": true,
+      "returncode": 0,
+      "stdout_tail": "2026-05-27 02:02:51,522 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:02:51.522980Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:02:51,522 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=False\n2026-05-27 02:02:51,582 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:02:51.582632Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:02:51,582 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\n2026-05-27 02:02:56,600 [INFO] ai_grader.runtime.validation: runtime_validation status=timeout smoke=False\n2026-05-27 02:02:56,832 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:02:56.832957Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:02:56,832 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\nStress battery: 12/12 scenarios handled\n"
+    },
+    "E": {
+      "status": "closed",
+      "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\phase_e_production_hardening.json",
+      "checks": {
+        "/health": {
+          "status_code": 200,
+          "ok": true
+        },
+        "/api/health": {
+          "status_code": 200,
+          "ok": true
+        },
+        "/api/metrics": {
+          "status_code": 200,
+          "ok": true
+        },
+        "middleware_stack": [
+          "RateLimitMiddleware"
+        ],
+        "rate_limit_wired": {
+          "ok": true
+        },
+        "celery_queues": {
+          "ok": true,
+          "queues": [
+            "ai_grading",
+            "runtime_jobs",
+            "replay_jobs",
+            "ocr_jobs",
+            "calibration_jobs",
+            "dead_letter"
+          ]
+        },
+        "retry_async": {
+          "ok": true
+        },
+        "storage": {
+          "uploads_exists": true,
+          "students_exists": true,
+          "reports_exists": true
+        }
+      }
+    },
+    "tests": {
+      "http_e2e": {
+        "ok": true,
+        "returncode": 0,
+        "stdout_tail": "Database tables created successfully!\n[OK] Synced 13 subscription packages\n[OK] Initialized Gemini (OpenAI-compat) with model: gemini-2.5-flash\n",
+        "stderr_tail": "ound) ... ok\ntest_governance_contracts (__main__.TestHttpE2E.test_governance_contracts) ... ok\ntest_governance_freeze_registry (__main__.TestHttpE2E.test_governance_freeze_registry) ... ok\ntest_health_deep (__main__.TestHttpE2E.test_health_deep) ... ok\ntest_health_liveness (__main__.TestHttpE2E.test_health_liveness) ... ok\ntest_institutional_readiness_api (__main__.TestHttpE2E.test_institutional_readiness_api) ... ok\ntest_login_page (__main__.TestHttpE2E.test_login_page) ... ok\ntest_readiness (__main__.TestHttpE2E.test_readiness) ... ok\ntest_replay_cohort_registry (__main__.TestHttpE2E.test_replay_cohort_registry) ... ok\ntest_runtime_l4_gate (__main__.TestHttpE2E.test_runtime_l4_gate) ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 2.585s\n\nOK\n"
+      },
+      "replay": {
+        "ok": true,
+        "returncode": 0,
+        "stdout_tail": "",
+        "stderr_tail": "__main__.TestReplayDeterminism.test_event_replay_sorted_by_seq) ... D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\database.py:47: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)\n  Base = declarative_base()\nok\ntest_protected_digest_match (__main__.TestReplayDeterminism.test_protected_digest_match) ... ok\ntest_replay_hash_stable_ten_trials (__main__.TestReplayDeterminism.test_replay_hash_stable_ten_trials) ... ok\ntest_stale_log_uses_synthetic_reconstruction (__main__.TestReplayDeterminism.test_stale_log_uses_synthetic_reconstruction) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.365s\n\nOK\n"
+      },
+      "cohort": {
+        "ok": true,
+        "returncode": 0,
+        "stdout_tail": "2026-05-27 02:03:01,565 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:03:01.565657Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:03:01,565 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\n2026-05-27 02:03:01,625 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:03:01.625625Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:03:01,625 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=False\n2026-05-27 02:03:01,685 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:03:01.685312Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:03:01,685 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\n2026-05-27 02:03:01,685 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:03:01.685312Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:03:01,685 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\n2026-05-27 02:03:01,685 [INFO] ai_grader: {\"ts\": \"2026-05-26T23:03:01.685312Z\", \"event\": \"sandbox_observation_complete\", \"submission_id\": null, \"status\": \"completed\", \"artifact_count\": 1}\n2026-05-27 02:03:01,688 [INFO] ai_grader.runtime.validation: runtime_validation status=completed smoke=True\n",
+        "stderr_tail": "test_fixture_paths_stay_local (__main__.TestRuntimeCohort.test_fixture_paths_stay_local) ... ok\ntest_replay_trials_deterministic_hash (__main__.TestRuntimeCohort.test_replay_trials_deterministic_hash) ... ok\ntest_run_fixtures_cohort (__main__.TestRuntimeCohort.test_run_fixtures_cohort) ... D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\database.py:47: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)\n  Base = declarative_base()\nok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.648s\n\nOK\n"
+      }
+    },
+    "F": {
+      "status": "closed_scaffold",
+      "paths": {
+        "moderation_queue": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\moderation_queue.json",
+        "pending_human": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\pending_human_validation.json",
+        "rubric_freeze": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\rubric_freeze_v1.json",
+        "governance_release": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\governance_release_v1.json"
+      },
+      "moderation_queue_length": 25
+    }
+  },
+  "artifacts_dir": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure",
+  "system_knows_its_limits": true,
+  "exit_ok": true
+}

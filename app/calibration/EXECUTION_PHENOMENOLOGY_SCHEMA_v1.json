@@ -1,0 +1,7 @@
+{
+  "status": "superseded_by_compression",
+  "superseded_at": "2026-05-25T20:00:00Z",
+  "canonical": "app/calibration/PHENOMENOLOGY_MANIFEST_v1.json",
+  "domain": "execution",
+  "merge_id": "HARDENING_MERGE_1"
+}

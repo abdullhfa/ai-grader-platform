@@ -1,0 +1,86 @@
+{
+  "worksheet_id": "REPLAY_GATE_FORENSIC_WORKSHEET_v1",
+  "mode": "forensic_authority_walkthrough",
+  "not": "grading review · pass/fail decision",
+  "core_question_ar": "في أي لحظة بدأ النظام يعامل representation كأنه executable reality؟",
+  "sections_ordered": [
+    {"id": "A", "key": "raw_observation", "label_ar": "Raw observation — ما رُصد structurally"},
+    {"id": "B", "key": "representation_pressure", "label_ar": "Representation pressure — ضغط السرد/الوصف"},
+    {"id": "C", "key": "replay_timing", "label_ar": "Replay timing — متى فُتح replay vs متى تشكل الحكم"},
+    {"id": "D", "key": "provenance_continuity", "label_ar": "Provenance continuity — استمرارية المصدر"},
+    {"id": "E", "key": "authority_temptation", "label_ar": "Authority temptation — إغراء منح السلطة"},
+    {"id": "F", "key": "quarantine_enforcement", "label_ar": "Quarantine enforcement — تطبيق الحجر المعرفي"},
+    {"id": "G", "key": "final_eligibility_state", "label_ar": "Final eligibility — حالة أهلية السلطة"}
+  ],
+  "special_moments": [
+    {
+      "id": "moment_of_illegitimate_closure",
+      "label_ar": "Moment of illegitimate closure",
+      "prompt_ar": "الجملة/الصورة/الوصف الذي جعل «واضح أنها شغالة» قبل اكتمال replay/corroboration"
+    }
+  ],
+  "fields": [
+    {
+      "id": "closure_trigger_detected",
+      "type": "text",
+      "purpose_ar": "ما الذي سبّب الانتقال النفسي من observation → legitimacy — أو none",
+      "required": true
+    },
+    {
+      "id": "comparison_with_reference_session",
+      "type": "comparison_table",
+      "optional": true,
+      "purpose_ar": "مقارنة مباشرة مع session مرجعي (e.g. #2 vs #3)"
+    },
+    {
+      "id": "restraint_anchor_detected",
+      "type": "anchor_list",
+      "optional": true,
+      "session_focus": [4],
+      "purpose_ar": "ما الذي منع التحول من representation → authority — نواة AUTHORITY_TRIAD_LANGUAGE_v1",
+      "anchor_types_ar": [
+        "language hedging",
+        "explicit HOLD persistence",
+        "absence acknowledgment",
+        "refusal to upgrade despite structured documentation"
+      ]
+    },
+    {
+      "id": "runtime_authority_gap",
+      "type": "gap_analysis",
+      "optional": true,
+      "session_focus": [13],
+      "purpose_ar": "الفرق بين وجود executable وبين إمكانية منحه authority فعليًا — وجود executable ≠ اكتمال provenance"
+    },
+    {
+      "id": "temptation_classification",
+      "type": "enum_multi",
+      "optional": true,
+      "session_focus": [13],
+      "options": [
+        {"id": "representational_temptation", "definition_ar": "GDD / screenshots / narrative"},
+        {"id": "executable_temptation", "definition_ar": "وجود runtime artifact غير مكتمل provenance"}
+      ],
+      "purpose_ar": "تصنيف نوع الإغراء — Batch 4 عالج أساسًا representational؛ #13 أول executable test"
+    },
+    {
+      "id": "authority_language_first_at",
+      "type": "enum",
+      "options": ["before_replay", "during_replay", "after_replay", "never"],
+      "required": true
+    },
+    {
+      "id": "gate_pass_fail",
+      "type": "gates",
+      "gate_ids": [
+        "representation_detected",
+        "runtime_claim_detected",
+        "provenance_replay_completed",
+        "corroboration_evaluated",
+        "authority_eligibility_unlocked"
+      ]
+    }
+  ],
+  "success_test_ar": "هل يستطيع النظام البقاء داخل epistemic quarantine حتى عندما يبدو السرد مقنعًا بالكامل؟",
+  "success_test_executable_ar": "هل يستطيع النظام رفض authority حتى عند وجود executable، إذا كانت provenance continuity غير مكتملة؟"
+}

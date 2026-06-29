@@ -1,0 +1,20 @@
+<section id="sec-evidence" class="gov-panel evidence-tree">
+  <h3 class="font-bold mb-3">Evidence Graph</h3>
+  {% if investigation.evidence.criteria %}
+  <p class="text-xs text-gray-500 mb-3">{{ investigation.evidence.total_nodes }} evidence nodes across {{ investigation.evidence.criteria | length }} criteria</p>
+  {% for crit in investigation.evidence.criteria %}
+  <details class="evidence-criterion" open>
+    <summary>{{ crit.criterion_id }} — avg confidence {{ (crit.avg_confidence * 100) | int }}%</summary>
+    {% for node in crit.nodes %}
+    <div class="evidence-node node-{{ node.status }}">
+      <span class="font-mono text-[10px] text-gray-400">{{ node.node_id }}</span>
+      <p class="font-medium">{{ node.claim or '—' }}</p>
+      <p class="text-xs text-gray-500">source: {{ node.source or '—' }} · {{ node.confidence_pct }}% · {{ node.status }}</p>
+    </div>
+    {% endfor %}
+  </details>
+  {% endfor %}
+  {% else %}
+  <p class="text-sm text-gray-500">No evidence graph in replay bundle.</p>
+  {% endif %}
+</section>

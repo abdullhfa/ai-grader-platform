@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-grader.local/schemas/reasoning.schema.json",
+  "title": "EvidenceReasoningSession",
+  "type": "object",
+  "required": ["status"],
+  "properties": {
+    "status": { "type": "string", "enum": ["completed", "disabled", "queued", "error"] },
+    "submission_key": { "type": "string" },
+    "session_id": { "type": "string" },
+    "final_decision": {
+      "type": "object",
+      "properties": {
+        "decision": { "type": "string" },
+        "confidence": { "type": "number" },
+        "requires_manual_review": { "type": "boolean" },
+        "reasoning_rejected": { "type": "boolean" }
+      }
+    },
+    "criterion_graphs": { "type": "array" },
+    "agent_opinions": { "type": "array" },
+    "hallucination_guard": { "type": "object" },
+    "replay_snapshot": { "type": "object" }
+  }
+}

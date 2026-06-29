@@ -1,0 +1,22 @@
+{
+  "cohort_layer": "false_confidence",
+  "governance_rehearsal": true,
+  "not_ai_benchmark": true,
+  "expected_ambiguity": "high",
+  "intended_disagreement": false,
+  "evidence_completeness": "low",
+  "fake_confidence_risk": "high",
+  "expected_governance_behaviour": [
+    "corroboration_pressure",
+    "pattern_or_ocr_not_sufficient_alone",
+    "fp_risk_if_system_achieved"
+  ],
+  "assessor_split_note": "",
+  "evaluate": [
+    "uncertainty_visible",
+    "hold_when_expected",
+    "corroboration_pressure",
+    "advisory_stays_advisory",
+    "explanation_auditable"
+  ]
+}

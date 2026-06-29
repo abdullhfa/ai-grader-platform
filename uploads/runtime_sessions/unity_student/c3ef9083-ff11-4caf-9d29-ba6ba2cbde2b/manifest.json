@@ -1,0 +1,136 @@
+{
+  "session_id": "c3ef9083-ff11-4caf-9d29-ba6ba2cbde2b",
+  "engine": "unity",
+  "submission_key": "unity_student",
+  "status": "completed",
+  "capabilities": {
+    "supports_headless": true,
+    "supports_input_simulation": true,
+    "supports_screenshots": true,
+    "supports_video_capture": true,
+    "supports_network_isolation": false,
+    "supports_gpu": true,
+    "supports_audio": false,
+    "supports_build_from_source": true,
+    "supports_playmode_tests": true,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "signals": {
+    "unity_layout": {
+      "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpvf9_ge95",
+      "executable": null,
+      "unity_version": "2022.3.10f1",
+      "scene_paths": [],
+      "scene_count": 0,
+      "has_source_project": true,
+      "has_build_executable": false,
+      "build_confidence": "none",
+      "detection_method": "layout_probe"
+    },
+    "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpvf9_ge95",
+    "scene_validation": {
+      "scene_count": 0,
+      "scenes_present": [],
+      "scenes_missing": [],
+      "build_settings_scene_count": 0,
+      "validation_passed": false,
+      "has_playable_scene": false,
+      "packages_manifest_present": false
+    },
+    "unity_static_analysis": {
+      "mode": "unity_static_analysis",
+      "scene_validation": {
+        "scene_count": 0,
+        "scenes_present": [],
+        "scenes_missing": [],
+        "build_settings_scene_count": 0,
+        "validation_passed": false,
+        "has_playable_scene": false,
+        "packages_manifest_present": false
+      },
+      "manifest_validation": {
+        "manifest_present": false,
+        "package_conflicts": [],
+        "warnings": [
+          "packages_manifest_missing"
+        ]
+      },
+      "script_count": 0,
+      "sample_scripts": [],
+      "unity_version_hint": "2022.3.10f1",
+      "completeness_hint": 0.35,
+      "gameplay_inference": {
+        "has_scenes": false,
+        "has_scripts": false,
+        "likely_playable": false
+      }
+    },
+    "runtime_method": "unity_static_only"
+  },
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": false,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782646634.482087,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "unity",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpvf9_ge95"
+      }
+    },
+    {
+      "timestamp": 1782646634.482908,
+      "type": "unity_detected",
+      "severity": "info",
+      "source": "unity_engine",
+      "payload": {
+        "has_source": true,
+        "has_build": false,
+        "scene_count": 0
+      }
+    },
+    {
+      "timestamp": 1782646634.4830663,
+      "type": "scene_validation_complete",
+      "severity": "info",
+      "source": "unity_engine",
+      "payload": {
+        "validation_passed": false,
+        "scene_count": 0
+      }
+    }
+  ],
+  "screenshots": [],
+  "logs": [],
+  "errors": [
+    "unity_source_without_executable"
+  ],
+  "artifacts": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

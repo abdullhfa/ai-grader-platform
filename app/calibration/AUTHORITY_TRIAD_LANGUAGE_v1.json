@@ -1,0 +1,211 @@
+{
+  "artifact_id": "AUTHORITY_TRIAD_LANGUAGE_v1",
+  "status": "design",
+  "path": "A",
+  "activation": "advisory_only_no_grading_wire",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "batch_id": 4,
+  "prerequisite_artifacts": [
+    "REPLAY_GATE_DISCIPLINE_v1",
+    "REPLAY_GATE_MITIGATION_WORKSHOP_v1"
+  ],
+  "workshop_sessions_lineage": [
+    {"session": 3, "submission_id": 3, "pattern_ar": "كيف يتحول السرد إلى legitimacy", "temptation_type": "representational"},
+    {"session": 2, "submission_id": 2, "pattern_ar": "كيف يبقى quarantine مستقرًا طبيعيًا", "temptation_type": "none_low"},
+    {"session": 4, "submission_id": 4, "pattern_ar": "كيف يُحافظ على restraint تحت temptation", "temptation_type": "representational_partial"},
+    {"session": 13, "submission_id": 13, "pattern_ar": "executable presence illusion of completion", "temptation_type": "executable_representational"}
+  ],
+  "institutional_axiom_ar": "اللغة نفسها كانت جزءًا من آلية منح السلطة، وليست مجرد وصف محايد للحكم.",
+  "institutional_axiom_en": "vocabulary drift is authority formation",
+  "authority_triad": [
+    {
+      "id": "observation",
+      "label_ar": "ملاحظة",
+      "language_rule_ar": "يتحدث عما شوهد structurally — لا يُضمن criterion achieved",
+      "max_linguistic_authority": "acknowledgment"
+    },
+    {
+      "id": "representation",
+      "label_ar": "تمثيل",
+      "language_rule_ar": "يتحدث عما وُصف/وُثِّق — لا يُترجم إلى executable reality",
+      "max_linguistic_authority": "description_only"
+    },
+    {
+      "id": "executable_authority",
+      "label_ar": "سلطة تنفيذية",
+      "language_rule_ar": "يتحدث عما corroborate تشغيله — لا يُمنح بوجود ملف alone",
+      "max_linguistic_authority": "human_L5_or_sandbox_L4_post_unlock"
+    }
+  ],
+  "forbidden_authority_shortcuts": {
+    "applies_when": [
+      "epistemic_quarantine_active",
+      "gate_3_provenance_replay_pass=false",
+      "gate_4_corroboration_unresolved"
+    ],
+    "markers_ar": [
+      "تم تحقيق المعيار",
+      "واضح أنها تعمل",
+      "الصور تؤكد التشغيل",
+      "الوصف يغطي المتطلبات",
+      "الكود يثبت التنفيذ",
+      "وجود exe يكفي",
+      "الملف التنفيذي موجود إذًا"
+    ],
+    "markers_en": [
+      "criterion achieved",
+      "clearly works",
+      "game verified",
+      "screenshots confirm gameplay",
+      "description covers requirements",
+      "code proves implementation",
+      "executable present therefore"
+    ],
+    "escalation_type": "premature_authority_escalation",
+    "session_evidence": {
+      "representational": 3,
+      "executable": 13,
+      "partial_legitimacy_gap": 13
+    }
+  },
+  "quarantine_safe_language": {
+    "core_phrases_ar": [
+      "تم رصد representation يشير إلى...",
+      "وجود artifact لا يكفي لإثبات التشغيل",
+      "runtime غير corroborated",
+      "الـ executable لم يُربط provenance-wise",
+      "الاستدلال الحالي وصفي وليس تنفيذيًا"
+    ],
+    "replacements": [
+      {
+        "forbidden_ar": "تم تحقيق المعيار",
+        "safe_ar": "أدلة جزئية تدعم المعيار — runtime غير corroborated"
+      },
+      {
+        "forbidden_ar": "واضح أنها تعمل",
+        "safe_ar": "تم رصد representation يشير إلى سلوك محتمل — لم يُتحقق تشغيليًا"
+      },
+      {
+        "forbidden_ar": "الصور تؤكد التشغيل",
+        "safe_ar": "لقطات تُستخدم كاستدلال بصري استشاري — ليست corroboration"
+      },
+      {
+        "forbidden_ar": "الوصف يغطي المتطلبات",
+        "safe_ar": "العمل المقدم هو شرح للمعيار وليس تنفيذًا له",
+        "restraint_anchor_session": 4
+      },
+      {
+        "forbidden_ar": "الكود يثبت التنفيذ",
+        "safe_ar": "تحليل ساكن (بدون تشغيل) — وجود artifact لا يكفي لإثبات التشغيل"
+      },
+      {
+        "forbidden_ar": "exe موجود → verified",
+        "safe_ar": "رُصدت — لم تُشغَّل · الـ executable لم يُربط provenance-wise",
+        "restraint_anchor_session": 13
+      }
+    ],
+    "restraint_anchors_from_session_4": [
+      "observation_criterion_distinction",
+      "absence_acknowledgment",
+      "refusal_to_upgrade",
+      "explicit_hold_persistence"
+    ]
+  },
+  "authority_unlock_conditions": {
+    "all_required": [
+      {"id": "replay_completed", "gate": "gate_3_provenance_replay", "required": true},
+      {"id": "runtime_corroborated", "gate": "gate_4_corroboration", "required": true},
+      {"id": "provenance_continuity_preserved", "required": true},
+      {"id": "quarantine_lifted", "required": true}
+    ],
+    "blocking": [
+      {"id": "contradiction_unresolved", "required": false, "effect": "must resolve or explicit HOLD — blocks unlock"}
+    ],
+    "permitted_lexicon_after_unlock": {
+      "ar": ["مُتحقَّق (runtime)", "مؤكد (criterion)", "تم تحقيق / Achieved"],
+      "en": ["verified", "confirmed", "achieved"],
+      "note_ar": "Achieved never auto — human deliberation post-unlock only"
+    }
+  },
+  "epistemic_state_vocabulary": {
+    "states_ordered": [
+      {
+        "id": "observed",
+        "label_ar": "شوهد",
+        "meaning_ar": "رُصد structurally — file · hint · inventory",
+        "max_linguistic_authority": "acknowledgment"
+      },
+      {
+        "id": "represented",
+        "label_ar": "وُصف",
+        "meaning_ar": "docx · GDD · narrative — description tier",
+        "max_linguistic_authority": "description_only"
+      },
+      {
+        "id": "inferred",
+        "label_ar": "استُنتج",
+        "meaning_ar": "advisory inference — L2–L3 visual/temporal",
+        "max_linguistic_authority": "advisory_not_verification"
+      },
+      {
+        "id": "corroborated",
+        "label_ar": "تم دعمه",
+        "meaning_ar": "cross-artifact support post Gate 4",
+        "max_linguistic_authority": "partial_not_auto_achieved"
+      },
+      {
+        "id": "provenance_linked",
+        "label_ar": "مرتبط provenance-wise",
+        "meaning_ar": "replay complete · identity match · chain intact",
+        "max_linguistic_authority": "pre_eligibility"
+      },
+      {
+        "id": "authority_eligible",
+        "label_ar": "صالح للسلطة",
+        "meaning_ar": "Gate 5 unlock — may enter human criterion deliberation",
+        "max_linguistic_authority": "deliberation_not_auto_grant"
+      },
+      {
+        "id": "authority_granted",
+        "label_ar": "مُنحت له السلطة",
+        "meaning_ar": "human L5 · signed institutional verdict",
+        "max_linguistic_authority": "criterion_authority"
+      }
+    ],
+    "allowed_transitions": [
+      "observed → represented",
+      "represented → inferred",
+      "inferred → corroborated",
+      "corroborated → provenance_linked",
+      "provenance_linked → authority_eligible",
+      "authority_eligible → authority_granted"
+    ],
+    "forbidden_transitions": [
+      {"from": "represented", "to": "authority_granted", "session_evidence": 3},
+      {"from": "inferred", "to": "authority_granted", "session_evidence": [3, 13]},
+      {"from": "observed", "to": "authority_granted", "note": "exe file alone", "session_evidence": 13},
+      {"from": "represented", "to": "corroborated", "note": "without Gate 4", "session_evidence": 3}
+    ]
+  },
+  "temptation_classification": {
+    "representational_temptation": {
+      "definition_ar": "GDD / screenshots / narrative completeness",
+      "primary_forbidden": "الوصف يغطي المتطلبات",
+      "quarantine_counter": "الاستدلال الحالي وصفي وليس تنفيذيًا"
+    },
+    "executable_temptation": {
+      "definition_ar": "وجود runtime artifact غير مكتمل provenance",
+      "primary_forbidden": "exe موجود → verified",
+      "quarantine_counter": "رُصدت — لم تُشغَّل · provenance-wise غير مربوط"
+    }
+  },
+  "explicit_non_goals": [
+    "wire_to_automatic_grades_v1",
+    "replace_EVIDENCE_LANGUAGE_CONTRACTS",
+    "enable_L4_sandbox",
+    "auto_block_all_verification_words_globally_without_gate_context"
+  ],
+  "companion_md": "app/calibration/AUTHORITY_TRIAD_LANGUAGE_v1.md",
+  "companion_quarantine_contract": "app/calibration/EPISTEMIC_QUARANTINE_CONTRACT_v1.json",
+  "path_a_sequence_complete": true
+}

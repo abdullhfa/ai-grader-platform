@@ -1,0 +1,2 @@
+{"timestamp": 1782548221.2897134, "type": "session_created", "severity": "info", "source": "runtime", "payload": {"engine": "gamemaker", "root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx43"}}
+{"timestamp": 1782548263.102384, "type": "gamemaker_pro_runtime_verification", "severity": "info", "source": "runtime", "payload": {"objects": 1, "rooms": 0, "gameplay": true}}

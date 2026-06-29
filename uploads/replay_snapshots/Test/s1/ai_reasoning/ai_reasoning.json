@@ -1,0 +1,712 @@
+{
+  "pipeline_version": "ai_reasoning_v1",
+  "submission_key": "Test",
+  "session_id": "s1",
+  "criterion_graphs": [
+    {
+      "criterion": "8/C.P5",
+      "criterion_level": "8/C.P5",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    },
+    {
+      "criterion": "C.P5",
+      "criterion_level": "C.P5",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    },
+    {
+      "criterion": "C.P6",
+      "criterion_level": "C.P6",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    },
+    {
+      "criterion": "P5",
+      "criterion_level": "",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    },
+    {
+      "criterion": "game_launch",
+      "criterion_level": "",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.9,
+      "corroboration_strength": "moderate",
+      "node_count": 3
+    },
+    {
+      "criterion": "gameplay_loop",
+      "criterion_level": "",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.825,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    },
+    {
+      "criterion": "lose_health",
+      "criterion_level": "",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    },
+    {
+      "criterion": "testing_evidence",
+      "criterion_level": "",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    },
+    {
+      "criterion": "win_lose_state",
+      "criterion_level": "",
+      "evidence_nodes": [
+        {
+          "node_id": "det:motion_detector:movement_detected",
+          "source": "gameplay",
+          "label": "movement_detected",
+          "confidence": 0.85,
+          "payload": {}
+        },
+        {
+          "node_id": "evt:movement_detected:1.0",
+          "source": "timeline",
+          "label": "movement_detected",
+          "confidence": 0.8,
+          "payload": {}
+        },
+        {
+          "node_id": "runtime:observed",
+          "source": "runtime",
+          "label": "runtime_observed",
+          "confidence": 0.9,
+          "payload": {}
+        }
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "corroboration_strength": "strong",
+      "node_count": 3
+    }
+  ],
+  "agent_opinions": [
+    {
+      "agent_id": "gameplay_agent",
+      "verdict": "support",
+      "confidence": 0.92,
+      "summary": "Gameplay motion/progression signals present in temporal analysis.",
+      "evidence_refs": [
+        "det:motion_detector:movement_detected"
+      ],
+      "concerns": []
+    },
+    {
+      "agent_id": "runtime_agent",
+      "verdict": "support",
+      "confidence": 0.88,
+      "summary": "Runtime launch observed with stable smoke session.",
+      "evidence_refs": [
+        "runtime:observed"
+      ],
+      "concerns": []
+    },
+    {
+      "agent_id": "academic_agent",
+      "verdict": "support",
+      "confidence": 0.855,
+      "summary": "BTEC evidence sufficient for 5/9 mapped criteria hints.",
+      "evidence_refs": [
+        "graph:8/C.P5",
+        "graph:C.P5",
+        "graph:P5",
+        "graph:game_launch",
+        "graph:gameplay_loop"
+      ],
+      "concerns": [
+        "weak_evidence:C.P6",
+        "weak_evidence:lose_health",
+        "weak_evidence:testing_evidence",
+        "weak_evidence:win_lose_state"
+      ]
+    },
+    {
+      "agent_id": "integrity_agent",
+      "verdict": "suspicious",
+      "confidence": 0.7,
+      "summary": "Integrity signals require human review.",
+      "evidence_refs": [
+        "integrity:ai_likelihood_high",
+        "integrity:source_build_mismatch"
+      ],
+      "concerns": [
+        "source_build_mismatch",
+        "high_ai_likelihood_text",
+        "unity_source_without_build"
+      ]
+    },
+    {
+      "agent_id": "reflection_agent",
+      "verdict": "uncertain",
+      "confidence": 0.55,
+      "summary": "Agent contradiction detected — reflection required before final decision.",
+      "evidence_refs": [],
+      "concerns": [
+        "integrity_suspicious_requires_review"
+      ]
+    }
+  ],
+  "final_decisions": {
+    "overall": {
+      "decision": "manual_review",
+      "weighted_confidence": 0.801,
+      "requires_manual_review": true,
+      "reasoning_rejected": false,
+      "agent_opinions": [
+        {
+          "agent_id": "gameplay_agent",
+          "verdict": "support",
+          "confidence": 0.92,
+          "summary": "Gameplay motion/progression signals present in temporal analysis.",
+          "evidence_refs": [
+            "det:motion_detector:movement_detected"
+          ],
+          "concerns": []
+        },
+        {
+          "agent_id": "runtime_agent",
+          "verdict": "support",
+          "confidence": 0.88,
+          "summary": "Runtime launch observed with stable smoke session.",
+          "evidence_refs": [
+            "runtime:observed"
+          ],
+          "concerns": []
+        },
+        {
+          "agent_id": "academic_agent",
+          "verdict": "support",
+          "confidence": 0.855,
+          "summary": "BTEC evidence sufficient for 5/9 mapped criteria hints.",
+          "evidence_refs": [
+            "graph:8/C.P5",
+            "graph:C.P5",
+            "graph:P5",
+            "graph:game_launch",
+            "graph:gameplay_loop"
+          ],
+          "concerns": [
+            "weak_evidence:C.P6",
+            "weak_evidence:lose_health",
+            "weak_evidence:testing_evidence",
+            "weak_evidence:win_lose_state"
+          ]
+        },
+        {
+          "agent_id": "integrity_agent",
+          "verdict": "suspicious",
+          "confidence": 0.7,
+          "summary": "Integrity signals require human review.",
+          "evidence_refs": [
+            "integrity:ai_likelihood_high",
+            "integrity:source_build_mismatch"
+          ],
+          "concerns": [
+            "source_build_mismatch",
+            "high_ai_likelihood_text",
+            "unity_source_without_build"
+          ]
+        },
+        {
+          "agent_id": "reflection_agent",
+          "verdict": "uncertain",
+          "confidence": 0.55,
+          "summary": "Agent contradiction detected — reflection required before final decision.",
+          "evidence_refs": [],
+          "concerns": [
+            "integrity_suspicious_requires_review"
+          ]
+        }
+      ],
+      "arbitration_notes": [
+        "integrity_agent_flagged_suspicious"
+      ]
+    }
+  },
+  "hallucination_flags": [],
+  "status": "completed",
+  "criterion_mapping": [
+    {
+      "criterion": "8/C.P5",
+      "required_evidence": [],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "evidence_sufficient": true,
+      "corroboration_strength": "strong"
+    },
+    {
+      "criterion": "C.P5",
+      "required_evidence": [
+        "runtime_observed",
+        "movement_detected",
+        "manual_playtest"
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "evidence_sufficient": true,
+      "corroboration_strength": "strong"
+    },
+    {
+      "criterion": "C.P6",
+      "required_evidence": [
+        "testing_documentation",
+        "input_simulated",
+        "manual_playtest"
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "evidence_sufficient": false,
+      "corroboration_strength": "strong"
+    },
+    {
+      "criterion": "P5",
+      "required_evidence": [],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "evidence_sufficient": true,
+      "corroboration_strength": "strong"
+    },
+    {
+      "criterion": "game_launch",
+      "required_evidence": [
+        "motion_detected",
+        "menu_ui_detected",
+        "scene_loaded",
+        "runtime_observed"
+      ],
+      "supporting_events": [
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.9,
+      "evidence_sufficient": true,
+      "corroboration_strength": "moderate"
+    },
+    {
+      "criterion": "gameplay_loop",
+      "required_evidence": [
+        "movement_detected",
+        "progression_detected",
+        "score_hud_detected"
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.825,
+      "evidence_sufficient": true,
+      "corroboration_strength": "strong"
+    },
+    {
+      "criterion": "lose_health",
+      "required_evidence": [
+        "death_detected",
+        "score_hud_detected"
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "evidence_sufficient": false,
+      "corroboration_strength": "strong"
+    },
+    {
+      "criterion": "testing_evidence",
+      "required_evidence": [
+        "input_simulated",
+        "fps_ok",
+        "testing_documentation"
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "evidence_sufficient": false,
+      "corroboration_strength": "strong"
+    },
+    {
+      "criterion": "win_lose_state",
+      "required_evidence": [
+        "win_detected",
+        "lose_detected"
+      ],
+      "supporting_events": [
+        "movement_detected",
+        "movement_detected",
+        "runtime_observed"
+      ],
+      "contradicting_events": [],
+      "confidence": 0.85,
+      "evidence_sufficient": false,
+      "corroboration_strength": "strong"
+    }
+  ],
+  "validation": {
+    "evidence_graphs": {
+      "valid": true,
+      "issues": [],
+      "graph_count": 9
+    },
+    "timeline": {
+      "valid": true,
+      "event_count": 1,
+      "duration_seconds": 0,
+      "issues": []
+    }
+  },
+  "hallucination_guard": {
+    "claims_detected": [
+      "movement_detected"
+    ],
+    "flags": [],
+    "reasoning_rejected": false,
+    "guard_version": "hallucination_guard_v1"
+  },
+  "final_decision": {
+    "decision": "manual_review",
+    "weighted_confidence": 0.801,
+    "requires_manual_review": true,
+    "reasoning_rejected": false,
+    "agent_opinions": [
+      {
+        "agent_id": "gameplay_agent",
+        "verdict": "support",
+        "confidence": 0.92,
+        "summary": "Gameplay motion/progression signals present in temporal analysis.",
+        "evidence_refs": [
+          "det:motion_detector:movement_detected"
+        ],
+        "concerns": []
+      },
+      {
+        "agent_id": "runtime_agent",
+        "verdict": "support",
+        "confidence": 0.88,
+        "summary": "Runtime launch observed with stable smoke session.",
+        "evidence_refs": [
+          "runtime:observed"
+        ],
+        "concerns": []
+      },
+      {
+        "agent_id": "academic_agent",
+        "verdict": "support",
+        "confidence": 0.855,
+        "summary": "BTEC evidence sufficient for 5/9 mapped criteria hints.",
+        "evidence_refs": [
+          "graph:8/C.P5",
+          "graph:C.P5",
+          "graph:P5",
+          "graph:game_launch",
+          "graph:gameplay_loop"
+        ],
+        "concerns": [
+          "weak_evidence:C.P6",
+          "weak_evidence:lose_health",
+          "weak_evidence:testing_evidence",
+          "weak_evidence:win_lose_state"
+        ]
+      },
+      {
+        "agent_id": "integrity_agent",
+        "verdict": "suspicious",
+        "confidence": 0.7,
+        "summary": "Integrity signals require human review.",
+        "evidence_refs": [
+          "integrity:ai_likelihood_high",
+          "integrity:source_build_mismatch"
+        ],
+        "concerns": [
+          "source_build_mismatch",
+          "high_ai_likelihood_text",
+          "unity_source_without_build"
+        ]
+      },
+      {
+        "agent_id": "reflection_agent",
+        "verdict": "uncertain",
+        "confidence": 0.55,
+        "summary": "Agent contradiction detected — reflection required before final decision.",
+        "evidence_refs": [],
+        "concerns": [
+          "integrity_suspicious_requires_review"
+        ]
+      }
+    ],
+    "arbitration_notes": [
+      "integrity_agent_flagged_suspicious"
+    ]
+  }
+}

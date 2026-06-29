@@ -1,0 +1,31 @@
+{
+  "release_id": "governance_release_v1",
+  "status": "pre_pilot_freeze_pending",
+  "frozen_at": null,
+  "rubric_version": "BTEC_8_GAME_DEV_v1",
+  "replay_engine_version": "1.0",
+  "replay_reducer_version": "1.0",
+  "governance_contract": "2.1",
+  "active_freeze_epoch": "epoch_2",
+  "ai_model_version": "gemini-2.5-flash",
+  "calibration_run_id": "institutional_closure_2026-05-26T230244Z",
+  "calibration_metrics": {
+    "agreement_rate": 0.6666666666666666,
+    "cohens_kappa": 0.0,
+    "replay_verification_rate": 1.0,
+    "gold_rows_used": 3,
+    "note_ar": "يُحدَّث تلقائياً — pilot freeze يتطلب توقيع مؤسسي"
+  },
+  "frozen_components": [
+    "deterministic_rubric_weights",
+    "replay_normalization",
+    "governance_scoring_epoch_2",
+    "evidence_completeness_gate_v1"
+  ],
+  "not_frozen_until_pilot": [
+    "ai_prompt_templates",
+    "ocr_thresholds",
+    "sandbox_timeout_defaults"
+  ],
+  "closure_run_at": "2026-05-26T23:03:01Z"
+}

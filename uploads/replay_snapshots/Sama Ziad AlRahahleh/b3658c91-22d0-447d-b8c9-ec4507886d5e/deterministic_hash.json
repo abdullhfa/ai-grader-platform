@@ -1,0 +1,22 @@
+{
+  "submission_key": "Sama Ziad AlRahahleh",
+  "session_id": "b3658c91-22d0-447d-b8c9-ec4507886d5e",
+  "snapshot_root": "uploads\\replay_snapshots\\Sama Ziad AlRahahleh\\b3658c91-22d0-447d-b8c9-ec4507886d5e",
+  "sections": [
+    "runtime",
+    "gameplay",
+    "timeline",
+    "evidence",
+    "ai_reasoning",
+    "grading_summary"
+  ],
+  "replay_schema_version": "1.0",
+  "reasoning_schema_version": "1.0",
+  "audit_schema_version": "1.0",
+  "evidence_schema_version": "1.0",
+  "gameplay_schema_version": "1.0",
+  "governance_schema_version": "1.0",
+  "platform_version": "1.0.0-institutional",
+  "truth_anchor": "replay_snapshot_canonical",
+  "deterministic_hash": "86a184c9edad067d9f5835aad08fb399ea83e3820cd912417f5bf1f17549adbb"
+}

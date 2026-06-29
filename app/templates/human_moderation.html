@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% block title %}مراجعة بشرية — Institutional Closure{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10 max-w-6xl" dir="rtl">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">المرحلة 1 — مراجعة المعلّم</h1>
+    <p class="text-gray-600 mb-4">
+        قارن حكمك مع النظام. لا تُحفظ قرارات إلا بضغطك أنت.
+    </p>
+    <p class="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm mb-6">
+        الملف: <code class="font-mono text-xs">{{ labels_path }}</code>
+    </p>
+
+    <div class="grid md:grid-cols-4 gap-4 mb-6">
+        <div class="glass-card rounded-xl p-4 border">
+            <p class="text-sm text-gray-500">موجة Abdullah</p>
+            <ul id="wave1" class="text-sm mt-2 space-y-1"></ul>
+        </div>
+        <div class="glass-card rounded-xl p-4 border">
+            <p class="text-sm text-gray-500">Top 5</p>
+            <ul id="wave2" class="text-sm mt-2 space-y-1"></ul>
+        </div>
+        <div class="glass-card rounded-xl p-4 border">
+            <p class="text-sm text-gray-500">Bottom 5</p>
+            <ul id="wave3" class="text-sm mt-2 space-y-1"></ul>
+        </div>
+        <div class="glass-card rounded-xl p-4 border">
+            <p class="text-sm text-gray-500">المعلّم</p>
+            <input id="reviewer" type="text" placeholder="اسم المراجع"
+                class="w-full border rounded-lg px-3 py-2 text-sm mt-1" value="ABDULAHFA">
+        </div>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-6">
+        <div class="flex flex-wrap gap-3 items-end mb-4">
+            <div>
+                <label class="text-sm font-bold text-gray-600">اختر تسليم</label>
+                <select id="submissionSelect" class="border rounded-lg px-3 py-2 text-sm min-w-[280px]"></select>
+            </div>
+            <button type="button" id="loadBtn"
+                class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg">تحميل</button>
+            <button type="button" id="acceptAiBtn"
+                class="bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold px-4 py-2 rounded-lg">
+                قبول اقتراحات النظام (بعد مراجعتك)
+            </button>
+            <button type="button" id="saveBtn"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2 rounded-lg">
+                حفظ المراجعة
+            </button>
+        </div>
+        <p id="status" class="text-sm text-gray-600 mb-4"></p>
+
+        <div id="detail" class="hidden">
+            <div class="flex flex-wrap gap-4 mb-4 text-sm">
+                <span>الطالب: <strong id="studentName"></strong></span>
+                <span>درجة النظام: <strong id="aiGrade" class="font-mono"></strong></span>
+                <span>التقدم: <strong id="progressPct"></strong></span>
+            </div>
+            <div class="mb-4">
+                <label class="text-sm font-bold">Overall grade</label>
+                <select id="overallGrade" class="border rounded-lg px-3 py-2 text-sm mr-2">
+                    <option value="">—</option>
+                    <option value="P">P</option>
+                    <option value="M">M</option>
+                    <option value="D">D</option>
+                    <option value="U">U</option>
+                </select>
+            </div>
+            <table class="w-full text-sm border">
+                <thead class="bg-slate-100">
+                    <tr>
+                        <th class="p-2 text-right">المعيار</th>
+                        <th class="p-2">النظام</th>
+                        <th class="p-2">قرارك</th>
+                        <th class="p-2">ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody id="criteriaBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border bg-slate-50">
+        <h2 class="font-bold mb-2">بعد إكمال المراجعة</h2>
+        <pre class="text-xs bg-white border rounded p-3 font-mono">.venv\Scripts\python.exe tools\check_human_labels_progress.py
+.venv\Scripts\python.exe tools\run_institutional_closure.py</pre>
+        <a href="/institutional/governance-review" class="inline-block mt-3 text-primary text-sm font-bold">→ Governance Calibration Review</a>
+    </div>
+</main>
+
+<script>
+const CRITERIA = ['P3','P4','P5','P6','P7','M2','M3','D2','D3'];
+let currentId = null;
+
+function reviewer() {
+    return document.getElementById('reviewer').value.trim();
+}
+
+function setStatus(msg, ok) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = 'text-sm mb-4 ' + (ok ? 'text-emerald-700' : 'text-rose-700');
+}
+
+async function loadWave(id, wave) {
+    const res = await fetch('/api/institutional/moderation/progress?wave=' + wave);
+    const data = await res.json();
+    const ul = document.getElementById(id);
+    ul.innerHTML = '';
+    for (const r of data.records) {
+        const li = document.createElement('li');
+        li.innerHTML = `<button type="button" class="text-primary hover:underline" data-sid="${r.submission_id}">#${r.submission_id} ${r.student || ''} — ${r.pct}%</button>`;
+        li.querySelector('button').addEventListener('click', () => {
+            document.getElementById('submissionSelect').value = r.submission_id;
+            loadRecord(r.submission_id);
+        });
+        ul.appendChild(li);
+    }
+}
+
+async function loadAllSubmissions() {
+    const res = await fetch('/api/institutional/moderation/progress');
+    const data = await res.json();
+    const sel = document.getElementById('submissionSelect');
+    sel.innerHTML = '';
+    for (const r of data.records) {
+        const opt = document.createElement('option');
+        opt.value = r.submission_id;
+        opt.textContent = `#${r.submission_id} ${r.student || ''} (${r.pct}%)`;
+        sel.appendChild(opt);
+    }
+}
+
+function aiLabel(v) {
+    if (v === true) return 'Achieved';
+    if (v === false) return 'Not Achieved';
+    return '—';
+}
+
+function renderCriteria(criteria) {
+    const tbody = document.getElementById('criteriaBody');
+    tbody.innerHTML = '';
+    for (const c of criteria) {
+        const tr = document.createElement('tr');
+        tr.className = 'border-t';
+        tr.innerHTML = `
+            <td class="p-2 font-mono font-bold">${c.criterion}</td>
+            <td class="p-2 text-center">${aiLabel(c.ai_system_achieved)}</td>
+            <td class="p-2">
+                <select data-crit="${c.criterion}" class="crit-decision border rounded px-2 py-1">
+                    <option value="">—</option>
+                    <option value="Achieved">Achieved</option>
+                    <option value="Not Achieved">Not Achieved</option>
+                </select>
+            </td>
+            <td class="p-2"><input data-notes="${c.criterion}" type="text" class="border rounded px-2 py-1 w-full" value="${c.notes || ''}"></td>`;
+        tbody.appendChild(tr);
+        if (c.decision) tr.querySelector('.crit-decision').value = c.decision;
+    }
+}
+
+async function loadRecord(sid) {
+    if (!sid) return;
+    currentId = sid;
+    const res = await fetch('/api/institutional/moderation/' + sid);
+    if (!res.ok) { setStatus('تعذّر التحميل', false); return; }
+    const data = await res.json();
+    document.getElementById('detail').classList.remove('hidden');
+    document.getElementById('studentName').textContent = data.student || '';
+    document.getElementById('aiGrade').textContent = data.ai_system_grade_level || '—';
+    document.getElementById('progressPct').textContent = data.progress.pct + '%';
+    document.getElementById('overallGrade').value = data.overall_grade || '';
+    if (data.reviewer) document.getElementById('reviewer').value = data.reviewer;
+    renderCriteria(data.criteria);
+    setStatus('تم التحميل #' + sid, true);
+}
+
+async function saveRecord() {
+    if (!currentId) return;
+    if (!reviewer()) { setStatus('أدخل اسم المراجع', false); return; }
+    const criteria = {};
+    for (const key of CRITERIA) {
+        const dec = document.querySelector(`select[data-crit="${key}"]`);
+        const notes = document.querySelector(`input[data-notes="${key}"]`);
+        if (dec && dec.value) {
+            criteria[key] = { decision: dec.value, notes: notes ? notes.value : '' };
+        }
+    }
+    const body = {
+        reviewer: reviewer(),
+        overall_grade: document.getElementById('overallGrade').value || null,
+        criteria
+    };
+    const res = await fetch('/api/institutional/moderation/' + currentId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) { setStatus(data.detail || 'فشل الحفظ', false); return; }
+    setStatus('حُفظ #' + currentId + ' — ' + data.progress.pct + '%', true);
+    await refreshLists();
+}
+
+async function acceptAiHints() {
+    if (!currentId) return;
+    if (!reviewer()) { setStatus('أدخل اسم المراجع', false); return; }
+    if (!confirm('تأكيد: راجعت المشروع وأقبل اقتراحات النظام للحقول الفارغة؟')) return;
+    const res = await fetch('/api/institutional/moderation/' + currentId + '/accept-ai-hints', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewer: reviewer(), accept_overall: true })
+    });
+    const data = await res.json();
+    if (!res.ok) { setStatus(data.detail || 'فشل', false); return; }
+    await loadRecord(currentId);
+    setStatus('قُبلت اقتراحات النظام — ' + data.criteria_applied + ' معيار', true);
+    await refreshLists();
+}
+
+async function refreshLists() {
+    await Promise.all([
+        loadWave('wave1', '1'),
+        loadWave('wave2', '2'),
+        loadWave('wave3', '3'),
+        loadAllSubmissions()
+    ]);
+}
+
+document.getElementById('loadBtn').addEventListener('click', () => loadRecord(document.getElementById('submissionSelect').value));
+document.getElementById('saveBtn').addEventListener('click', saveRecord);
+document.getElementById('acceptAiBtn').addEventListener('click', acceptAiHints);
+
+refreshLists().then(() => loadRecord(1));
+</script>
+{% endblock %}

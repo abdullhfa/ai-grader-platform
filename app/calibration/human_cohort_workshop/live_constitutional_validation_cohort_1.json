@@ -1,0 +1,166 @@
+{
+  "cohort_id": "live_validation_cohort_1",
+  "phase_id": "LIVE_CONSTITUTIONAL_VALIDATION_v1",
+  "status": "paused_intentionally",
+  "paused_at": "2026-05-25T16:00:00Z",
+  "pause_reason_ar": "مسار runtime observability أولاً — لا تفعيل cohort حتى استئناف",
+  "activated_at": null,
+  "mode": "posture_observation_only",
+  "goal_ar": "هل disagreement ما يزال شرعيًا داخل المجال؟ — ليس accuracy",
+  "not_goal": [
+    "accuracy",
+    "speed",
+    "consistency",
+    "reviewer_agreement"
+  ],
+  "true_success_ar": "reviewers disagreed comfortably — ليس reviewers agreed",
+  "false_constitutional_calm_ar": "هدوء ظاهري من ضغط نفسي خفيف — انبهار تقني · خوف مؤسسي · إرضاء اتجاه النظام",
+  "reviewer_selection": {
+    "count": 3,
+    "seek_ar": [
+      "استعداد للاختلاف",
+      "ليس متحمسًا للنظام مسبقًا",
+      "ليس عدائيًا للنظام"
+    ],
+    "avoid_ar": [
+      "أصحاب نفوذ داخل المؤسسة",
+      "انبهار تقني زائد",
+      "خوف مؤسسي",
+      "رغبة بإرضاء اتجاه النظام"
+    ],
+    "slots": [
+      {
+        "slot_id": "R1",
+        "assignee": null,
+        "notes_ar": "يُملأ قبل الجلسة الأولى"
+      },
+      {
+        "slot_id": "R2",
+        "assignee": null,
+        "notes_ar": "يُملأ قبل الجلسة الأولى"
+      },
+      {
+        "slot_id": "R3",
+        "assignee": null,
+        "notes_ar": "يُملأ قبل الجلسة الأولى"
+      }
+    ]
+  },
+  "facilitator": {
+    "assignee": null,
+    "profile_ar": "شخص واحد محايد نسبيًا — ليس مدافعًا عن النظام ولا مهاجمًا"
+  },
+  "batch_id": 4,
+  "batch_note_ar": "reference corpus cases — live re-observation للـ posture · ليس re-grading pilot",
+  "corpus_source": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "submissions": [
+    {
+      "submission_id": 3,
+      "case_type": "semantic_temptation",
+      "case_type_ar": "مثل #3 — semantic temptation · GDD authority",
+      "disagreement_heavy": true
+    },
+    {
+      "submission_id": 4,
+      "case_type": "controlled_restraint",
+      "case_type_ar": "مثل #4 — controlled restraint · positive governance control",
+      "disagreement_heavy": false
+    },
+    {
+      "submission_id": 13,
+      "case_type": "executable_temptation",
+      "case_type_ar": "مثل #13 — executable temptation · exe stress",
+      "disagreement_heavy": true
+    },
+    {
+      "submission_id": 12,
+      "case_type": "very_weak_premature_legitimacy",
+      "case_type_ar": "ضعيفة جدًا — L0 نظري · اختبار premature legitimacy",
+      "disagreement_heavy": true
+    },
+    {
+      "submission_id": 7,
+      "case_type": "deliberately_ambiguous",
+      "case_type_ar": "ambiguous — partial evidence · discomfort with uncertainty",
+      "disagreement_heavy": true
+    }
+  ],
+  "session_rules": {
+    "runtime_activation": false,
+    "hints": "advisory_only_possible_vocabulary_escalation_hint",
+    "replay": "required_before_authority_language",
+    "worksheet": "governance_pilot_observatory",
+    "sections": [
+      "B",
+      "E",
+      "F_with_hint_optional"
+    ],
+    "observatory_url_pattern": "/governance-pilot/batch/{batch_id}"
+  },
+  "first_session_danger_moment_en": "When does the reviewer begin to feel that contradicting the system requires extra effort?",
+  "first_session_danger_moment_ar": "متى يبدأ المراجع بالشعور أن مخالفة النظام تحتاج مجهودًا إضافيًا؟",
+  "forbidden_in_cohort": [
+    "leaderboard",
+    "reviewer_scoring",
+    "confidence_colors",
+    "ai_suggestion_strength",
+    "auto_recommendations",
+    "nudging_language",
+    "best_practice_indicators"
+  ],
+  "forbidden_risk_ar": "organizational gravity — حتى بدون authority رسمي",
+  "pass_fail_signals": [
+    {
+      "signal_ar": "disagreement طبيعي",
+      "meaning_ar": "illumination"
+    },
+    {
+      "signal_ar": "disagreement يحتاج دفاع",
+      "meaning_ar": "organization بدأت"
+    },
+    {
+      "signal_ar": "تجاهل hint مريح",
+      "meaning_ar": "advisory tooling"
+    },
+    {
+      "signal_ar": "تجاهل hint يسبب توتر",
+      "meaning_ar": "covert authority"
+    },
+    {
+      "signal_ar": "uncertainty بقيت ممكنة",
+      "meaning_ar": "constitutional openness"
+    },
+    {
+      "signal_ar": "الجميع انجذب لنفس القراءة",
+      "meaning_ar": "epistemic gravity — failure"
+    }
+  ],
+  "after_each_session": {
+    "required": "POST_SESSION_CONSTITUTIONAL_REVIEW_v1",
+    "drift_check": "OBSERVER_ROLE_DRIFT_CHECK_v1#first_live_vocabulary_hint",
+    "triad": [
+      "freedom_of_non_conviction",
+      "non_conviction_extra_courage",
+      "non_conviction_without_leaving_system"
+    ],
+    "ledgers": [
+      "observer_role_drift_checks.jsonl",
+      "epistemic_trace_captures.jsonl"
+    ],
+    "forbidden_after_session": [
+      "feature_expansion",
+      "observability_expansion"
+    ]
+  },
+  "if_organizing_cognition_detected": {
+    "action_en": "reduce instrumentation — do not expand",
+    "action_ar": "قلّل المراقبة — لا توسّع",
+    "not": "add_monitoring"
+  },
+  "project_framing_ar": "constitutional governance architecture for epistemic legitimacy formation — ليس AI grading system",
+  "companions": [
+    "POST_SESSION_CONSTITUTIONAL_REVIEW_v1.json",
+    "LIVE_CONSTITUTIONAL_VALIDATION_v1.json",
+    "OBSERVATORY_POSTURE_GOVERNANCE_v1.json"
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "schema": "calibration_diff_v1",
+  "observational_only": true,
+  "baseline_run_id": "cal_reliability_stress_v1",
+  "candidate_run_id": "cal_reliability_stress_v2",
+  "benchmark_consistency": {
+    "comparable": false,
+    "baseline_run_id": "cal_reliability_stress_v1",
+    "candidate_run_id": "cal_reliability_stress_v2",
+    "baseline_freeze_window_id": "freeze_reliability_stress_v1",
+    "candidate_freeze_window_id": "freeze_reliability_stress_v2",
+    "same_gold_file": true,
+    "same_systems_file": true,
+    "gold_file_baseline": "unity_gold_reliability_stress_v1.json",
+    "gold_file_candidate": "unity_gold_reliability_stress_v1.json",
+    "rubric_version_baseline": "1.0",
+    "rubric_version_candidate": "1.0",
+    "flags": [
+      {
+        "flag": "benchmark_mismatch",
+        "detail": "freeze_window_id"
+      }
+    ],
+    "notes": []
+  },
+  "drift_severity": "low",
+  "confusion_deltas": {
+    "true_positives_delta": 0,
+    "true_positives_baseline": 6,
+    "true_positives_candidate": 6,
+    "true_positives_drift_severity": "low",
+    "false_positives_delta": 0,
+    "false_positives_baseline": 34,
+    "false_positives_candidate": 34,
+    "false_positives_drift_severity": "low",
+    "false_negatives_delta": 0,
+    "false_negatives_baseline": 2,
+    "false_negatives_candidate": 2,
+    "false_negatives_drift_severity": "low",
+    "true_negatives_delta": 0,
+    "true_negatives_baseline": 8,
+    "true_negatives_candidate": 8,
+    "true_negatives_drift_severity": "low",
+    "false_positive_rate_delta": 0.0,
+    "false_negative_rate_delta": 0.0,
+    "precision_achieved_class_delta": 0.0,
+    "f1_achieved_class_delta": 0.0,
+    "false_positive_rate_drift_severity": "low",
+    "false_negative_rate_drift_severity": "low"
+  },
+  "review_gate_deltas": {
+    "human_review_required_rate_baseline": 0.84,
+    "human_review_required_rate_candidate": 0.84,
+    "human_review_required_rate_delta": 0.0,
+    "human_review_required_rate_drift_severity": "low",
+    "severity_distribution_delta": {
+      "critical": -4,
+      "high": 0,
+      "low": 0,
+      "medium": 4
+    },
+    "top_review_reasons_delta": {
+      "corroboration_conflicts_detected": 0,
+      "cross_modal_diversity_below_threshold": 0,
+      "excessive_submission_noise_flags": 0,
+      "high_submission_ignore_ratio": 0,
+      "insufficient_runtime_confirmation": 0,
+      "pattern_hint_only_insufficient": -4,
+      "pattern_hints_without_semantic_code": 0,
+      "rubric_sufficiency_shadow_not_met": 0,
+      "runtime_present_without_system_confirmation": 0,
+      "sparse_evidence_detected": 0,
+      "sparse_evidence_with_upload_noise": 0,
+      "video_only_windows": 0
+    }
+  },
+  "shadow_deltas": {
+    "shadow_sufficient_rate_delta": 0.0,
+    "teacher_shadow_agreement_rate_delta": 0.0,
+    "pattern_hint_only_rate_delta": 0.0,
+    "corroboration_conflicts_rate_delta": 0.0,
+    "mean_cross_modal_diversity_score_delta": 0.0,
+    "insufficiency_flag_counts_delta": {
+      "corroboration_conflict_detected": 0,
+      "empty_evidence_layer": 4,
+      "missing_runtime_corroboration": 0,
+      "ocr_video_without_corroboration": 0,
+      "pattern_hints_only_insufficient": -4,
+      "pattern_hints_without_semantic_code": 0,
+      "runtime_present_without_system_confirmation": 0
+    },
+    "pattern_hint_only_rate_drift_severity": "low",
+    "corroboration_conflicts_rate_drift_severity": "low"
+  },
+  "fp_empty_evidence_drift": {
+    "fp_empty_evidence_layer_ratio_baseline": 0.0,
+    "fp_empty_evidence_layer_ratio_candidate": 0.0,
+    "fp_empty_evidence_layer_ratio_delta": 0.0,
+    "fp_empty_evidence_layer_drift_severity": "low",
+    "false_positives_total_delta": 0
+  },
+  "error_taxonomy_suggested_counts_delta": {
+    "fn_teacher_achieved_system_not": 0,
+    "fp_collision_weak_execution_suspected": 0,
+    "fp_pattern_only_collision_hint": 0,
+    "fp_strong_collision_signal_teacher_rejected_borderline": 0,
+    "fp_system_achieved_teacher_not": 0
+  },
+  "regression_flags": [],
+  "improvement_flags": [],
+  "interpretation_notes": [],
+  "calibration_stability_summary": {
+    "stable": false,
+    "reasons": [
+      "benchmark_mismatch_between_runs"
+    ],
+    "interpretation": "material_drift_requires_review_before_threshold_changes"
+  },
+  "policy": {
+    "auto_declare_winner": false,
+    "note": "Diff describes reliability drift only; human review required for promotion decisions."
+  }
+}

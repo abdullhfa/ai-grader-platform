@@ -1,0 +1,454 @@
+{
+  "schema": "moderation_queue_v1",
+  "generated_at": "2026-05-26T23:03:01Z",
+  "queue_length": 25,
+  "items": [
+    {
+      "submission_id": 1,
+      "student": "عبدالله العتوم",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P7",
+        "M2",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": false,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "high"
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "pending_criteria": [
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "M2",
+        "M3",
+        "D2",
+        "D3"
+      ],
+      "overall_grade_pending": true,
+      "status": "PENDING_HUMAN_VALIDATION",
+      "priority": "normal"
+    }
+  ]
+}

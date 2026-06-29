@@ -1,0 +1,1500 @@
+{
+  "schema": "unity_calibration_gold_v2",
+  "synthetic": true,
+  "stress_cohort": true,
+  "description": "Reliability Stress Cohort — failure-oriented operational simulation. NOT teacher ground truth or production validation.",
+  "target_count": 50,
+  "records": [
+    {
+      "submission_id": "STRESS_000_strong_corroboration",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_corroboration",
+      "cohort_tags": [
+        "reliability_stress",
+        "strong_corroboration",
+        "baseline",
+        "review_gate_quiet"
+      ],
+      "stress_focus": [
+        "baseline",
+        "review_gate_quiet"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:strong_corroboration"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_001_strong_corroboration",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_corroboration",
+      "cohort_tags": [
+        "reliability_stress",
+        "strong_corroboration",
+        "baseline_repeat"
+      ],
+      "stress_focus": [
+        "baseline_repeat"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:strong_corroboration"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_002_runtime_real_stacked",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_real_stacked",
+      "cohort_tags": [
+        "reliability_stress",
+        "runtime_real_stacked",
+        "runtime_corroboration"
+      ],
+      "stress_focus": [
+        "runtime_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:runtime_real_stacked"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_003_runtime_fake_log_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_fake_log_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "runtime_fake_log_only",
+        "runtime_without_system",
+        "fp_risk"
+      ],
+      "stress_focus": [
+        "runtime_without_system",
+        "fp_risk"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:runtime_fake_log_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_004_runtime_fake_log_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_fake_log_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "runtime_fake_log_only",
+        "fake_runtime"
+      ],
+      "stress_focus": [
+        "fake_runtime"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:runtime_fake_log_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_005_runtime_fake_log_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_fake_log_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "runtime_fake_log_only",
+        "fake_runtime_repeat"
+      ],
+      "stress_focus": [
+        "fake_runtime_repeat"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:runtime_fake_log_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_006_screenshots_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "screenshots_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "screenshots_only",
+        "screenshots_only",
+        "sufficiency"
+      ],
+      "stress_focus": [
+        "screenshots_only",
+        "sufficiency"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:screenshots_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_007_screenshots_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "screenshots_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "screenshots_only",
+        "screenshots_only"
+      ],
+      "stress_focus": [
+        "screenshots_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:screenshots_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_008_ocr_misleading_score100",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "ocr_misleading_score100",
+      "cohort_tags": [
+        "reliability_stress",
+        "ocr_misleading_score100",
+        "ocr_inflation",
+        "no_systems"
+      ],
+      "stress_focus": [
+        "ocr_inflation",
+        "no_systems"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp",
+        "ocr_misleading"
+      ],
+      "teacher_notes": [
+        "stress:ocr_misleading_score100"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_009_ocr_misleading_score100",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "ocr_misleading_score100",
+      "cohort_tags": [
+        "reliability_stress",
+        "ocr_misleading_score100",
+        "ocr_inflation"
+      ],
+      "stress_focus": [
+        "ocr_inflation"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:ocr_misleading_score100"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_010_ocr_misleading_score100",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "ocr_misleading_score100",
+      "cohort_tags": [
+        "reliability_stress",
+        "ocr_misleading_score100",
+        "review_escalation_ocr"
+      ],
+      "stress_focus": [
+        "review_escalation_ocr"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:ocr_misleading_score100"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_011_logs_without_systems",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "logs_without_systems",
+      "cohort_tags": [
+        "reliability_stress",
+        "logs_without_systems",
+        "logs_without_systems"
+      ],
+      "stress_focus": [
+        "logs_without_systems"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:logs_without_systems"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_012_logs_without_systems",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "logs_without_systems",
+      "cohort_tags": [
+        "reliability_stress",
+        "logs_without_systems",
+        "runtime_corroboration_gap"
+      ],
+      "stress_focus": [
+        "runtime_corroboration_gap"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:logs_without_systems"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_013_systems_without_runtime",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "systems_without_runtime",
+      "cohort_tags": [
+        "reliability_stress",
+        "systems_without_runtime",
+        "systems_without_runtime"
+      ],
+      "stress_focus": [
+        "systems_without_runtime"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:systems_without_runtime"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_014_systems_without_runtime",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "systems_without_runtime",
+      "cohort_tags": [
+        "reliability_stress",
+        "systems_without_runtime",
+        "missing_runtime_corroboration"
+      ],
+      "stress_focus": [
+        "missing_runtime_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:systems_without_runtime"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_015_systems_without_runtime",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "systems_without_runtime",
+      "cohort_tags": [
+        "reliability_stress",
+        "systems_without_runtime",
+        "code_only"
+      ],
+      "stress_focus": [
+        "code_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:systems_without_runtime"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_016_pattern_hints_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "pattern_hints_only",
+        "pattern_hint_dependence"
+      ],
+      "stress_focus": [
+        "pattern_hint_dependence"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_017_pattern_hints_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "pattern_hints_only",
+        "pattern_hints_only"
+      ],
+      "stress_focus": [
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_018_pattern_hints_only",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "reliability_stress",
+        "pattern_hints_only",
+        "review_gate_pattern"
+      ],
+      "stress_focus": [
+        "review_gate_pattern"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_019_noisy_upload_library_temp",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "noisy_upload_library_temp",
+      "cohort_tags": [
+        "reliability_stress",
+        "noisy_upload_library_temp",
+        "submission_noise",
+        "critical_review"
+      ],
+      "stress_focus": [
+        "submission_noise",
+        "critical_review"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:noisy_upload_library_temp"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_020_noisy_upload_library_temp",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "noisy_upload_library_temp",
+      "cohort_tags": [
+        "reliability_stress",
+        "noisy_upload_library_temp",
+        "intake_diagnostics",
+        "review_inflation"
+      ],
+      "stress_focus": [
+        "intake_diagnostics",
+        "review_inflation"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:noisy_upload_library_temp"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_021_noisy_upload_node_modules",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "noisy_upload_node_modules",
+      "cohort_tags": [
+        "reliability_stress",
+        "noisy_upload_node_modules",
+        "excessive_submission_noise"
+      ],
+      "stress_focus": [
+        "excessive_submission_noise"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:noisy_upload_node_modules"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_022_corrupt_archive_sparse",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "corrupt_archive_sparse",
+      "cohort_tags": [
+        "reliability_stress",
+        "corrupt_archive_sparse",
+        "corrupt_zip",
+        "sparse_evidence"
+      ],
+      "stress_focus": [
+        "corrupt_zip",
+        "sparse_evidence"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:corrupt_archive_sparse"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_023_corrupt_archive_sparse",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "corrupt_archive_sparse",
+      "cohort_tags": [
+        "reliability_stress",
+        "corrupt_archive_sparse",
+        "fp_empty_evidence_layer"
+      ],
+      "stress_focus": [
+        "fp_empty_evidence_layer"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:corrupt_archive_sparse"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_024_weak_corroboration",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "weak_corroboration",
+      "cohort_tags": [
+        "reliability_stress",
+        "weak_corroboration",
+        "weak_corroboration"
+      ],
+      "stress_focus": [
+        "weak_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:weak_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_025_weak_corroboration",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "weak_corroboration",
+      "cohort_tags": [
+        "reliability_stress",
+        "weak_corroboration",
+        "low_diversity"
+      ],
+      "stress_focus": [
+        "low_diversity"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:weak_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_026_cross_modal_conflict",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "reliability_stress",
+        "cross_modal_conflict",
+        "cross_modal_conflicts"
+      ],
+      "stress_focus": [
+        "cross_modal_conflicts"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_027_cross_modal_conflict",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "reliability_stress",
+        "cross_modal_conflict",
+        "corroboration_conflict"
+      ],
+      "stress_focus": [
+        "corroboration_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_028_cross_modal_conflict",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "reliability_stress",
+        "cross_modal_conflict",
+        "severity_skew"
+      ],
+      "stress_focus": [
+        "severity_skew"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_029_borderline_video_only_code",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "borderline_video_only_code",
+      "cohort_tags": [
+        "reliability_stress",
+        "borderline_video_only_code",
+        "collision_code_video_only",
+        "sufficiency",
+        "review_gates"
+      ],
+      "stress_focus": [
+        "collision_code_video_only",
+        "sufficiency",
+        "review_gates"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "collision_system in code; video only; no log/screenshot"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_030_borderline_video_only_code",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "borderline_video_only_code",
+      "cohort_tags": [
+        "reliability_stress",
+        "borderline_video_only_code",
+        "borderline_sufficiency"
+      ],
+      "stress_focus": [
+        "borderline_sufficiency"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:borderline_video_only_code"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_031_borderline_video_only_code",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "borderline_video_only_code",
+      "cohort_tags": [
+        "reliability_stress",
+        "borderline_video_only_code",
+        "borderline_teacher_yes_system_yes"
+      ],
+      "stress_focus": [
+        "borderline_teacher_yes_system_yes"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "teacher accepts borderline; system also achieved — agreement stress"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_032_video_only_windows",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "video_only_windows",
+      "cohort_tags": [
+        "reliability_stress",
+        "video_only_windows",
+        "video_only_windows"
+      ],
+      "stress_focus": [
+        "video_only_windows"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:video_only_windows"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_033_video_only_windows",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "video_only_windows",
+      "cohort_tags": [
+        "reliability_stress",
+        "video_only_windows",
+        "temporal_overlap"
+      ],
+      "stress_focus": [
+        "temporal_overlap"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:video_only_windows"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_034_ocr_video_without_corroboration",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "ocr_video_without_corroboration",
+      "cohort_tags": [
+        "reliability_stress",
+        "ocr_video_without_corroboration",
+        "ocr_video_without_corroboration"
+      ],
+      "stress_focus": [
+        "ocr_video_without_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:ocr_video_without_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_035_ocr_video_without_corroboration",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "ocr_video_without_corroboration",
+      "cohort_tags": [
+        "reliability_stress",
+        "ocr_video_without_corroboration",
+        "cross_modal_false_overlap"
+      ],
+      "stress_focus": [
+        "cross_modal_false_overlap"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:ocr_video_without_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_036_sparse_evidence_empty",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_evidence_empty",
+      "cohort_tags": [
+        "reliability_stress",
+        "sparse_evidence_empty",
+        "sparse_evidence"
+      ],
+      "stress_focus": [
+        "sparse_evidence"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:sparse_evidence_empty"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_037_sparse_evidence_empty",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_evidence_empty",
+      "cohort_tags": [
+        "reliability_stress",
+        "sparse_evidence_empty",
+        "minimal_items"
+      ],
+      "stress_focus": [
+        "minimal_items"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:sparse_evidence_empty"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_038_fake_runtime_fp_system",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "fake_runtime_fp_system",
+      "cohort_tags": [
+        "reliability_stress",
+        "fake_runtime_fp_system",
+        "fp_driver_fake_runtime"
+      ],
+      "stress_focus": [
+        "fp_driver_fake_runtime"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_stress"
+      ],
+      "teacher_notes": [
+        "stress:fake_runtime_fp_system"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_039_fake_runtime_fp_system",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "fake_runtime_fp_system",
+      "cohort_tags": [
+        "reliability_stress",
+        "fake_runtime_fp_system"
+      ],
+      "stress_focus": [],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_stress"
+      ],
+      "teacher_notes": [
+        "stress:fake_runtime_fp_system"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_040_achievement_inflation_weak_code",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "achievement_inflation_weak_code",
+      "cohort_tags": [
+        "reliability_stress",
+        "achievement_inflation_weak_code",
+        "pattern_hint_dependence",
+        "weak_code"
+      ],
+      "stress_focus": [
+        "pattern_hint_dependence",
+        "weak_code"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:achievement_inflation_weak_code"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_041_achievement_inflation_weak_code",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "achievement_inflation_weak_code",
+      "cohort_tags": [
+        "reliability_stress",
+        "achievement_inflation_weak_code"
+      ],
+      "stress_focus": [],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:achievement_inflation_weak_code"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_042_fn_control_teacher_yes_system_no",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "fn_control_teacher_yes_system_no",
+      "cohort_tags": [
+        "reliability_stress",
+        "fn_control_teacher_yes_system_no",
+        "fn_control"
+      ],
+      "stress_focus": [
+        "fn_control"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fn",
+        "stress_fn_candidate"
+      ],
+      "teacher_notes": [
+        "stress:fn_control_teacher_yes_system_no"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_043_fn_control_teacher_yes_system_no",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "fn_control_teacher_yes_system_no",
+      "cohort_tags": [
+        "reliability_stress",
+        "fn_control_teacher_yes_system_no",
+        "fn_control_strong"
+      ],
+      "stress_focus": [
+        "fn_control_strong"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fn",
+        "stress_fn_candidate"
+      ],
+      "teacher_notes": [
+        "stress:fn_control_teacher_yes_system_no"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_044_borderline_sufficiency_near_pass",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "borderline_sufficiency_near_pass",
+      "cohort_tags": [
+        "reliability_stress",
+        "borderline_sufficiency_near_pass",
+        "borderline_sufficiency"
+      ],
+      "stress_focus": [
+        "borderline_sufficiency"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:borderline_sufficiency_near_pass"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_045_borderline_sufficiency_near_pass",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "borderline_sufficiency_near_pass",
+      "cohort_tags": [
+        "reliability_stress",
+        "borderline_sufficiency_near_pass",
+        "borderline_fp"
+      ],
+      "stress_focus": [
+        "borderline_fp"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:borderline_sufficiency_near_pass"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_046_cross_modal_false_overlap",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_false_overlap",
+      "cohort_tags": [
+        "reliability_stress",
+        "cross_modal_false_overlap",
+        "fake_corroboration"
+      ],
+      "stress_focus": [
+        "fake_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:cross_modal_false_overlap"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_047_runtime_stale_no_temporal",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_stale_no_temporal",
+      "cohort_tags": [
+        "reliability_stress",
+        "runtime_stale_no_temporal",
+        "temporal_misalignment"
+      ],
+      "stress_focus": [
+        "temporal_misalignment"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "stress_expected_fp"
+      ],
+      "teacher_notes": [
+        "stress:runtime_stale_no_temporal"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    },
+    {
+      "submission_id": "STRESS_048_strong_corroboration_control",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_corroboration_control",
+      "cohort_tags": [
+        "reliability_stress",
+        "strong_corroboration_control",
+        "control_no_fp"
+      ],
+      "stress_focus": [
+        "control_no_fp"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:strong_corroboration_control"
+      ],
+      "accepted_evidence": [
+        "stress_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "STRESS_049_noisy_upload_critical_combo",
+      "unit": "STRESS_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "noisy_upload_critical_combo",
+      "cohort_tags": [
+        "reliability_stress",
+        "noisy_upload_critical_combo",
+        "review_gate_inflation",
+        "critical_severity"
+      ],
+      "stress_focus": [
+        "review_gate_inflation",
+        "critical_severity"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.9
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "stress:noisy_upload_critical_combo"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "stress_rejected"
+      ]
+    }
+  ]
+}

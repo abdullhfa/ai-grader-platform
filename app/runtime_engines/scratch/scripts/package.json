@@ -1,0 +1,8 @@
+{
+  "name": "ai-grader-scratch-vm",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "scratch-vm": "^4.5.2"
+  }
+}

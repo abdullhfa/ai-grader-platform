@@ -1,0 +1,599 @@
+{
+  "report_type": "runtime_cohort_v1",
+  "cohort_id": "runtime_cohort_v1",
+  "generated_at": "2026-05-26T13:24:30Z",
+  "config_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\runtime_cohort\\cohort_config_v1.json",
+  "entry_count": 6,
+  "summary": {
+    "deterministic_replay_stable_count": 1,
+    "deterministic_replay_unstable": [],
+    "replay_hash_stable_verification_failed": [
+      "unity_excellent"
+    ],
+    "runtime_actually_launched": [],
+    "files_only_detection": [
+      "unity_excellent"
+    ],
+    "ai_human_divergence": [],
+    "priority_flags": {
+      "replay_hash_unstable": false,
+      "replay_verification_mismatch": true,
+      "runtime_not_executed": true,
+      "human_labels_missing": true
+    }
+  },
+  "entries": [
+    {
+      "source_type": "db",
+      "submission_id": 1,
+      "student_name": "عبدالله العتوم",
+      "paths_resolved": 7,
+      "path_source": "fallback_root",
+      "batch_id": 1,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": false,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 2,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": "gated"
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 33.3,
+          "total_score": 300,
+          "max_score": 900,
+          "achieved_criteria": [
+            "8/C.P5",
+            "8/C.P6"
+          ],
+          "achieved_count": 2
+        },
+        "human_grade": {
+          "available": false,
+          "overall_grade_level": null,
+          "overall_percentage": null,
+          "criteria": [],
+          "notes_ar": "يُملأ من مراجع بشري — Abdullah Unity",
+          "reviewer": null
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": false,
+          "semantic_stable": false,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "0470f556f0324c666b48f33d8b10805ba9fda3956748c9c9276c9f62db8a843b",
+              "replay_verified": false,
+              "semantic_replay_verified": false,
+              "protected_digest_match": false,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0470f556f0324c666b48f33d8b10805ba9fda3956748c9c9276c9f62db8a843b",
+              "replay_verified": false,
+              "semantic_replay_verified": false,
+              "protected_digest_match": false,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0470f556f0324c666b48f33d8b10805ba9fda3956748c9c9276c9f62db8a843b",
+              "replay_verified": false,
+              "semantic_replay_verified": false,
+              "protected_digest_match": false,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 4,
+          "interpretation_ar": "hash ثابت لكن verification فشل — drift في snapshot digest"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "error"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unity",
+          "sandbox_status": "error",
+          "functional_smoke_pass": null,
+          "validation_status": "error",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {}
+        },
+        "replay_disparity": {
+          "replay_unstable": true,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "runtime_only",
+            "runtime_only+partial_code_extraction"
+          ]
+        }
+      },
+      "slot_id": "unity_excellent",
+      "platform": "unity",
+      "tier": "excellent",
+      "label_ar": "Unity — مشروع مكتمل (Abdullah)"
+    },
+    {
+      "source_type": "path",
+      "slot_id": "python_console_ok",
+      "platform": "python",
+      "tier": "good",
+      "label_ar": "Python console — يعمل",
+      "fixture_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\cohort_fixtures\\python_console_ok",
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": false,
+          "reason": "fixture_only"
+        },
+        "ai_grade": {
+          "available": false
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "fixture_only"
+        },
+        "replay_reproducibility": {
+          "stable": null,
+          "reason": "no_graded_snapshot"
+        },
+        "runtime_reality": {
+          "executable_detected": false,
+          "sandbox_actually_ran": false,
+          "files_only_detection": false,
+          "runtime_evidence_level": null,
+          "interpretation_ar": "لا runtime"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "error"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "python",
+          "sandbox_status": "error",
+          "functional_smoke_pass": null,
+          "validation_status": "error",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {}
+        }
+      }
+    },
+    {
+      "source_type": "path",
+      "slot_id": "python_syntax_error",
+      "platform": "python",
+      "tier": "broken",
+      "label_ar": "Python — syntax error",
+      "fixture_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\cohort_fixtures\\python_syntax_error",
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": true,
+          "crash_detected": true,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": false,
+          "reason": "fixture_only"
+        },
+        "ai_grade": {
+          "available": false
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "fixture_only"
+        },
+        "replay_reproducibility": {
+          "stable": null,
+          "reason": "no_graded_snapshot"
+        },
+        "runtime_reality": {
+          "executable_detected": false,
+          "sandbox_actually_ran": false,
+          "files_only_detection": false,
+          "runtime_evidence_level": null,
+          "interpretation_ar": "لا runtime"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "error"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "python",
+          "sandbox_status": "error",
+          "functional_smoke_pass": null,
+          "validation_status": "error",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": true,
+            "crash_detected": true,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {}
+        }
+      }
+    },
+    {
+      "source_type": "path",
+      "slot_id": "python_missing_dep",
+      "platform": "python",
+      "tier": "broken",
+      "label_ar": "Python — broken dependency",
+      "fixture_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\cohort_fixtures\\python_missing_dep",
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": false,
+          "reason": "fixture_only"
+        },
+        "ai_grade": {
+          "available": false
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "fixture_only"
+        },
+        "replay_reproducibility": {
+          "stable": null,
+          "reason": "no_graded_snapshot"
+        },
+        "runtime_reality": {
+          "executable_detected": false,
+          "sandbox_actually_ran": false,
+          "files_only_detection": false,
+          "runtime_evidence_level": null,
+          "interpretation_ar": "لا runtime"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "error"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "python",
+          "sandbox_status": "error",
+          "functional_smoke_pass": null,
+          "validation_status": "error",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {}
+        }
+      }
+    },
+    {
+      "source_type": "path",
+      "slot_id": "web_static",
+      "platform": "web",
+      "tier": "good",
+      "label_ar": "Web — static HTML",
+      "fixture_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\cohort_fixtures\\web_static",
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": false,
+          "reason": "fixture_only"
+        },
+        "ai_grade": {
+          "available": false
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "fixture_only"
+        },
+        "replay_reproducibility": {
+          "stable": null,
+          "reason": "no_graded_snapshot"
+        },
+        "runtime_reality": {
+          "executable_detected": false,
+          "sandbox_actually_ran": false,
+          "files_only_detection": false,
+          "runtime_evidence_level": null,
+          "interpretation_ar": "لا runtime"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "error"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "web",
+          "sandbox_status": "error",
+          "functional_smoke_pass": null,
+          "validation_status": "error",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {}
+        }
+      }
+    },
+    {
+      "source_type": "path",
+      "slot_id": "web_interactive",
+      "platform": "web",
+      "tier": "good",
+      "label_ar": "Web — JS interactive",
+      "fixture_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\cohort_fixtures\\web_interactive",
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": false,
+          "reason": "fixture_only"
+        },
+        "ai_grade": {
+          "available": false
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "fixture_only"
+        },
+        "replay_reproducibility": {
+          "stable": null,
+          "reason": "no_graded_snapshot"
+        },
+        "runtime_reality": {
+          "executable_detected": false,
+          "sandbox_actually_ran": false,
+          "files_only_detection": false,
+          "runtime_evidence_level": null,
+          "interpretation_ar": "لا runtime"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "error"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "web",
+          "sandbox_status": "error",
+          "functional_smoke_pass": null,
+          "validation_status": "error",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {}
+        }
+      }
+    }
+  ]
+}

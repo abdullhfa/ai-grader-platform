@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Examiner Dashboard — {{ app_title }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/governance-ui/static/css/examiner.css">
+<main class="container mx-auto px-6 py-10">
+  <div class="max-w-6xl mx-auto">
+    <div class="mb-8">
+      <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Examiner Dashboard</h2>
+      <p class="text-gray-500 text-sm">Institutional investigation — replay-first governance</p>
+    </div>
+
+    <div class="gov-panel border-indigo-200 bg-indigo-50">
+      <p class="font-bold text-indigo-900 mb-2"><i class="fa-solid fa-shield-halved ml-1"></i> Investigation Mode</p>
+      <p class="text-sm text-indigo-800">Review frozen replay snapshots — not LLM summaries alone.</p>
+    </div>
+
+    {% if sessions %}
+    <div class="gov-panel">
+      <h3 class="font-bold mb-4">Replay Sessions</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="text-right text-gray-500 border-b">
+            <th class="py-2">Submission</th><th>Session</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+          {% for s in sessions %}
+            <tr class="border-b border-gray-100">
+              <td class="py-3 font-medium">{{ s.submission_key }}</td>
+              <td class="font-mono text-xs">{{ s.session_id }}</td>
+              <td>
+                <a href="/governance/examiner/review/{{ s.submission_key }}/{{ s.session_id }}"
+                   class="text-primary font-semibold hover:underline">Investigate</a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="gov-panel text-gray-600">
+      <p>No replay snapshots found under <code class="text-xs">uploads/replay_snapshots/</code>.</p>
+      <p class="text-sm mt-2">Run grading with evidence reasoning to generate audit packages.</p>
+    </div>
+    {% endif %}
+
+    <div class="grid md:grid-cols-3 gap-4 mt-6">
+      <a href="/governance/examiner/appeals" class="gov-panel hover:border-primary transition block">
+        <p class="font-bold">Appeals Queue</p>
+        <p class="text-xs text-gray-500 mt-1">Replay-backed appeal review</p>
+      </a>
+      <a href="/institutional/moderation" class="gov-panel hover:border-primary transition block">
+        <p class="font-bold">Human Moderation</p>
+        <p class="text-xs text-gray-500 mt-1">Teacher calibration workflow</p>
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

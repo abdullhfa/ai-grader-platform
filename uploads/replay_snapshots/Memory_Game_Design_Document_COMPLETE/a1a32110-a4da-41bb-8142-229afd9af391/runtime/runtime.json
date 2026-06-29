@@ -1,0 +1,2777 @@
+{
+  "status": "completed",
+  "observation_mode": "orchestrated_runtime_v2",
+  "runtime_session_id": "a1a32110-a4da-41bb-8142-229afd9af391",
+  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+  "engine": "gamemaker",
+  "confidence_tier": {
+    "schema": "confidence_tier_v1",
+    "tier": "C",
+    "tier_label": "static_inference",
+    "confidence_score": 0.43,
+    "confidence_pct": 43,
+    "examiner_signoff_required": true,
+    "description_ar": "استدلال static — source/artifact analysis بدون runtime كامل",
+    "human_signoff_mandatory": true
+  },
+  "capabilities": {
+    "supports_headless": false,
+    "supports_input_simulation": true,
+    "supports_screenshots": true,
+    "supports_video_capture": false,
+    "supports_network_isolation": false,
+    "supports_gpu": false,
+    "supports_audio": false,
+    "supports_build_from_source": true,
+    "supports_playmode_tests": false,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "runtime_events": [
+    {
+      "timestamp": 1782525424.1603687,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "gamemaker",
+        "root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42"
+      }
+    },
+    {
+      "timestamp": 1782525467.3891375,
+      "type": "gamemaker_pro_runtime_verification",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "objects": 1,
+        "rooms": 0,
+        "gameplay": true
+      }
+    }
+  ],
+  "artifact_manifest": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  },
+  "platform_analyses": [
+    {
+      "platform": "gamemaker",
+      "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42",
+      "status": "completed",
+      "signals": {
+        "enable_web_browser_automation": true,
+        "enable_android_emulator_automation": true,
+        "enable_gamemaker_runtime_verification": true,
+        "enable_scratch_runtime_verification": true,
+        "gamemaker_layout": {
+          "project_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل",
+          "yyp_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+          "yyz_path": null,
+          "gml_file_count": 1,
+          "executable": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\بعد التعديل.exe",
+          "html_entry": null,
+          "has_objects_tree": true,
+          "resource_count": 0
+        },
+        "yyp_metadata": {
+          "ok": false,
+          "error": "Illegal trailing comma before end of object: line 5 column 165 (char 230)"
+        },
+        "gamemaker_runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+        "gamemaker_launch_assessment": {
+          "is_gamemaker": true,
+          "launch_allowed": true,
+          "runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+          "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+          "skip_reason": null,
+          "materialize": {
+            "materialized": true,
+            "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+            "options_ini_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\options.ini",
+            "source": "disk"
+          }
+        },
+        "gamemaker_observation": {
+          "status": "completed",
+          "contract_id": "gamemaker_exe_smoke",
+          "runtime_screenshots": [
+            {
+              "label": "launch",
+              "capture_type": "launch",
+              "timestamp_sec": 2.31,
+              "elapsed_seconds": 2.31,
+              "runtime_session_id": "ros_15a251c732d6",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 777863,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 61.18,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6372.32,
+                "entropy_approx": 2.6479,
+                "center_band_variance": 551.27,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "post_interaction",
+              "capture_type": "post_interaction",
+              "timestamp_sec": 4.92,
+              "elapsed_seconds": 4.92,
+              "runtime_session_id": "ros_d9a244551e19",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 769981,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 60.75,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6359.56,
+                "entropy_approx": 2.6194,
+                "center_band_variance": 221.49,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "mid_runtime",
+              "capture_type": "mid_runtime",
+              "timestamp_sec": 6.3,
+              "elapsed_seconds": 6.3,
+              "runtime_session_id": "ros_e43159785b22",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 773626,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 60.85,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6351.57,
+                "entropy_approx": 2.6227,
+                "center_band_variance": 214.35,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "pre_exit",
+              "capture_type": "pre_exit",
+              "timestamp_sec": 39.34,
+              "elapsed_seconds": 39.34,
+              "runtime_session_id": "ros_4a1bb8fd8b71",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 780038,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 61.47,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6354.82,
+                "entropy_approx": 2.6656,
+                "center_band_variance": 567.22,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            }
+          ],
+          "crash_detected": false,
+          "freeze_possible": true,
+          "analyses": [
+            {
+              "artifact": "بعد التعديل.exe",
+              "type": "exe",
+              "attempted": true,
+              "signals": {
+                "runtime_launch_attempted": true,
+                "runtime_stable": true,
+                "scene_loaded": "partial",
+                "player_moved": "unknown",
+                "crash": "none",
+                "process_ran_seconds": 40,
+                "suspicious_spawn_detected": false
+              },
+              "runtime_screenshots": [
+                {
+                  "label": "launch",
+                  "capture_type": "launch",
+                  "timestamp_sec": 2.31,
+                  "elapsed_seconds": 2.31,
+                  "runtime_session_id": "ros_15a251c732d6",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 777863,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 61.18,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6372.32,
+                    "entropy_approx": 2.6479,
+                    "center_band_variance": 551.27,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                },
+                {
+                  "label": "post_interaction",
+                  "capture_type": "post_interaction",
+                  "timestamp_sec": 4.92,
+                  "elapsed_seconds": 4.92,
+                  "runtime_session_id": "ros_d9a244551e19",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 769981,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 60.75,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6359.56,
+                    "entropy_approx": 2.6194,
+                    "center_band_variance": 221.49,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                },
+                {
+                  "label": "mid_runtime",
+                  "capture_type": "mid_runtime",
+                  "timestamp_sec": 6.3,
+                  "elapsed_seconds": 6.3,
+                  "runtime_session_id": "ros_e43159785b22",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 773626,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 60.85,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6351.57,
+                    "entropy_approx": 2.6227,
+                    "center_band_variance": 214.35,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                },
+                {
+                  "label": "pre_exit",
+                  "capture_type": "pre_exit",
+                  "timestamp_sec": 39.34,
+                  "elapsed_seconds": 39.34,
+                  "runtime_session_id": "ros_4a1bb8fd8b71",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 780038,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 61.47,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6354.82,
+                    "entropy_approx": 2.6656,
+                    "center_band_variance": 567.22,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                }
+              ],
+              "interaction_trace": {
+                "mode": "automated_interaction_burst_v1",
+                "authority": "advisory_observation_only",
+                "platform": "win32",
+                "status": "completed",
+                "inputs_sent": [
+                  {
+                    "type": "key",
+                    "key": "W",
+                    "vk": 87,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "A",
+                    "vk": 65,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "S",
+                    "vk": 83,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "D",
+                    "vk": 68,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "SPACE",
+                    "vk": 32,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "ENTER",
+                    "vk": 13,
+                    "sent": true
+                  },
+                  {
+                    "type": "mouse",
+                    "action": "left_click_center",
+                    "sent": true
+                  }
+                ],
+                "input_count": 7,
+                "mouse_click_attempted": true,
+                "errors": [],
+                "does_not_verify_gameplay": true,
+                "human_playtest_required": true,
+                "authority_note_ar": "تفاعل آلي محدود — يسجّل إرسال input ومقارنة visual delta فقط؛ لا يثبت player movement ولا gameplay correctness.",
+                "pre_interaction_label": "launch",
+                "post_interaction_label": "post_interaction",
+                "pre_interaction_path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+                "post_interaction_path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+                "visual_delta_score": 2.276,
+                "visual_response_to_input": "none",
+                "interaction_traces_detected": true,
+                "player_movement_verified": false
+              },
+              "runtime_session_id": "ros_f8730f175d86",
+              "errors": [],
+              "gamemaker_launch_assessment": {
+                "is_gamemaker": true,
+                "launch_allowed": true,
+                "runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+                "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+                "skip_reason": null,
+                "materialize": {
+                  "materialized": true,
+                  "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+                  "options_ini_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\options.ini",
+                  "source": "disk"
+                }
+              },
+              "launch_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+              "smoke_result": "stable_window",
+              "process_restriction": {
+                "restriction_mode": "advisory_process_guard_v1",
+                "root_pid": 21060,
+                "scan_count": 78,
+                "max_process_count": 1,
+                "suspicious_spawn_detected": false,
+                "suspicious_events": [],
+                "process_tree_kill": {
+                  "root_pid": 21060,
+                  "attempted": true,
+                  "method": "taskkill_tree",
+                  "ok": true,
+                  "errors": [],
+                  "stdout": "SUCCESS: The process with PID 21060 (child process of PID 25572) has been terminated.\n"
+                },
+                "authority_note_ar": "Process restriction layer يقلّل المخاطر الواضحة فقط — ليس sandbox كاملًا ولا يضمن أمانًا مطلقًا.",
+                "network_isolated": false,
+                "filesystem_isolated": false
+              },
+              "visual_observation": {
+                "runtime_screenshot_count": 4,
+                "runtime_screenshots": [
+                  {
+                    "label": "launch",
+                    "capture_type": "launch",
+                    "timestamp_sec": 2.31,
+                    "elapsed_seconds": 2.31,
+                    "runtime_session_id": "ros_15a251c732d6",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 777863,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 61.18,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6372.32,
+                      "entropy_approx": 2.6479,
+                      "center_band_variance": 551.27,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  },
+                  {
+                    "label": "post_interaction",
+                    "capture_type": "post_interaction",
+                    "timestamp_sec": 4.92,
+                    "elapsed_seconds": 4.92,
+                    "runtime_session_id": "ros_d9a244551e19",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 769981,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 60.75,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6359.56,
+                      "entropy_approx": 2.6194,
+                      "center_band_variance": 221.49,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  },
+                  {
+                    "label": "mid_runtime",
+                    "capture_type": "mid_runtime",
+                    "timestamp_sec": 6.3,
+                    "elapsed_seconds": 6.3,
+                    "runtime_session_id": "ros_e43159785b22",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 773626,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 60.85,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6351.57,
+                      "entropy_approx": 2.6227,
+                      "center_band_variance": 214.35,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  },
+                  {
+                    "label": "pre_exit",
+                    "capture_type": "pre_exit",
+                    "timestamp_sec": 39.34,
+                    "elapsed_seconds": 39.34,
+                    "runtime_session_id": "ros_4a1bb8fd8b71",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 780038,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 61.47,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6354.82,
+                      "entropy_approx": 2.6656,
+                      "center_band_variance": 567.22,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  }
+                ],
+                "visual_runtime_evidence": "present",
+                "black_screen_possible": false,
+                "visual_states_observed": [
+                  "gameplay_candidate"
+                ],
+                "visual_runtime_confidence": 0.53,
+                "freeze_possible": true,
+                "observed_visual_elements": [
+                  "complex_visual_surface",
+                  "rendered_output_captured"
+                ],
+                "unverified_gameplay": [
+                  "player_input_response",
+                  "score_system",
+                  "collision_events",
+                  "win_loss_flow",
+                  "level_progression"
+                ],
+                "human_validation_required": [
+                  "gameplay_correctness",
+                  "criterion_achievement",
+                  "menu_to_gameplay_transition"
+                ],
+                "visual_audit_summary": {
+                  "observed_visual_elements": [
+                    "complex_visual_surface",
+                    "rendered_output_captured"
+                  ],
+                  "unverified_gameplay": [
+                    "player_input_response",
+                    "score_system",
+                    "collision_events",
+                    "win_loss_flow",
+                    "level_progression"
+                  ],
+                  "human_validation_required": [
+                    "gameplay_correctness",
+                    "criterion_achievement",
+                    "menu_to_gameplay_transition"
+                  ],
+                  "visual_states_observed": [
+                    "gameplay_candidate"
+                  ],
+                  "visual_runtime_confidence": 0.53,
+                  "freeze_detection": {
+                    "freeze_possible": true,
+                    "compared_pairs": 3,
+                    "similar_pairs": 3,
+                    "note_ar": "freeze_possible يعني frames متطابقة تقريباً — لا يثبت crash أو gameplay."
+                  }
+                },
+                "authority_note_ar": "لقطات runtime + visual_state استشاريان على ظهور output فقط — لا تثبت جودة gameplay أو تحقق معايير C.P5/C.P6."
+              }
+            }
+          ],
+          "gamemaker_runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل"
+        },
+        "runtime_method": "gamemaker_pro_runtime_verification",
+        "gamemaker_build_pipeline_ok": true,
+        "object_inspection_ok": true,
+        "object_count": 1,
+        "sprite_count": 0,
+        "room_count": 0,
+        "event_count": 1,
+        "gameplay_replay_ok": true,
+        "screenshot_count": 4,
+        "frame_delta_score": 0.06581771968046478,
+        "freeze_detected": false,
+        "functional_smoke_pass": true,
+        "build_pipeline": {
+          "version": "gamemaker_build_pipeline_v1",
+          "yyz_extracted": false,
+          "yyp_ready": true,
+          "ide_build_attempted": false,
+          "runnable_after_pipeline": true,
+          "layout": {
+            "project_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل",
+            "yyp_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+            "yyz_path": null,
+            "gml_file_count": 1,
+            "executable": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\بعد التعديل.exe",
+            "html_entry": null,
+            "has_objects_tree": true,
+            "resource_count": 0
+          }
+        },
+        "object_inspection": {
+          "version": "gamemaker_object_inspection_v1",
+          "yyp_metadata": {
+            "ok": false,
+            "error": "Illegal trailing comma before end of object: line 5 column 165 (char 230)"
+          },
+          "yyp_resources": {
+            "objects": [],
+            "sprites": [],
+            "rooms": [],
+            "scripts": [],
+            "sounds": [],
+            "other": []
+          },
+          "filesystem_tree": {
+            "objects": [
+              {
+                "name": "obj_controller",
+                "event_count": 1,
+                "events": [
+                  "Draw_64"
+                ],
+                "sprite_id": null
+              }
+            ],
+            "sprites": [],
+            "rooms": [],
+            "events": [
+              {
+                "object": "obj_controller",
+                "event": "Draw_64",
+                "file": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\objects\\obj_controller\\Draw_64.gml"
+              }
+            ],
+            "object_count": 1,
+            "sprite_count": 0,
+            "room_count": 0,
+            "event_count": 1
+          },
+          "gml_file_count": 1,
+          "summary": {
+            "objects": 1,
+            "sprites": 0,
+            "rooms": 0,
+            "events": 1,
+            "scripts": 0
+          },
+          "inspection_ok": true
+        },
+        "gameplay_replay": {
+          "version": "gamemaker_gameplay_replay_v1",
+          "method": "exe_smoke",
+          "screenshots": [
+            "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+            "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+            "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+            "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png"
+          ],
+          "comparison": {
+            "frame_delta_score": 0.06581771968046478,
+            "freeze_detected": false,
+            "screenshot_count": 4,
+            "comparison_available": true,
+            "input_responsive_hint": true
+          },
+          "gameplay_observed": true,
+          "freeze_detected": false,
+          "frame_delta_score": 0.06581771968046478
+        },
+        "artifact_analysis": {
+          "mode": "artifact_analysis",
+          "layout": {
+            "project_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل",
+            "yyp_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+            "yyz_path": null,
+            "gml_file_count": 1,
+            "executable": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\بعد التعديل.exe",
+            "html_entry": null,
+            "has_objects_tree": true,
+            "resource_count": 0
+          },
+          "runnable_build_present": true,
+          "yyp_metadata": {
+            "ok": false,
+            "error": "[Errno 2] No such file or directory: 'D:\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\uploads\\\\students\\\\bx42\\\\واجب\\\\بعد التعديل\\\\بعد التعديل.yyp'"
+          },
+          "resource_count": 0,
+          "gml_analysis": {
+            "sample_count": 0,
+            "total_lines_sampled": 0,
+            "keyword_hits": {
+              "keyboard": 0,
+              "collision": 0,
+              "draw": 0,
+              "step": 0,
+              "score": 0,
+              "room": 0
+            },
+            "event_mapping": {},
+            "complexity_estimate": 0.25,
+            "samples": []
+          },
+          "project_graph": {
+            "object_count": 1,
+            "room_count": 0,
+            "event_files": 0,
+            "has_objects_tree": true,
+            "has_rooms_tree": false
+          },
+          "completeness_hint": 0.55
+        },
+        "gamemaker_runtime_verification": {
+          "version": "gamemaker_runtime_verification_v1",
+          "yyp": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+          "yyz": null
+        }
+      },
+      "session_id": "a1a32110-a4da-41bb-8142-229afd9af391"
+    }
+  ],
+  "sandbox_engine_version": "2.1",
+  "orchestrator_version": "2.0",
+  "normalized": {
+    "runtime_observation": {
+      "schema": "runtime_observation_v1",
+      "session_id": "a1a32110-a4da-41bb-8142-229afd9af391",
+      "engine_id": "gamemaker",
+      "submission_key": "Memory_Game_Design_Document_COMPLETE",
+      "status": "completed",
+      "runtime_method": "gamemaker_pro_runtime_verification",
+      "capabilities": {
+        "supports_headless": false,
+        "supports_input_simulation": true,
+        "supports_screenshots": true,
+        "supports_video_capture": false,
+        "supports_network_isolation": false,
+        "supports_gpu": false,
+        "supports_audio": false,
+        "supports_build_from_source": true,
+        "supports_playmode_tests": false,
+        "supports_log_parsing": true,
+        "supports_telemetry": true
+      },
+      "metrics": {
+        "avg_fps": null,
+        "crash_detected": false,
+        "freeze_detected": true,
+        "input_responsive": null,
+        "frame_delta_score": 0.0
+      },
+      "telemetry": {
+        "fps_samples": [],
+        "frame_times_ms": [],
+        "memory_usage_mb": [],
+        "scene_transitions": [],
+        "crash_events": [],
+        "ui_events": [],
+        "process_exit_code": null,
+        "runtime_duration_seconds": null,
+        "avg_fps": null,
+        "peak_memory_mb": null
+      },
+      "errors": [],
+      "confidence_tier": "C",
+      "confidence_pct": 43,
+      "examiner_signoff_required": true,
+      "submission_validity": "partial"
+    },
+    "gameplay_timeline": {
+      "duration_seconds": 1782525467.3891375,
+      "event_count": 3,
+      "events": [
+        {
+          "timestamp": 1782525424.1603687,
+          "type": "session_created",
+          "source": "runtime",
+          "payload": {
+            "severity": "info",
+            "payload": {
+              "engine": "gamemaker",
+              "root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42"
+            }
+          }
+        },
+        {
+          "timestamp": 1782525467.3891375,
+          "type": "gamemaker_pro_runtime_verification",
+          "source": "runtime",
+          "payload": {
+            "severity": "info",
+            "payload": {
+              "objects": 1,
+              "rooms": 0,
+              "gameplay": true
+            }
+          }
+        },
+        {
+          "timestamp": 0.0,
+          "type": "freeze_detected",
+          "source": "metrics",
+          "payload": {}
+        }
+      ]
+    },
+    "evidence_bundle": {
+      "schema": "evidence_bundle_v1",
+      "engine_id": "gamemaker",
+      "runtime_observation": {
+        "schema": "runtime_observation_v1",
+        "session_id": "a1a32110-a4da-41bb-8142-229afd9af391",
+        "engine_id": "gamemaker",
+        "submission_key": "Memory_Game_Design_Document_COMPLETE",
+        "status": "completed",
+        "runtime_method": "gamemaker_pro_runtime_verification",
+        "capabilities": {
+          "supports_headless": false,
+          "supports_input_simulation": true,
+          "supports_screenshots": true,
+          "supports_video_capture": false,
+          "supports_network_isolation": false,
+          "supports_gpu": false,
+          "supports_audio": false,
+          "supports_build_from_source": true,
+          "supports_playmode_tests": false,
+          "supports_log_parsing": true,
+          "supports_telemetry": true
+        },
+        "metrics": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        },
+        "telemetry": {
+          "fps_samples": [],
+          "frame_times_ms": [],
+          "memory_usage_mb": [],
+          "scene_transitions": [],
+          "crash_events": [],
+          "ui_events": [],
+          "process_exit_code": null,
+          "runtime_duration_seconds": null,
+          "avg_fps": null,
+          "peak_memory_mb": null
+        },
+        "errors": [],
+        "confidence_tier": "C",
+        "confidence_pct": 43,
+        "examiner_signoff_required": true,
+        "submission_validity": "partial"
+      },
+      "gameplay_timeline": {
+        "duration_seconds": 1782525467.3891375,
+        "event_count": 3,
+        "events": [
+          {
+            "timestamp": 1782525424.1603687,
+            "type": "session_created",
+            "source": "runtime",
+            "payload": {
+              "severity": "info",
+              "payload": {
+                "engine": "gamemaker",
+                "root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42"
+              }
+            }
+          },
+          {
+            "timestamp": 1782525467.3891375,
+            "type": "gamemaker_pro_runtime_verification",
+            "source": "runtime",
+            "payload": {
+              "severity": "info",
+              "payload": {
+                "objects": 1,
+                "rooms": 0,
+                "gameplay": true
+              }
+            }
+          },
+          {
+            "timestamp": 0.0,
+            "type": "freeze_detected",
+            "source": "metrics",
+            "payload": {}
+          }
+        ]
+      },
+      "artifacts": {
+        "screenshots": [
+          "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+          "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+          "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+          "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png"
+        ],
+        "logs": [],
+        "manifest_entries": {
+          "screenshots": [],
+          "traces": [],
+          "logs": [],
+          "fps": [],
+          "gameplay_video": [],
+          "runtime_events": []
+        }
+      },
+      "signals": {
+        "runtime_method": "gamemaker_pro_runtime_verification",
+        "artifact_analysis": {
+          "mode": "artifact_analysis",
+          "layout": {
+            "project_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل",
+            "yyp_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+            "yyz_path": null,
+            "gml_file_count": 1,
+            "executable": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\بعد التعديل.exe",
+            "html_entry": null,
+            "has_objects_tree": true,
+            "resource_count": 0
+          },
+          "runnable_build_present": true,
+          "yyp_metadata": {
+            "ok": false,
+            "error": "[Errno 2] No such file or directory: 'D:\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\uploads\\\\students\\\\bx42\\\\واجب\\\\بعد التعديل\\\\بعد التعديل.yyp'"
+          },
+          "resource_count": 0,
+          "gml_analysis": {
+            "sample_count": 0,
+            "total_lines_sampled": 0,
+            "keyword_hits": {
+              "keyboard": 0,
+              "collision": 0,
+              "draw": 0,
+              "step": 0,
+              "score": 0,
+              "room": 0
+            },
+            "event_mapping": {},
+            "complexity_estimate": 0.25,
+            "samples": []
+          },
+          "project_graph": {
+            "object_count": 1,
+            "room_count": 0,
+            "event_files": 0,
+            "has_objects_tree": true,
+            "has_rooms_tree": false
+          },
+          "completeness_hint": 0.55
+        },
+        "yyp_metadata": {
+          "ok": false,
+          "error": "Illegal trailing comma before end of object: line 5 column 165 (char 230)"
+        },
+        "gamemaker_layout": {
+          "project_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل",
+          "yyp_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+          "yyz_path": null,
+          "gml_file_count": 1,
+          "executable": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\بعد التعديل.exe",
+          "html_entry": null,
+          "has_objects_tree": true,
+          "resource_count": 0
+        },
+        "gamemaker_observation": {
+          "status": "completed",
+          "contract_id": "gamemaker_exe_smoke",
+          "runtime_screenshots": [
+            {
+              "label": "launch",
+              "capture_type": "launch",
+              "timestamp_sec": 2.31,
+              "elapsed_seconds": 2.31,
+              "runtime_session_id": "ros_15a251c732d6",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 777863,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 61.18,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6372.32,
+                "entropy_approx": 2.6479,
+                "center_band_variance": 551.27,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "post_interaction",
+              "capture_type": "post_interaction",
+              "timestamp_sec": 4.92,
+              "elapsed_seconds": 4.92,
+              "runtime_session_id": "ros_d9a244551e19",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 769981,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 60.75,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6359.56,
+                "entropy_approx": 2.6194,
+                "center_band_variance": 221.49,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "mid_runtime",
+              "capture_type": "mid_runtime",
+              "timestamp_sec": 6.3,
+              "elapsed_seconds": 6.3,
+              "runtime_session_id": "ros_e43159785b22",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 773626,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 60.85,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6351.57,
+                "entropy_approx": 2.6227,
+                "center_band_variance": 214.35,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "pre_exit",
+              "capture_type": "pre_exit",
+              "timestamp_sec": 39.34,
+              "elapsed_seconds": 39.34,
+              "runtime_session_id": "ros_4a1bb8fd8b71",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 780038,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 61.47,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6354.82,
+                "entropy_approx": 2.6656,
+                "center_band_variance": 567.22,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            }
+          ],
+          "crash_detected": false,
+          "freeze_possible": true,
+          "analyses": [
+            {
+              "artifact": "بعد التعديل.exe",
+              "type": "exe",
+              "attempted": true,
+              "signals": {
+                "runtime_launch_attempted": true,
+                "runtime_stable": true,
+                "scene_loaded": "partial",
+                "player_moved": "unknown",
+                "crash": "none",
+                "process_ran_seconds": 40,
+                "suspicious_spawn_detected": false
+              },
+              "runtime_screenshots": [
+                {
+                  "label": "launch",
+                  "capture_type": "launch",
+                  "timestamp_sec": 2.31,
+                  "elapsed_seconds": 2.31,
+                  "runtime_session_id": "ros_15a251c732d6",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 777863,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 61.18,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6372.32,
+                    "entropy_approx": 2.6479,
+                    "center_band_variance": 551.27,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                },
+                {
+                  "label": "post_interaction",
+                  "capture_type": "post_interaction",
+                  "timestamp_sec": 4.92,
+                  "elapsed_seconds": 4.92,
+                  "runtime_session_id": "ros_d9a244551e19",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 769981,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 60.75,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6359.56,
+                    "entropy_approx": 2.6194,
+                    "center_band_variance": 221.49,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                },
+                {
+                  "label": "mid_runtime",
+                  "capture_type": "mid_runtime",
+                  "timestamp_sec": 6.3,
+                  "elapsed_seconds": 6.3,
+                  "runtime_session_id": "ros_e43159785b22",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 773626,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 60.85,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6351.57,
+                    "entropy_approx": 2.6227,
+                    "center_band_variance": 214.35,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                },
+                {
+                  "label": "pre_exit",
+                  "capture_type": "pre_exit",
+                  "timestamp_sec": 39.34,
+                  "elapsed_seconds": 39.34,
+                  "runtime_session_id": "ros_4a1bb8fd8b71",
+                  "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                  "status": "captured",
+                  "mode": "desktop_capture_best_effort",
+                  "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+                  "errors": [],
+                  "authority": "advisory_visual_runtime_only",
+                  "window_visible": true,
+                  "size_bytes": 780038,
+                  "width": 1920,
+                  "height": 1200,
+                  "resolution": "1920x1200",
+                  "visual_stats": {
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "avg_luma_approx": 61.47,
+                    "min_channel": 0,
+                    "max_channel": 255,
+                    "dynamic_range": 255,
+                    "luma_variance": 6354.82,
+                    "entropy_approx": 2.6656,
+                    "center_band_variance": 567.22,
+                    "black_screen_possible": false,
+                    "window_visible": true
+                  },
+                  "visual_state": "gameplay_candidate",
+                  "visual_state_confidence": 0.48,
+                  "classification_mode": "heuristic_v1",
+                  "classification_reasons": [
+                    "higher visual complexity — gameplay not verified"
+                  ]
+                }
+              ],
+              "interaction_trace": {
+                "mode": "automated_interaction_burst_v1",
+                "authority": "advisory_observation_only",
+                "platform": "win32",
+                "status": "completed",
+                "inputs_sent": [
+                  {
+                    "type": "key",
+                    "key": "W",
+                    "vk": 87,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "A",
+                    "vk": 65,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "S",
+                    "vk": 83,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "D",
+                    "vk": 68,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "SPACE",
+                    "vk": 32,
+                    "sent": true
+                  },
+                  {
+                    "type": "key",
+                    "key": "ENTER",
+                    "vk": 13,
+                    "sent": true
+                  },
+                  {
+                    "type": "mouse",
+                    "action": "left_click_center",
+                    "sent": true
+                  }
+                ],
+                "input_count": 7,
+                "mouse_click_attempted": true,
+                "errors": [],
+                "does_not_verify_gameplay": true,
+                "human_playtest_required": true,
+                "authority_note_ar": "تفاعل آلي محدود — يسجّل إرسال input ومقارنة visual delta فقط؛ لا يثبت player movement ولا gameplay correctness.",
+                "pre_interaction_label": "launch",
+                "post_interaction_label": "post_interaction",
+                "pre_interaction_path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+                "post_interaction_path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+                "visual_delta_score": 2.276,
+                "visual_response_to_input": "none",
+                "interaction_traces_detected": true,
+                "player_movement_verified": false
+              },
+              "runtime_session_id": "ros_f8730f175d86",
+              "errors": [],
+              "gamemaker_launch_assessment": {
+                "is_gamemaker": true,
+                "launch_allowed": true,
+                "runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+                "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+                "skip_reason": null,
+                "materialize": {
+                  "materialized": true,
+                  "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+                  "options_ini_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\options.ini",
+                  "source": "disk"
+                }
+              },
+              "launch_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+              "smoke_result": "stable_window",
+              "process_restriction": {
+                "restriction_mode": "advisory_process_guard_v1",
+                "root_pid": 21060,
+                "scan_count": 78,
+                "max_process_count": 1,
+                "suspicious_spawn_detected": false,
+                "suspicious_events": [],
+                "process_tree_kill": {
+                  "root_pid": 21060,
+                  "attempted": true,
+                  "method": "taskkill_tree",
+                  "ok": true,
+                  "errors": [],
+                  "stdout": "SUCCESS: The process with PID 21060 (child process of PID 25572) has been terminated.\n"
+                },
+                "authority_note_ar": "Process restriction layer يقلّل المخاطر الواضحة فقط — ليس sandbox كاملًا ولا يضمن أمانًا مطلقًا.",
+                "network_isolated": false,
+                "filesystem_isolated": false
+              },
+              "visual_observation": {
+                "runtime_screenshot_count": 4,
+                "runtime_screenshots": [
+                  {
+                    "label": "launch",
+                    "capture_type": "launch",
+                    "timestamp_sec": 2.31,
+                    "elapsed_seconds": 2.31,
+                    "runtime_session_id": "ros_15a251c732d6",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 777863,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 61.18,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6372.32,
+                      "entropy_approx": 2.6479,
+                      "center_band_variance": 551.27,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  },
+                  {
+                    "label": "post_interaction",
+                    "capture_type": "post_interaction",
+                    "timestamp_sec": 4.92,
+                    "elapsed_seconds": 4.92,
+                    "runtime_session_id": "ros_d9a244551e19",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 769981,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 60.75,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6359.56,
+                      "entropy_approx": 2.6194,
+                      "center_band_variance": 221.49,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  },
+                  {
+                    "label": "mid_runtime",
+                    "capture_type": "mid_runtime",
+                    "timestamp_sec": 6.3,
+                    "elapsed_seconds": 6.3,
+                    "runtime_session_id": "ros_e43159785b22",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 773626,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 60.85,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6351.57,
+                      "entropy_approx": 2.6227,
+                      "center_band_variance": 214.35,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  },
+                  {
+                    "label": "pre_exit",
+                    "capture_type": "pre_exit",
+                    "timestamp_sec": 39.34,
+                    "elapsed_seconds": 39.34,
+                    "runtime_session_id": "ros_4a1bb8fd8b71",
+                    "submission_key": "Memory_Game_Design_Document_COMPLETE",
+                    "status": "captured",
+                    "mode": "desktop_capture_best_effort",
+                    "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+                    "errors": [],
+                    "authority": "advisory_visual_runtime_only",
+                    "window_visible": true,
+                    "size_bytes": 780038,
+                    "width": 1920,
+                    "height": 1200,
+                    "resolution": "1920x1200",
+                    "visual_stats": {
+                      "width": 1920,
+                      "height": 1200,
+                      "resolution": "1920x1200",
+                      "avg_luma_approx": 61.47,
+                      "min_channel": 0,
+                      "max_channel": 255,
+                      "dynamic_range": 255,
+                      "luma_variance": 6354.82,
+                      "entropy_approx": 2.6656,
+                      "center_band_variance": 567.22,
+                      "black_screen_possible": false,
+                      "window_visible": true
+                    },
+                    "visual_state": "gameplay_candidate",
+                    "visual_state_confidence": 0.48,
+                    "classification_mode": "heuristic_v1",
+                    "classification_reasons": [
+                      "higher visual complexity — gameplay not verified"
+                    ]
+                  }
+                ],
+                "visual_runtime_evidence": "present",
+                "black_screen_possible": false,
+                "visual_states_observed": [
+                  "gameplay_candidate"
+                ],
+                "visual_runtime_confidence": 0.53,
+                "freeze_possible": true,
+                "observed_visual_elements": [
+                  "complex_visual_surface",
+                  "rendered_output_captured"
+                ],
+                "unverified_gameplay": [
+                  "player_input_response",
+                  "score_system",
+                  "collision_events",
+                  "win_loss_flow",
+                  "level_progression"
+                ],
+                "human_validation_required": [
+                  "gameplay_correctness",
+                  "criterion_achievement",
+                  "menu_to_gameplay_transition"
+                ],
+                "visual_audit_summary": {
+                  "observed_visual_elements": [
+                    "complex_visual_surface",
+                    "rendered_output_captured"
+                  ],
+                  "unverified_gameplay": [
+                    "player_input_response",
+                    "score_system",
+                    "collision_events",
+                    "win_loss_flow",
+                    "level_progression"
+                  ],
+                  "human_validation_required": [
+                    "gameplay_correctness",
+                    "criterion_achievement",
+                    "menu_to_gameplay_transition"
+                  ],
+                  "visual_states_observed": [
+                    "gameplay_candidate"
+                  ],
+                  "visual_runtime_confidence": 0.53,
+                  "freeze_detection": {
+                    "freeze_possible": true,
+                    "compared_pairs": 3,
+                    "similar_pairs": 3,
+                    "note_ar": "freeze_possible يعني frames متطابقة تقريباً — لا يثبت crash أو gameplay."
+                  }
+                },
+                "authority_note_ar": "لقطات runtime + visual_state استشاريان على ظهور output فقط — لا تثبت جودة gameplay أو تحقق معايير C.P5/C.P6."
+              }
+            }
+          ],
+          "gamemaker_runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل"
+        }
+      },
+      "replay_inputs": {
+        "session_id": "a1a32110-a4da-41bb-8142-229afd9af391",
+        "engine": "gamemaker",
+        "runtime_method": "gamemaker_pro_runtime_verification",
+        "status": "completed",
+        "confidence_tier": "C"
+      },
+      "confidence_tier": {
+        "schema": "confidence_tier_v1",
+        "tier": "C",
+        "tier_label": "static_inference",
+        "confidence_score": 0.43,
+        "confidence_pct": 43,
+        "examiner_signoff_required": true,
+        "description_ar": "استدلال static — source/artifact analysis بدون runtime كامل",
+        "human_signoff_mandatory": true
+      },
+      "submission_validity": {
+        "schema": "submission_validity_v1",
+        "validity": "partial",
+        "engine_id": "gamemaker",
+        "has_runnable_build": true,
+        "has_source_project": false,
+        "has_documentation": false,
+        "build_count": 1,
+        "zip_status": {
+          "checked": false,
+          "corrupted": false
+        },
+        "issues": [],
+        "warnings": [
+          "missing_source",
+          "missing_documentation"
+        ],
+        "decisions": [
+          {
+            "condition": "missing_source",
+            "decision": "reduced_evidence",
+            "grading": "runtime_verified"
+          },
+          {
+            "condition": "missing_docs",
+            "decision": "governance_warning",
+            "grading": "continue_with_flag"
+          }
+        ],
+        "policy_note_ar": "التحقق من صحة التسليم لا يوقف pipeline — يوجّه مستوى الثقة ومراجعة examiner."
+      }
+    },
+    "confidence_tier": {
+      "schema": "confidence_tier_v1",
+      "tier": "C",
+      "tier_label": "static_inference",
+      "confidence_score": 0.43,
+      "confidence_pct": 43,
+      "examiner_signoff_required": true,
+      "description_ar": "استدلال static — source/artifact analysis بدون runtime كامل",
+      "human_signoff_mandatory": true
+    },
+    "submission_validity": {
+      "schema": "submission_validity_v1",
+      "validity": "partial",
+      "engine_id": "gamemaker",
+      "has_runnable_build": true,
+      "has_source_project": false,
+      "has_documentation": false,
+      "build_count": 1,
+      "zip_status": {
+        "checked": false,
+        "corrupted": false
+      },
+      "issues": [],
+      "warnings": [
+        "missing_source",
+        "missing_documentation"
+      ],
+      "decisions": [
+        {
+          "condition": "missing_source",
+          "decision": "reduced_evidence",
+          "grading": "runtime_verified"
+        },
+        {
+          "condition": "missing_docs",
+          "decision": "governance_warning",
+          "grading": "continue_with_flag"
+        }
+      ],
+      "policy_note_ar": "التحقق من صحة التسليم لا يوقف pipeline — يوجّه مستوى الثقة ومراجعة examiner."
+    }
+  },
+  "submission_validity": {
+    "schema": "submission_validity_v1",
+    "validity": "partial",
+    "engine_id": "gamemaker",
+    "has_runnable_build": true,
+    "has_source_project": false,
+    "has_documentation": false,
+    "build_count": 1,
+    "zip_status": {
+      "checked": false,
+      "corrupted": false
+    },
+    "issues": [],
+    "warnings": [
+      "missing_source",
+      "missing_documentation"
+    ],
+    "decisions": [
+      {
+        "condition": "missing_source",
+        "decision": "reduced_evidence",
+        "grading": "runtime_verified"
+      },
+      {
+        "condition": "missing_docs",
+        "decision": "governance_warning",
+        "grading": "continue_with_flag"
+      }
+    ],
+    "policy_note_ar": "التحقق من صحة التسليم لا يوقف pipeline — يوجّه مستوى الثقة ومراجعة examiner."
+  },
+  "failsafe": {
+    "schema": "failsafe_assessment_v1",
+    "pipeline_completed": true,
+    "never_empty": true,
+    "grading_summary": {
+      "engine": "gamemaker",
+      "status": "completed",
+      "confidence_tier": "C",
+      "confidence_pct": 43,
+      "examiner_signoff_required": true,
+      "validity": "partial",
+      "warnings": [
+        "missing_source",
+        "missing_documentation"
+      ],
+      "static_fallback": false,
+      "message_ar": "تم إنتاج تقرير assessment — evidence-based with mandatory human signoff."
+    },
+    "reviewer_notes_section": [
+      "validity_warning:missing_source",
+      "validity_warning:missing_documentation",
+      "examiner_signoff_required:true"
+    ],
+    "audit_trail_hint": "replay_snapshot + confidence_tier + submission_validity"
+  },
+  "runtime_screenshots": [
+    {
+      "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+      "status": "captured",
+      "source": "web_headless"
+    },
+    {
+      "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+      "status": "captured",
+      "source": "web_headless"
+    },
+    {
+      "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+      "status": "captured",
+      "source": "web_headless"
+    },
+    {
+      "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+      "status": "captured",
+      "source": "web_headless"
+    }
+  ],
+  "runtime_observed": true,
+  "runtime_metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": true,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "freeze_possible": true,
+  "gamemaker_artifact_analysis": {
+    "mode": "artifact_analysis",
+    "layout": {
+      "project_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل",
+      "yyp_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+      "yyz_path": null,
+      "gml_file_count": 1,
+      "executable": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\بعد التعديل.exe",
+      "html_entry": null,
+      "has_objects_tree": true,
+      "resource_count": 0
+    },
+    "runnable_build_present": true,
+    "yyp_metadata": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'D:\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\uploads\\\\students\\\\bx42\\\\واجب\\\\بعد التعديل\\\\بعد التعديل.yyp'"
+    },
+    "resource_count": 0,
+    "gml_analysis": {
+      "sample_count": 0,
+      "total_lines_sampled": 0,
+      "keyword_hits": {
+        "keyboard": 0,
+        "collision": 0,
+        "draw": 0,
+        "step": 0,
+        "score": 0,
+        "room": 0
+      },
+      "event_mapping": {},
+      "complexity_estimate": 0.25,
+      "samples": []
+    },
+    "project_graph": {
+      "object_count": 1,
+      "room_count": 0,
+      "event_files": 0,
+      "has_objects_tree": true,
+      "has_rooms_tree": false
+    },
+    "completeness_hint": 0.55
+  },
+  "gamemaker_observation_summary": {
+    "status": "completed",
+    "contract_id": "gamemaker_exe_smoke",
+    "runtime_screenshots": [
+      {
+        "label": "launch",
+        "capture_type": "launch",
+        "timestamp_sec": 2.31,
+        "elapsed_seconds": 2.31,
+        "runtime_session_id": "ros_15a251c732d6",
+        "submission_key": "Memory_Game_Design_Document_COMPLETE",
+        "status": "captured",
+        "mode": "desktop_capture_best_effort",
+        "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+        "errors": [],
+        "authority": "advisory_visual_runtime_only",
+        "window_visible": true,
+        "size_bytes": 777863,
+        "width": 1920,
+        "height": 1200,
+        "resolution": "1920x1200",
+        "visual_stats": {
+          "width": 1920,
+          "height": 1200,
+          "resolution": "1920x1200",
+          "avg_luma_approx": 61.18,
+          "min_channel": 0,
+          "max_channel": 255,
+          "dynamic_range": 255,
+          "luma_variance": 6372.32,
+          "entropy_approx": 2.6479,
+          "center_band_variance": 551.27,
+          "black_screen_possible": false,
+          "window_visible": true
+        },
+        "visual_state": "gameplay_candidate",
+        "visual_state_confidence": 0.48,
+        "classification_mode": "heuristic_v1",
+        "classification_reasons": [
+          "higher visual complexity — gameplay not verified"
+        ]
+      },
+      {
+        "label": "post_interaction",
+        "capture_type": "post_interaction",
+        "timestamp_sec": 4.92,
+        "elapsed_seconds": 4.92,
+        "runtime_session_id": "ros_d9a244551e19",
+        "submission_key": "Memory_Game_Design_Document_COMPLETE",
+        "status": "captured",
+        "mode": "desktop_capture_best_effort",
+        "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+        "errors": [],
+        "authority": "advisory_visual_runtime_only",
+        "window_visible": true,
+        "size_bytes": 769981,
+        "width": 1920,
+        "height": 1200,
+        "resolution": "1920x1200",
+        "visual_stats": {
+          "width": 1920,
+          "height": 1200,
+          "resolution": "1920x1200",
+          "avg_luma_approx": 60.75,
+          "min_channel": 0,
+          "max_channel": 255,
+          "dynamic_range": 255,
+          "luma_variance": 6359.56,
+          "entropy_approx": 2.6194,
+          "center_band_variance": 221.49,
+          "black_screen_possible": false,
+          "window_visible": true
+        },
+        "visual_state": "gameplay_candidate",
+        "visual_state_confidence": 0.48,
+        "classification_mode": "heuristic_v1",
+        "classification_reasons": [
+          "higher visual complexity — gameplay not verified"
+        ]
+      },
+      {
+        "label": "mid_runtime",
+        "capture_type": "mid_runtime",
+        "timestamp_sec": 6.3,
+        "elapsed_seconds": 6.3,
+        "runtime_session_id": "ros_e43159785b22",
+        "submission_key": "Memory_Game_Design_Document_COMPLETE",
+        "status": "captured",
+        "mode": "desktop_capture_best_effort",
+        "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+        "errors": [],
+        "authority": "advisory_visual_runtime_only",
+        "window_visible": true,
+        "size_bytes": 773626,
+        "width": 1920,
+        "height": 1200,
+        "resolution": "1920x1200",
+        "visual_stats": {
+          "width": 1920,
+          "height": 1200,
+          "resolution": "1920x1200",
+          "avg_luma_approx": 60.85,
+          "min_channel": 0,
+          "max_channel": 255,
+          "dynamic_range": 255,
+          "luma_variance": 6351.57,
+          "entropy_approx": 2.6227,
+          "center_band_variance": 214.35,
+          "black_screen_possible": false,
+          "window_visible": true
+        },
+        "visual_state": "gameplay_candidate",
+        "visual_state_confidence": 0.48,
+        "classification_mode": "heuristic_v1",
+        "classification_reasons": [
+          "higher visual complexity — gameplay not verified"
+        ]
+      },
+      {
+        "label": "pre_exit",
+        "capture_type": "pre_exit",
+        "timestamp_sec": 39.34,
+        "elapsed_seconds": 39.34,
+        "runtime_session_id": "ros_4a1bb8fd8b71",
+        "submission_key": "Memory_Game_Design_Document_COMPLETE",
+        "status": "captured",
+        "mode": "desktop_capture_best_effort",
+        "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+        "errors": [],
+        "authority": "advisory_visual_runtime_only",
+        "window_visible": true,
+        "size_bytes": 780038,
+        "width": 1920,
+        "height": 1200,
+        "resolution": "1920x1200",
+        "visual_stats": {
+          "width": 1920,
+          "height": 1200,
+          "resolution": "1920x1200",
+          "avg_luma_approx": 61.47,
+          "min_channel": 0,
+          "max_channel": 255,
+          "dynamic_range": 255,
+          "luma_variance": 6354.82,
+          "entropy_approx": 2.6656,
+          "center_band_variance": 567.22,
+          "black_screen_possible": false,
+          "window_visible": true
+        },
+        "visual_state": "gameplay_candidate",
+        "visual_state_confidence": 0.48,
+        "classification_mode": "heuristic_v1",
+        "classification_reasons": [
+          "higher visual complexity — gameplay not verified"
+        ]
+      }
+    ],
+    "crash_detected": false,
+    "freeze_possible": true,
+    "analyses": [
+      {
+        "artifact": "بعد التعديل.exe",
+        "type": "exe",
+        "attempted": true,
+        "signals": {
+          "runtime_launch_attempted": true,
+          "runtime_stable": true,
+          "scene_loaded": "partial",
+          "player_moved": "unknown",
+          "crash": "none",
+          "process_ran_seconds": 40,
+          "suspicious_spawn_detected": false
+        },
+        "runtime_screenshots": [
+          {
+            "label": "launch",
+            "capture_type": "launch",
+            "timestamp_sec": 2.31,
+            "elapsed_seconds": 2.31,
+            "runtime_session_id": "ros_15a251c732d6",
+            "submission_key": "Memory_Game_Design_Document_COMPLETE",
+            "status": "captured",
+            "mode": "desktop_capture_best_effort",
+            "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+            "errors": [],
+            "authority": "advisory_visual_runtime_only",
+            "window_visible": true,
+            "size_bytes": 777863,
+            "width": 1920,
+            "height": 1200,
+            "resolution": "1920x1200",
+            "visual_stats": {
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "avg_luma_approx": 61.18,
+              "min_channel": 0,
+              "max_channel": 255,
+              "dynamic_range": 255,
+              "luma_variance": 6372.32,
+              "entropy_approx": 2.6479,
+              "center_band_variance": 551.27,
+              "black_screen_possible": false,
+              "window_visible": true
+            },
+            "visual_state": "gameplay_candidate",
+            "visual_state_confidence": 0.48,
+            "classification_mode": "heuristic_v1",
+            "classification_reasons": [
+              "higher visual complexity — gameplay not verified"
+            ]
+          },
+          {
+            "label": "post_interaction",
+            "capture_type": "post_interaction",
+            "timestamp_sec": 4.92,
+            "elapsed_seconds": 4.92,
+            "runtime_session_id": "ros_d9a244551e19",
+            "submission_key": "Memory_Game_Design_Document_COMPLETE",
+            "status": "captured",
+            "mode": "desktop_capture_best_effort",
+            "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+            "errors": [],
+            "authority": "advisory_visual_runtime_only",
+            "window_visible": true,
+            "size_bytes": 769981,
+            "width": 1920,
+            "height": 1200,
+            "resolution": "1920x1200",
+            "visual_stats": {
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "avg_luma_approx": 60.75,
+              "min_channel": 0,
+              "max_channel": 255,
+              "dynamic_range": 255,
+              "luma_variance": 6359.56,
+              "entropy_approx": 2.6194,
+              "center_band_variance": 221.49,
+              "black_screen_possible": false,
+              "window_visible": true
+            },
+            "visual_state": "gameplay_candidate",
+            "visual_state_confidence": 0.48,
+            "classification_mode": "heuristic_v1",
+            "classification_reasons": [
+              "higher visual complexity — gameplay not verified"
+            ]
+          },
+          {
+            "label": "mid_runtime",
+            "capture_type": "mid_runtime",
+            "timestamp_sec": 6.3,
+            "elapsed_seconds": 6.3,
+            "runtime_session_id": "ros_e43159785b22",
+            "submission_key": "Memory_Game_Design_Document_COMPLETE",
+            "status": "captured",
+            "mode": "desktop_capture_best_effort",
+            "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+            "errors": [],
+            "authority": "advisory_visual_runtime_only",
+            "window_visible": true,
+            "size_bytes": 773626,
+            "width": 1920,
+            "height": 1200,
+            "resolution": "1920x1200",
+            "visual_stats": {
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "avg_luma_approx": 60.85,
+              "min_channel": 0,
+              "max_channel": 255,
+              "dynamic_range": 255,
+              "luma_variance": 6351.57,
+              "entropy_approx": 2.6227,
+              "center_band_variance": 214.35,
+              "black_screen_possible": false,
+              "window_visible": true
+            },
+            "visual_state": "gameplay_candidate",
+            "visual_state_confidence": 0.48,
+            "classification_mode": "heuristic_v1",
+            "classification_reasons": [
+              "higher visual complexity — gameplay not verified"
+            ]
+          },
+          {
+            "label": "pre_exit",
+            "capture_type": "pre_exit",
+            "timestamp_sec": 39.34,
+            "elapsed_seconds": 39.34,
+            "runtime_session_id": "ros_4a1bb8fd8b71",
+            "submission_key": "Memory_Game_Design_Document_COMPLETE",
+            "status": "captured",
+            "mode": "desktop_capture_best_effort",
+            "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+            "errors": [],
+            "authority": "advisory_visual_runtime_only",
+            "window_visible": true,
+            "size_bytes": 780038,
+            "width": 1920,
+            "height": 1200,
+            "resolution": "1920x1200",
+            "visual_stats": {
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "avg_luma_approx": 61.47,
+              "min_channel": 0,
+              "max_channel": 255,
+              "dynamic_range": 255,
+              "luma_variance": 6354.82,
+              "entropy_approx": 2.6656,
+              "center_band_variance": 567.22,
+              "black_screen_possible": false,
+              "window_visible": true
+            },
+            "visual_state": "gameplay_candidate",
+            "visual_state_confidence": 0.48,
+            "classification_mode": "heuristic_v1",
+            "classification_reasons": [
+              "higher visual complexity — gameplay not verified"
+            ]
+          }
+        ],
+        "interaction_trace": {
+          "mode": "automated_interaction_burst_v1",
+          "authority": "advisory_observation_only",
+          "platform": "win32",
+          "status": "completed",
+          "inputs_sent": [
+            {
+              "type": "key",
+              "key": "W",
+              "vk": 87,
+              "sent": true
+            },
+            {
+              "type": "key",
+              "key": "A",
+              "vk": 65,
+              "sent": true
+            },
+            {
+              "type": "key",
+              "key": "S",
+              "vk": 83,
+              "sent": true
+            },
+            {
+              "type": "key",
+              "key": "D",
+              "vk": 68,
+              "sent": true
+            },
+            {
+              "type": "key",
+              "key": "SPACE",
+              "vk": 32,
+              "sent": true
+            },
+            {
+              "type": "key",
+              "key": "ENTER",
+              "vk": 13,
+              "sent": true
+            },
+            {
+              "type": "mouse",
+              "action": "left_click_center",
+              "sent": true
+            }
+          ],
+          "input_count": 7,
+          "mouse_click_attempted": true,
+          "errors": [],
+          "does_not_verify_gameplay": true,
+          "human_playtest_required": true,
+          "authority_note_ar": "تفاعل آلي محدود — يسجّل إرسال input ومقارنة visual delta فقط؛ لا يثبت player movement ولا gameplay correctness.",
+          "pre_interaction_label": "launch",
+          "post_interaction_label": "post_interaction",
+          "pre_interaction_path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+          "post_interaction_path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+          "visual_delta_score": 2.276,
+          "visual_response_to_input": "none",
+          "interaction_traces_detected": true,
+          "player_movement_verified": false
+        },
+        "runtime_session_id": "ros_f8730f175d86",
+        "errors": [],
+        "gamemaker_launch_assessment": {
+          "is_gamemaker": true,
+          "launch_allowed": true,
+          "runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+          "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+          "skip_reason": null,
+          "materialize": {
+            "materialized": true,
+            "data_win_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\data.win",
+            "options_ini_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\options.ini",
+            "source": "disk"
+          }
+        },
+        "launch_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل",
+        "smoke_result": "stable_window",
+        "process_restriction": {
+          "restriction_mode": "advisory_process_guard_v1",
+          "root_pid": 21060,
+          "scan_count": 78,
+          "max_process_count": 1,
+          "suspicious_spawn_detected": false,
+          "suspicious_events": [],
+          "process_tree_kill": {
+            "root_pid": 21060,
+            "attempted": true,
+            "method": "taskkill_tree",
+            "ok": true,
+            "errors": [],
+            "stdout": "SUCCESS: The process with PID 21060 (child process of PID 25572) has been terminated.\n"
+          },
+          "authority_note_ar": "Process restriction layer يقلّل المخاطر الواضحة فقط — ليس sandbox كاملًا ولا يضمن أمانًا مطلقًا.",
+          "network_isolated": false,
+          "filesystem_isolated": false
+        },
+        "visual_observation": {
+          "runtime_screenshot_count": 4,
+          "runtime_screenshots": [
+            {
+              "label": "launch",
+              "capture_type": "launch",
+              "timestamp_sec": 2.31,
+              "elapsed_seconds": 2.31,
+              "runtime_session_id": "ros_15a251c732d6",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 777863,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 61.18,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6372.32,
+                "entropy_approx": 2.6479,
+                "center_band_variance": 551.27,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "post_interaction",
+              "capture_type": "post_interaction",
+              "timestamp_sec": 4.92,
+              "elapsed_seconds": 4.92,
+              "runtime_session_id": "ros_d9a244551e19",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 769981,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 60.75,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6359.56,
+                "entropy_approx": 2.6194,
+                "center_band_variance": 221.49,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "mid_runtime",
+              "capture_type": "mid_runtime",
+              "timestamp_sec": 6.3,
+              "elapsed_seconds": 6.3,
+              "runtime_session_id": "ros_e43159785b22",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 773626,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 60.85,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6351.57,
+                "entropy_approx": 2.6227,
+                "center_band_variance": 214.35,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            },
+            {
+              "label": "pre_exit",
+              "capture_type": "pre_exit",
+              "timestamp_sec": 39.34,
+              "elapsed_seconds": 39.34,
+              "runtime_session_id": "ros_4a1bb8fd8b71",
+              "submission_key": "Memory_Game_Design_Document_COMPLETE",
+              "status": "captured",
+              "mode": "desktop_capture_best_effort",
+              "path": "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png",
+              "errors": [],
+              "authority": "advisory_visual_runtime_only",
+              "window_visible": true,
+              "size_bytes": 780038,
+              "width": 1920,
+              "height": 1200,
+              "resolution": "1920x1200",
+              "visual_stats": {
+                "width": 1920,
+                "height": 1200,
+                "resolution": "1920x1200",
+                "avg_luma_approx": 61.47,
+                "min_channel": 0,
+                "max_channel": 255,
+                "dynamic_range": 255,
+                "luma_variance": 6354.82,
+                "entropy_approx": 2.6656,
+                "center_band_variance": 567.22,
+                "black_screen_possible": false,
+                "window_visible": true
+              },
+              "visual_state": "gameplay_candidate",
+              "visual_state_confidence": 0.48,
+              "classification_mode": "heuristic_v1",
+              "classification_reasons": [
+                "higher visual complexity — gameplay not verified"
+              ]
+            }
+          ],
+          "visual_runtime_evidence": "present",
+          "black_screen_possible": false,
+          "visual_states_observed": [
+            "gameplay_candidate"
+          ],
+          "visual_runtime_confidence": 0.53,
+          "freeze_possible": true,
+          "observed_visual_elements": [
+            "complex_visual_surface",
+            "rendered_output_captured"
+          ],
+          "unverified_gameplay": [
+            "player_input_response",
+            "score_system",
+            "collision_events",
+            "win_loss_flow",
+            "level_progression"
+          ],
+          "human_validation_required": [
+            "gameplay_correctness",
+            "criterion_achievement",
+            "menu_to_gameplay_transition"
+          ],
+          "visual_audit_summary": {
+            "observed_visual_elements": [
+              "complex_visual_surface",
+              "rendered_output_captured"
+            ],
+            "unverified_gameplay": [
+              "player_input_response",
+              "score_system",
+              "collision_events",
+              "win_loss_flow",
+              "level_progression"
+            ],
+            "human_validation_required": [
+              "gameplay_correctness",
+              "criterion_achievement",
+              "menu_to_gameplay_transition"
+            ],
+            "visual_states_observed": [
+              "gameplay_candidate"
+            ],
+            "visual_runtime_confidence": 0.53,
+            "freeze_detection": {
+              "freeze_possible": true,
+              "compared_pairs": 3,
+              "similar_pairs": 3,
+              "note_ar": "freeze_possible يعني frames متطابقة تقريباً — لا يثبت crash أو gameplay."
+            }
+          },
+          "authority_note_ar": "لقطات runtime + visual_state استشاريان على ظهور output فقط — لا تثبت جودة gameplay أو تحقق معايير C.P5/C.P6."
+        }
+      }
+    ],
+    "gamemaker_runtime_cwd": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل"
+  },
+  "gamemaker_yyp_metadata": {
+    "ok": false,
+    "error": "Illegal trailing comma before end of object: line 5 column 165 (char 230)"
+  },
+  "gamemaker_runtime_verification": {
+    "version": "gamemaker_runtime_verification_v1",
+    "yyp": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+    "yyz": null
+  },
+  "gamemaker_object_inspection": {
+    "version": "gamemaker_object_inspection_v1",
+    "yyp_metadata": {
+      "ok": false,
+      "error": "Illegal trailing comma before end of object: line 5 column 165 (char 230)"
+    },
+    "yyp_resources": {
+      "objects": [],
+      "sprites": [],
+      "rooms": [],
+      "scripts": [],
+      "sounds": [],
+      "other": []
+    },
+    "filesystem_tree": {
+      "objects": [
+        {
+          "name": "obj_controller",
+          "event_count": 1,
+          "events": [
+            "Draw_64"
+          ],
+          "sprite_id": null
+        }
+      ],
+      "sprites": [],
+      "rooms": [],
+      "events": [
+        {
+          "object": "obj_controller",
+          "event": "Draw_64",
+          "file": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\objects\\obj_controller\\Draw_64.gml"
+        }
+      ],
+      "object_count": 1,
+      "sprite_count": 0,
+      "room_count": 0,
+      "event_count": 1
+    },
+    "gml_file_count": 1,
+    "summary": {
+      "objects": 1,
+      "sprites": 0,
+      "rooms": 0,
+      "events": 1,
+      "scripts": 0
+    },
+    "inspection_ok": true
+  },
+  "gamemaker_gameplay_replay": {
+    "version": "gamemaker_gameplay_replay_v1",
+    "method": "exe_smoke",
+    "screenshots": [
+      "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_2596fcef5f81\\بعد_التعديل\\launch_1782525428240.png",
+      "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_b3e4673dcb9a\\بعد_التعديل\\post_interaction_1782525430841.png",
+      "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_8efe6f1ba29b\\بعد_التعديل\\mid_runtime_1782525432226.png",
+      "uploads\\debug\\runtime_screenshots\\Memory_Game_Design_Document_COMPLETE\\ros_10e7da973a50\\بعد_التعديل\\pre_exit_1782525465262.png"
+    ],
+    "comparison": {
+      "frame_delta_score": 0.06581771968046478,
+      "freeze_detected": false,
+      "screenshot_count": 4,
+      "comparison_available": true,
+      "input_responsive_hint": true
+    },
+    "gameplay_observed": true,
+    "freeze_detected": false,
+    "frame_delta_score": 0.06581771968046478
+  },
+  "gamemaker_build_pipeline": {
+    "version": "gamemaker_build_pipeline_v1",
+    "yyz_extracted": false,
+    "yyp_ready": true,
+    "ide_build_attempted": false,
+    "runnable_after_pipeline": true,
+    "layout": {
+      "project_root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل",
+      "yyp_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\بعد التعديل\\بعد التعديل.yyp",
+      "yyz_path": null,
+      "gml_file_count": 1,
+      "executable": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx42\\واجب\\_nested_runtime\\(.exe)بعد التعديل\\بعد التعديل.exe",
+      "html_entry": null,
+      "has_objects_tree": true,
+      "resource_count": 0
+    }
+  },
+  "crash_detected": false,
+  "runtime_verified": true,
+  "runtime_method": "gamemaker_pro_runtime_verification",
+  "game_launch_attempted": true,
+  "gameplay_analysis": {
+    "status": "skipped",
+    "reason": "no_frames_or_video",
+    "session_id": "a1a32110-a4da-41bb-8142-229afd9af391"
+  },
+  "artifact_count": 1,
+  "runtime_validation": {
+    "validation_version": "runtime_validation_v1",
+    "status": "completed",
+    "functional_smoke": {
+      "functional_smoke_pass": true,
+      "reason": "runtime_verified_with_evidence"
+    },
+    "freeze_analysis": {
+      "freeze_suspected": false,
+      "duration_seconds": 0.0,
+      "visual_response": "none",
+      "input_detected": "none"
+    },
+    "soft_lock_analysis": {
+      "soft_lock_suspected": false,
+      "black_screenshot_count": 0,
+      "scene_loaded_hint": false
+    },
+    "crash_analysis": {
+      "crash_detected": false,
+      "exit_code": null
+    },
+    "gameplay_verification": {
+      "mechanics_observed": true,
+      "ui_interaction_hint": null,
+      "advisory_only": true
+    },
+    "duration_ms": 0
+  }
+}

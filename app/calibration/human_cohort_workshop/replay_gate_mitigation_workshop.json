@@ -1,0 +1,93 @@
+{
+  "workshop_id": "REPLAY_GATE_MITIGATION_WORKSHOP_v1",
+  "status": "active",
+  "path": "A",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "batch_id": 4,
+  "design_artifact": "app/calibration/REPLAY_GATE_DISCIPLINE_v1.md",
+  "activated_at": "2026-05-25T00:40:00Z",
+  "facilitator": "Eng.Abdulah",
+  "core_question_ar": "متى يصبح observation قابلاً للتحول إلى authority؟",
+  "mode_ar": "mitigation observe only — لا grading retune · لا L4 · لا freeze v2",
+  "suggested_submissions": [
+    {"submission_id": 3, "reason_ar": "semantic leakage — GDD authority"},
+    {"submission_id": 2, "reason_ar": "baseline L2 — CAT RUNNER"},
+    {"submission_id": 4, "reason_ar": "boundary discipline positive"},
+    {"submission_id": 13, "reason_ar": "exe + contradictory"},
+    {"submission_id": 6, "reason_ar": "representation → authority drift"}
+  ],
+  "worksheet_per_submission": {
+    "gates": ["representation_detected", "runtime_claim_detected", "provenance_replay_completed", "corroboration_evaluated", "authority_eligibility_unlocked"],
+    "record": ["gate_pass_fail", "authority_language_first_at", "replay_consulted_at", "quarantine_violations_ar"]
+  },
+  "recommended_session_order": [
+    {"session": 3, "submission_id": 3, "role_ar": "failure anatomy"},
+    {"session": 2, "submission_id": 2, "role_ar": "baseline containment"},
+    {"session": 4, "submission_id": 4, "role_ar": "positive governance control"},
+    {"session": 13, "submission_id": 13, "role_ar": "runtime/provenance edge"}
+  ],
+  "curriculum_core_sessions": 4,
+  "curriculum_core_status": "complete",
+  "sessions_completed": 4,
+  "sessions_target": 5,
+  "sessions": [
+    {
+      "session_number": 3,
+      "submission_id": 3,
+      "role_ar": "failure anatomy",
+      "artifact": "app/calibration/human_cohort_workshop/replay_gate_session_3_submission_3.json",
+      "completed_at": "2026-05-25T01:00:00Z",
+      "closure_trigger_detected": "الاكتمال السردي المقنع — GDD/وصف + verification lexicon",
+      "quarantine_stability": "breached"
+    },
+    {
+      "session_number": 2,
+      "submission_id": 2,
+      "role_ar": "baseline containment",
+      "artifact": "app/calibration/human_cohort_workshop/replay_gate_session_2_submission_2.json",
+      "completed_at": "2026-05-25T01:15:00Z",
+      "closure_trigger_detected": "none — غياب الإغراء السردي",
+      "quarantine_stability": "stable",
+      "paired_with_session": 3
+    },
+    {
+      "session_number": 4,
+      "submission_id": 4,
+      "role_ar": "positive governance control",
+      "artifact": "app/calibration/human_cohort_workshop/replay_gate_session_4_submission_4.json",
+      "completed_at": "2026-05-25T02:00:00Z",
+      "closure_trigger_detected": "none — temptation contained",
+      "quarantine_stability": "stable_under_pressure",
+      "restraint_anchor_primary_ar": "observation_criterion_distinction — «شرح للمعيار وليس تنفيذًا له»"
+    },
+    {
+      "session_number": 13,
+      "submission_id": 13,
+      "role_ar": "runtime/provenance edge",
+      "artifact": "app/calibration/human_cohort_workshop/replay_gate_session_13_submission_13.json",
+      "completed_at": "2026-05-25T03:00:00Z",
+      "closure_trigger_detected": "executable temptation — exe presence without provenance completion",
+      "quarantine_stability": "partial_containment",
+      "temptation_types": ["representational_temptation", "executable_temptation"],
+      "runtime_authority_gap_ar": "وجود executable ≠ اكتمال provenance — Bomber Quest vs Kitten Run · exe لم يُشغَّل"
+    }
+  ],
+  "next_artifact_ar": null,
+  "path_a_design_layer": "complete",
+  "epistemic_quarantine_contract_v1": {
+    "artifact": "app/calibration/EPISTEMIC_QUARANTINE_CONTRACT_v1.json",
+    "completed_at": "2026-05-25T05:00:00Z",
+    "status": "constitutional_state_machine_advisory"
+  },
+  "authority_triad_language_v1": {
+    "artifact": "app/calibration/AUTHORITY_TRIAD_LANGUAGE_v1.json",
+    "completed_at": "2026-05-25T04:00:00Z",
+    "status": "design_advisory_only"
+  },
+  "epoch_rereview_packet_path_a_v1": {
+    "artifact": "app/calibration/EPOCH_REREVIEW_PACKET_PATH_A_v1.json",
+    "completed_at": "2026-05-25T06:00:00Z",
+    "verdict": "mitigation_containment_progress_accepted",
+    "mitigation_ledger_entry": "led_d9fe03a80996"
+  }
+}

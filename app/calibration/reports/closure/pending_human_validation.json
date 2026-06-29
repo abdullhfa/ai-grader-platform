@@ -1,0 +1,12 @@
+{
+  "schema": "pending_human_validation_v1",
+  "generated_at": "2026-05-26T23:03:01Z",
+  "requires_human": [
+    "teacher criterion decisions in human_labels_v1.json",
+    "overall_grade per submission",
+    "pilot moderation sign-off",
+    "governance freeze institutional signature"
+  ],
+  "automated_scaffold_complete": true,
+  "moderation_queue": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\moderation_queue.json"
+}

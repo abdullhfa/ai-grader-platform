@@ -1,0 +1,922 @@
+{% extends "base.html" %}
+
+{% set step_state_ar = {
+    'active': 'نشط',
+    'done': 'مكتمل',
+    'pending': 'معلّق',
+    'ready': 'جاهز'
+} %}
+{% set stability_ar = {
+    'green': 'مستقر',
+    'amber': 'حذر',
+    'red': 'غير مستقر'
+} %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10" dir="rtl">
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-8">
+            <a href="/batch-results/{{ batch_id }}"
+                class="text-secondary hover:text-blue-700 flex items-center gap-2 mb-3 text-sm font-semibold transition">
+                <i class="fa-solid fa-arrow-right"></i>
+                العودة لنتائج الدفعة
+            </a>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">مرصد الحوكمة — ورشة الملاحظة</h2>
+            <p class="text-gray-600 text-sm mb-1">{{ worksheet_version }} — دفعة {{ batch_id }}</p>
+            <p class="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm mt-3">
+                ورشة مراقبة حدود السلطة — ليس تصحيحاً. القسم A تلقائي · B–E يدوي · افتح إعادة تشغيل السلطة أولاً.
+            </p>
+            {% if phase2_state and phase2_state.registered %}
+            <div class="text-rose-950 bg-rose-50 border-2 border-rose-300 rounded-lg px-4 py-3 text-sm mt-3">
+                <p class="font-bold mb-2">المرحلة 2 — الملاحظة المؤسسية (مراقبة فقط)</p>
+                <p class="text-xs mb-2">{{ phase2_state.core_question_ar }}</p>
+                {% if phase2_state.not_yet %}
+                <p class="text-xs font-bold text-rose-800 mb-2">ما زال ناقصاً: {{ phase2_state.not_yet }}</p>
+                {% endif %}
+                <p class="text-xs mb-2">الملاحظات: {{ observation_count }} / {{ phase2_state.target_submissions or 25 }} (الحد الأدنى 20)</p>
+                {% if phase2_state.workflow %}
+                <p class="text-xs font-semibold mb-2">التركيز الآن: {{ phase2_state.workflow.current_focus_ar }}</p>
+                <ol class="text-xs space-y-1 mb-2 list-decimal pr-5">
+                    {% for step in phase2_state.workflow.steps %}
+                    <li class="{% if step.state == 'active' %}font-bold text-rose-900{% elif step.state == 'done' %}text-emerald-800{% else %}text-gray-500{% endif %}">
+                        {{ step.label_ar }} — {{ step_state_ar.get(step.state, step.state) }}
+                    </li>
+                    {% endfor %}
+                </ol>
+                {% endif %}
+                <ul class="text-xs space-y-1 list-disc pr-5 mb-2">
+                    {% for rule in phase2_state.rules_ar %}
+                    <li>{{ rule }}</li>
+                    {% endfor %}
+                </ul>
+                {% if phase2_state.status == 'cooling_period' %}
+                <p class="text-xs font-bold text-rose-800">
+                    فترة التهدئة حتى {{ phase2_state.cooling_period_ends_at }} —
+                    <a class="underline" href="/governance-pilot/batch/{{ batch_id }}/ritual-reading">القراءة الطقسية</a>
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
+            <p class="text-violet-900 bg-violet-50 border border-violet-200 rounded-lg px-4 py-2 text-xs mt-2">
+                <strong>سير العمل:</strong> إعادة تشغيل السلطة أولاً — قبل أي حكم شفهي ·
+                القسم E قبل D · ناقش الأنماط لا النجاح/الفشل.
+            </p>
+            <p class="text-violet-900 bg-violet-50 border border-violet-200 rounded-lg px-4 py-2 text-xs mt-2">
+                <strong>القسم E — السلوك المعرفي:</strong> أدلة سلوكية مؤسسية — لا درجة · لا بوابة.
+                المبدأ الدستوري: ملاحظة runtime لا تزال ليست سلطة المعيار.
+            </p>
+            <div class="mt-3 text-xs bg-indigo-50 border border-indigo-200 rounded-lg px-4 py-3 text-indigo-950">
+                <strong>الإشارات الذهبية:</strong> replay لم يُفتح · «اللعبة مُتحقَّقة» · الفيديو يلغي التعارضات · رفض التخفيض · HOLD غير مستخدم · انخفاض الثقة
+            </div>
+            <div class="mt-4">
+                {% if not phase2_state or not phase2_state.governance_expansion_locked %}
+                <a href="/governance/l4-decision?batch_id={{ batch_id }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-700 text-white text-sm font-semibold hover:bg-violet-800 transition">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    نقطة القرار المؤسسي L4
+                </a>
+                <span class="text-xs text-gray-500 mr-2">— مراجعة epoch قبل sandbox · ليس «ابدأ البرمجة»</span>
+                {% else %}
+                <span class="text-xs text-rose-700 font-semibold">
+                    L4 / sandbox / v2 مقفول — أكمل أدلة Phase 2 البشرية أولاً
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <details class="glass-card rounded-2xl p-5 mb-8 border border-violet-200 bg-violet-50/30">
+            <summary class="cursor-pointer font-bold text-violet-900">
+                معجم تسرب السلطة المعرفي — مرجع للانحراف الدلالي المؤسسي
+            </summary>
+            <p class="text-xs text-gray-600 mt-3 mb-3">استشاري فقط — ليس تصنيفاً آلياً</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b bg-white">
+                            <th class="text-right p-2">العبارة</th>
+                            <th class="text-right p-2">نوع التسرب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in leakage_lexicon %}
+                        <tr class="border-b">
+                            <td class="p-2">{{ entry.phrase_ar }}</td>
+                            <td class="p-2 font-mono text-violet-800">{{ entry.leakage_type }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </details>
+
+        {% if synthesis %}
+        <div class="glass-card rounded-2xl p-6 mb-8 border {% if synthesis.pilot_gate.ready_for_l4_rfc %}border-emerald-300 bg-emerald-50{% else %}border-slate-200{% endif %}">
+            <h3 class="text-xl font-bold mb-2">تركيب حوكمة الدفعة</h3>
+            <p class="text-sm text-gray-700 mb-4">{{ synthesis.purpose_ar }}</p>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div class="bg-white rounded-lg p-3 border">
+                    <p class="font-bold">الملاحظات</p>
+                    <p class="text-2xl font-mono">{{ synthesis.observations_count }} / {{ synthesis.submission_count }}</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 border">
+                    <p class="font-bold">ارتباك L3 (يدوي)</p>
+                    <p class="text-2xl font-mono">{{ synthesis.l3_confusion_map.manual_confusion_count }}</p>
+                </div>
+                <div class="glass-card rounded-lg p-3 border">
+                    <p class="font-bold">بوابة الـ pilot</p>
+                    <p class="font-bold {% if synthesis.pilot_gate.ready_for_l4_rfc %}text-emerald-700{% else %}text-red-700{% endif %}">
+                        {{ synthesis.pilot_gate.summary_ar }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {% if epistemic_evidence %}
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-violet-300 bg-violet-50/50">
+            <h3 class="text-xl font-bold mb-1">الأدلة السلوكية المعرفية</h3>
+            <p class="text-xs text-violet-800 mb-3">{{ epistemic_evidence.not_ar if epistemic_evidence.not_ar else 'ليس درجة ولا بوابة ولا نسبة جاهزية' }}</p>
+            <p class="text-sm text-gray-800 mb-3">{{ epistemic_evidence.core_question_ar }}</p>
+            <p class="text-xs font-mono mb-3">
+                القسم E مسجّل: {{ epistemic_evidence.observations_with_section_e }} /
+                {{ epistemic_evidence.total_observations }}
+            </p>
+            {% if epistemic_evidence.facilitator_interpretation_ar %}
+            <ul class="text-sm space-y-1 mb-4 list-disc pr-5">
+                {% for line in epistemic_evidence.facilitator_interpretation_ar %}
+                <li>{{ line }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% if epistemic_evidence.linguistic_leakage_examples %}
+            <div class="bg-white rounded-lg p-3 border text-xs mb-3">
+                <p class="font-bold mb-2">عينات لغوية (هنا يبدأ تضخم السلطة)</p>
+                {% for ex in epistemic_evidence.linguistic_leakage_examples %}
+                <p class="mb-1"><span class="font-mono">#{{ ex.submission_id }}:</span> {{ ex.samples_ar }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if epistemic_evidence.leakage_lexicon_analysis and epistemic_evidence.leakage_lexicon_analysis.per_submission %}
+            <div class="bg-amber-50 rounded-lg p-3 border border-amber-200 text-xs mb-3">
+                <p class="font-bold mb-2">تطابقات المعجم الاستشارية (يؤكدها الميسّر — ليست بوابة آلية)</p>
+                {% for sub in epistemic_evidence.leakage_lexicon_analysis.per_submission %}
+                <div class="mb-2">
+                    <span class="font-mono">#{{ sub.submission_id }}</span>:
+                    {% for m in sub.advisory_matches %}
+                    <span class="inline-block bg-white border rounded px-1 mx-0.5">{{ m.leakage_type }}</span>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <p class="text-xs mt-4 text-violet-700">
+                بعد الورشة الكاملة (20–30):
+                تركيب epistemic → تهدئة 3–7 أيام →
+                <a class="underline" href="/governance-pilot/batch/{{ batch_id }}/ritual-reading">القراءة الطقسية</a>
+                → الذاكرة الدلالية (بعد القراءة فقط) → مداولة epoch
+            </p>
+        </div>
+        {% endif %}
+
+        {% if canonical_stability %}
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-violet-200 bg-violet-50/40">
+            <h3 class="text-xl font-bold mb-1">مقاييس الاستقرار المعياري</h3>
+            <p class="text-sm text-gray-700 mb-4">{{ canonical_stability.purpose_ar }}</p>
+            <p class="text-sm font-bold mb-3 {% if canonical_stability.overall_stability == 'green' %}text-emerald-700{% elif canonical_stability.overall_stability == 'amber' %}text-amber-700{% else %}text-red-700{% endif %}">
+                الاستقرار العام: {{ stability_ar.get(canonical_stability.overall_stability, canonical_stability.overall_stability) }}
+            </p>
+            <div class="grid md:grid-cols-3 gap-3 text-xs font-mono">
+                {% for key, val in canonical_stability.metrics.items() %}
+                <div class="bg-white rounded-lg p-3 border">
+                    <p class="font-bold text-gray-800">{{ key }}</p>
+                    <p>{{ val if val is not none else 'غ/م' }}
+                        {% set band = canonical_stability.health_bands[key].band %}
+                        <span class="{% if band == 'green' %}text-emerald-600{% elif band == 'amber' %}text-amber-600{% elif band == 'red' %}text-red-600{% else %}text-gray-500{% endif %}">
+                            ({{ stability_ar.get(band, band) }})
+                        </span>
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if governance_trajectory and governance_trajectory.transitions %}
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-amber-200 bg-amber-50/30">
+            <h3 class="text-lg font-bold mb-2">أحداث انتقال الاستقرار</h3>
+            <p class="text-xs text-gray-600 mb-3">
+                epoch التجميد: {{ governance_trajectory.freeze_epoch.freeze_epoch }}
+                ({{ governance_trajectory.freeze_epoch.freeze_id }})
+                · نقاط التاريخ: {{ governance_trajectory.history_points }}
+            </p>
+            <ul class="text-sm space-y-2">
+                {% for ev in governance_trajectory.transitions %}
+                <li class="border-r-4 {% if ev.severity == 'critical' %}border-red-500{% elif ev.severity == 'high' %}border-orange-500{% else %}border-slate-400{% endif %} pr-3">
+                    <span class="font-mono text-xs">{{ ev.event }}</span>
+                    {% if ev.metric %} · {{ ev.metric }}{% endif %}
+                    <p class="text-gray-700">{{ ev.meaning_ar }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if epoch_narrative and epoch_narrative.narrative_ar %}
+        <div class="glass-card rounded-2xl p-6 mb-8 border border-indigo-200 bg-indigo-50/30">
+            <h3 class="text-lg font-bold mb-1">سرد epoch الحوكمة</h3>
+            <p class="text-xs text-gray-600 mb-3 font-mono">
+                {{ epoch_narrative.epoch_id }} · {{ epoch_narrative.freeze_id }}
+            </p>
+            <ul class="text-sm space-y-1 text-gray-800">
+                {% for line in epoch_narrative.narrative_ar %}
+                <li>{{ line }}</li>
+                {% endfor %}
+            </ul>
+            <p class="text-xs mt-3 text-gray-500">
+                <a href="/governance-epoch-workshop?target_epoch=epoch_2" class="underline">ورشة Epoch</a>
+                ·
+                <a href="/api/governance/epoch/{{ epoch_narrative.epoch_id }}/mitigation-ledger" class="underline">سجل التخفيف</a>
+                ·
+                <a href="/api/governance/artifact-chain/epoch/{{ epoch_narrative.epoch_id }}" class="underline">سلسلة الأدلة</a>
+            </p>
+            {% if synthesis and synthesis.artifact_chain_summary %}
+            <p class="text-xs text-gray-600 mt-2">
+                سلسلة المصدر: {{ synthesis.artifact_chain_summary.node_count }} عقدة
+                {% if synthesis.artifact_chain_summary.who_approved %}
+                · وقّع: {{ synthesis.artifact_chain_summary.who_approved[0].name }}
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+
+        <div class="space-y-6">
+            {% for item in submissions %}
+            <div class="glass-card rounded-2xl p-6 border border-slate-200" id="sub-{{ item.submission_id }}">
+                <div class="flex flex-col md:flex-row justify-between gap-3 mb-4">
+                    <div>
+                        <h4 class="text-lg font-bold">{{ item.student_name or ('تسليم ' ~ item.submission_id) }}</h4>
+                        <p class="text-xs font-mono text-gray-500">المعرّف {{ item.submission_id }} · انحراف: {{ item.drift_status or 'غ/م' }}</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <a href="/authority-replay/{{ item.submission_id }}"
+                            target="_blank"
+                            rel="noopener"
+                            class="replay-open-link text-xs font-semibold bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700"
+                            data-submission-id="{{ item.submission_id }}">
+                            إعادة تشغيل السلطة ↗ (افتح أولاً)
+                        </a>
+                        {% if item.already_observed %}
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg font-semibold">✓ تمت الملاحظة</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-slate-50 rounded-xl p-4 border">
+                        <p class="font-bold text-sm mb-2">القسم A — حالة أدلة runtime (تلقائي)</p>
+                        {% set a = item.section_a %}
+                        <ul class="text-xs space-y-1">
+                            <li>مستوى runtime: {{ a.runtime_level }}</li>
+                            <li>ملف تنفيذي: {{ 'نعم' if a.executable_detected else 'لا' }}</li>
+                            <li>فيديو gameplay: {{ 'نعم' if a.gameplay_video else 'لا' }}</li>
+                            <li>runtime مُتحقَّق: {{ 'نعم' if a.runtime_verified else 'لا' }}</li>
+                            <li>replay متاح: {{ 'نعم' if a.replay_available else 'لا' }}</li>
+                            {% if a.contradiction_flags %}
+                            <li>تعارضات: {{ a.contradiction_flags | join('، ') }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 border">
+                        <p class="font-bold text-sm mb-2">أحداث مقترحة (تلميحات القسم C)</p>
+                        <ul class="text-xs space-y-1">
+                            {% for ev in item.suggested_events[:4] %}
+                            <li>{{ ev.event }} [{{ ev.severity }}]</li>
+                            {% else %}
+                            <li class="text-gray-500">لا يوجد</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <form class="pilot-obs-form space-y-4" data-submission-id="{{ item.submission_id }}">
+                    <input type="hidden" name="batch_id" value="{{ batch_id }}">
+                    <p class="font-bold text-sm">القسم B — سلوك المراجع</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                        {% for field, label in [
+                            ('l3_interpreted_as_verification', 'هل عُولج L3 كـ verification؟'),
+                            ('replay_opened', 'هل فُتح replay؟'),
+                            ('downgrade_accepted', 'هل قُبل التخفيض؟'),
+                            ('authority_boundary_overridden', 'هل تخطّى حد السلطة؟'),
+                            ('hold_considered', 'هل نُظر في HOLD؟'),
+                            ('hold_applied', 'هل طُبّق HOLD؟')
+                        ] %}
+                        <label class="flex flex-col gap-1">
+                            <span>{{ label }}</span>
+                            <select name="{{ field }}" class="border rounded-lg px-2 py-1" required>
+                                <option value="">—</option>
+                                <option value="true">نعم</option>
+                                <option value="false">لا</option>
+                            </select>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    <label class="block text-sm">
+                        ملاحظات
+                        <textarea name="notes_ar" rows="2" class="w-full border rounded-lg px-3 py-2 mt-1"></textarea>
+                    </label>
+
+                    <div class="border-t border-violet-200 pt-4 mt-4 section-e-block">
+                        <p class="font-bold text-sm text-violet-900 mb-1">القسم E — السلوك المعرفي (قبل القسم D)</p>
+                        <p class="text-xs text-violet-700 mb-3">السلوك المعرفي يسبق مشاعر الثقة — سلوكي · لغوي · ليس rubric</p>
+                        <div class="space-y-3">
+                            {% for q in epistemic_questions %}
+                            <label class="block text-sm border border-violet-100 rounded-lg p-3 bg-violet-50/40">
+                                <span class="font-semibold">{{ q.question_ar }}</span>
+                                <span class="block text-xs text-gray-500 mt-0.5">{{ q.reveals_ar }}</span>
+                                {% if q.examples_ar %}
+                                <span class="block text-xs text-violet-600 mt-0.5">{{ q.examples_ar }}</span>
+                                {% endif %}
+                                <select name="epistemic_{{ q.id }}" class="epistemic-q w-full border rounded-lg px-2 py-1 mt-2 text-sm" required>
+                                    <option value="">—</option>
+                                    <option value="yes">نعم</option>
+                                    <option value="partial">جزئياً</option>
+                                    <option value="no">لا</option>
+                                    <option value="not_observed">لم يُلاحظ</option>
+                                </select>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <label class="block text-sm mt-3">
+                            عينات لغة المراجع — عبارات حرفية، حتى «العادية»
+                            <textarea name="reviewer_language_samples_ar" rows="2"
+                                class="w-full border rounded-lg px-3 py-2 mt-1 text-sm"
+                                placeholder="«واضح أنها شغالة» · «الفيديو يثبت» · «إذن اللعبة مكتملة» · «هذا كافٍ»"></textarea>
+                        </label>
+                        <label class="block text-sm mt-3">
+                            إشارات الغياب — ما لم يُذكر أو اختفى
+                            <textarea name="absence_signals_ar" rows="2"
+                                class="w-full border rounded-lg px-3 py-2 mt-1 text-sm"
+                                placeholder="تعارض لم يُذكر · replay لم يُفتح بسرعة · uncertainty اختفت · corroboration لم تُطلب"></textarea>
+                        </label>
+                        <label class="block text-sm mt-3">
+                            ملاحظات الميسّر المعرفية
+                            <textarea name="facilitator_epistemic_notes_ar" rows="2"
+                                class="w-full border rounded-lg px-3 py-2 mt-1 text-sm"></textarea>
+                        </label>
+                        <label class="block text-sm mt-3">
+                            هل حُفظت حدود السلطة؟ (تقييم شامل)
+                            <select name="authority_boundaries_preserved" class="epistemic-q w-full border rounded-lg px-2 py-1 mt-1" required>
+                                <option value="">—</option>
+                                <option value="yes">نعم</option>
+                                <option value="partial">جزئياً</option>
+                                <option value="no">لا</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <details class="border-t border-slate-300 pt-4 mt-4 section-f-block bg-slate-50/80 rounded-xl px-4 py-3">
+                        <summary class="cursor-pointer font-bold text-sm text-slate-800">
+                            القسم F — التقاط الأثر المعرفي (اختياري · ليس تقييماً)
+                        </summary>
+                        <p class="text-xs text-slate-600 mt-3 mb-2 border border-slate-300 bg-white rounded-lg px-3 py-2">
+                            <strong>Invariant:</strong> {{ epistemic_trace_invariant_en }}<br>
+                            {{ epistemic_trace_invariant_ar }}<br>
+                            <span class="text-slate-500">{{ observability_invariant_en }}</span><br>
+                            {{ observability_invariant_ar }}
+                        </p>
+                        <p class="text-xs text-gray-500 mb-4">timing · transitions · quarantine · language — بدون scoring · pass/fail · achieved</p>
+
+                        <input type="hidden" name="trace_exe_present" value="{{ 'true' if item.section_a.executable_detected else 'false' }}">
+
+                        <p class="text-xs font-bold text-slate-700 mb-2">1 — تسلسل replay (M1)</p>
+                        <div class="grid md:grid-cols-2 gap-3 text-sm mb-4">
+                            <label class="flex flex-col gap-1">
+                                <span>replay_opened_at</span>
+                                <input type="datetime-local" name="trace_replay_opened_at" class="trace-opened-at border rounded-lg px-2 py-1">
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>replay_consulted_at</span>
+                                <input type="datetime-local" name="trace_replay_consulted_at" class="trace-consulted-at border rounded-lg px-2 py-1">
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>authority_language_first_seen_at</span>
+                                <input type="datetime-local" name="trace_authority_language_first_seen_at" class="border rounded-lg px-2 py-1">
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>replay_precedes_authority</span>
+                                <select name="trace_replay_precedes_authority" class="border rounded-lg px-2 py-1">
+                                    <option value="">— (auto if timestamps)</option>
+                                    <option value="true">نعم</option>
+                                    <option value="false">لا</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <p class="text-xs font-bold text-slate-700 mb-2">2 — علامات تشكّل السلطة</p>
+
+                        <details class="mb-4 border border-slate-200 rounded-lg bg-white text-sm vocab-escalation-hint-block">
+                            <summary class="cursor-pointer px-3 py-2 text-slate-700">
+                                possible_vocabulary_escalation_hint — advisory · optional
+                            </summary>
+                            <div class="px-3 pb-3 border-t border-slate-100">
+                                <p class="text-xs text-slate-600 mt-2 mb-1">
+                                    {{ vocabulary_hint_invariant_en }}
+                                </p>
+                                <p class="text-xs text-slate-500 mb-3">
+                                    {{ vocabulary_hint_invariant_ar }}
+                                </p>
+                                <p class="text-xs text-slate-600 mb-1 border-t border-slate-100 pt-2">
+                                    {{ escalation_notice_invariant_en }}
+                                </p>
+                                <p class="text-xs text-slate-500 mb-3">
+                                    {{ escalation_notice_invariant_ar }}
+                                </p>
+                                <p class="text-xs text-gray-500 mb-2 font-mono">
+                                    possible_vocabulary_escalation_hint ≠ verification_lexicon_detected
+                                </p>
+                                <p class="text-xs text-gray-500 mb-2">
+                                    المصدر فقط: عينات لغة المراجع (E) · ملاحظات الميسّر (E) · ملاحظات B — ليس كامل الـ observation
+                                </p>
+                                <button type="button"
+                                    class="vocab-hint-refresh text-xs border border-slate-300 rounded-lg px-3 py-1.5 text-slate-700 hover:bg-slate-50">
+                                    اقتراح hints من النص أعلاه
+                                </button>
+                                <div class="vocab-hint-status text-xs text-gray-500 mt-2"></div>
+                                <table class="vocab-hint-table w-full mt-3 text-xs hidden">
+                                    <thead>
+                                        <tr class="text-left text-slate-600 border-b border-slate-200">
+                                            <th class="py-1 pe-2 font-normal">phrase candidate</th>
+                                            <th class="py-1 pe-2 font-normal">confidence</th>
+                                            <th class="py-1 font-normal">human confirm</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="vocab-hint-tbody"></tbody>
+                                </table>
+                                <p class="vocab-hint-empty text-xs text-gray-400 mt-2 hidden">لا phrase candidates — أو لم يُطلب hint بعد</p>
+                            </div>
+                        </details>
+
+                        <div class="grid md:grid-cols-2 gap-3 text-sm mb-4">
+                            <label class="flex flex-col gap-1">
+                                <span>verification_lexicon_detected</span>
+                                <select name="trace_verification_lexicon_detected" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="yes">نعم</option>
+                                    <option value="partial">جزئياً</option>
+                                    <option value="no">لا</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>temptation_classification</span>
+                                <select name="trace_temptation_classification" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="representational">representational</option>
+                                    <option value="executable">executable</option>
+                                    <option value="both">both</option>
+                                    <option value="none">none</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1 md:col-span-2">
+                                <span>closure_trigger_detected</span>
+                                <input type="text" name="trace_closure_trigger_detected" class="border rounded-lg px-2 py-1" placeholder="ما الذي سبّب الإغلاق النفسي؟">
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>authority_formation_altered</span>
+                                <select name="trace_authority_formation_altered" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="yes">نعم</option>
+                                    <option value="partial">جزئياً</option>
+                                    <option value="no">لا</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <p class="text-xs font-bold text-slate-700 mb-2">3 — حالة الحجر (QB)</p>
+                        <div class="grid md:grid-cols-2 gap-3 text-sm mb-4">
+                            <label class="flex flex-col gap-1">
+                                <span>quarantine_state</span>
+                                <select name="trace_quarantine_state" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="active">active</option>
+                                    <option value="maintained">maintained</option>
+                                    <option value="breached">breached</option>
+                                    <option value="lifted">lifted</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>qb_level</span>
+                                <select name="trace_qb_level" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="QB1">QB1</option>
+                                    <option value="QB2">QB2</option>
+                                    <option value="QB3">QB3</option>
+                                    <option value="QB4">QB4</option>
+                                    <option value="none">none</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1 md:col-span-2">
+                                <span>quarantine_breach_reason</span>
+                                <input type="text" name="trace_quarantine_breach_reason" class="border rounded-lg px-2 py-1">
+                            </label>
+                            <label class="flex flex-col gap-1 md:col-span-2">
+                                <span>restraint_anchor_detected</span>
+                                <input type="text" name="trace_restraint_anchor_detected" class="border rounded-lg px-2 py-1" placeholder="ما الذي منع escalation؟">
+                            </label>
+                        </div>
+
+                        <p class="text-xs font-bold text-slate-700 mb-2">4 — استمرارية المصدر (M5)</p>
+                        <div class="grid md:grid-cols-2 gap-3 text-sm mb-4">
+                            <label class="flex flex-col gap-1">
+                                <span>exe_present (prefill من A)</span>
+                                <select name="trace_exe_present_override" class="border rounded-lg px-2 py-1">
+                                    <option value="">— auto</option>
+                                    <option value="true" {% if item.section_a.executable_detected %}selected{% endif %}>نعم</option>
+                                    <option value="false" {% if not item.section_a.executable_detected %}selected{% endif %}>لا</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>exe_identity_matches_submission</span>
+                                <select name="trace_exe_identity_matches" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="true">نعم</option>
+                                    <option value="false">لا</option>
+                                    <option value="unknown">unknown</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>runtime_corroborated</span>
+                                <select name="trace_runtime_corroborated" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="true">نعم</option>
+                                    <option value="false">لا</option>
+                                    <option value="unknown">unknown</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>provenance_continuity_state</span>
+                                <select name="trace_provenance_continuity_state" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="intact">intact</option>
+                                    <option value="partial">partial</option>
+                                    <option value="broken">broken</option>
+                                    <option value="unknown">unknown</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <p class="text-xs font-bold text-slate-700 mb-2">5 — counterfactual (replay pilot)</p>
+                        <div class="grid md:grid-cols-2 gap-3 text-sm mb-2">
+                            <label class="flex flex-col gap-1 md:col-span-2">
+                                <span>counterfactual_without_replay</span>
+                                <textarea name="trace_counterfactual_without_replay" rows="2" class="border rounded-lg px-2 py-1" placeholder="ماذا كان سيحدث بدون replay؟"></textarea>
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>intuition_closure_detected</span>
+                                <select name="trace_intuition_closure_detected" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="yes">نعم</option>
+                                    <option value="partial">جزئياً</option>
+                                    <option value="no">لا</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col gap-1">
+                                <span>replay_changed_outcome</span>
+                                <select name="trace_replay_changed_outcome" class="border rounded-lg px-2 py-1">
+                                    <option value="">—</option>
+                                    <option value="yes">نعم</option>
+                                    <option value="partial">جزئياً</option>
+                                    <option value="no">لا</option>
+                                </select>
+                            </label>
+                        </div>
+                    </details>
+
+                    <div class="border-t border-slate-200 pt-4 mt-4 section-d-block opacity-60 pointer-events-none">
+                        <p class="font-bold text-sm">القسم D — إشارات الثقة (1–5) — بعد القسم E</p>
+                        <p class="text-xs text-gray-500 mb-2">يُفعّل بعد إكمال القسم E</p>
+                        <div class="grid md:grid-cols-3 gap-3 text-sm">
+                            {% for field, label in [
+                                ('reviewer_confidence', 'ثقة المراجع'),
+                                ('trust_retained_after_disagreement', 'الثقة بعد الخلاف'),
+                                ('ambiguity_understandable', 'الغموض مفهوم')
+                            ] %}
+                            <label class="flex flex-col gap-1">
+                                <span>{{ label }}</span>
+                                <select name="{{ field }}" class="section-d-field border rounded-lg px-2 py-1" disabled>
+                                    <option value="">—</option>
+                                    {% for n in range(1, 6) %}
+                                    <option value="{{ n }}">{{ n }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="replay_consulted_at" class="replay-consulted-at" value="">
+
+                    <button type="submit"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2 rounded-lg">
+                        حفظ الملاحظة
+                    </button>
+                    <span class="form-status text-xs ms-3 text-gray-500"></span>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<script>
+function replayStorageKey(sid) { return 'pilot_replay_consulted_' + sid; }
+function replayOpenedStorageKey(sid) { return 'pilot_replay_opened_' + sid; }
+
+function toLocalDatetimeInput(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function toIsoOrNull(v) {
+    if (!v) return null;
+    try { return new Date(v).toISOString(); } catch (e) { return null; }
+}
+
+function triState(v) {
+    if (v === 'true') return true;
+    if (v === 'false') return false;
+    if (v === 'unknown') return 'unknown';
+    return v || null;
+}
+
+function buildEpistemicTrace(fd) {
+    const exeDefault = fd.get('trace_exe_present') === 'true';
+    const exeOverride = fd.get('trace_exe_present_override');
+    const exePresent = exeOverride === 'true' ? true : exeOverride === 'false' ? false : exeDefault;
+    const trace = {
+        replay_chronology: {
+            replay_opened_at: toIsoOrNull(fd.get('trace_replay_opened_at')),
+            replay_consulted_at: toIsoOrNull(fd.get('trace_replay_consulted_at') || fd.get('replay_consulted_at')),
+            authority_language_first_seen_at: toIsoOrNull(fd.get('trace_authority_language_first_seen_at')),
+            replay_precedes_authority: triState(fd.get('trace_replay_precedes_authority')),
+        },
+        authority_formation_markers: {
+            verification_lexicon_detected: fd.get('trace_verification_lexicon_detected') || null,
+            closure_trigger_detected: fd.get('trace_closure_trigger_detected') || '',
+            temptation_classification: fd.get('trace_temptation_classification') || null,
+            authority_formation_altered: fd.get('trace_authority_formation_altered') || null,
+        },
+        quarantine_state_capture: {
+            quarantine_state: fd.get('trace_quarantine_state') || null,
+            qb_level: fd.get('trace_qb_level') || null,
+            quarantine_breach_reason: fd.get('trace_quarantine_breach_reason') || '',
+            restraint_anchor_detected: fd.get('trace_restraint_anchor_detected') || '',
+        },
+        provenance_continuity: {
+            exe_present: exePresent,
+            exe_identity_matches_submission: triState(fd.get('trace_exe_identity_matches')),
+            runtime_corroborated: triState(fd.get('trace_runtime_corroborated')),
+            provenance_continuity_state: fd.get('trace_provenance_continuity_state') || null,
+        },
+        counterfactual_capture: {
+            counterfactual_without_replay: fd.get('trace_counterfactual_without_replay') || '',
+            intuition_closure_detected: fd.get('trace_intuition_closure_detected') || null,
+            replay_changed_outcome: fd.get('trace_replay_changed_outcome') || null,
+        },
+    };
+    const hint = collectVocabularyHintPayload(fd);
+    if (hint) trace.possible_vocabulary_escalation_hint = hint;
+    return trace;
+}
+
+function collectVocabularyHintPayload(fd) {
+    const raw = fd.get('vocab_hint_payload');
+    if (!raw) return null;
+    try {
+        const parsed = JSON.parse(raw);
+        const candidates = (parsed.candidates || []).filter(c => c.human_confirmed === true);
+        if (!candidates.length) return null;
+        return {
+            hint_type: 'possible_vocabulary_escalation_hint',
+            candidates: candidates,
+        };
+    } catch (e) {
+        return null;
+    }
+}
+
+async function refreshVocabularyHints(form) {
+    const status = form.querySelector('.vocab-hint-status');
+    const table = form.querySelector('.vocab-hint-table');
+    const tbody = form.querySelector('.vocab-hint-tbody');
+    const empty = form.querySelector('.vocab-hint-empty');
+    const samples = form.querySelector('[name="reviewer_language_samples_ar"]');
+    const facNotes = form.querySelector('[name="facilitator_epistemic_notes_ar"]');
+    const notes = form.querySelector('[name="notes_ar"]');
+    if (status) status.textContent = 'جاري الاقتراح…';
+    try {
+        const res = await fetch('/api/governance-pilot/possible-vocabulary-escalation-hint', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                reviewer_language_samples_ar: samples ? samples.value : '',
+                facilitator_epistemic_notes_ar: facNotes ? facNotes.value : '',
+                notes_ar: notes ? notes.value : '',
+            }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'hint request failed');
+        const candidates = data.candidates || [];
+        if (tbody) tbody.innerHTML = '';
+        if (candidates.length && tbody && table) {
+            table.classList.remove('hidden');
+            if (empty) empty.classList.add('hidden');
+            candidates.forEach((c, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="py-1.5 pe-2 text-slate-800">${escapeHtml(c.phrase_candidate)}</td>
+                    <td class="py-1.5 pe-2 text-slate-600">${escapeHtml(c.confidence)}</td>
+                    <td class="py-1.5">
+                        <label class="inline-flex items-center gap-1 text-slate-600">
+                            <input type="checkbox" class="vocab-hint-confirm" data-idx="${idx}">
+                            required
+                        </label>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+            form.dataset.vocabHintJson = JSON.stringify(data);
+            syncVocabHintHidden(form);
+            if (status) status.textContent = `${candidates.length} candidate(s) — human confirmation required`;
+        } else {
+            if (table) table.classList.add('hidden');
+            if (empty) empty.classList.remove('hidden');
+            delete form.dataset.vocabHintJson;
+            syncVocabHintHidden(form);
+            if (status) status.textContent = 'لا phrase candidates في النص المحدد';
+        }
+    } catch (err) {
+        if (status) status.textContent = 'خطأ: ' + err.message;
+    }
+}
+
+function escapeHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function syncVocabHintHidden(form) {
+    let hidden = form.querySelector('[name="vocab_hint_payload"]');
+    if (!hidden) {
+        hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.name = 'vocab_hint_payload';
+        form.appendChild(hidden);
+    }
+    const raw = form.dataset.vocabHintJson;
+    if (!raw) {
+        hidden.value = '';
+        return;
+    }
+    const data = JSON.parse(raw);
+    const checks = form.querySelectorAll('.vocab-hint-confirm');
+    data.candidates = (data.candidates || []).map((c, idx) => {
+        const box = Array.from(checks).find(el => el.dataset.idx === String(idx));
+        return { ...c, human_confirmed: box ? box.checked : false };
+    });
+    hidden.value = JSON.stringify({ hint_type: data.hint_type, candidates: data.candidates });
+}
+
+document.querySelectorAll('.replay-open-link').forEach(link => {
+    link.addEventListener('click', () => {
+        const sid = link.dataset.submissionId;
+        const ts = new Date().toISOString();
+        localStorage.setItem(replayStorageKey(sid), ts);
+        localStorage.setItem(replayOpenedStorageKey(sid), ts);
+        const card = link.closest('[id^="sub-"]');
+        const form = card && card.querySelector('.pilot-obs-form');
+        if (form) {
+            const hidden = form.querySelector('.replay-consulted-at');
+            if (hidden) hidden.value = ts;
+            const openedAt = form.querySelector('.trace-opened-at');
+            if (openedAt && !openedAt.value) openedAt.value = toLocalDatetimeInput(ts);
+            const consultedAt = form.querySelector('.trace-consulted-at');
+            if (consultedAt && !consultedAt.value) consultedAt.value = toLocalDatetimeInput(ts);
+            const replaySel = form.querySelector('[name="replay_opened"]');
+            if (replaySel && !replaySel.value) replaySel.value = 'true';
+        }
+    });
+});
+
+function sectionEComplete(form) {
+    const qs = form.querySelectorAll('.epistemic-q');
+    return Array.from(qs).every(el => el.value && el.value !== '');
+}
+
+function updateSectionDGate(form) {
+    const block = form.querySelector('.section-d-block');
+    const fields = form.querySelectorAll('.section-d-field');
+    const ready = sectionEComplete(form);
+    if (block) {
+        block.classList.toggle('opacity-60', !ready);
+        block.classList.toggle('pointer-events-none', !ready);
+    }
+    fields.forEach(f => { f.disabled = !ready; });
+}
+
+document.querySelectorAll('.pilot-obs-form').forEach(form => {
+    const sid = form.dataset.submissionId;
+    const stored = localStorage.getItem(replayStorageKey(sid));
+    const storedOpened = localStorage.getItem(replayOpenedStorageKey(sid));
+    if (stored) {
+        const hidden = form.querySelector('.replay-consulted-at');
+        if (hidden) hidden.value = stored;
+        const consultedAt = form.querySelector('.trace-consulted-at');
+        if (consultedAt && !consultedAt.value) consultedAt.value = toLocalDatetimeInput(stored);
+        const replaySel = form.querySelector('[name="replay_opened"]');
+        if (replaySel && !replaySel.value) replaySel.value = 'true';
+    }
+    if (storedOpened) {
+        const openedAt = form.querySelector('.trace-opened-at');
+        if (openedAt && !openedAt.value) openedAt.value = toLocalDatetimeInput(storedOpened);
+    }
+    form.querySelectorAll('.epistemic-q').forEach(el => {
+        el.addEventListener('change', () => updateSectionDGate(form));
+    });
+    const hintRefresh = form.querySelector('.vocab-hint-refresh');
+    if (hintRefresh) {
+        hintRefresh.addEventListener('click', () => refreshVocabularyHints(form));
+    }
+    form.addEventListener('change', (ev) => {
+        if (ev.target && ev.target.classList.contains('vocab-hint-confirm')) {
+            syncVocabHintHidden(form);
+        }
+    });
+    updateSectionDGate(form);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const status = form.querySelector('.form-status');
+        status.textContent = 'جاري الحفظ…';
+        const fd = new FormData(form);
+        const bool = (v) => v === 'true' ? true : v === 'false' ? false : null;
+        const num = (v) => v ? parseInt(v, 10) : null;
+        const payload = {
+            submission_id: parseInt(form.dataset.submissionId, 10),
+            batch_id: parseInt(fd.get('batch_id'), 10),
+            replay_consulted_at: fd.get('replay_consulted_at') || null,
+            authority_replay_url: '/authority-replay/' + form.dataset.submissionId,
+            section_b_reviewer_behaviour: {
+                l3_interpreted_as_verification: bool(fd.get('l3_interpreted_as_verification')),
+                replay_opened: bool(fd.get('replay_opened')),
+                replay_consulted_at: fd.get('replay_consulted_at') || null,
+                downgrade_accepted: bool(fd.get('downgrade_accepted')),
+                authority_boundary_overridden: bool(fd.get('authority_boundary_overridden')),
+                hold_considered: bool(fd.get('hold_considered')),
+                hold_applied: bool(fd.get('hold_applied')),
+                notes_ar: fd.get('notes_ar') || '',
+            },
+            section_c_governance_events: [],
+            section_d_trust_signals: {
+                reviewer_confidence: num(fd.get('reviewer_confidence')),
+                trust_retained_after_disagreement: num(fd.get('trust_retained_after_disagreement')),
+                ambiguity_understandable: num(fd.get('ambiguity_understandable')),
+            },
+            section_e_epistemic_behaviour: {
+                answers: {
+                    verification_language_used: fd.get('epistemic_verification_language_used') || null,
+                    replay_before_judgment: fd.get('epistemic_replay_before_judgment') || null,
+                    runtime_linked_to_achieved: fd.get('epistemic_runtime_linked_to_achieved') || null,
+                    contradictions_remained_visible: fd.get('epistemic_contradictions_remained_visible') || null,
+                    observation_vs_criterion_distinction: fd.get('epistemic_observation_vs_criterion_distinction') || null,
+                    modality_dominance_observed: fd.get('epistemic_modality_dominance_observed') || null,
+                    human_corroboration_requested: fd.get('epistemic_human_corroboration_requested') || null,
+                },
+                reviewer_language_samples_ar: fd.get('reviewer_language_samples_ar') || '',
+                absence_signals_ar: fd.get('absence_signals_ar') || '',
+                facilitator_epistemic_notes_ar: fd.get('facilitator_epistemic_notes_ar') || '',
+                authority_boundaries_preserved: fd.get('authority_boundaries_preserved') || null,
+            },
+            section_f_epistemic_trace: buildEpistemicTrace(fd),
+        };
+        try {
+            const res = await fetch('/api/governance-pilot/observation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || data.message_ar || 'فشل الحفظ');
+            if (data.ok === false) throw new Error(data.message_ar || data.code || 'فشل الحفظ');
+            status.textContent = '✓ تم الحفظ';
+            status.className = 'form-status text-xs text-emerald-700';
+        } catch (err) {
+            status.textContent = 'خطأ: ' + err.message;
+            status.className = 'form-status text-xs text-red-700';
+        }
+    });
+});
+</script>
+{% endblock %}

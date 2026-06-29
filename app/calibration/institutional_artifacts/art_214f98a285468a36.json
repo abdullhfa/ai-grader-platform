@@ -1,0 +1,24 @@
+{
+  "artifact_type": "signed_institutional_artifact",
+  "artifact_version": "signed_institutional_artifact_v1",
+  "artifact_id": "art_214f98a285468a36",
+  "artifact_kind": "epoch_workshop_verdict",
+  "content_hash": "214f98a285468a368e940bb13ae2b3ee41694dce6d753c8a25c6e1224e7ea0d0",
+  "signed_at": "2026-05-22T23:42:35Z",
+  "signatory": {
+    "name": "Test Facilitator",
+    "role": "governance_facilitator",
+    "institution_affirmation": true,
+    "affirmation_ar": "أؤكد أن هذا verdict مؤسسي — وليس رأياً شخصياً — ويُستخدم في freeze transition provenance."
+  },
+  "governance_context": {
+    "freeze_epoch_id": "epoch_1",
+    "freeze_id": "GOVERNANCE_FREEZE_v1"
+  },
+  "provenance_refs": [],
+  "artifact_body": {
+    "transition_verdict": "not_yet_requires_mitigation",
+    "test": true
+  },
+  "provenance_purpose_ar": "جزء من governance provenance — freeze transitions · RFC legitimacy · epoch review"
+}

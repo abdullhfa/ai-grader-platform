@@ -1,0 +1,19 @@
+{
+  "detections": [
+    {
+      "detector": "motion_detector",
+      "label": "movement_detected",
+      "confidence": 0.85,
+      "evidence": {}
+    }
+  ],
+  "timeline": {
+    "events": [
+      {
+        "type": "movement_detected",
+        "timestamp": 1.0,
+        "confidence": 0.8
+      }
+    ]
+  }
+}

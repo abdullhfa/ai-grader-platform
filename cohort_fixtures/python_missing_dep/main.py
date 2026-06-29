@@ -1,0 +1,3 @@
+import nonexistent_module_xyz_999
+
+print(nonexistent_module_xyz_999.value)

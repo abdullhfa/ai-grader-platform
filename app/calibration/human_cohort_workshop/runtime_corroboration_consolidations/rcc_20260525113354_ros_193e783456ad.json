@@ -1,0 +1,41 @@
+{
+  "consolidation_id": "rcc_20260525113354",
+  "spec_id": "RUNTIME_CORROBORATION_CONSOLIDATION_v1",
+  "logged_at": "2026-05-25T11:33:54.441642Z",
+  "mode": "runtime_corroboration_consolidation",
+  "not_mode": "grading_legitimacy_session",
+  "student_label": "abdullah_al_utoum",
+  "runtime_session_id": "ros_193e783456ad",
+  "evidence_layers": {
+    "code_hypotheses": "present",
+    "smoke_runtime_phenomenology": "present",
+    "assisted_interaction": "absent",
+    "visual_corroboration": "pending",
+    "contradiction_corroboration": "none",
+    "semantic_restraint": "preserved"
+  },
+  "unresolved_runtime_opacity": [
+    "visual_corroboration_pending",
+    "contradiction_corroboration_incomplete",
+    "gameplay_meaning_opaque"
+  ],
+  "contradiction_registry": null,
+  "interactive_phenomenology_descriptors": [
+    "start_state_transition_observed"
+  ],
+  "provenance_continuity_notes": [],
+  "runtime_quarantine_states": [
+    "runtime_observed",
+    "runtime_reproducible",
+    "runtime_provenance_partial",
+    "runtime_epistemically_unverified",
+    "runtime_legitimacy_blocked"
+  ],
+  "quarantine_remains_active": true,
+  "legitimacy_blocked": true,
+  "rubric_meaning_blocked": true,
+  "gameplay_understood": false,
+  "central_question_en": "Can the system retain restraint after accumulating runtime evidence?",
+  "post_consolidation_phase": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "institutional_ledger_appended": false
+}

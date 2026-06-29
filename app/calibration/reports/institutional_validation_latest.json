@@ -1,0 +1,23 @@
+{
+  "report_type": "institutional_validation_v1",
+  "generated_at": "2026-05-26T23:03:01Z",
+  "run_id": "institutional_closure_2026-05-26T230244Z",
+  "closure_manifest": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\reports\\closure\\CLOSURE_MANIFEST.json",
+  "phases": {
+    "A": "closed",
+    "B": "closed",
+    "C": "closed",
+    "governance_calibration": "partial_data",
+    "D": "closed",
+    "E": "closed",
+    "tests": null,
+    "F": "closed_scaffold"
+  },
+  "trust_scores": {
+    "engineering_completion": 0.93,
+    "operational_readiness": 0.84,
+    "institutional_trust": 0.68,
+    "production_candidate": 0.86,
+    "note": "Institutional trust capped until human labels + pilot moderation"
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "audit_id": "REDUNDANCY_AUDIT_v1",
+  "phase_id": "ARCHITECTURAL_HARDENING_v1",
+  "status": "complete_review_only",
+  "completed_at": "2026-05-25T19:00:00Z",
+  "audit_question_en": "What currently exists only because earlier uncertainty was unresolved?",
+  "audit_question_not_en": "What can be deleted?",
+  "hardening_invariant_en": "Constitutional protection must remain comprehensible.",
+  "supreme_risk_en": "protective density becoming organizational density",
+  "preserved_non_negotiable_en": "The system still refuses to certify itself — empty ledgers intentional.",
+  "categories": {
+    "invariant_critical": "do not touch",
+    "protective_redundancy": "merge",
+    "interpretive_surplus": "remove or pause"
+  },
+  "review_areas": [
+    {
+      "area_id": "overlapping_quarantine_semantics",
+      "risk_en": "conceptual duplication",
+      "finding_en": "EPISTEMIC_QUARANTINE_CONTRACT (linguistic) and RUNTIME_QUARANTINE_STATES (execution) overlap in intent but serve different domains — keep both, add explicit domain split doc only"
+    },
+    {
+      "area_id": "repeated_legitimacy_disclaimers",
+      "risk_en": "atmospheric authority",
+      "finding_en": "assigns_legitimacy/assigns_authority repeated in every module output — merge to API boundary + constitutional core only"
+    },
+    {
+      "area_id": "too_many_epistemic_labels",
+      "risk_en": "cognitive framing gravity",
+      "finding_en": "Multiple step spec IDs, schema IDs, clause IDs — consolidate to manifest index"
+    },
+    {
+      "area_id": "dense_governance_vocabulary",
+      "risk_en": "institutional intimidation",
+      "finding_en": "Parallel MD+JSON for each step — JSON canonical; pause new MD companions"
+    },
+    {
+      "area_id": "nested_phenomenology_layers",
+      "risk_en": "interpretive saturation",
+      "finding_en": "execution_phenomenology + replay_phenomenology + governance phenomenology layer — merge schemas, single module surface"
+    }
+  ],
+  "entries": [
+    {
+      "surface_id": "constitutional_core_invariants",
+      "artifact": "app/calibration/CONSTITUTIONAL_CORE_INVARIANTS_v1.json",
+      "category": "invariant_critical",
+      "uncertainty_resolved_en": "Distilled protections — anchor for all reduction",
+      "action": "preserve"
+    },
+    {
+      "surface_id": "empty_runtime_observation_ledger",
+      "artifact": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+      "category": "invariant_critical",
+      "uncertainty_resolved_en": "Refusal of self-certification — most important constitutional protection",
+      "action": "preserve_empty"
+    },
+    {
+      "surface_id": "runtime_observation_contract",
+      "artifact": "app/runtime_observation_contract.py",
+      "category": "invariant_critical",
+      "uncertainty_resolved_en": "L4 language freeze — still necessary",
+      "action": "preserve"
+    },
+    {
+      "surface_id": "epistemic_quarantine_contract",
+      "artifact": "app/epistemic_quarantine_contract.py",
+      "category": "invariant_critical",
+      "uncertainty_resolved_en": "Linguistic quarantine — distinct from runtime quarantine states",
+      "action": "preserve"
+    },
+    {
+      "surface_id": "governance_freeze_v1",
+      "artifact": "app/calibration/GOVERNANCE_FREEZE_v1.json",
+      "category": "invariant_critical",
+      "action": "preserve"
+    },
+    {
+      "surface_id": "runtime_l4_phenomenology_clause",
+      "artifact": "app/calibration/RUNTIME_L4_PHENOMENOLOGY_CLAUSE_v1.json",
+      "category": "protective_redundancy",
+      "uncertainty_resolved_en": "Clause now duplicated in runtime_observation_contract.py constants",
+      "action": "merge_into_contract_reference_only",
+      "merge_target": "app/runtime_observation_contract.py"
+    },
+    {
+      "surface_id": "execution_phenomenology_schema",
+      "artifact": "app/calibration/EXECUTION_PHENOMENOLOGY_SCHEMA_v1.json",
+      "category": "protective_redundancy",
+      "uncertainty_resolved_en": "Split schemas existed while phenomenology layer was uncertain",
+      "action": "merge_with_replay_phenomenology_schema",
+      "merge_target": "single phenomenology manifest"
+    },
+    {
+      "surface_id": "replay_phenomenology_schema",
+      "artifact": "app/calibration/REPLAY_PHENOMENOLOGY_SCHEMA_v1.json",
+      "category": "protective_redundancy",
+      "action": "merge_with_execution_phenomenology_schema"
+    },
+    {
+      "surface_id": "runtime_quarantine_states",
+      "artifact": "app/calibration/RUNTIME_QUARANTINE_STATES_v1.json",
+      "category": "protective_redundancy",
+      "uncertainty_resolved_en": "Runtime domain split from linguistic quarantine now clear",
+      "action": "preserve_but_cross_reference_quarantine_contract_only",
+      "note_en": "Do not merge with linguistic quarantine — document domain boundary"
+    },
+    {
+      "surface_id": "provenance_sandbox_spec",
+      "artifact": "app/calibration/PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1.json",
+      "category": "protective_redundancy",
+      "uncertainty_resolved_en": "Extends PHASE4 RFC — step specs can index from parent",
+      "action": "merge_into_observability_manifest_index",
+      "merge_target": "RUNTIME_OBSERVABILITY_PREPARATION_v1.json"
+    },
+    {
+      "surface_id": "telemetry_replay_wiring_spec",
+      "artifact": "app/calibration/TELEMETRY_REPLAY_CAPTURE_WIRING_v1.json",
+      "category": "protective_redundancy",
+      "action": "merge_into_observability_manifest_index"
+    },
+    {
+      "surface_id": "runtime_epistemic_governance_spec",
+      "artifact": "app/calibration/RUNTIME_EPISTEMIC_GOVERNANCE_v1.json",
+      "category": "protective_redundancy",
+      "action": "merge_into_observability_manifest_index"
+    },
+    {
+      "surface_id": "phase4_observational_sandbox_rfc",
+      "artifact": "app/calibration/PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.json",
+      "category": "invariant_critical",
+      "uncertainty_resolved_en": "Parent eligibility spec — steps extend it",
+      "action": "preserve_as_parent"
+    },
+    {
+      "surface_id": "runtime_observability_preparation",
+      "artifact": "app/calibration/RUNTIME_OBSERVABILITY_PREPARATION_v1.json",
+      "category": "invariant_critical",
+      "action": "preserve_as_capability_manifest"
+    },
+    {
+      "surface_id": "step_spec_md_companions",
+      "artifact": "app/calibration/*_v1.md (runtime step specs)",
+      "category": "interpretive_surplus",
+      "uncertainty_resolved_en": "MD duplicated JSON while architecture was forming",
+      "action": "pause_new_md — json_canonical"
+    },
+    {
+      "surface_id": "module_disclaimer_repetition",
+      "artifact": "assigns_legitimacy/assigns_authority in every bundle field",
+      "category": "interpretive_surplus",
+      "action": "reduce_to_api_boundary_and_core_invariants"
+    },
+    {
+      "surface_id": "nested_phenomenology_modules",
+      "artifact": "app/execution_phenomenology.py + app/telemetry_replay_capture.py replay layer + app/runtime_epistemic_governance.py phen layer",
+      "category": "interpretive_surplus",
+      "uncertainty_resolved_en": "Triple nesting while runtime epistemics was uncertain",
+      "action": "pause_expansion — merge_schemas_first — code_merge_deferred"
+    },
+    {
+      "surface_id": "runtime_evidence_chain_roadmap",
+      "artifact": "app/calibration/RUNTIME_EVIDENCE_CHAIN_ROADMAP.md",
+      "category": "interpretive_surplus",
+      "uncertainty_resolved_en": "Pre-hardening exploratory roadmap",
+      "action": "pause — superseded by capability_complete + hardening"
+    },
+    {
+      "surface_id": "live_constitutional_validation",
+      "artifact": "app/calibration/LIVE_CONSTITUTIONAL_VALIDATION_v1.json",
+      "category": "invariant_critical",
+      "uncertainty_resolved_en": "Human evidence gate — paused not redundant",
+      "action": "preserve_paused"
+    },
+    {
+      "surface_id": "observatory_posture_governance",
+      "artifact": "app/calibration/human_cohort_workshop/OBSERVATORY_POSTURE_GOVERNANCE_v1.json",
+      "category": "invariant_critical",
+      "action": "preserve"
+    }
+  ],
+  "summary": {
+    "invariant_critical_count": 9,
+    "protective_redundancy_count": 7,
+    "interpretive_surplus_count": 4,
+    "merge_candidates": 6,
+    "pause_candidates": 4,
+    "preserve_empty_ledger": true,
+    "reduction_without_epistemic_loss_target_en": "Merge redundant specs into manifest index; reduce disclaimer repetition; keep 9 core surfaces + empty ledger"
+  },
+  "forbidden_audit_actions": [
+    "delete_invariant_critical",
+    "populate_ledgers_for_cleanliness",
+    "remove_empty_ledger_discipline",
+    "merge_linguistic_and_runtime_quarantine_into_one"
+  ],
+  "module": "app/redundancy_audit.py"
+}

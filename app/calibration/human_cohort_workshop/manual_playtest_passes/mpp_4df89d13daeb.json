@@ -1,0 +1,169 @@
+{
+  "pass_id": "mpp_4df89d13daeb",
+  "pass_type_id": "MANUAL_PLAYTEST_PASS_v1",
+  "spec_id": "MANUAL_PLAYTEST_PASS_v1",
+  "logged_at": "2026-05-25T02:28:03.045061Z",
+  "mode": "manual_playtest_pass",
+  "not_mode": "final_legitimacy_session",
+  "parent_session_id": "ros_193e783456ad",
+  "pass_label": "pass_1",
+  "student_label": "abdullah_al_utoum",
+  "artifact_path": "D:\\تجربة\\العاب\\عبدالله العتوم\\My project (3).exe",
+  "invariant_en": "Mechanic observation does not imply pedagogical or rubric inference.",
+  "core_separation_en": "execution continuity ≠ mechanics validation",
+  "umbrella_phenomenology": "mechanic_observed_without_pedagogical_inference",
+  "assigns_legitimacy": false,
+  "assigns_rubric_inference": false,
+  "tests": [
+    {
+      "test_id": "start_space",
+      "prompt_en": "Does Space start the game from the start screen?",
+      "hypothesis_links": [
+        "timescale_start_conflict",
+        "space_key_dual_use"
+      ],
+      "status": "inconclusive",
+      "observed_en": "Game window detected (My project (3)); Space input injected. Start-panel state change not directly observable in this environment (no visual capture).",
+      "phenomenology_descriptors": [],
+      "do_not_infer_en": "project invalid · gameplay broken",
+      "observed_allowed_examples_en": [
+        "start panel hidden after Space",
+        "timeScale resumed after Space",
+        "start panel remained visible after Space"
+      ],
+      "recorded_at": "2026-05-25T02:30:35.955839Z",
+      "observation_classification": "unresolved_runtime_behavior"
+    },
+    {
+      "test_id": "jump_after_start",
+      "prompt_en": "Does jump work after the game has started?",
+      "hypothesis_links": [
+        "space_key_dual_use"
+      ],
+      "status": "inconclusive",
+      "observed_en": "Space input sent repeatedly after start attempt; jump state not observable from Player.log alone.",
+      "phenomenology_descriptors": [],
+      "do_not_infer_en": "gameplay broken · achievement impossible",
+      "observed_allowed_examples_en": [
+        "player jumped on Space when grounded",
+        "Space triggered start instead of jump",
+        "no jump response observed"
+      ],
+      "recorded_at": "2026-05-25T02:30:35.955839Z",
+      "observation_classification": "unresolved_runtime_behavior"
+    },
+    {
+      "test_id": "cup_score",
+      "prompt_en": "Does collecting cups increase score?",
+      "hypothesis_links": [],
+      "status": "inconclusive",
+      "observed_en": "No score change signal observed in Player.log during movement pass; cup contact not confirmed in this pass.",
+      "phenomenology_descriptors": [],
+      "do_not_infer_en": "rubric failed · project invalid",
+      "observed_allowed_examples_en": [
+        "score UI incremented on cup collection",
+        "cup destroyed on contact",
+        "no score change on cup contact"
+      ],
+      "recorded_at": "2026-05-25T02:30:35.955839Z",
+      "observation_classification": "unresolved_runtime_behavior"
+    },
+    {
+      "test_id": "third_cup_level",
+      "prompt_en": "Does the third cup trigger a level transition?",
+      "hypothesis_links": [
+        "scene_name_mismatch_level2"
+      ],
+      "status": "inconclusive",
+      "observed_en": "Third-cup level transition not reached in this assisted pass; scene mismatch hypothesis not runtime-confirmed nor refuted.",
+      "phenomenology_descriptors": [],
+      "do_not_infer_en": "project invalid · rubric failed",
+      "observed_allowed_examples_en": [
+        "scene changed after third cup",
+        "level transition failed or error observed",
+        "no transition after third cup"
+      ],
+      "recorded_at": "2026-05-25T02:30:35.955839Z",
+      "observation_classification": "unresolved_runtime_behavior"
+    },
+    {
+      "test_id": "timer_zero",
+      "prompt_en": "What happens when the timer reaches zero?",
+      "hypothesis_links": [
+        "timer_not_wired_to_game_over"
+      ],
+      "status": "inconclusive",
+      "observed_en": "Timer zero condition not observed in this pass (120s not elapsed); prior code review remains sole source for no-consequence hypothesis.",
+      "phenomenology_descriptors": [],
+      "do_not_infer_en": "rubric failed · mechanics validated",
+      "observed_allowed_examples_en": [
+        "timer reached 00:00 with no gameplay consequence",
+        "game over triggered at timer zero",
+        "level failed state observed at timer zero"
+      ],
+      "recorded_at": "2026-05-25T02:30:35.955839Z",
+      "observation_classification": "corroborated_with_code"
+    },
+    {
+      "test_id": "lives_exhausted",
+      "prompt_en": "What happens when all three lives are lost?",
+      "hypothesis_links": [],
+      "status": "inconclusive",
+      "observed_en": "Three-life exhaustion sequence not executed in this assisted pass.",
+      "phenomenology_descriptors": [],
+      "do_not_infer_en": "achievement impossible · project invalid",
+      "observed_allowed_examples_en": [
+        "respawn observed between life losses",
+        "game over panel shown after third loss",
+        "respawn position inconsistent",
+        "lives UI decremented correctly"
+      ],
+      "recorded_at": "2026-05-25T02:30:35.955839Z",
+      "observation_classification": "unresolved_runtime_behavior"
+    }
+  ],
+  "interactive_phenomenology_descriptors": [
+    "mechanic_observed_without_pedagogical_inference"
+  ],
+  "interactive_phenomenology_summary_en": "Interactive mechanic signals were observed without pedagogical inference. Pedagogical and rubric meaning remain unverified.",
+  "contradiction_updates_advisory": [],
+  "runtime_quarantine_unchanged": true,
+  "forbidden_recorder_language_en": [
+    "game validated",
+    "rubric achieved",
+    "project confirmed",
+    "gameplay verified",
+    "mechanics validated",
+    "project invalid",
+    "rubric failed",
+    "achievement impossible",
+    "gameplay broken"
+  ],
+  "human_authority_required": true,
+  "institutional_ledger_appended": false,
+  "playtest_status": "partial_assisted",
+  "interactive_phenomenology": {
+    "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+    "domain": "interactive",
+    "spec_id": "MANUAL_PLAYTEST_PASS_v1",
+    "layer": "interactive_phenomenology",
+    "descriptors": [
+      "mechanic_observed_without_pedagogical_inference"
+    ],
+    "t_offset_ms": 0,
+    "source": "manual_playtest",
+    "detail": {
+      "pass_round": "assisted_1"
+    },
+    "invariant_en": "Mechanic observation does not imply pedagogical or rubric inference."
+  },
+  "playtest_method": "assisted_input_with_player_log_tail",
+  "playtest_limitations_en": "No direct visual/UI observation in this environment; Player.log and input injection only. Human visual pass may resolve inconclusive tests.",
+  "player_log_path": "C:\\Users\\Eng.Abdulah\\AppData\\LocalLow\\DefaultCompany\\My project (3)\\Player.log",
+  "player_log_excerpt": "Mono path[0] = 'D:/تجربة/العاب/عبدالله العتوم/My project (3)_Data/Managed'\r\nMono config path = 'D:/تجربة/العاب/عبدالله العتوم/MonoBleedingEdge/etc'\r\nCodeReloadManager initialized\r\nInput System module state changed to: Initialized.\r\n[Physics::Module] Initialized fallback backend.\r\n[Physics::Module] Id: 0xdecafbad\r\nInitialize engine version: 6000.4.2f1 (7a4c1aeef971)\r\n[Subsystems] Discovering subsystems at path D:/تجربة/العاب/عبدالله العتوم/My project (3)_Data/UnitySubsystems\r\n[D3D12 Device Filter] Vendor Name: NVIDIA\r\n[D3D12 Device Filter] Device Name: NVIDIA GeForce RTX 2050\r\n[D3D12 Device Filter] Driver Version: 32.0.15.8157\r\n[D3D12 Device Filter] Feature Level: 12.2\r\n[D3D12 Device Filter] Graphics Memory: 3965 MB\r\n[D3D12 Device Filter] Processor Count: 22\r\n[D3D12 Device Filter] Device Type: Discrete\r\nGfxDevice: creating device client; kGfxThreadingModeSplitJobs\r\nd3d12: failed to query info queue interface (0x80004002).\r\nDirect3D:\r\n    Version:         Direct3D 12 [level 12.2]\r\n    Renderer:        NVIDIA GeForce RTX 2050 (ID=0x25a9)\r\n    Vendor:          NVIDIA\r\n    VRAM:            3965 MB\r\n    App VRAM Budget: 3370 MB\r\n    Driver:          32.0.15.8157\r\nBegin MonoManager ReloadAssembly\r\n- Finished resetting the current domain, in  0.002 seconds\r\n[Physics::Module] Selected backend.\r\n[Physics::Module] Name: PhysX\r\n[Physics::Module] Id: 0xf2b8ea05\r\n[Physics::Module] SDK Version: 4.1.2\r\n[Physics::Module] Integration Version: 1.0.0\r\n[Physics::Module] Threading Mode: Multi-Threaded\r\n<RI> Initializing input.\r\r\nUsing Windows.Gaming.Input\r\n<RI> Input initialized.\r\r\nUnloadTime: 1.433500 ms\r\n",
+  "pass_file": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_cohort_workshop\\manual_playtest_passes\\mpp_4df89d13daeb.json",
+  "parent_session_updated": true,
+  "playtest_round": "assisted_pass_1",
+  "requires_human_visual_pass": true,
+  "pass_mode": "assisted"
+}

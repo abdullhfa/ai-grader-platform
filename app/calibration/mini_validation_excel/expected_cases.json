@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe Excel spreadsheet semantic extraction; not pass/fail product proof.",
+  "cases": [
+    {
+      "case_id": "case_a_full_workbook",
+      "expected_behavior": "Multiple sheets; formula_cells > 0; formula_types include SUM, IF, VLOOKUP; charts_detected; table_count > 0; cross_sheet_references; conditional_logic_detected; evidence_type spreadsheet_semantic.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_values_only",
+      "expected_behavior": "Numeric/text values only; formula_cells 0; spreadsheet_noise_flags includes values_without_formulas.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_formula_errors",
+      "expected_behavior": "Formulas with error signals (=1/0 or #REF!); formula_errors_detected noise flag; formula_error_cells > 0.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_charts_only",
+      "expected_behavior": "Charts present; formula_cells 0; charts_without_formulas noise flag.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_cross_sheet_logic",
+      "expected_behavior": "Formulas reference other sheets (e.g. Data!A1); cross_sheet_references true; conditional_logic_detected (IF/COUNTIF).",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

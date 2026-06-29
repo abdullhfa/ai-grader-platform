@@ -1,0 +1,56 @@
+{
+  "run_purpose": "Observe temporal corroboration (time windows, strength, conflicts); diagnostic only — not used for achieved.",
+  "cases": [
+    {
+      "case_id": "case_a_frame_log_close",
+      "expected_behavior": "Video frames (~0,3,6s sampling) and runtime log line with t≈1s + collision keyword in same 5s window as first frame → expect temporal_alignment_strength at least medium, reasoning includes log near frame, few or no temporal conflicts.",
+      "temporal_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"temporal_alignment\": {\n    \"version\": \"1.0\",\n    \"window_seconds\": 5.0,\n    \"temporal_alignment_strength\": \"medium\",\n    \"temporal_event_count\": 4,\n    \"temporal_groups\": [\n      {\n        \"window_start\": 0.0,\n        \"window_end\": 5.0,\n        \"events\": [\n          \"runtime_log_collision\",\n          \"runtime_log_generic\",\n          \"video_frame\"\n        ],\n        \"temporal_alignment_strength\": \"medium\",\n        \"event_count\": 4\n      }\n    ],\n    \"temporal_alignment_conflicts\": [],\n    \"temporal_reasoning\": {\n      \"reasoning\": [\n        \"runtime_log_detected_within_5s_of_video_frame_window\"\n      ]\n    }\n  },\n  \"runtime_evidence_counts\": {\n    \"video_frames\": 1,\n    \"screenshots\": 0,\n    \"logs\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_frame_far_from_log",
+      "expected_behavior": "Log timestamp very large vs video frame times → expect split windows; flags like video_frames_without_nearby_runtime_activity and/or runtime_logs_without_temporal_visual_support.",
+      "temporal_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"temporal_alignment\": {\n    \"version\": \"1.0\",\n    \"window_seconds\": 5.0,\n    \"temporal_alignment_strength\": \"weak\",\n    \"temporal_event_count\": 2,\n    \"temporal_groups\": [\n      {\n        \"window_start\": 0.0,\n        \"window_end\": 5.0,\n        \"events\": [\n          \"video_frame\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 1\n      },\n      {\n        \"window_start\": 9999.0,\n        \"window_end\": 10004.0,\n        \"events\": [\n          \"runtime_log_collision\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 1\n      }\n    ],\n    \"temporal_alignment_conflicts\": [\n      {\n        \"flag\": \"video_frames_without_nearby_runtime_activity\",\n        \"detail\": \"1\"\n      },\n      {\n        \"flag\": \"runtime_logs_without_temporal_visual_support\",\n        \"detail\": \"1\"\n      }\n    ],\n    \"temporal_reasoning\": {\n      \"reasoning\": []\n    }\n  },\n  \"runtime_evidence_counts\": {\n    \"video_frames\": 1,\n    \"screenshots\": 0,\n    \"logs\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_video_no_runtime_activity",
+      "expected_behavior": "MP4 only (no logs, no screenshots) → video_frames_without_nearby_runtime_activity; global strength weak (frame-only).",
+      "temporal_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"temporal_alignment\": {\n    \"version\": \"1.0\",\n    \"window_seconds\": 5.0,\n    \"temporal_alignment_strength\": \"weak\",\n    \"temporal_event_count\": 1,\n    \"temporal_groups\": [\n      {\n        \"window_start\": 0.0,\n        \"window_end\": 5.0,\n        \"events\": [\n          \"video_frame\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 1\n      }\n    ],\n    \"temporal_alignment_conflicts\": [\n      {\n        \"flag\": \"video_frames_without_nearby_runtime_activity\",\n        \"detail\": \"1\"\n      }\n    ],\n    \"temporal_reasoning\": {\n      \"reasoning\": []\n    }\n  },\n  \"runtime_evidence_counts\": {\n    \"video_frames\": 1,\n    \"screenshots\": 0,\n    \"logs\": 0\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_many_logs_no_frames",
+      "expected_behavior": "Dense runtime.log with parsed timestamps, no video → runtime_logs_without_temporal_visual_support.",
+      "temporal_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"temporal_alignment\": {\n    \"version\": \"1.0\",\n    \"window_seconds\": 5.0,\n    \"temporal_alignment_strength\": \"weak\",\n    \"temporal_event_count\": 6,\n    \"temporal_groups\": [\n      {\n        \"window_start\": 1.0,\n        \"window_end\": 6.0,\n        \"events\": [\n          \"runtime_log_collision\",\n          \"runtime_log_generic\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 2\n      },\n      {\n        \"window_start\": 12.0,\n        \"window_end\": 17.0,\n        \"events\": [\n          \"runtime_log_collision\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 1\n      },\n      {\n        \"window_start\": 20.0,\n        \"window_end\": 25.0,\n        \"events\": [\n          \"runtime_log_collision\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 1\n      },\n      {\n        \"window_start\": 35.0,\n        \"window_end\": 40.0,\n        \"events\": [\n          \"runtime_log_collision\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 1\n      },\n      {\n        \"window_start\": 50.0,\n        \"window_end\": 55.0,\n        \"events\": [\n          \"runtime_log_collision\"\n        ],\n        \"temporal_alignment_strength\": \"weak\",\n        \"event_count\": 1\n      }\n    ],\n    \"temporal_alignment_conflicts\": [\n      {\n        \"flag\": \"runtime_logs_without_temporal_visual_support\",\n        \"detail\": \"no_visual_evidence\"\n      }\n    ],\n    \"temporal_reasoning\": {\n      \"reasoning\": []\n    }\n  },\n  \"runtime_evidence_counts\": {\n    \"video_frames\": 0,\n    \"screenshots\": 0,\n    \"logs\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_frame_screenshot_log_same_window",
+      "expected_behavior": "First sampled video frame (~0s), screenshot filename with 1s hint, log t≈0.75 + collision → same 5s window, temporal_alignment_strength strong; both reasoning strings present.",
+      "temporal_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"temporal_alignment\": {\n    \"version\": \"1.0\",\n    \"window_seconds\": 5.0,\n    \"temporal_alignment_strength\": \"strong\",\n    \"temporal_event_count\": 3,\n    \"temporal_groups\": [\n      {\n        \"window_start\": 0.0,\n        \"window_end\": 5.0,\n        \"events\": [\n          \"runtime_log_collision\",\n          \"runtime_screenshot\",\n          \"video_frame\"\n        ],\n        \"temporal_alignment_strength\": \"strong\",\n        \"event_count\": 3\n      }\n    ],\n    \"temporal_alignment_conflicts\": [],\n    \"temporal_reasoning\": {\n      \"reasoning\": [\n        \"runtime_log_detected_within_5s_of_video_frame_window\",\n        \"runtime_screenshot_matches_alignment_window\"\n      ]\n    }\n  },\n  \"runtime_evidence_counts\": {\n    \"video_frames\": 1,\n    \"screenshots\": 1,\n    \"logs\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ],
+  "note": "Human-review temporal_observation_notes; thresholds are fixed (5s window)."
+}

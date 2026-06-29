@@ -1,0 +1,676 @@
+{
+  "session_id": "ros_193e783456ad",
+  "session_type_id": "RUNTIME_OBSERVATION_SESSION_v1",
+  "logged_at": "2026-05-25T02:25:37.502550Z",
+  "mode": "runtime_observation_session",
+  "not_mode": "final_legitimacy_session",
+  "submission_id": null,
+  "batch_id": null,
+  "session_label": "abdullah_al_utoum",
+  "artifact_paths": [
+    "D:\\تجربة\\العاب\\عبدالله العتوم\\My project (3).exe"
+  ],
+  "sandbox_status": "completed",
+  "observation_mode": "controlled_static_and_smoke",
+  "execution_phenomenology": {
+    "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+    "domain": "execution",
+    "spec_id": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1",
+    "layer": "execution_phenomenology",
+    "descriptors": [
+      "process_launched",
+      "window_detected",
+      "frames_rendered",
+      "execution_continuity_observed",
+      "telemetry_stream_active"
+    ],
+    "t_offset_ms": 0,
+    "source": "sandbox",
+    "detail": {},
+    "invariant_en": "Visible execution is not equivalent to validated execution."
+  },
+  "execution_phenomenology_descriptors": [
+    "process_launched",
+    "window_detected",
+    "frames_rendered",
+    "execution_continuity_observed",
+    "telemetry_stream_active"
+  ],
+  "replay_phenomenology_descriptors": [
+    "replay_captured",
+    "replay_continuous"
+  ],
+  "phenomenology_summary_en": "A process launch was observed. A window surface was detected. Frame output was observed. Execution continuity was observed within the window. A telemetry stream was active. Human review required for any trust or legitimacy claim. Unity source (5 scripts, 3 build scenes) and exported .exe observed. Code review advisory: possible Level2 scene name mismatch, timer not wired to game over. Smoke result: stable_window — gameplay mechanics still require human playtest.",
+  "telemetry_replay_wiring": {
+    "spec_id": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1",
+    "wiring_id": "trcw_ea2049527f0c",
+    "assigns_authority": false,
+    "assigns_legitimacy": false,
+    "invariants": {
+      "telemetry_density": "Telemetry density does not imply gameplay understanding.",
+      "replay": "Replay is evidence of reproducibility, not evidence of validity.",
+      "visibility_comprehension": "execution visibility ≠ execution comprehension"
+    },
+    "raw_telemetry": {
+      "layer": "raw_telemetry",
+      "trace_count": 4,
+      "traces": [
+        {
+          "layer": "raw_telemetry",
+          "signal_type": "process_lifecycle",
+          "value": "yes",
+          "t_offset_ms": 0,
+          "source": "sandbox",
+          "detail": {
+            "mapped_from": "process_started",
+            "artifact": "My project (3).exe",
+            "smoke_result": "stable_window"
+          },
+          "assigns_legitimacy": false,
+          "assigns_comprehension": false,
+          "invariant_en": "Telemetry density does not imply gameplay understanding."
+        },
+        {
+          "layer": "raw_telemetry",
+          "signal_type": "frame_event",
+          "value": "partial",
+          "t_offset_ms": 500,
+          "source": "sandbox",
+          "detail": {
+            "mapped_from": "scene_loaded"
+          },
+          "assigns_legitimacy": false,
+          "assigns_comprehension": false,
+          "invariant_en": "Telemetry density does not imply gameplay understanding."
+        },
+        {
+          "layer": "raw_telemetry",
+          "signal_type": "crash_signal",
+          "value": "none",
+          "t_offset_ms": 4000,
+          "source": "sandbox",
+          "detail": {
+            "mapped_from": "crash_state",
+            "exit_code": null,
+            "smoke_result": "stable_window"
+          },
+          "assigns_legitimacy": false,
+          "assigns_comprehension": false,
+          "invariant_en": "Telemetry density does not imply gameplay understanding."
+        },
+        {
+          "layer": "raw_telemetry",
+          "signal_type": "process_lifecycle",
+          "value": 12,
+          "t_offset_ms": 12000,
+          "source": "sandbox",
+          "detail": {
+            "mapped_from": "runtime_duration",
+            "unit": "seconds"
+          },
+          "assigns_legitimacy": false,
+          "assigns_comprehension": false,
+          "invariant_en": "Telemetry density does not imply gameplay understanding."
+        }
+      ],
+      "mode": "phenomenological_traces_only"
+    },
+    "telemetry_graph": {
+      "graph_version": "runtime_telemetry_graph_v1",
+      "contract_id": "",
+      "observation_mode": "runtime_observation_session",
+      "artifact_name": "My project (3).exe",
+      "event_count": 4,
+      "timeline": [
+        {
+          "event_type": "process_started",
+          "value": "yes",
+          "source": "sandbox",
+          "detail": {
+            "artifact": "My project (3).exe",
+            "smoke_result": "stable_window"
+          },
+          "t_offset_ms": 0
+        },
+        {
+          "event_type": "scene_loaded",
+          "value": "partial",
+          "source": "sandbox",
+          "detail": {},
+          "t_offset_ms": 500
+        },
+        {
+          "event_type": "crash_state",
+          "value": "none",
+          "source": "sandbox",
+          "detail": {
+            "exit_code": null,
+            "smoke_result": "stable_window"
+          },
+          "t_offset_ms": 4000
+        },
+        {
+          "event_type": "runtime_duration",
+          "value": 12,
+          "source": "sandbox",
+          "detail": {
+            "unit": "seconds"
+          },
+          "t_offset_ms": 12000
+        }
+      ],
+      "summary": {
+        "process_started": "yes",
+        "scene_loaded": "partial",
+        "input_detected": "unknown",
+        "score_changed": "unknown",
+        "collision_detected": "unknown",
+        "level_transition": "unknown",
+        "runtime_duration": 12,
+        "crash_state": "none"
+      },
+      "layer": "raw_telemetry_graph",
+      "epistemic_interpretation": "blocked_by_default",
+      "invariant_en": "Telemetry density does not imply gameplay understanding.",
+      "authority_note_ar": "telemetry timeline استشاري — runtime observation remains advisory until human review.",
+      "generated_at": "2026-05-25T02:25:37.501550Z"
+    },
+    "replay_phenomenology": {
+      "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+      "domain": "replay",
+      "spec_id": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1",
+      "layer": "replay_phenomenology",
+      "descriptors": [
+        "replay_captured",
+        "replay_continuous"
+      ],
+      "t_offset_ms": 0,
+      "checksum": "",
+      "detail": {},
+      "invariant_en": "Replay is evidence of reproducibility, not evidence of validity."
+    },
+    "execution_phenomenology": {
+      "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+      "domain": "execution",
+      "spec_id": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1",
+      "layer": "execution_phenomenology",
+      "descriptors": [
+        "telemetry_stream_active",
+        "replay_captured"
+      ],
+      "t_offset_ms": 0,
+      "source": "sandbox",
+      "detail": {},
+      "invariant_en": "Visible execution is not equivalent to validated execution."
+    },
+    "provenance_chain_segment": {
+      "segment_id": "cap_58f494fbf9c5",
+      "artifact_name": "My project (3).exe",
+      "prior_segment_id": null,
+      "continuity_observed": true,
+      "assigns_legitimacy": false,
+      "note_en": "Provenance chain segment — observation continuity, not validation."
+    },
+    "epistemic_interpretation": {
+      "layer": "epistemic_interpretation",
+      "blocked": true,
+      "default_state": "blocked",
+      "unlock_requires": "human_governed_explicit_gate",
+      "claims": [],
+      "note_en": "Signal density does not auto-unlock comprehension.",
+      "invariant_en": "execution visibility ≠ execution comprehension"
+    },
+    "forbidden": [
+      "gameplay_understood",
+      "high_resolution_legitimacy_summary"
+    ],
+    "replay_phenomenology_check": {
+      "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+      "domain": "replay",
+      "allowed": true,
+      "violations": [],
+      "invariant_en": "Replay is evidence of reproducibility, not evidence of validity."
+    }
+  },
+  "runtime_epistemic_governance": {
+    "spec_id": "RUNTIME_EPISTEMIC_GOVERNANCE_v1",
+    "governance_id": "reg_14d26da8b981",
+    "assigns_authority": false,
+    "assigns_legitimacy": false,
+    "assigns_comprehension": false,
+    "layers_merged": false,
+    "auto_merge_forbidden": true,
+    "invariants": {
+      "governed_observation": "Governed runtime observation is still not runtime understanding.",
+      "governance_comprehension": "runtime governance ≠ runtime comprehension",
+      "execution_opacity": "Even with dense telemetry, gameplay · pedagogical · rubric-wise meaning remain partially opaque."
+    },
+    "l4_clause_id": "RUNTIME_L4_PHENOMENOLOGY_CLAUSE_v1",
+    "l4_clause": {
+      "clause_id": "RUNTIME_L4_PHENOMENOLOGY_CLAUSE_v1",
+      "parent_contract": "RUNTIME_OBSERVATION_CONTRACT_v1",
+      "canonical": true,
+      "clause_en": "L4 may observe runtime phenomenology. L4 may not infer gameplay legitimacy.",
+      "may": [
+        "observe_runtime_phenomenology",
+        "record_phenomenological_traces",
+        "apply_runtime_quarantine_states",
+        "link_provenance_segments_observation_only"
+      ],
+      "may_not": [
+        "infer_gameplay_legitimacy",
+        "infer_rubric_satisfaction",
+        "infer_mechanics_validated",
+        "infer_submission_authentic",
+        "collapse_telemetry_to_meaning",
+        "auto_merge_governance_layers"
+      ],
+      "note_en": "Runtime temptation is psychologically stronger than narrative temptation."
+    },
+    "runtime_phenomenology": {
+      "layer_id": "runtime_phenomenology",
+      "function_en": "what appeared",
+      "assigns_meaning": false,
+      "assigns_legitimacy": false,
+      "assigns_comprehension": false,
+      "execution_phenomenology": {
+        "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+        "domain": "execution",
+        "spec_id": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1",
+        "layer": "execution_phenomenology",
+        "descriptors": [
+          "telemetry_stream_active",
+          "replay_captured"
+        ],
+        "t_offset_ms": 0,
+        "source": "sandbox",
+        "detail": {},
+        "invariant_en": "Visible execution is not equivalent to validated execution."
+      },
+      "replay_phenomenology": {
+        "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+        "domain": "replay",
+        "spec_id": "TELEMETRY_REPLAY_CAPTURE_WIRING_v1",
+        "layer": "replay_phenomenology",
+        "descriptors": [
+          "replay_captured",
+          "replay_continuous"
+        ],
+        "t_offset_ms": 0,
+        "checksum": "",
+        "detail": {},
+        "invariant_en": "Replay is evidence of reproducibility, not evidence of validity."
+      },
+      "raw_telemetry_trace_count": 4,
+      "invariant_en": "Governed runtime observation is still not runtime understanding."
+    },
+    "provenance_governance": {
+      "layer_id": "provenance_governance",
+      "function_en": "what can be linked",
+      "assigns_authenticity": false,
+      "assigns_legitimacy": false,
+      "provenance_chain_segments": [
+        {
+          "segment_id": "cap_58f494fbf9c5",
+          "artifact_name": "My project (3).exe",
+          "prior_segment_id": null,
+          "continuity_observed": true,
+          "assigns_legitimacy": false,
+          "note_en": "Provenance chain segment — observation continuity, not validation."
+        }
+      ],
+      "identity_complete": false,
+      "linkage_mode": "observation_only",
+      "note_en": "Linkage observed — not validated."
+    },
+    "legitimacy_governance": {
+      "layer_id": "legitimacy_governance",
+      "function_en": "blocked by default",
+      "blocked": true,
+      "default_state": "blocked",
+      "unlock_requires": "human_governed_explicit_gate",
+      "achievement_inference": false,
+      "gameplay_legitimacy_inference": false,
+      "l4_clause_en": "L4 may observe runtime phenomenology. L4 may not infer gameplay legitimacy."
+    },
+    "runtime_quarantine_states": [
+      "runtime_observed",
+      "runtime_reproducible",
+      "runtime_provenance_partial",
+      "runtime_epistemically_unverified",
+      "runtime_legitimacy_blocked"
+    ],
+    "runtime_quarantine_mandatory_present": true,
+    "phenomenological_overconfidence_check": {
+      "risk_id": "phenomenological overconfidence",
+      "detected": false,
+      "trace_count": 4,
+      "advisory_en": "Dense traces and replay continuity may induce comprehension illusion. Epistemic meaning remains unverified.",
+      "mitigation_en": "execution opacity preservation · mandatory unverified + legitimacy_blocked states"
+    },
+    "execution_opacity_preservation": {
+      "gameplay_internal_state": "partially_opaque",
+      "pedagogical_meaning": "partially_opaque",
+      "rubric_satisfaction": "partially_opaque",
+      "note_en": "Even with dense telemetry, gameplay · pedagogical · rubric-wise meaning remain partially opaque."
+    },
+    "source_wiring_id": "trcw_ea2049527f0c",
+    "layer_separation_check": {
+      "allowed": true,
+      "violations": []
+    }
+  },
+  "runtime_quarantine_states": [
+    "runtime_observed",
+    "runtime_reproducible",
+    "runtime_provenance_partial",
+    "runtime_epistemically_unverified",
+    "runtime_legitimacy_blocked"
+  ],
+  "mandatory_quarantine_present": true,
+  "allowed_claims_en": [
+    "process_launched",
+    "window_detected",
+    "frames_rendered",
+    "execution_continuity_observed",
+    "telemetry_stream_active",
+    "replay:replay_captured",
+    "replay:replay_continuous"
+  ],
+  "forbidden_auto_claims_en": [
+    "game validated",
+    "rubric achieved",
+    "project confirmed"
+  ],
+  "human_authority_required": true,
+  "facilitator_notes_ar": "",
+  "invariant_en": "Runtime visibility ≠ runtime legitimacy.",
+  "institutional_ledger_appended": false,
+  "session_file": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_cohort_workshop\\runtime_observation_sessions\\ros_193e783456ad.json",
+  "student_folder": "D:\\تجربة\\العاب\\عبدالله العتوم",
+  "unity_project": "D:\\تجربة\\العاب\\عبدالله العتوم\\My project (3)",
+  "code_observation": {
+    "unity_project": "D:\\تجربة\\العاب\\عبدالله العتوم\\My project (3)",
+    "exported_exe": "D:\\تجربة\\العاب\\عبدالله العتوم\\My project (3).exe",
+    "exe_exists": true,
+    "exe_data_folder": [
+      "D:\\تجربة\\العاب\\عبدالله العتوم\\My project (3)_Data"
+    ],
+    "build_scenes": [
+      "Level 1",
+      "Level 2",
+      "Level 3"
+    ],
+    "script_count": 5,
+    "game_mechanics_observed": {
+      "start_screen_pause": true,
+      "player_move_jump_collect": true,
+      "lives_hearts_respawn": true,
+      "score_cups_level_transition_at_3": true,
+      "timer_display_120s": true,
+      "timer_triggers_game_over": false,
+      "levels_in_build": 3
+    },
+    "tags_used_in_code": [
+      "Ground",
+      "Cup",
+      "Danger"
+    ],
+    "smoke_result": "stable_window"
+  },
+  "scripts": [
+    {
+      "file": "GameStart.cs",
+      "lines": 30,
+      "signals": {
+        "has_score": false,
+        "has_lives": false,
+        "has_timer": false,
+        "has_start_panel": true,
+        "has_player_movement": false,
+        "has_level_transition": false,
+        "has_game_over": false
+      }
+    },
+    {
+      "file": "LivesManager.cs",
+      "lines": 63,
+      "signals": {
+        "has_score": false,
+        "has_lives": true,
+        "has_timer": false,
+        "has_start_panel": false,
+        "has_player_movement": true,
+        "has_level_transition": false,
+        "has_game_over": true
+      }
+    },
+    {
+      "file": "PlayerMovement.cs",
+      "lines": 76,
+      "signals": {
+        "has_score": true,
+        "has_lives": false,
+        "has_timer": false,
+        "has_start_panel": false,
+        "has_player_movement": true,
+        "has_level_transition": false,
+        "has_game_over": false
+      }
+    },
+    {
+      "file": "ScoreManager.cs",
+      "lines": 34,
+      "signals": {
+        "has_score": true,
+        "has_lives": false,
+        "has_timer": false,
+        "has_start_panel": false,
+        "has_player_movement": false,
+        "has_level_transition": true,
+        "has_game_over": false
+      }
+    },
+    {
+      "file": "Timer.cs",
+      "lines": 26,
+      "signals": {
+        "has_score": false,
+        "has_lives": false,
+        "has_timer": true,
+        "has_start_panel": false,
+        "has_player_movement": false,
+        "has_level_transition": false,
+        "has_game_over": false
+      }
+    }
+  ],
+  "documentation_assets": {
+    "docx_count": 0,
+    "pdf_count": 0,
+    "note_en": "No student-authored docx/pdf found; Pixel Adventure asset pack images present."
+  },
+  "contradictions_advisory": [
+    {
+      "id": "scene_name_mismatch_level2",
+      "observation_en": "ScoreManager loads scene \"Level2\" but build scenes are \"Level 1\", \"Level 2\", \"Level 3\" (space in name). Level transition may fail at runtime.",
+      "hold_suggested": true,
+      "not_claim": "student did not implement levels"
+    },
+    {
+      "id": "timer_not_wired_to_game_over",
+      "observation_en": "Timer.cs counts down to 00:00 but does not trigger game over, level fail, or scene change — timeout consequence unclear from code.",
+      "hold_suggested": true
+    },
+    {
+      "id": "space_key_dual_use",
+      "observation_en": "GameStart and PlayerMovement both bind Space (start game vs jump). Interaction depends on script order and isGrounded state."
+    },
+    {
+      "id": "timescale_start_conflict",
+      "observation_en": "GameStart sets Time.timeScale=0 at start; PlayerMovement.Start sets timeScale=1 — start-screen pause may be overridden by script order."
+    },
+    {
+      "id": "no_submission_documentation",
+      "observation_en": "No docx/pdf GDD or written documentation found in submission folder (asset pack images only)."
+    },
+    {
+      "id": "smoke_stable_no_input",
+      "observation_en": "Process ran stable_window (~12s) in sandbox without simulated input. Start screen, movement, scoring, and level transition remain unobserved.",
+      "action_ar": "playtest يدوي للتحقق من الميكانيكيات"
+    }
+  ],
+  "code_observation_logged_at": "2026-05-25T02:25:38.407586Z",
+  "next_steps_ar": [
+    "تشغيل My project (3).exe يدوياً — Space لبدء اللعب",
+    "اختبار جمع 3 كؤوس — هل ينتقل إلى Level 2؟",
+    "التحقق من المؤقت 120 ثانية — هل يوجد عقوبة عند 00:00؟",
+    "قرار Achieved يدوي (L5) إن لزم"
+  ],
+  "manual_playtest_passes": [
+    {
+      "pass_id": "mpp_4df89d13daeb",
+      "pass_label": "pass_1",
+      "playtest_status": "complete",
+      "pass_file": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_cohort_workshop\\manual_playtest_passes\\mpp_4df89d13daeb.json",
+      "interactive_phenomenology_descriptors": [
+        "start_state_transition_observed"
+      ]
+    },
+    {
+      "pass_id": "mpp_45c99b47de48",
+      "pass_label": "visual_pass_1",
+      "pass_mode": "visual_human",
+      "playtest_status": "complete_visual",
+      "pass_file": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_cohort_workshop\\manual_playtest_passes\\mpp_45c99b47de48.json",
+      "interactive_phenomenology_descriptors": [
+        "start_state_transition_observed",
+        "jump_response_observed",
+        "score_change_observed",
+        "level_transition_failed",
+        "timer_expired_no_consequence_observed",
+        "game_over_panel_observed"
+      ]
+    }
+  ],
+  "interactive_verification_layer": {
+    "status": "complete_visual",
+    "pass_mode": "visual_human",
+    "invariant_en": "Mechanic observation does not imply pedagogical or rubric inference.",
+    "input_dispatched": true,
+    "interaction_visually_corroborated": true,
+    "mechanics_corroborated": "partial",
+    "gameplay_understood": false,
+    "gameplay_meaning": "opaque",
+    "rubric_validated": false,
+    "legitimacy_granted": false,
+    "latest_pass_id": "mpp_45c99b47de48",
+    "central_pending_test_id": null,
+    "assisted_pass_id": "mpp_4df89d13daeb",
+    "pedagogical_meaning": "opaque"
+  },
+  "runtime_pass1_epistemic_discoveries": "RUNTIME_PASS1_EPISTEMIC_DISCOVERIES_v1.json",
+  "runtime_corroboration_consolidation": {
+    "consolidation_id": "rcc_20260525113959",
+    "consolidation_file": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_cohort_workshop\\runtime_corroboration_consolidations\\rcc_20260525113959_ros_193e783456ad.json",
+    "evidence_layers": {
+      "code_hypotheses": "present",
+      "smoke_runtime_phenomenology": "present",
+      "assisted_interaction": "absent",
+      "visual_corroboration": "present",
+      "contradiction_corroboration": "partial_or_complete",
+      "semantic_restraint": "preserved"
+    },
+    "legitimacy_blocked": true
+  },
+  "contradiction_corroboration": {
+    "spec_id": "RUNTIME_CORROBORATION_UPDATE_v1",
+    "pass_id": "mpp_45c99b47de48",
+    "updates": [
+      {
+        "contradiction_id": "scene_name_mismatch_level2",
+        "corroboration_state": "corroborated",
+        "note_en": "Runtime visual observation aligned with code hypothesis (level_transition_failed).",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      },
+      {
+        "contradiction_id": "timer_not_wired_to_game_over",
+        "corroboration_state": "corroborated",
+        "note_en": "Runtime visual observation aligned with code hypothesis (timer_expired_no_consequence_observed).",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      },
+      {
+        "contradiction_id": "space_key_dual_use",
+        "corroboration_state": "inconclusive",
+        "note_en": "Partial signal (jump_response_observed) — hypothesis not fully resolved.",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      },
+      {
+        "contradiction_id": "timescale_start_conflict",
+        "corroboration_state": "inconclusive",
+        "note_en": "Partial signal (start_state_transition_observed) — hypothesis not fully resolved.",
+        "assigns_legitimacy": false,
+        "assigns_rubric_inference": false
+      }
+    ],
+    "legitimacy_blocked": true,
+    "rubric_meaning_blocked": true
+  },
+  "provenance_continuity_notes": [
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "start_space",
+      "observed_en": "After Space, gameplay start transition observed (jump/start response visible).",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "jump_after_start",
+      "observed_en": "Jump response observed after game start.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "cup_score",
+      "observed_en": "Score change observed on cup collection.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "third_cup_level",
+      "observed_en": "No scene change observed after third cup.",
+      "classification": "contradiction_observed",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "timer_zero",
+      "observed_en": "Timer reached zero with no observed gameplay event.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    },
+    {
+      "segment_type": "visual_state_transition",
+      "test_id": "lives_exhausted",
+      "observed_en": "Game over panel shown after lives exhausted.",
+      "classification": "confirmed_runtime_observation",
+      "pass_id": "mpp_45c99b47de48",
+      "assigns_legitimacy": false
+    }
+  ],
+  "runtime_corroboration_update_at": "2026-05-25T11:39:59.451928Z",
+  "first_runtime_constitutional_corroboration_record": "FIRST_RUNTIME_CONSTITUTIONAL_CORROBORATION_RECORD_v1.json",
+  "constitutional_maintenance_review": "CONSTITUTIONAL_MAINTENANCE_REVIEW_post_rcc_20260525113959.json",
+  "runtime_contradiction_registry": "RUNTIME_CONTRADICTION_REGISTRY_v1.json"
+}

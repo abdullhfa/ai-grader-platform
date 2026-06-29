@@ -1,0 +1,583 @@
+{% extends "base.html" %}
+
+{% block title %}إعدادات النظام - BTEC Grader{% endblock %}
+
+{% block nav_settings %}active{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ======= PREMIUM OCEAN NAVY THEME ======= */
+    .st-page {
+        background: linear-gradient(160deg, #091b2a, #0c2d48, #0a1628);
+        min-height: calc(100vh - 80px);
+        position: relative;
+        overflow: hidden;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+
+    /* Animated blobs */
+    .st-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.3;
+        z-index: 0;
+        animation: stFloat 20s ease-in-out infinite alternate;
+    }
+    .st-blob-1 {
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, #22d3ee, #0891b2);
+        top: -100px; right: -80px;
+    }
+    .st-blob-2 {
+        width: 450px; height: 450px;
+        background: radial-gradient(circle, #0ea5e9, #0369a1);
+        bottom: -120px; left: -100px;
+        animation-delay: -8s;
+    }
+    .st-blob-3 {
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, #67e8f9, #06b6d4);
+        top: 40%; left: 60%;
+        opacity: 0.12;
+        animation-delay: -14s;
+    }
+    @keyframes stFloat {
+        0% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(50px, -40px) scale(1.1); }
+        100% { transform: translate(-30px, 30px) scale(0.95); }
+    }
+
+    /* Header */
+    .st-header {
+        position: relative;
+        z-index: 5;
+        text-align: center;
+        padding: 48px 20px 32px;
+    }
+    .st-icon-wrap {
+        width: 70px; height: 70px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.1));
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 28px;
+        color: #22d3ee;
+    }
+    .st-title {
+        font-size: 36px;
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 20px rgba(6, 182, 212, 0.3);
+    }
+    .st-subtitle {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 16px;
+        font-weight: 500;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    /* Content area */
+    .st-content {
+        position: relative;
+        z-index: 5;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px 80px;
+    }
+
+    /* Glass card */
+    .st-card {
+        background: linear-gradient(145deg, rgba(34, 211, 238, 0.06), rgba(255, 255, 255, 0.04), rgba(6, 182, 212, 0.03));
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(34, 211, 238, 0.12);
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        animation: stCardIn 0.5s ease-out backwards;
+        position: relative;
+        overflow: hidden;
+    }
+    .st-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #22d3ee, #06b6d4, transparent);
+        opacity: 0.6;
+    }
+    .st-card:nth-child(1) { animation-delay: 0.05s; }
+    .st-card:nth-child(2) { animation-delay: 0.1s; }
+    .st-card:nth-child(3) { animation-delay: 0.15s; }
+    .st-card:nth-child(4) { animation-delay: 0.2s; }
+    .st-card:nth-child(5) { animation-delay: 0.25s; }
+    .st-card:nth-child(6) { animation-delay: 0.3s; }
+
+    @keyframes stCardIn {
+        from { opacity: 0; transform: translateY(25px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .st-card:hover {
+        background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(255, 255, 255, 0.06), rgba(6, 182, 212, 0.06));
+        border-color: rgba(34, 211, 238, 0.3);
+        box-shadow: 0 8px 40px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(34, 211, 238, 0.1);
+        transform: translateY(-3px);
+    }
+    .st-card:hover::before {
+        opacity: 1;
+    }
+
+    .st-card-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+    .st-card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+    .st-card-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #ffffff;
+    }
+    .st-card-title small {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: rgba(255,255,255,0.4);
+        margin-top: 2px;
+    }
+
+    /* Grading mode cards */
+    .st-mode-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+    @media (max-width: 640px) {
+        .st-mode-grid { grid-template-columns: 1fr; }
+    }
+
+    .st-mode-option {
+        position: relative;
+        cursor: pointer;
+        display: block;
+    }
+    .st-mode-option input { position: absolute; opacity: 0; pointer-events: none; }
+
+    .st-mode-box {
+        padding: 22px;
+        border-radius: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        transition: all 0.3s;
+        height: 100%;
+    }
+    .st-mode-option input:checked + .st-mode-box {
+        border-color: #22d3ee;
+        background: rgba(34, 211, 238, 0.1);
+        box-shadow: 0 0 25px rgba(34, 211, 238, 0.15);
+    }
+    .st-mode-box:hover {
+        border-color: rgba(34, 211, 238, 0.4);
+        background: rgba(255, 255, 255, 0.05);
+    }
+    .st-mode-name {
+        font-size: 15px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .st-mode-name i {
+        color: rgba(255,255,255,0.3);
+        transition: color 0.3s;
+    }
+    .st-mode-option input:checked + .st-mode-box .st-mode-name i {
+        color: #22d3ee;
+    }
+    .st-mode-desc {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.45);
+        line-height: 1.6;
+    }
+    .st-recommended {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: linear-gradient(135deg, #22d3ee, #0891b2);
+        color: #091b2a;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    /* Provider select */
+    .st-provider-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Labels & Inputs */
+    .st-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 8px;
+    }
+
+    .st-input {
+        width: 100%;
+        padding: 13px 16px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 14px;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .st-input::placeholder { color: rgba(255,255,255,0.25); }
+    .st-input:focus {
+        border-color: #22d3ee;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+    }
+
+    .st-select {
+        width: 100%;
+        padding: 11px 16px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 13px;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+        outline: none;
+        transition: all 0.3s;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2322d3ee' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: left 14px center;
+    }
+    .st-select:focus {
+        border-color: #22d3ee;
+        box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+    }
+    .st-select option {
+        background: #0c2d48;
+        color: #fff;
+    }
+
+    /* Test button */
+    .st-btn-test {
+        padding: 8px 18px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .st-btn-test:hover {
+        background: rgba(34, 211, 238, 0.15);
+        border-color: #22d3ee;
+        color: #67e8f9;
+    }
+
+    /* Action buttons */
+    .st-actions {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        padding-top: 16px;
+        flex-wrap: wrap;
+    }
+    .st-btn-secondary {
+        padding: 14px 28px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .st-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .st-btn-save {
+        padding: 14px 36px;
+        background: linear-gradient(135deg, #22d3ee, #0891b2);
+        border: none;
+        border-radius: 14px;
+        color: #091b2a;
+        font-weight: 800;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 25px rgba(34, 211, 238, 0.35);
+        font-family: 'Rubik', 'Cairo', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .st-btn-save:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 35px rgba(34, 211, 238, 0.5);
+    }
+
+    /* Status badges */
+    .st-status {
+        font-size: 12px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+    .st-status-loading { background: rgba(34, 211, 238, 0.1); color: #67e8f9; border: 1px solid rgba(34, 211, 238, 0.2); }
+    .st-status-success { background: rgba(34, 197, 94, 0.1); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.2); }
+    .st-status-error { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .st-status-warn { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+
+    /* Message container */
+    .st-msg-success {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        color: #4ade80;
+        padding: 14px 20px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* API card specific colors */
+    .st-icon-groq { background: linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(234, 88, 12, 0.08)); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.2); }
+    .st-icon-gemini { background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(37, 99, 235, 0.08)); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.2); }
+    .st-icon-openai { background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(22, 163, 74, 0.08)); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+    .st-icon-pplx { background: linear-gradient(135deg, rgba(129, 140, 248, 0.15), rgba(79, 70, 229, 0.08)); color: #818cf8; border: 1px solid rgba(129, 140, 248, 0.2); }
+    .st-icon-minimax { background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.08)); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
+    .st-icon-claude { background: linear-gradient(135deg, rgba(217, 119, 87, 0.15), rgba(191, 80, 54, 0.08)); color: #d97757; border: 1px solid rgba(217, 119, 87, 0.2); }
+
+    .hidden { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="st-page">
+    <!-- Blobs -->
+    <div class="st-blob st-blob-1"></div>
+    <div class="st-blob st-blob-2"></div>
+    <div class="st-blob st-blob-3"></div>
+
+    <!-- Header -->
+    <div class="st-header">
+        <div class="st-icon-wrap">
+            <i class="fa-solid fa-gear"></i>
+        </div>
+        <h1 class="st-title">إعدادات النظام</h1>
+        <p class="st-subtitle">تحكم في خيارات الذكاء الاصطناعي ومفاتيح الربط (API Keys).</p>
+    </div>
+
+    <!-- Content -->
+    <div class="st-content">
+        <div id="message-container"></div>
+
+        <form id="settings-form">
+
+            <!-- Grading Mode -->
+            <div class="st-card">
+                <div class="st-card-header">
+                    <div class="st-card-icon" style="background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(139,92,246,0.08)); color: #c084fc; border: 1px solid rgba(168,85,247,0.2);">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div class="st-card-title">نمط التصحيح <small>اختر طريقة عمل محرك الذكاء الاصطناعي</small></div>
+                </div>
+
+                <input type="hidden" name="grading_mode" value="single">
+
+                <div id="single-provider-select" class="st-provider-section">
+                    <label class="st-label">المزود الأساسي (Gemini أولاً؛ عند الفشل يُستخدم Ollama تلقائياً إن كان مضبوطاً)</label>
+                    <select name="primary_provider" class="st-select">
+                        <option value="gemini">Google Gemini (افتراضي — مع تراجع تلقائي إلى Ollama)</option>
+                        <option value="ollama">Ollama محلي فقط (بدون Gemini)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Gemini -->
+            <div class="st-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                    <div class="st-card-header" style="margin-bottom: 0;">
+                        <div class="st-card-icon st-icon-gemini"><i class="fa-brands fa-google"></i></div>
+                        <div class="st-card-title">Google Gemini <small>نماذج Google المتقدمة</small></div>
+                    </div>
+                    <button type="button" onclick="testProvider('gemini')" class="st-btn-test">
+                        <i class="fa-solid fa-plug-circle-check" style="margin-left: 5px;"></i> اختبار
+                    </button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <input type="password" name="gemini_api_key" id="gemini_api_key" class="st-input" placeholder="AIza...">
+                    <select name="gemini_model" class="st-select">
+                        <option value="gemini-2.5-pro" selected>gemini-2.5-pro</option>
+                        <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                        <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                    </select>
+                    <div id="gemini-status" class="hidden"></div>
+                </div>
+            </div>
+
+            <!-- Ollama -->
+            <div class="st-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                    <div class="st-card-header" style="margin-bottom: 0;">
+                        <div class="st-card-icon st-icon-openai"><i class="fa-solid fa-server"></i></div>
+                        <div class="st-card-title">Ollama <small>نسخة احتياطية محلية عند فشل Gemini</small></div>
+                    </div>
+                    <button type="button" onclick="testProvider('ollama')" class="st-btn-test">
+                        <i class="fa-solid fa-plug-circle-check" style="margin-left: 5px;"></i> اختبار
+                    </button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <label class="st-label">عنوان الخادم</label>
+                    <input type="text" name="ollama_base_url" id="ollama_base_url" class="st-input" placeholder="http://localhost:11434/v1">
+                    <label class="st-label">اسم النموذج</label>
+                    <input type="text" name="ollama_model" id="ollama_model" class="st-input" placeholder="مثال: llama3.2 أو deepseek-coder">
+                    <div id="ollama-status" class="hidden"></div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="st-actions">
+                <button type="button" onclick="testAllProviders()" class="st-btn-secondary">
+                    <i class="fa-solid fa-vial" style="margin-left: 6px;"></i>
+                    اختبار الجميع
+                </button>
+                <button type="submit" class="st-btn-save">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    حفظ التغييرات
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    async function testProvider(provider) {
+        const statusDiv = document.getElementById(`${provider}-status`);
+        let apiKey = '';
+        if (provider === 'gemini') {
+            const inp = document.getElementById('gemini_api_key');
+            apiKey = inp ? inp.value.trim() : '';
+            if (!apiKey) {
+                statusDiv.className = 'st-status st-status-warn';
+                statusDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> أدخل مفتاح Gemini أولاً';
+                statusDiv.classList.remove('hidden');
+                return;
+            }
+        }
+
+        statusDiv.className = 'st-status st-status-loading';
+        statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الاتصال...';
+        statusDiv.classList.remove('hidden');
+
+        try {
+            const response = await fetch('/api/test-provider', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider: provider, api_key: apiKey })
+            });
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                statusDiv.className = 'st-status st-status-success';
+                statusDiv.innerHTML = '<i class="fa-solid fa-check-circle"></i> متصل بنجاح ✓';
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            statusDiv.className = 'st-status st-status-error';
+            statusDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> فشل الاتصال';
+            console.error(error);
+        }
+    }
+
+    async function testAllProviders() {
+        await testProvider('gemini');
+        await testProvider('ollama');
+    }
+
+    document.getElementById('settings-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        try {
+            const response = await fetch('/api/save-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+            const result = await response.json();
+            const msg = document.getElementById('message-container');
+            if (result.success) {
+                msg.innerHTML = `<div class="st-msg-success"><i class="fa-solid fa-check-circle"></i> ${result.message}</div>`;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        } catch (e) { alert('Error saving properties'); }
+    });
+
+    window.addEventListener('DOMContentLoaded', async function () {
+        try {
+            const response = await fetch('/api/get-settings');
+            const settings = await response.json();
+            if (settings.gemini_api_key) document.getElementById('gemini_api_key').value = settings.gemini_api_key;
+            if (settings.ollama_base_url) document.getElementById('ollama_base_url').value = settings.ollama_base_url;
+            if (settings.ollama_model) document.getElementById('ollama_model').value = settings.ollama_model;
+
+            if (settings.primary_provider) document.querySelector('select[name="primary_provider"]').value = settings.primary_provider;
+            if (settings.gemini_model) document.querySelector('select[name="gemini_model"]').value = settings.gemini_model;
+
+        } catch (e) { console.error('Error loading settings', e); }
+    });
+</script>
+{% endblock %}

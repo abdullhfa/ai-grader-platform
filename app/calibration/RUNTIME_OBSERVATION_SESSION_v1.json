@@ -1,0 +1,32 @@
+{
+  "session_type_id": "RUNTIME_OBSERVATION_SESSION_v1",
+  "phase_id": "CONSTITUTIONAL_MAINTENANCE_v1",
+  "mode": "runtime_observation_session",
+  "not_mode": "final_legitimacy_session",
+  "allowed": [
+    "sandbox_execution",
+    "runtime_phenomenology",
+    "replay_phenomenology",
+    "telemetry_capture",
+    "replay_review",
+    "code_file_analysis",
+    "rubric_comparison_advisory",
+    "contradiction_detection",
+    "hold_quarantine_tracking"
+  ],
+  "forbidden_auto": [
+    "game_validated",
+    "rubric_achieved",
+    "project_confirmed",
+    "runtime_verified_as_legitimacy",
+    "authority_grade_final_judgment"
+  ],
+  "mandatory_quarantine_states": [
+    "runtime_epistemically_unverified",
+    "runtime_legitimacy_blocked"
+  ],
+  "session_output_dir": "app/calibration/human_cohort_workshop/runtime_observation_sessions",
+  "institutional_ledger": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+  "ledger_policy_en": "Session files are operational notes — institutional ledger remains empty unless explicit human governance append.",
+  "invariant_en": "Runtime visibility ≠ runtime legitimacy."
+}

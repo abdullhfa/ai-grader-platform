@@ -1,0 +1,72 @@
+{
+  "schema": "workshop_friction_synthesis_v1",
+  "source_workshop": "app/calibration/reports/cal_reliability_stress_v2.json",
+  "calibration_run_id": "cal_reliability_stress_v2",
+  "workshop_complete": false,
+  "governance_signal_valid": false,
+  "operational_status": "workshop_incomplete",
+  "governance_decision": null,
+  "rows_in_workshop": 14,
+  "rows_missing_friction_tags": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "rows_unanswered_review_questions": 98,
+  "friction_tag_counts": {},
+  "friction_tag_by_archetype": {},
+  "top_friction_tags": [],
+  "friction_frequency_policy": {
+    "actionable_min_count": 4,
+    "actionable_min_share": 0.35,
+    "rule": "Prefer frequency over first complaint; ignore tags below threshold for Run3."
+  },
+  "actionable_friction_clusters": [],
+  "anecdote_friction_tags": [],
+  "answer_distributions": {
+    "review_escalation_logical": {
+      "(unanswered)": 14
+    },
+    "reasoning_understandable": {
+      "(unanswered)": 14
+    },
+    "insufficiency_clear": {
+      "(unanswered)": 14
+    },
+    "conflict_flags_useful": {
+      "(unanswered)": 14
+    },
+    "severity_appropriate": {
+      "(unanswered)": 14
+    },
+    "noisy_triggers": {
+      "(unanswered)": 14
+    },
+    "behavior_auditable": {
+      "(unanswered)": 14
+    }
+  },
+  "not_fully_auditable_rows": [],
+  "suggested_run3_focus": [],
+  "post_workshop_discipline": {
+    "pick_friction_points": "1-2 maximum",
+    "change_type": "interpretability refinement only (reasoning merge, severity calm, flag dedup)",
+    "then": "freeze → run_reliability_stress_cycle → calibration_diff",
+    "avoid": [
+      "shadow_to_achieved",
+      "major_architecture",
+      "threshold_bundle_changes"
+    ]
+  }
+}

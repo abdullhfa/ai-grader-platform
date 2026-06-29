@@ -1,0 +1,9 @@
+{
+  "events": [
+    {
+      "type": "movement_detected",
+      "timestamp": 1.0,
+      "confidence": 0.8
+    }
+  ]
+}

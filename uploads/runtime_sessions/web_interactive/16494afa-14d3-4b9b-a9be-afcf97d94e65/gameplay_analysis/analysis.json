@@ -1,0 +1,557 @@
+{
+  "pipeline_version": "gameplay_ai_v1",
+  "session": {
+    "session_id": "16494afa-14d3-4b9b-a9be-afcf97d94e65",
+    "submission_key": "web_interactive",
+    "artifact_root": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65",
+    "video_path": null,
+    "frame_count": 5,
+    "frame_timestamps": [
+      0.0,
+      1.0,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "telemetry": {
+      "fps_samples": [],
+      "frame_times_ms": [],
+      "memory_usage_mb": [],
+      "scene_transitions": [],
+      "crash_events": [],
+      "ui_events": [],
+      "process_exit_code": null,
+      "runtime_duration_seconds": null,
+      "avg_fps": null,
+      "peak_memory_mb": null
+    },
+    "runtime_event_count": 1
+  },
+  "timeline": {
+    "duration_seconds": 1782646513.8917713,
+    "event_count": 3,
+    "events": [
+      {
+        "timestamp": 0.0,
+        "type": "pipeline_started",
+        "severity": "info",
+        "source": "gameplay_ai",
+        "confidence": 0.5,
+        "payload": {
+          "frame_count": 5
+        }
+      },
+      {
+        "timestamp": 4.0,
+        "type": "freeze_detected",
+        "severity": "warning",
+        "source": "gameplay_ai",
+        "confidence": 0.88,
+        "payload": {}
+      },
+      {
+        "timestamp": 1782646513.8917713,
+        "type": "session_created",
+        "severity": "info",
+        "source": "runtime",
+        "confidence": 0.9,
+        "payload": {
+          "engine": "web",
+          "root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\cohort_fixtures\\web_interactive"
+        }
+      }
+    ],
+    "summary_lines": [
+      "00s pipeline_started (0.50)",
+      "04s freeze_detected (0.88)",
+      "1782646513s session_created (0.90)"
+    ]
+  },
+  "detections": [
+    {
+      "detector": "freeze_detector",
+      "label": "freeze_detected",
+      "confidence": 0.88,
+      "evidence": {
+        "avg_frame_delta": 0.0,
+        "threshold": 0.008,
+        "pair_deltas": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "frame_count": 5
+      },
+      "method": "temporal_pixel_delta"
+    },
+    {
+      "detector": "motion_detector",
+      "label": "static_scene",
+      "confidence": 0.55,
+      "evidence": {
+        "avg_delta": 0.0,
+        "max_delta": 0.0,
+        "motion_threshold": 0.015
+      },
+      "method": "temporal_delta"
+    },
+    {
+      "detector": "scene_change",
+      "label": "stable_scene",
+      "confidence": 0.7,
+      "evidence": {
+        "changes": [],
+        "change_count": 0
+      },
+      "method": "histogram_diff"
+    },
+    {
+      "detector": "hud_detector",
+      "label": "hud_unclear",
+      "confidence": 0.45,
+      "evidence": {
+        "hud_frame_ratio": 0.0,
+        "samples": [
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_00.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_01.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_02.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_03.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_04.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          }
+        ]
+      },
+      "method": "band_variance_heuristic"
+    },
+    {
+      "detector": "text_ocr",
+      "label": "no_text",
+      "confidence": 0.35,
+      "evidence": {
+        "frames_ocrd": 5,
+        "score_tokens": [],
+        "win_text": false,
+        "lose_text": false,
+        "pause_text": false,
+        "samples": [
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_00.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_01.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_02.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_03.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_04.png",
+            "text": "",
+            "method": "unavailable"
+          }
+        ]
+      },
+      "method": "tesseract_or_easyocr"
+    },
+    {
+      "detector": "ui_detector",
+      "label": "gameplay_ui_unclear",
+      "confidence": 0.4,
+      "evidence": {
+        "menu_keyword_hits": 0
+      },
+      "method": "ocr_keyword"
+    },
+    {
+      "detector": "win_detector",
+      "label": "win_not_detected",
+      "confidence": 0.55,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    {
+      "detector": "lose_detector",
+      "label": "lose_not_detected",
+      "confidence": 0.55,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    {
+      "detector": "score_detector",
+      "label": "no_score_tokens",
+      "confidence": 0.4,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    {
+      "detector": "pause_detector",
+      "label": "pause_not_detected",
+      "confidence": 0.5,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    {
+      "detector": "death_detector",
+      "label": "death_not_detected",
+      "confidence": 0.52,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    {
+      "detector": "progression_detector",
+      "label": "progression_unclear",
+      "confidence": 0.45,
+      "evidence": {
+        "scene_changes": 0,
+        "level_keywords_in_ocr": false
+      },
+      "method": "heuristic"
+    },
+    {
+      "detector": "fps_monitor",
+      "label": "no_fps_data",
+      "confidence": 0.25,
+      "evidence": {},
+      "method": "heuristic"
+    }
+  ],
+  "cv_reports": {
+    "freeze": {
+      "detector": "freeze_detector",
+      "label": "freeze_detected",
+      "confidence": 0.88,
+      "evidence": {
+        "avg_frame_delta": 0.0,
+        "threshold": 0.008,
+        "pair_deltas": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "frame_count": 5
+      },
+      "method": "temporal_pixel_delta"
+    },
+    "motion": {
+      "detector": "motion_detector",
+      "label": "static_scene",
+      "confidence": 0.55,
+      "evidence": {
+        "avg_delta": 0.0,
+        "max_delta": 0.0,
+        "motion_threshold": 0.015
+      },
+      "method": "temporal_delta"
+    },
+    "scene_change": {
+      "detector": "scene_change",
+      "label": "stable_scene",
+      "confidence": 0.7,
+      "evidence": {
+        "changes": [],
+        "change_count": 0
+      },
+      "method": "histogram_diff"
+    },
+    "hud": {
+      "detector": "hud_detector",
+      "label": "hud_unclear",
+      "confidence": 0.45,
+      "evidence": {
+        "hud_frame_ratio": 0.0,
+        "samples": [
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_00.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_01.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_02.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_03.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_04.png",
+            "top_var": 53.14,
+            "bottom_var": 0.0,
+            "center_var": 0.0,
+            "hud_like": false
+          }
+        ]
+      },
+      "method": "band_variance_heuristic"
+    },
+    "ocr": {
+      "detector": "text_ocr",
+      "label": "no_text",
+      "confidence": 0.35,
+      "evidence": {
+        "frames_ocrd": 5,
+        "score_tokens": [],
+        "win_text": false,
+        "lose_text": false,
+        "pause_text": false,
+        "samples": [
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_00.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_01.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_02.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_03.png",
+            "text": "",
+            "method": "unavailable"
+          },
+          {
+            "path": "uploads\\runtime_sessions\\web_interactive\\16494afa-14d3-4b9b-a9be-afcf97d94e65\\screenshots\\frame_04.png",
+            "text": "",
+            "method": "unavailable"
+          }
+        ]
+      },
+      "method": "tesseract_or_easyocr"
+    },
+    "ui": {
+      "detector": "ui_detector",
+      "label": "gameplay_ui_unclear",
+      "confidence": 0.4,
+      "evidence": {
+        "menu_keyword_hits": 0
+      },
+      "method": "ocr_keyword"
+    },
+    "frame_metrics": {
+      "frame_count": 5,
+      "metrics_available": true,
+      "avg_frame_delta": 0.0,
+      "max_frame_delta": 0.0,
+      "estimated_fps_from_timestamps": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "avg_estimated_fps": 1.0
+    }
+  },
+  "gameplay_reports": {
+    "win": {
+      "detector": "win_detector",
+      "label": "win_not_detected",
+      "confidence": 0.55,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    "lose": {
+      "detector": "lose_detector",
+      "label": "lose_not_detected",
+      "confidence": 0.55,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    "score": {
+      "detector": "score_detector",
+      "label": "no_score_tokens",
+      "confidence": 0.4,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    "pause": {
+      "detector": "pause_detector",
+      "label": "pause_not_detected",
+      "confidence": 0.5,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    "death": {
+      "detector": "death_detector",
+      "label": "death_not_detected",
+      "confidence": 0.52,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    "progression": {
+      "detector": "progression_detector",
+      "label": "progression_unclear",
+      "confidence": 0.45,
+      "evidence": {
+        "scene_changes": 0,
+        "level_keywords_in_ocr": false
+      },
+      "method": "heuristic"
+    },
+    "fps": {
+      "detector": "fps_monitor",
+      "label": "no_fps_data",
+      "confidence": 0.25,
+      "evidence": {},
+      "method": "heuristic"
+    },
+    "input_trace": {}
+  },
+  "evidence_links": [
+    {
+      "criterion_hint": "game_launch",
+      "supporting_detectors": [
+        {
+          "detector": "motion_detector",
+          "label": "static_scene",
+          "confidence": 0.55
+        },
+        {
+          "detector": "ui_detector",
+          "label": "gameplay_ui_unclear",
+          "confidence": 0.4
+        },
+        {
+          "detector": "scene_change",
+          "label": "stable_scene",
+          "confidence": 0.7
+        }
+      ],
+      "aggregate_confidence": 0.55,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion_hint": "gameplay_loop",
+      "supporting_detectors": [
+        {
+          "detector": "motion_detector",
+          "label": "static_scene",
+          "confidence": 0.55
+        },
+        {
+          "detector": "freeze_detector",
+          "label": "freeze_detected",
+          "confidence": 0.88
+        },
+        {
+          "detector": "progression_detector",
+          "label": "progression_unclear",
+          "confidence": 0.45
+        }
+      ],
+      "aggregate_confidence": 0.627,
+      "corroboration_strength": "moderate"
+    },
+    {
+      "criterion_hint": "lose_health",
+      "supporting_detectors": [
+        {
+          "detector": "score_detector",
+          "label": "no_score_tokens",
+          "confidence": 0.4
+        },
+        {
+          "detector": "death_detector",
+          "label": "death_not_detected",
+          "confidence": 0.52
+        },
+        {
+          "detector": "text_ocr",
+          "label": "no_text",
+          "confidence": 0.35
+        }
+      ],
+      "aggregate_confidence": 0.423,
+      "corroboration_strength": "weak"
+    },
+    {
+      "criterion_hint": "win_lose_state",
+      "supporting_detectors": [
+        {
+          "detector": "win_detector",
+          "label": "win_not_detected",
+          "confidence": 0.55
+        },
+        {
+          "detector": "lose_detector",
+          "label": "lose_not_detected",
+          "confidence": 0.55
+        }
+      ],
+      "aggregate_confidence": 0.55,
+      "corroboration_strength": "moderate"
+    },
+    {
+      "criterion_hint": "testing_evidence",
+      "supporting_detectors": [
+        {
+          "detector": "fps_monitor",
+          "label": "no_fps_data",
+          "confidence": 0.25
+        }
+      ],
+      "aggregate_confidence": 0.25,
+      "corroboration_strength": "weak"
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "session_id": "replay_gate_session_13",
+  "session_number": 13,
+  "worksheet_version": "REPLAY_GATE_FORENSIC_WORKSHEET_v1",
+  "mode": "forensic_authority_walkthrough",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "design_artifact": "REPLAY_GATE_DISCIPLINE_v1",
+  "submission_id": 13,
+  "student_name": "حسين السلامات",
+  "batch_id": 4,
+  "facilitator": "Eng.Abdulah",
+  "completed_at": "2026-05-25T03:00:00Z",
+  "session_role_ar": "runtime/provenance edge — stress test تحت executable ambiguity",
+  "curriculum_position_ar": "أول اختبار حقيقي لـ executable temptation — ليس breach سردي (#3) ولا baseline (#2) ولا restraint تحت pressure خفيف (#4)",
+  "core_question_ar": "هل يستطيع النظام رفض authority حتى عند وجود executable، إذا كانت provenance continuity غير مكتملة؟",
+  "secondary_question_ar": "هل وجود executable يكفي لكسر quarantine؟",
+  "temptation_classification": {
+    "purpose_ar": "Batch 4 عالج أساسًا representational temptation — #13 أول اختبار لـ executable temptation",
+    "types": [
+      {
+        "type_id": "representational_temptation",
+        "definition_ar": "GDD / screenshots / narrative completeness",
+        "present": true,
+        "level": "high_but_mostly_supported",
+        "note_ar": "evidence متعدد الطبقات — semantic inflation أقل من #3 لأن claims مدعومة structurally"
+      },
+      {
+        "type_id": "executable_temptation",
+        "definition_ar": "وجود runtime artifact غير مكتمل provenance",
+        "present": true,
+        "level": "critical",
+        "note_ar": "4 exe · Unity build · L3 — لكن gameplay غير مُتحقَّق · exe لم يُشغَّل · identity mismatch"
+      }
+    ],
+    "primary_stress_vector_ar": "executable_temptation — الاعتقاد النفسي أن «وجود exe يعني أن الجزء الأصعب انتهى»"
+  },
+  "runtime_authority_gap": {
+    "purpose_ar": "الفرق بين وجود executable وبين إمكانية منحه authority فعليًا",
+    "executable_presence": {
+      "detected": true,
+      "detail_ar": "4 ملفات .exe · Unity build · L3 footage مرشّح",
+      "coverage_matrix_ar": "ملفات تنفيذية: رُصدت — لم تُشغَّل"
+    },
+    "provenance_continuity": {
+      "complete": false,
+      "gaps_ar": [
+        "gameplay execution: غير مُتحقَّق",
+        "replay_consulted_at: null — Gate 3 fail",
+        "executable identity mismatch: Bomber Quest (تقرير) vs Kitten Run (exe)",
+        "cross-artifact: multiple_product_build_names — ambiguity",
+        "video: رُصد — لم يُحلَّل · بدون runtime linkage"
+      ]
+    },
+    "authority_grant_eligible": false,
+    "gap_summary_ar": "وجود executable ≠ اكتمال provenance — presence رُصد · execution · identity · replay لم تكتمل",
+    "psychological_hazard_ar": "وجود exe يُحسّ كـ «الجزء الأصعب انتهى» — replay discipline يجب أن تمنع هذا shortcut"
+  },
+  "moment_of_illegitimate_closure": {
+    "detected": "partial",
+    "note_ar": "partial legitimacy formation — runtime_linked_to_achieved=yes · verification lexicon — لكن full closure م blocked",
+    "partial_triggers_ar": [
+      "L3 + exe presence → runtime authority مرتفع",
+      "verification_language_used=yes",
+      "l3_interpreted_as_verification=true",
+      "«قدم أدلة قوية على تطوير اللعبة»"
+    ],
+    "what_prevented_full_closure_ar": [
+      "executable identity contradiction (Bomber Quest vs Kitten Run)",
+      "«عدم إمكانية التحقق من تشغيل الملف التنفيذي فعليًا»",
+      "Gate 3 fail — replay not consulted",
+      "HOLD applied · epistemic_quarantine_active=true",
+      "authority_boundaries_preserved=yes"
+    ]
+  },
+  "closure_trigger_detected": "executable temptation + partial representational support — «exe موجود» يُقرّب من closure لكن provenance gap يمنع authority grant",
+  "authority_language_first_at": "before_replay",
+  "sections": {
+    "A_raw_observation": {
+      "label_ar": "Raw observation",
+      "findings_ar": [
+        "L3 — أعلى runtime surface في cohort",
+        "exe/build: رُصدت — لم تُشغَّل (4 .exe)",
+        "gameplay execution: غير مُتحقَّق",
+        "GDD تفصيلي · screenshots · Unity hierarchy · user testing · video (2 mp4)",
+        "cross-artifact: Bomber Quest vs Kitten Run — identity mismatch"
+      ],
+      "authority_tier": "mixed — representational strong · executable observed not executed"
+    },
+    "B_representation_pressure": {
+      "label_ar": "Representation pressure",
+      "findings_ar": [
+        "representational temptation: high — GDD · screenshots · testing docs",
+        "لكن claims مدعومة structurally أكثر من #3",
+        "executable temptation يضاف فوق representational — dual pressure",
+        "لا pure semantic closure — hybrid edge case"
+      ],
+      "pressure_level": "high_dual_vector"
+    },
+    "C_replay_timing": {
+      "label_ar": "Replay timing",
+      "findings_ar": [
+        "replay_opened=true · replay_consulted_at=null",
+        "replay_before_judgment=partial",
+        "authority language (verification) ظهر قبل Gate 3 completion",
+        "Gate 3 fail — critical locus for executable cases"
+      ],
+      "gate_3_pass_advisory": false,
+      "stress_note_ar": "exe presence يزيد ضغط «تخطي» Gate 3 — replay discipline must hold"
+    },
+    "D_provenance_continuity": {
+      "label_ar": "Provenance continuity",
+      "findings_ar": [
+        "continuity broken at executable identity layer",
+        "presence chain: doc → screenshots → exe file — but execution bridge missing",
+        "multiple build names — no documented which_build_was_assessed",
+        "contradictions_remained_visible=partial — mismatch surfaced in feedback"
+      ],
+      "continuity_intact": false,
+      "continuity_break_locus_ar": "executable identity + execution verification — not narrative alone"
+    },
+    "E_authority_temptation": {
+      "label_ar": "Authority temptation",
+      "language_samples_ar": [
+        "«قدم أدلة قوية على تطوير اللعبة»",
+        "«لقطات الشاشة المتعددة»",
+        "«اختبار مستخدم مع 10 مشاركين»",
+        "«تم توثيق التغييرات البرمجية»",
+        "«عدم إمكانية التحقق من تشغيل الملف التنفيذي فعليًا»"
+      ],
+      "temptation_level": "high_executable_plus_representational",
+      "observation_vs_criterion_distinction": "yes",
+      "runtime_linked_to_achieved": "yes",
+      "contrast_ar": "#3: pure representational breach · #13: executable shortcut temptation with partial legitimacy"
+    },
+    "F_quarantine_enforcement": {
+      "label_ar": "Quarantine enforcement",
+      "should_quarantine": true,
+      "was_quarantined_at_judgment_time": "partial",
+      "epistemic_quarantine_active_advisory": true,
+      "mechanism_ar": "Gate 3 + identity contradiction + explicit execution denial blocked full authority — HOLD maintained",
+      "hold_applied": true,
+      "authority_boundaries_preserved": true,
+      "stress_test_result_ar": "partial pass — refused full closure but partial legitimacy formed (runtime→Achieved yes)"
+    },
+    "G_final_eligibility_state": {
+      "label_ar": "Final eligibility",
+      "authority_eligibility_advisory": "locked",
+      "blocked_by_gate_3": true,
+      "gates_advisory": {
+        "representation_detected": true,
+        "runtime_claim_detected": true,
+        "provenance_replay_completed": false,
+        "corroboration_state": "partial",
+        "authority_eligibility_unlocked": false
+      },
+      "answer_to_core_question_ar": "نعم جزئيًا — eligibility locked · quarantine active · HOLD — لكن runtime_linked_to_achieved=yes يُظهر anti-runtime-shortcut gap"
+    }
+  },
+  "curriculum_completion": {
+    "core_sessions": [
+      {"session": 3, "role_ar": "why quarantine breaks", "temptation_type": "representational", "outcome": "breach"},
+      {"session": 2, "role_ar": "why quarantine survives naturally", "temptation_type": "none/low", "outcome": "stable baseline"},
+      {"session": 4, "role_ar": "how quarantine survives under pressure", "temptation_type": "representational partial", "outcome": "controlled restraint"},
+      {"session": 13, "role_ar": "stress test executable ambiguity", "temptation_type": "executable + representational", "outcome": "partial containment — gap documented"}
+    ],
+    "curriculum_status_ar": "core complete — جاهز لصياغة AUTHORITY_TRIAD_LANGUAGE_v1"
+  },
+  "dual_mitigation_finding_ar": "النظام بنى anti-semantic hallucination (#3→#4) و anti-runtime shortcut legitimacy (#13) — لكن #13 يكشف gap: partial legitimacy (runtime→Achieved) رغم provenance incompleteness",
+  "authority_triad_language_seeds": [
+    {"triad_member": "observation", "language_pattern_ar": "«رُصدت — لم تُشغَّل» · «غير مُتحقَّق» — presence acknowledged without execution authority"},
+    {"triad_member": "representation", "language_pattern_ar": "«أدلة قوية» · screenshots · testing — supported claims remain representation until provenance complete"},
+    {"triad_member": "executable_authority", "language_pattern_ar": "«عدم إمكانية التحقق من تشغيل الملف التنفيذي» — exe file ≠ executed verified product · identity must match"}
+  ],
+  "l4_readiness_note_ar": "نقطة التحول قبل L4 sandbox — #13 يثبت أن exe alone insufficient · replay + identity + execution bridge mandatory",
+  "facilitator_synthesis_ar": "Session #13 = أخطر edge case. ليس #3 ولا #2 ولا #4. السؤال: exe يكفي لكسر quarantine؟ الجواب: لا — provenance gap (Gate 3 · identity · execution) يمنع authority grant. لكن partial legitimacy (runtime→Achieved) يكشف أن anti-runtime-shortcut discipline ما زالت incomplete — هذا input مباشر لـ AUTHORITY_TRIAD_LANGUAGE_v1 و REPLAY_GATE hardening.",
+  "artifact_links": {
+    "phase2_observation": "observations.jsonl#submission_id=13",
+    "authority_replay": "/authority-replay/13",
+    "paired_sessions": [
+      "replay_gate_session_3_submission_3.json",
+      "replay_gate_session_2_submission_2.json",
+      "replay_gate_session_4_submission_4.json"
+    ]
+  }
+}

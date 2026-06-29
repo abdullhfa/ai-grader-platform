@@ -1,0 +1,720 @@
+[
+  {
+    "criterion": "B.D2",
+    "criterion_level": "B.D2",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "B.M2",
+    "criterion_level": "B.M2",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "B.P3",
+    "criterion_level": "B.P3",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "B.P4",
+    "criterion_level": "B.P4",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "C.D3",
+    "criterion_level": "C.D3",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "C.M3",
+    "criterion_level": "C.M3",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "C.P5",
+    "criterion_level": "C.P5",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed"
+    ],
+    "contradicting_events": [
+      "freeze_detected"
+    ],
+    "confidence": 0.65,
+    "corroboration_strength": "moderate",
+    "node_count": 2
+  },
+  {
+    "criterion": "C.P6",
+    "criterion_level": "C.P6",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "D2",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "D3",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "M2",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "M3",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "P3",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "P4",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "P5",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "P6",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "game_launch",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed"
+    ],
+    "contradicting_events": [
+      "freeze_detected"
+    ],
+    "confidence": 0.65,
+    "corroboration_strength": "moderate",
+    "node_count": 2
+  },
+  {
+    "criterion": "gameplay_loop",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [
+      "freeze_detected"
+    ],
+    "confidence": 0.625,
+    "corroboration_strength": "moderate",
+    "node_count": 2
+  },
+  {
+    "criterion": "lose_health",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "testing_evidence",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  },
+  {
+    "criterion": "win_lose_state",
+    "criterion_level": "",
+    "evidence_nodes": [
+      {
+        "node_id": "runtime:observed",
+        "source": "runtime",
+        "label": "runtime_observed",
+        "confidence": 0.9,
+        "payload": {}
+      },
+      {
+        "node_id": "telemetry:freeze",
+        "source": "telemetry",
+        "label": "freeze_detected",
+        "confidence": 0.85,
+        "payload": {
+          "avg_fps": null,
+          "crash_detected": false,
+          "freeze_detected": true,
+          "input_responsive": null,
+          "frame_delta_score": 0.0
+        }
+      }
+    ],
+    "supporting_events": [
+      "runtime_observed",
+      "freeze_detected"
+    ],
+    "contradicting_events": [],
+    "confidence": 0.875,
+    "corroboration_strength": "strong",
+    "node_count": 2
+  }
+]

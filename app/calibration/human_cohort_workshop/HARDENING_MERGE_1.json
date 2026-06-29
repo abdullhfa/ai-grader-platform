@@ -1,0 +1,44 @@
+{
+  "merge_id": "HARDENING_MERGE_1",
+  "phase_id": "ARCHITECTURAL_HARDENING_v1",
+  "completed_at": "2026-05-25T20:00:00Z",
+  "principle_en": "Merge by compression, not abstraction.",
+  "merges_executed": [
+    {
+      "merge": "phenomenology_schemas",
+      "before": [
+        "EXECUTION_PHENOMENOLOGY_SCHEMA_v1.json",
+        "REPLAY_PHENOMENOLOGY_SCHEMA_v1.json"
+      ],
+      "after": "PHENOMENOLOGY_MANIFEST_v1.json",
+      "abstraction_added": false
+    },
+    {
+      "merge": "l4_clause_reference",
+      "before": ["RUNTIME_L4_PHENOMENOLOGY_CLAUSE_v1.json"],
+      "after": "app/runtime_observation_contract.py",
+      "abstraction_added": false
+    }
+  ],
+  "explicitly_not_merged": [
+    {
+      "pair": "linguistic_quarantine + runtime_quarantine",
+      "action": "cross_reference_only",
+      "artifact": "QUARANTINE_DOMAIN_SPLIT_v1.json"
+    }
+  ],
+  "explanation_burden_check": {
+    "question_en": "Did the merge reduce explanation burden?",
+    "canonical_json_surfaces_before": 3,
+    "canonical_json_surfaces_after": 2,
+    "explanation_burden_reduced": true,
+    "interpretive_power_increased": false,
+    "legitimacy_surface_expanded": false,
+    "passed": true
+  },
+  "preserved": {
+    "empty_runtime_observation_ledger": true,
+    "constitutional_core_invariants": 8,
+    "self_certification_refused": true
+  }
+}

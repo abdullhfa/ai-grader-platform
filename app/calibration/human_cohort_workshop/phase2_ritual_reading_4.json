@@ -1,0 +1,38 @@
+{
+  "batch_id": 4,
+  "phase": "PHASE2_INSTITUTIONAL_OBSERVATION_v1",
+  "core_question_ar": "كيف استقرّ اليقين نفسياً تحت قابلية ملاحظة runtime المحدودة؟",
+  "not_for": [
+    "who was wrong",
+    "leakage count",
+    "readiness score"
+  ],
+  "lenses": {
+    "replay_timing": {
+      "notes_ar": "ظهر replay كإجراء حاضر شكليًا أكثر من كونه provenance discipline حقيقي. في معظم الحالات تم فتح replay بعد تشكل الانطباع الأولي أو بالتوازي معه، وليس قبله بالكامل. هذا خلق replay جزئي لا يكسر authority الأولي بشكل كافٍ.",
+      "observed": "partial"
+    },
+    "hesitation_disappearance": {
+      "notes_ar": "في عدة حالات اختفى التردد بسرعة بعد ظهور evidence بصري أو سردي محدود، خصوصًا عند وجود GDD منظم أو screenshots جزئية. runtime authority بقي ناقصًا، لكن السلوك التقييمي تعامل مع observation كأنه يكفي للإغلاق المعرفي.",
+      "observed": "yes"
+    },
+    "contradiction_silence": {
+      "notes_ar": "التناقضات لم تختفِ بالكامل؛ HOLD واللغة التحفظية أبقيا جزءًا كبيرًا من الغموض ظاهرًا. النظام لم يتحول إلى silent legitimacy كامل، لكنه أحيانًا قبل authority نصي رغم استمرار contradiction التشغيلي.",
+      "observed": "partial"
+    },
+    "persuasive_screenshots": {
+      "notes_ar": "الصور وواجهات التشغيل أعطت acceleration واضح لليقين حتى عندما لم يكن corroborated runtime مكتملًا. screenshots لعبت دورًا epistemic أكثر من كونها evidence تقني صرف، خصوصًا عندما كانت مصحوبة بلغة وصفية قوية.",
+      "observed": "partial"
+    },
+    "implicit_authority_phrases": {
+      "notes_ar": "ظهر تحول observation إلى legitimacy ضمني عبر عبارات مثل: \"واضح أنها تعمل\"، \"الصورة تؤكد التشغيل\"، \"الوصف يغطي المتطلبات\". هذه اللغة منحت authority تدريجيًا للسرد والصورة حتى عند غياب executable أو replay موثق بالكامل.",
+      "observed": "yes"
+    },
+    "silence_as_closure": {
+      "notes_ar": "في المراحل المتأخرة من التقييم ظهر ميل مؤسسي نحو closure pressure: استمرار HOLD كان مقبولًا شكليًا، لكن الرغبة بإنهاء الحكم دفعت أحيانًا نحو authority وصفي جزئي رغم بقاء فجوات runtime والتشغيل دون حل كامل.",
+      "observed": "partial"
+    }
+  },
+  "facilitator_reflection_ar": "القراءة البطيئة أظهرت أن المشكلة الأساسية لم تكن hallucination أو فساد حكم مباشر، بل انجذاب معرفي طبيعي نحو السرد الجيد والتنظيم البصري بوصفهما بديلًا جزئيًا عن executable reality. النظام نجح في إبقاء التناقضات مرئية عبر HOLD وظهور انخفاض الثقة بعد الخلاف، لكنه لم يمنع بالكامل انتقال authority من runtime إلى النص والصورة. النتيجة الأهم ليست أن النظام أخطأ، بل أنه كشف حدود يقينه ولم يُخفِها.",
+  "completed_at": "2026-05-25T00:19:53.827957Z"
+}

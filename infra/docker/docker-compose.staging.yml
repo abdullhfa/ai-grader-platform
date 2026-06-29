@@ -1,0 +1,59 @@
+# Staging overrides — use with production base compose
+# Go-Live Readiness: execute → validate → observe → harden (Stability > Features)
+services:
+  api:
+    environment:
+      AI_GRADER_ENV: staging
+      DEBUG: "false"
+      AI_GRADER_ASYNC_MALWARE_SCAN: "1"
+      AI_GRADER_DOCKER_SANDBOX: "1"
+      AI_GRADER_STRICT_EVIDENCE_GATE: "1"
+      AI_GRADER_ARCHIVE_RETENTION_DAYS: "3650"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+      OTEL_SERVICE_NAME: ai-grader-api
+      OTEL_TRACES_SAMPLER: always_on
+    deploy:
+      replicas: 1
+
+  worker-runtime:
+    environment:
+      AI_GRADER_ENV: staging
+      AI_GRADER_RUNTIME_TIMEOUT: "180"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+      OTEL_SERVICE_NAME: ai-grader-worker-runtime
+
+  worker-cv:
+    environment:
+      AI_GRADER_ENV: staging
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+      OTEL_SERVICE_NAME: ai-grader-worker-cv
+
+  worker-reasoning:
+    environment:
+      AI_GRADER_ENV: staging
+      AI_GRADER_ASYNC_REASONING: "1"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+      OTEL_SERVICE_NAME: ai-grader-worker-reasoning
+
+  loki:
+    command: -config.file=/etc/loki/local-config.yaml -log.level=debug
+    volumes:
+      - loki_data:/loki
+
+  prometheus:
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+
+  clamav:
+    image: clamav/clamav:stable
+    ports:
+      - "3310:3310"
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/clamdcheck.sh"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  loki_data:

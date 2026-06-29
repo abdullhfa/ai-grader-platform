@@ -1,0 +1,122 @@
+{
+  "spec_id": "PROVENANCE_AWARE_EXECUTION_SANDBOX_SPEC_v1",
+  "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+  "step": 3,
+  "status": "design_only",
+  "activation": false,
+  "grading_wire": false,
+  "authority_deployment": false,
+  "extends": "PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1",
+  "primary_invariant_en": "Execution is observable before it is trustworthy.",
+  "primary_invariant_ar": "التنفيذ قابل للمراقبة قبل أن يصبح موثوقًا.",
+  "first_sandbox_invariant_en": "Visible execution is not equivalent to validated execution.",
+  "first_sandbox_invariant_ar": "التنفيذ المرئي لا يعادل التنفيذ المُ validated.",
+  "visibility_legitimacy_split_en": "runtime visibility ≠ runtime legitimacy",
+  "visibility_legitimacy_split_ar": "رؤية runtime ≠ legitimacy لـ runtime",
+  "supreme_risk_en": "simulation confidence drift",
+  "supreme_risk_ar": "انجراف ثقة المحاكاة — window · movement · frames · telemetry · replay → game confirmed",
+  "protective_ambiguity_en": "Empty runtime_observation_ledger is intentional — telemetry presence does not mean the system understands the game.",
+  "not_goal": [
+    "if exe ran then runtime truth",
+    "gameplay legitimacy",
+    "rubric achievement",
+    "success inference"
+  ],
+  "sandbox_layer_matrix": {
+    "process_launch": "observation",
+    "window_detection": "observation",
+    "telemetry_stream": "observation",
+    "frame_capture": "observation",
+    "input_playback": "observation",
+    "execution_continuity": "observation",
+    "provenance_chain_link": "observation",
+    "gameplay_legitimacy": "forbidden",
+    "rubric_achievement": "forbidden",
+    "success_inference": "forbidden"
+  },
+  "execution_phenomenology": {
+    "layer_id": "execution_phenomenology",
+    "purpose_en": "Describe what appeared during execution — not what it means.",
+    "purpose_ar": "يصف ما ظهر أثناء التشغيل — لا ما يعنيه.",
+    "module": "app/execution_phenomenology.py",
+    "schema": "app/calibration/PHENOMENOLOGY_MANIFEST_v1.json",
+    "forbidden_escalation_principle_en": "Phenomenology may never auto-escalate to legitimacy claims.",
+    "pairs": [
+      {
+        "phenomenology_en": "process launched",
+        "forbidden_escalation_en": "game works"
+      },
+      {
+        "phenomenology_en": "frames rendered",
+        "forbidden_escalation_en": "gameplay verified"
+      },
+      {
+        "phenomenology_en": "input responded",
+        "forbidden_escalation_en": "mechanics validated"
+      },
+      {
+        "phenomenology_en": "executable persisted",
+        "forbidden_escalation_en": "rubric achieved"
+      },
+      {
+        "phenomenology_en": "window detected",
+        "forbidden_escalation_en": "game confirmed"
+      },
+      {
+        "phenomenology_en": "telemetry stream active",
+        "forbidden_escalation_en": "runtime truth established"
+      },
+      {
+        "phenomenology_en": "replay captured",
+        "forbidden_escalation_en": "provenance validated"
+      }
+    ]
+  },
+  "provenance_requirements": {
+    "continuity_tracking": true,
+    "artifact_identity_binding": "required_before_trust_claims",
+    "replay_determinism": "design_target",
+    "corroboration_gate": "human_governed",
+    "note_en": "Provenance must be traceable before any trust language — observation chain ≠ validation chain"
+  },
+  "simulation_confidence_drift_watch": {
+    "triggers": [
+      "window_opens",
+      "movement_visible",
+      "frames_captured",
+      "telemetry_active",
+      "replay_available"
+    ],
+    "psychological_risk_en": "Observer feels game is confirmed despite missing corroboration · identity binding · gameplay understanding · provenanced replay",
+    "mitigation_en": "execution phenomenology layer · forbidden escalation table · ledger empty-by-default discipline"
+  },
+  "constitutional_epistemics_transfer_en": "Transfer constitutional epistemics from linguistic domain to runtime execution domain.",
+  "allowed_outputs": [
+    "phenomenology_descriptor",
+    "provenance_chain_segment",
+    "telemetry_event",
+    "observation_ledger_entry"
+  ],
+  "forbidden_outputs": [
+    "gameplay_verified",
+    "mechanics_validated",
+    "rubric_achieved",
+    "game_confirmed",
+    "runtime_truth",
+    "success_inferred"
+  ],
+  "implementation_stubs": [
+    "app/execution_phenomenology.py",
+    "app/runtime_observation_sandbox.py",
+    "app/runtime_observation_ledger.py",
+    "app/runtime_telemetry_graph.py"
+  ],
+  "ledger_path": "app/calibration/human_cohort_workshop/runtime_observation_ledger.jsonl",
+  "ledger_intentionally_empty": true,
+  "companions": [
+    "RUNTIME_OBSERVABILITY_PREPARATION_v1.json",
+    "PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1.json",
+    "RUNTIME_OBSERVATION_CONTRACT_v1.md",
+    "EXECUTION_PHENOMENOLOGY_SCHEMA_v1.json"
+  ]
+}

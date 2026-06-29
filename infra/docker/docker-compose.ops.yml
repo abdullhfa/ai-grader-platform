@@ -1,0 +1,63 @@
+# Extended operations stack — use with docker compose -f docker-compose.yml -f docker-compose.ops.yml up
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: aigrader
+      POSTGRES_PASSWORD: aigrader
+      POSTGRES_DB: aigrader
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aigrader"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: aigrader
+      RABBITMQ_DEFAULT_PASS: aigrader
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  loki:
+    image: grafana/loki:2.9.4
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ../loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+
+  tempo:
+    image: grafana/tempo:2.3.1
+    command: ["-config.file=/etc/tempo.yaml"]
+    ports:
+      - "3200:3200"
+    volumes:
+      - ../tempo/tempo.yaml:/etc/tempo.yaml:ro
+
+  api:
+    environment:
+      DATABASE_URL: postgresql+psycopg2://aigrader:aigrader@postgres:5432/aigrader
+      AI_GRADER_RABBITMQ_URL: amqp://aigrader:aigrader@rabbitmq:5672//
+      AI_GRADER_REDIS_URL: redis://redis:6379/0
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+      OTEL_SERVICE_NAME: ai-grader-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

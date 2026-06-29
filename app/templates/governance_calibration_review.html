@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Governance Calibration Review{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-6 py-10 max-w-6xl" dir="rtl">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Governance Calibration Cycle</h1>
+    <p class="text-gray-600 mb-6">Disagreement taxonomy — القيمة المؤسسية، لا Kappa وحده.</p>
+
+    {% if not cycle %}
+    <p class="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+        شغّل أولاً: <code>.venv\Scripts\python.exe tools\run_institutional_closure.py</code>
+    </p>
+    {% else %}
+    <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="glass-card rounded-xl p-4 border">
+            <p class="text-sm text-gray-500">Cycle status</p>
+            <p class="text-xl font-bold">{{ cycle.cycle_status }}</p>
+        </div>
+        <div class="glass-card rounded-xl p-4 border">
+            <p class="text-sm text-gray-500">Pilot wave</p>
+            <p class="text-xl font-bold">
+                {{ cycle.pilot_wave_progress.pilot_fully_complete }}/{{ cycle.pilot_wave_progress.pilot_cohort_size }}
+            </p>
+        </div>
+        <div class="glass-card rounded-xl p-4 border">
+            <p class="text-sm text-gray-500">Gold rows</p>
+            <p class="text-xl font-bold">{{ cycle.calibration_metrics.gold_rows_used }}</p>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-6 bg-indigo-50 border-indigo-200">
+        <h2 class="text-lg font-bold mb-3">Abdullah — Reference Governance Case</h2>
+        {% if intel and intel.reference_governance_case and intel.reference_governance_case.pending_criteria %}
+        <p class="text-sm mb-2">معايير ناقصة — املأها في moderation:</p>
+        <ul class="text-sm list-disc pr-5 mb-3">
+        {% for p in intel.reference_governance_case.pending_criteria %}
+            <li><span class="font-mono font-bold">{{ p.criterion }}</span> — AI: {{ p.ai_system_achieved if p.ai_system_achieved is not none else '—' }}</li>
+        {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-sm text-emerald-800">Abdullah مكتمل — calibration anchor جاهز.</p>
+        {% endif %}
+        <p class="text-xs text-gray-600">{{ cycle.core_question_ar if cycle.core_question_ar is defined else 'عند الاختلاف — هل القرار defensible؟' }}</p>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-6">
+        <h2 class="text-lg font-bold mb-4">Disagreement Taxonomy Matrix</h2>
+        <table class="w-full text-sm border">
+            <thead class="bg-slate-100">
+                <tr>
+                    <th class="p-2 text-right">النوع</th>
+                    <th class="p-2">العدد</th>
+                    <th class="p-2 text-right">قرار الحوكمة</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in cycle.disagreement_taxonomy_matrix %}
+                <tr class="border-t">
+                    <td class="p-2 font-mono">{{ row.taxonomy_type }}</td>
+                    <td class="p-2 text-center font-bold">{{ row.count }}</td>
+                    <td class="p-2">{{ row.governance_decision }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="3" class="p-4 text-gray-500">بانتظار موجة human labels — املأ /institutional/moderation</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="glass-card rounded-xl p-6 border mb-6">
+        <h2 class="text-lg font-bold mb-3">Moderation review agenda</h2>
+        <ul class="list-disc pr-5 text-sm space-y-1">
+        {% for item in cycle.moderation_review_agenda_ar %}
+            <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div class="flex gap-3">
+        <a href="/institutional/moderation"
+            class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg">← مراجعة المعلّم</a>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

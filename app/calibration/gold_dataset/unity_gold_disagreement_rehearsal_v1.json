@@ -1,0 +1,1227 @@
+{
+  "schema": "unity_calibration_gold_v2",
+  "synthetic": true,
+  "governance_rehearsal": true,
+  "disagreement_oriented": true,
+  "description": "Governance rehearsal cohort — messy educational reality simulation. NOT perfect datasets; NOT production validation.",
+  "target_count": 25,
+  "layers": {
+    "clear_pass_cases": 5,
+    "partial_sufficiency": 5,
+    "false_confidence": 5,
+    "disagreement_cases": 5,
+    "hold_expected": 5
+  },
+  "records": [
+    {
+      "submission_id": "GOV_000_clear_pass_cases_python_neat",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "python_neat",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "clear_pass_cases",
+        "python_neat"
+      ],
+      "cohort_layer": "clear_pass_cases",
+      "case_metadata": {
+        "cohort_layer": "clear_pass_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "low",
+        "intended_disagreement": false,
+        "evidence_completeness": "high",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "no_spurious_hold",
+          "no_invented_evidence",
+          "moderate_or_low_review"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:clear_pass_cases:python_neat"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_001_clear_pass_cases_docs_clear",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "docs_clear",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "clear_pass_cases",
+        "docs_clear"
+      ],
+      "cohort_layer": "clear_pass_cases",
+      "case_metadata": {
+        "cohort_layer": "clear_pass_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "low",
+        "intended_disagreement": false,
+        "evidence_completeness": "high",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "no_spurious_hold",
+          "no_invented_evidence",
+          "moderate_or_low_review"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:clear_pass_cases:docs_clear"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_002_clear_pass_cases_screenshots_match",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "screenshots_match",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "clear_pass_cases",
+        "screenshots_match"
+      ],
+      "cohort_layer": "clear_pass_cases",
+      "case_metadata": {
+        "cohort_layer": "clear_pass_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "low",
+        "intended_disagreement": false,
+        "evidence_completeness": "high",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "no_spurious_hold",
+          "no_invented_evidence",
+          "moderate_or_low_review"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:clear_pass_cases:screenshots_match"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_003_clear_pass_cases_code_and_log",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "code_and_log",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "clear_pass_cases",
+        "code_and_log"
+      ],
+      "cohort_layer": "clear_pass_cases",
+      "case_metadata": {
+        "cohort_layer": "clear_pass_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "low",
+        "intended_disagreement": false,
+        "evidence_completeness": "high",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "no_spurious_hold",
+          "no_invented_evidence",
+          "moderate_or_low_review"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:clear_pass_cases:code_and_log"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_004_clear_pass_cases_balanced_evidence",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "balanced_evidence",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "clear_pass_cases",
+        "balanced_evidence"
+      ],
+      "cohort_layer": "clear_pass_cases",
+      "case_metadata": {
+        "cohort_layer": "clear_pass_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "low",
+        "intended_disagreement": false,
+        "evidence_completeness": "high",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "no_spurious_hold",
+          "no_invented_evidence",
+          "moderate_or_low_review"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "strong",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:clear_pass_cases:balanced_evidence"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_005_partial_sufficiency_code_no_runtime",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "code_no_runtime",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "partial_sufficiency",
+        "code_no_runtime"
+      ],
+      "cohort_layer": "partial_sufficiency",
+      "case_metadata": {
+        "cohort_layer": "partial_sufficiency",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "moderate",
+        "intended_disagreement": false,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "sufficiency_shadow_insufficient",
+          "review_escalation_possible",
+          "achieved_not_from_shadow"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:partial_sufficiency:code_no_runtime"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_006_partial_sufficiency_video_only",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "video_only",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "partial_sufficiency",
+        "video_only"
+      ],
+      "cohort_layer": "partial_sufficiency",
+      "case_metadata": {
+        "cohort_layer": "partial_sufficiency",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "ambiguous",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "sufficiency_shadow_insufficient",
+          "review_escalation_possible",
+          "achieved_not_from_shadow"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:partial_sufficiency:video_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_007_partial_sufficiency_weak_corroboration",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "weak_corroboration",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "partial_sufficiency",
+        "weak_corroboration"
+      ],
+      "cohort_layer": "partial_sufficiency",
+      "case_metadata": {
+        "cohort_layer": "partial_sufficiency",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "moderate",
+        "intended_disagreement": false,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "sufficiency_shadow_insufficient",
+          "review_escalation_possible",
+          "achieved_not_from_shadow"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:partial_sufficiency:weak_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_008_partial_sufficiency_borderline_near",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "borderline_near",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "partial_sufficiency",
+        "borderline_near"
+      ],
+      "cohort_layer": "partial_sufficiency",
+      "case_metadata": {
+        "cohort_layer": "partial_sufficiency",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "ambiguous",
+        "intended_disagreement": false,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "sufficiency_shadow_insufficient",
+          "review_escalation_possible",
+          "achieved_not_from_shadow"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:partial_sufficiency:borderline_near"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_009_partial_sufficiency_screenshots_partial",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "screenshots_partial",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "partial_sufficiency",
+        "screenshots_partial"
+      ],
+      "cohort_layer": "partial_sufficiency",
+      "case_metadata": {
+        "cohort_layer": "partial_sufficiency",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "moderate",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "sufficiency_shadow_insufficient",
+          "review_escalation_possible",
+          "achieved_not_from_shadow"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:partial_sufficiency:screenshots_partial"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_010_false_confidence_ocr_score_100",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "ocr_score_100",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "false_confidence",
+        "ocr_score_100"
+      ],
+      "cohort_layer": "false_confidence",
+      "case_metadata": {
+        "cohort_layer": "false_confidence",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "high",
+        "expected_governance_behaviour": [
+          "corroboration_pressure",
+          "pattern_or_ocr_not_sufficient_alone",
+          "fp_risk_if_system_achieved"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "rehearsal_false_confidence"
+      ],
+      "teacher_notes": [
+        "governance_rehearsal:false_confidence:ocr_score_100"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_011_false_confidence_doc_style_no_code",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "doc_style_no_code",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "false_confidence",
+        "doc_style_no_code"
+      ],
+      "cohort_layer": "false_confidence",
+      "case_metadata": {
+        "cohort_layer": "false_confidence",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "high",
+        "expected_governance_behaviour": [
+          "corroboration_pressure",
+          "pattern_or_ocr_not_sufficient_alone",
+          "fp_risk_if_system_achieved"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "rehearsal_false_confidence"
+      ],
+      "teacher_notes": [
+        "governance_rehearsal:false_confidence:doc_style_no_code"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_012_false_confidence_weak_code_hints",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "weak_code_hints",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "false_confidence",
+        "weak_code_hints"
+      ],
+      "cohort_layer": "false_confidence",
+      "case_metadata": {
+        "cohort_layer": "false_confidence",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "high",
+        "expected_governance_behaviour": [
+          "corroboration_pressure",
+          "pattern_or_ocr_not_sufficient_alone",
+          "fp_risk_if_system_achieved"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "rehearsal_false_confidence"
+      ],
+      "teacher_notes": [
+        "governance_rehearsal:false_confidence:weak_code_hints"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_013_false_confidence_ocr_repeat",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "ocr_repeat",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "false_confidence",
+        "ocr_repeat"
+      ],
+      "cohort_layer": "false_confidence",
+      "case_metadata": {
+        "cohort_layer": "false_confidence",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "high",
+        "expected_governance_behaviour": [
+          "corroboration_pressure",
+          "pattern_or_ocr_not_sufficient_alone",
+          "fp_risk_if_system_achieved"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "rehearsal_false_confidence"
+      ],
+      "teacher_notes": [
+        "governance_rehearsal:false_confidence:ocr_repeat"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_014_false_confidence_pattern_screenshots",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "pattern_screenshots",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "false_confidence",
+        "pattern_screenshots"
+      ],
+      "cohort_layer": "false_confidence",
+      "case_metadata": {
+        "cohort_layer": "false_confidence",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "high",
+        "expected_governance_behaviour": [
+          "corroboration_pressure",
+          "pattern_or_ocr_not_sufficient_alone",
+          "fp_risk_if_system_achieved"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "rehearsal_false_confidence"
+      ],
+      "teacher_notes": [
+        "governance_rehearsal:false_confidence:pattern_screenshots"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_015_disagreement_cases_ui_functionality_borderline",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "ui_functionality_borderline",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "disagreement_cases",
+        "ui_functionality_borderline"
+      ],
+      "cohort_layer": "disagreement_cases",
+      "case_metadata": {
+        "cohort_layer": "disagreement_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": true,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "human_review_likely",
+          "taxonomy_ambiguous",
+          "no_automatic_authority"
+        ],
+        "assessor_split_note": "Assessor A may accept UI/video; Assessor B wants runtime log",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:disagreement_cases:ui_functionality_borderline"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_016_disagreement_cases_pseudo_code_debate",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "pseudo_code_debate",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "disagreement_cases",
+        "pseudo_code_debate"
+      ],
+      "cohort_layer": "disagreement_cases",
+      "case_metadata": {
+        "cohort_layer": "disagreement_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": true,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "human_review_likely",
+          "taxonomy_ambiguous",
+          "no_automatic_authority"
+        ],
+        "assessor_split_note": "Some assessors accept pattern hints; others reject without code_system",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:disagreement_cases:pseudo_code_debate"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_017_disagreement_cases_partial_testing_debate",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "partial_testing_debate",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "disagreement_cases",
+        "partial_testing_debate"
+      ],
+      "cohort_layer": "disagreement_cases",
+      "case_metadata": {
+        "cohort_layer": "disagreement_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": true,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "human_review_likely",
+          "taxonomy_ambiguous",
+          "no_automatic_authority"
+        ],
+        "assessor_split_note": "Teacher yes on partial test matrix; system conservative no",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:disagreement_cases:partial_testing_debate"
+      ],
+      "accepted_evidence": [
+        "rehearsal_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "GOV_018_disagreement_cases_borderline_teacher_no_system_yes",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "borderline_teacher_no_system_yes",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "disagreement_cases",
+        "borderline_teacher_no_system_yes"
+      ],
+      "cohort_layer": "disagreement_cases",
+      "case_metadata": {
+        "cohort_layer": "disagreement_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": true,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "human_review_likely",
+          "taxonomy_ambiguous",
+          "no_automatic_authority"
+        ],
+        "assessor_split_note": "Classic FP rehearsal: code present, runtime missing",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:disagreement_cases:borderline_teacher_no_system_yes"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_019_disagreement_cases_ambiguous_both_borderline",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "ambiguous_both_borderline",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "disagreement_cases",
+        "ambiguous_both_borderline"
+      ],
+      "cohort_layer": "disagreement_cases",
+      "case_metadata": {
+        "cohort_layer": "disagreement_cases",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "high",
+        "intended_disagreement": true,
+        "evidence_completeness": "medium",
+        "fake_confidence_risk": "medium",
+        "expected_governance_behaviour": [
+          "human_review_likely",
+          "taxonomy_ambiguous",
+          "no_automatic_authority"
+        ],
+        "assessor_split_note": "Both assessors uncertain; neither strong pass",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:disagreement_cases:ambiguous_both_borderline"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_020_hold_expected_corrupt_zip",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "corrupt_zip",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "hold_expected",
+        "corrupt_zip"
+      ],
+      "cohort_layer": "hold_expected",
+      "case_metadata": {
+        "cohort_layer": "hold_expected",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "medium",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "human_review_or_conservative_achieved",
+          "insufficiency_clear",
+          "reject_overclaim"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:hold_expected:corrupt_zip"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_021_hold_expected_screenshots_only_fail",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "screenshots_only_fail",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "hold_expected",
+        "screenshots_only_fail"
+      ],
+      "cohort_layer": "hold_expected",
+      "case_metadata": {
+        "cohort_layer": "hold_expected",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "medium",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "human_review_or_conservative_achieved",
+          "insufficiency_clear",
+          "reject_overclaim"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:hold_expected:screenshots_only_fail"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_022_hold_expected_pattern_only_fail",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "pattern_only_fail",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "hold_expected",
+        "pattern_only_fail"
+      ],
+      "cohort_layer": "hold_expected",
+      "case_metadata": {
+        "cohort_layer": "hold_expected",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "medium",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "human_review_or_conservative_achieved",
+          "insufficiency_clear",
+          "reject_overclaim"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:hold_expected:pattern_only_fail"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_023_hold_expected_empty_submission",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "empty_submission",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "hold_expected",
+        "empty_submission"
+      ],
+      "cohort_layer": "hold_expected",
+      "case_metadata": {
+        "cohort_layer": "hold_expected",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "medium",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "human_review_or_conservative_achieved",
+          "insufficiency_clear",
+          "reject_overclaim"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:hold_expected:empty_submission"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    },
+    {
+      "submission_id": "GOV_024_hold_expected_sparse_noise",
+      "unit": "GOV_REHEARSAL_Unit",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise",
+      "cohort_tags": [
+        "governance_rehearsal",
+        "hold_expected",
+        "sparse_noise"
+      ],
+      "cohort_layer": "hold_expected",
+      "case_metadata": {
+        "cohort_layer": "hold_expected",
+        "governance_rehearsal": true,
+        "not_ai_benchmark": true,
+        "expected_ambiguity": "medium",
+        "intended_disagreement": false,
+        "evidence_completeness": "low",
+        "fake_confidence_risk": "low",
+        "expected_governance_behaviour": [
+          "human_review_or_conservative_achieved",
+          "insufficiency_clear",
+          "reject_overclaim"
+        ],
+        "assessor_split_note": "",
+        "evaluate": [
+          "uncertainty_visible",
+          "hold_when_expected",
+          "corroboration_pressure",
+          "advisory_stays_advisory",
+          "explanation_auditable"
+        ]
+      },
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.88
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "governance_rehearsal:hold_expected:sparse_noise"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "rehearsal_rejected"
+      ]
+    }
+  ]
+}

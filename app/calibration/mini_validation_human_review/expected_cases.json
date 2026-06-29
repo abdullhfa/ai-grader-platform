@@ -1,0 +1,45 @@
+{
+  "run_purpose": "Observe human review escalation gates; advisory only — does not change achieved.",
+  "cases": [
+    {
+      "case_id": "case_a_strong_no_review",
+      "expected_behavior": "human_review_required.required false; severity low; review_confidence high (>= 0.9).",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_runtime_no_corroboration",
+      "expected_behavior": "required true; severity medium; reasons include runtime_present_without_system_confirmation or insufficient_runtime_confirmation.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_pattern_hints_only",
+      "expected_behavior": "required true; severity high; reasons include pattern_hint_only_insufficient; category evidence_sufficiency.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_cross_modal_conflict",
+      "expected_behavior": "required true; severity high; corroboration_conflicts_detected; category cross_modal_conflict.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_sparse_noise_critical",
+      "expected_behavior": "required true; severity critical; excessive_submission_noise or sparse_evidence_with_upload_noise.",
+      "observation_notes": { "observation_note": "" },
+      "actual_behavior": "",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ]
+}

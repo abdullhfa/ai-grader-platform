@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-grader.local/schemas/replay.schema.json",
+  "title": "ReplayInspectionBundle",
+  "type": "object",
+  "required": ["submission_key", "session_id", "deterministic_hash"],
+  "properties": {
+    "submission_key": { "type": "string" },
+    "session_id": { "type": "string" },
+    "snapshot_root": { "type": "string" },
+    "deterministic_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "runtime": { "type": "object" },
+    "timeline": { "type": "object" },
+    "evidence": {},
+    "ai_reasoning": { "type": "object" },
+    "grading_summary": { "type": "object" },
+    "screenshots": { "type": "array", "items": { "type": "string" } },
+    "bundle_complete": { "type": "boolean" },
+    "missing_sections": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

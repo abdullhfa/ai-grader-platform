@@ -1,0 +1,1890 @@
+{
+  "report_type": "runtime_cohort_v1",
+  "cohort_id": "batch4_runtime_coverage_v1",
+  "generated_at": "2026-05-26T15:54:51Z",
+  "config_path": null,
+  "entry_count": 12,
+  "summary": {
+    "deterministic_replay_stable_count": 12,
+    "deterministic_replay_unstable": [],
+    "replay_hash_stable_verification_failed": [],
+    "runtime_actually_launched": [],
+    "files_only_detection": [
+      "batch4_sub_2",
+      "batch4_sub_3",
+      "batch4_sub_4",
+      "batch4_sub_5",
+      "batch4_sub_6",
+      "batch4_sub_7",
+      "batch4_sub_8",
+      "batch4_sub_9",
+      "batch4_sub_10",
+      "batch4_sub_11",
+      "batch4_sub_12",
+      "batch4_sub_13"
+    ],
+    "ai_human_divergence": [],
+    "priority_flags": {
+      "replay_hash_unstable": false,
+      "replay_verification_mismatch": false,
+      "runtime_not_executed": true,
+      "human_labels_missing": true
+    }
+  },
+  "entries": [
+    {
+      "source_type": "db",
+      "submission_id": 2,
+      "student_name": "(ج) مهمه الالعاب محمد رمزي",
+      "paths_resolved": 34,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 49.0,
+          "total_score": 49,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P3",
+            "8/B.P4"
+          ],
+          "achieved_count": 2
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "808807f5a6b4e7a644f00186a89c46437ef176f716cc5e2498df15d4af84e125",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "808807f5a6b4e7a644f00186a89c46437ef176f716cc5e2498df15d4af84e125",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "808807f5a6b4e7a644f00186a89c46437ef176f716cc5e2498df15d4af84e125",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_2",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 3,
+      "student_name": "CAT RUNNER  عمر صبري أبو عاذره",
+      "paths_resolved": 41,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 2,
+            "label_ar": "لقطات/صور مرشّحة",
+            "label_en": "screenshot_candidates",
+            "authority": "advisory_visual_inference",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 60.0,
+          "total_score": 60,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P3",
+            "8/B.P4"
+          ],
+          "achieved_count": 2
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "21eb81d4a901aecc889079a5adc3287056e9be9830f436d9abeb83f9b8b01039",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "21eb81d4a901aecc889079a5adc3287056e9be9830f436d9abeb83f9b8b01039",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "21eb81d4a901aecc889079a5adc3287056e9be9830f436d9abeb83f9b8b01039",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 2,
+            "label_ar": "لقطات/صور مرشّحة",
+            "label_en": "screenshot_candidates",
+            "authority": "advisory_visual_inference",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "documentation_rich",
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_3",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 4,
+      "student_name": "hashem nawasreh _ lpsc geame worde",
+      "paths_resolved": 41,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 44.0,
+          "total_score": 44,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P3",
+            "8/B.M2"
+          ],
+          "achieved_count": 2
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "cebe82ceb96032e681da17c7be4ce2e1ca69a25e228f187bb98483cfd879aef0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "cebe82ceb96032e681da17c7be4ce2e1ca69a25e228f187bb98483cfd879aef0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "cebe82ceb96032e681da17c7be4ce2e1ca69a25e228f187bb98483cfd879aef0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_4",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 5,
+      "student_name": "احمد طبوش",
+      "paths_resolved": 8,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 24.0,
+          "total_score": 24,
+          "max_score": 100,
+          "achieved_criteria": [],
+          "achieved_count": 0
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "e127b0eafc1bf76dfb09e23a5c99999d2d758dde5e550ba492ad9c6f62b6798e",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "e127b0eafc1bf76dfb09e23a5c99999d2d758dde5e550ba492ad9c6f62b6798e",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "e127b0eafc1bf76dfb09e23a5c99999d2d758dde5e550ba492ad9c6f62b6798e",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_5",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 6,
+      "student_name": "الالعاب سيف سليمان ابو فرده",
+      "paths_resolved": 0,
+      "path_source": "none",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "no_paths",
+        "freeze_detection": {},
+        "crash_detection": {},
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 29.0,
+          "total_score": 29,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P3",
+            "8/B.P4",
+            "8/B.M2"
+          ],
+          "achieved_count": 3
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "5d7f327af86ee1030c0744d69d53740df83346f8c93418c0877970576964a78e",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "5d7f327af86ee1030c0744d69d53740df83346f8c93418c0877970576964a78e",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "5d7f327af86ee1030c0744d69d53740df83346f8c93418c0877970576964a78e",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "no_paths",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "validation": {},
+          "freeze_detection": {},
+          "crash_detection": {},
+          "sandbox_logs_captured": false
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_6",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 7,
+      "student_name": "العاب حيدر عمر الزعارير",
+      "paths_resolved": 14,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 57.0,
+          "total_score": 57,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P3",
+            "8/B.P4",
+            "8/C.P7",
+            "8/B.M2"
+          ],
+          "achieved_count": 4
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "0dadff0accc8e9c8be278c40cd525761d25274677ed812b4157e96db18b9e567",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0dadff0accc8e9c8be278c40cd525761d25274677ed812b4157e96db18b9e567",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0dadff0accc8e9c8be278c40cd525761d25274677ed812b4157e96db18b9e567",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_7",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 8,
+      "student_name": "عبد الرحمن بني مصطفى",
+      "paths_resolved": 19,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 15.0,
+          "total_score": 15,
+          "max_score": 100,
+          "achieved_criteria": [],
+          "achieved_count": 0
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "0ed683126aff3fc30f7dea3f45db5f7734a74b4badb964c7e231874b804b3ba0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0ed683126aff3fc30f7dea3f45db5f7734a74b4badb964c7e231874b804b3ba0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0ed683126aff3fc30f7dea3f45db5f7734a74b4badb964c7e231874b804b3ba0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_8",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 9,
+      "student_name": "ايمن الشنباري",
+      "paths_resolved": 41,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 22.0,
+          "total_score": 22,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.M2"
+          ],
+          "achieved_count": 1
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "b025e997fb32082cca51a3f98c7b5fe9e7b7bc8c9901d5b2ed693801ee9c898d",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "b025e997fb32082cca51a3f98c7b5fe9e7b7bc8c9901d5b2ed693801ee9c898d",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "b025e997fb32082cca51a3f98c7b5fe9e7b7bc8c9901d5b2ed693801ee9c898d",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_9",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 10,
+      "student_name": "أيهم حسن العتوم",
+      "paths_resolved": 40,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 2,
+            "label_ar": "لقطات/صور مرشّحة",
+            "label_en": "screenshot_candidates",
+            "authority": "advisory_visual_inference",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 71.0,
+          "total_score": 71,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P4"
+          ],
+          "achieved_count": 1
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "273cd5bba602601f62ac172811914decbd070a858960f1610bc083d746941d1d",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "273cd5bba602601f62ac172811914decbd070a858960f1610bc083d746941d1d",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "273cd5bba602601f62ac172811914decbd070a858960f1610bc083d746941d1d",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 2,
+            "label_ar": "لقطات/صور مرشّحة",
+            "label_en": "screenshot_candidates",
+            "authority": "advisory_visual_inference",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "documentation_rich",
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_10",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 11,
+      "student_name": "محمد عبد المعطي نوفل",
+      "paths_resolved": 9,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 25.0,
+          "total_score": 25,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P3",
+            "8/B.P4",
+            "8/B.M2"
+          ],
+          "achieved_count": 3
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "12a5daf1654d6704db1015f50a0c46b03c5a3cc8f799a3f0696f64e1a94fdab0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "12a5daf1654d6704db1015f50a0c46b03c5a3cc8f799a3f0696f64e1a94fdab0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "12a5daf1654d6704db1015f50a0c46b03c5a3cc8f799a3f0696f64e1a94fdab0",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_11",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 12,
+      "student_name": "محمد قاسم نوفل",
+      "paths_resolved": 17,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 35.0,
+          "total_score": 35,
+          "max_score": 100,
+          "achieved_criteria": [
+            "8/B.P4"
+          ],
+          "achieved_count": 1
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "3630c6f312e55942db14d0fdbbf7e0d367d5cdc0037a35c041fc14f06fc7b625",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "3630c6f312e55942db14d0fdbbf7e0d367d5cdc0037a35c041fc14f06fc7b625",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "3630c6f312e55942db14d0fdbbf7e0d367d5cdc0037a35c041fc14f06fc7b625",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_12",
+      "platform": "batch4",
+      "tier": "pilot"
+    },
+    {
+      "source_type": "db",
+      "submission_id": 13,
+      "student_name": "حذيفه محمد صبيحي",
+      "paths_resolved": 5,
+      "path_source": "db_uploads",
+      "batch_id": 4,
+      "metrics": {
+        "runtime_launch": "fail",
+        "freeze_detection": {
+          "pass": true,
+          "freeze_suspected": false,
+          "duration_seconds": 0.0,
+          "visual_response": "none",
+          "input_detected": "none"
+        },
+        "crash_detection": {
+          "detected": false,
+          "crash_detected": false,
+          "exit_code": null
+        },
+        "evidence_extraction": {
+          "available": true,
+          "has_gaps": true,
+          "missing_artifacts": [],
+          "completeness_score": null,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "executable_count": 5,
+          "source_file_count": 0,
+          "document_count": 0,
+          "snapshot_runtime_status": null
+        },
+        "ai_grade": {
+          "available": true,
+          "grade_level": "U",
+          "percentage": 38.0,
+          "total_score": 38,
+          "max_score": 100,
+          "achieved_criteria": [],
+          "achieved_count": 0
+        },
+        "human_grade": {
+          "available": false
+        },
+        "ai_vs_human": {
+          "computed": false,
+          "reason": "missing_human_or_ai"
+        },
+        "replay_reproducibility": {
+          "trials": 3,
+          "hash_stable": true,
+          "verification_stable": true,
+          "semantic_stable": true,
+          "stable": true,
+          "unique_state_hashes": 1,
+          "trial_results": [
+            {
+              "reconstructed_state_hash": "0d97c6b5887e8e16558570c04f8eda9c425f59cb3c47953f9ee64fcfc5f0f23c",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0d97c6b5887e8e16558570c04f8eda9c425f59cb3c47953f9ee64fcfc5f0f23c",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            },
+            {
+              "reconstructed_state_hash": "0d97c6b5887e8e16558570c04f8eda9c425f59cb3c47953f9ee64fcfc5f0f23c",
+              "replay_verified": true,
+              "semantic_replay_verified": true,
+              "protected_digest_match": true,
+              "grade_level": "U"
+            }
+          ],
+          "events_count": 2,
+          "interpretation_ar": "إعادة التشغيل حتمية — نفس hash"
+        },
+        "runtime_reality": {
+          "executable_detected": true,
+          "sandbox_actually_ran": false,
+          "files_only_detection": true,
+          "runtime_evidence_level": {
+            "level": 0,
+            "label_ar": "لا أدلة تشغيل",
+            "label_en": "no_runtime_evidence",
+            "authority": "none",
+            "max_auto_level": 3,
+            "note_ar": "مستوى الأدلة يصف ما رُصد/حُلّل — **لا يمنح** Achieved تلقائياً لأي معيار."
+          },
+          "interpretation_ar": "اكتشاف ملفات فقط — لم يُشغَّل"
+        },
+        "sandbox_logs": {
+          "captured": false,
+          "status": "skipped"
+        },
+        "screenshot_evidence": {
+          "count": 0,
+          "valid": false
+        },
+        "ocr_usefulness": {
+          "present": false,
+          "ocr_artifact_count": 0,
+          "useful": null,
+          "noise_suspected": false,
+          "runtime_screenshot_count": 0
+        },
+        "runtime_probe": {
+          "runtime_launch": "fail",
+          "platform": "unknown",
+          "sandbox_status": "skipped",
+          "functional_smoke_pass": null,
+          "validation_status": "skipped",
+          "freeze_detection": {
+            "pass": true,
+            "freeze_suspected": false,
+            "duration_seconds": 0.0,
+            "visual_response": "none",
+            "input_detected": "none"
+          },
+          "crash_detection": {
+            "detected": false,
+            "crash_detected": false,
+            "exit_code": null
+          },
+          "runtime_duration_seconds": null,
+          "screenshot_count": 0,
+          "sandbox_logs_captured": false,
+          "observation_summary": {
+            "reason": "no_runnable_artifacts"
+          }
+        },
+        "replay_disparity": {
+          "replay_unstable": false,
+          "replay_cohorts": [
+            "partial_code_extraction",
+            "word_pdf"
+          ]
+        }
+      },
+      "slot_id": "batch4_sub_13",
+      "platform": "batch4",
+      "tier": "pilot"
+    }
+  ],
+  "batch_id": 4,
+  "purpose_ar": "Runtime Coverage Mapping — batch #4 (read-only, no grade changes)"
+}

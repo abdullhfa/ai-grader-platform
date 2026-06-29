@@ -1,0 +1,28 @@
+<section id="sec-timeline" class="gov-panel">
+  <h3 class="font-bold mb-3">Gameplay Timeline</h3>
+  {% if investigation.timeline.event_count %}
+  <p class="text-xs text-gray-500 mb-3">
+    {{ investigation.timeline.event_count }} events —
+    {{ investigation.timeline.contradiction_count }} contradiction markers
+  </p>
+  <div class="space-y-1">
+    {% for ev in investigation.timeline.events %}
+    <div class="timeline-row {{ ev.confidence_class }}{% if ev.contradiction %} contradiction{% endif %}">
+      <span class="text-gray-500">{{ ev.time_label }}</span>
+      <span>
+        {{ ev.type }}
+        {% if ev.contradiction %}<span class="text-violet-700 text-xs font-bold"> ⚡ contradiction</span>{% endif %}
+      </span>
+      <span class="text-xs text-gray-500">
+        {{ ev.confidence_pct }}%
+        {% if ev.replay_link %}
+        <a href="{{ ev.replay_link }}" data-replay-link="{{ ev.replay_link }}" class="text-indigo-600 mr-1">↗ replay</a>
+        {% endif %}
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-sm text-gray-500">No timeline events in replay bundle.</p>
+  {% endif %}
+</section>

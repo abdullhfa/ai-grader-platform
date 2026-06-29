@@ -1,0 +1,50 @@
+{
+  "run_purpose": "Video presence & frame extraction only — no vision semantics.",
+  "cases": [
+    {
+      "case_id": "case_a_gameplay_video",
+      "expected_note": "Named like gameplay + Unity collision code; frames extract into runtime_video_frames; corroboration should list video_frame modality with low tier.",
+      "corroboration_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"video_frame_count\": 3,\n  \"video_metadata\": {\n    \"duration_seconds\": 0.0,\n    \"frame_count_extracted\": 3,\n    \"sources\": [\n      {\n        \"path\": \"C:\\\\Users\\\\Eng-Alsawalmeh\\\\Desktop\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\app\\\\calibration\\\\mini_validation_video\\\\cases\\\\case_a_gameplay_video\\\\gameplay_capture.mp4\",\n        \"basename\": \"gameplay_capture.mp4\",\n        \"duration_seconds\": null,\n        \"frames_extracted\": 3\n      }\n    ]\n  },\n  \"video_noise_flags\": [\n    {\n      \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n    }\n  ],\n  \"video_extraction_errors\": [],\n  \"corroboration_by_system_sample\": {\n    \"collision_system\": {\n      \"modalities\": [\n        \"code_system\",\n        \"video_frame\"\n      ],\n      \"weighted\": 0.5,\n      \"reasoning_tail\": [\n        \"code_system_detected\",\n        \"code_detection_source_unity_extractor\",\n        \"runtime_video_frames_extracted\"\n      ],\n      \"noise\": [\n        {\n          \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n        }\n      ]\n    }\n  },\n  \"evidence_video_items\": 3\n}",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_b_menu_only_video",
+      "expected_note": "menu in filename; pipeline still extracts frames; observe noise flags vs screenshots/logs.",
+      "corroboration_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"video_frame_count\": 2,\n  \"video_metadata\": {\n    \"duration_seconds\": 0.0,\n    \"frame_count_extracted\": 2,\n    \"sources\": [\n      {\n        \"path\": \"C:\\\\Users\\\\Eng-Alsawalmeh\\\\Desktop\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\app\\\\calibration\\\\mini_validation_video\\\\cases\\\\case_b_menu_only_video\\\\menu_screen.mp4\",\n        \"basename\": \"menu_screen.mp4\",\n        \"duration_seconds\": null,\n        \"frames_extracted\": 2\n      }\n    ]\n  },\n  \"video_noise_flags\": [\n    {\n      \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n    }\n  ],\n  \"video_extraction_errors\": [],\n  \"corroboration_by_system_sample\": {\n    \"collision_system\": {\n      \"modalities\": [\n        \"code_system\",\n        \"video_frame\"\n      ],\n      \"weighted\": 0.5,\n      \"reasoning_tail\": [\n        \"code_system_detected\",\n        \"code_detection_source_unity_extractor\",\n        \"runtime_video_frames_extracted\"\n      ],\n      \"noise\": [\n        {\n          \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n        }\n      ]\n    }\n  },\n  \"evidence_video_items\": 2\n}",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_c_static_video",
+      "expected_note": "Uniform frames only; extraction count > 0 if OpenCV/ffmpeg works.",
+      "corroboration_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"video_frame_count\": 3,\n  \"video_metadata\": {\n    \"duration_seconds\": 0.0,\n    \"frame_count_extracted\": 3,\n    \"sources\": [\n      {\n        \"path\": \"C:\\\\Users\\\\Eng-Alsawalmeh\\\\Desktop\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\app\\\\calibration\\\\mini_validation_video\\\\cases\\\\case_c_static_video\\\\static_run.mp4\",\n        \"basename\": \"static_run.mp4\",\n        \"duration_seconds\": null,\n        \"frames_extracted\": 3\n      }\n    ]\n  },\n  \"video_noise_flags\": [\n    {\n      \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n    }\n  ],\n  \"video_extraction_errors\": [],\n  \"corroboration_by_system_sample\": {\n    \"collision_system\": {\n      \"modalities\": [\n        \"code_system\",\n        \"video_frame\"\n      ],\n      \"weighted\": 0.5,\n      \"reasoning_tail\": [\n        \"code_system_detected\",\n        \"code_detection_source_unity_extractor\",\n        \"runtime_video_frames_extracted\"\n      ],\n      \"noise\": [\n        {\n          \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n        }\n      ]\n    }\n  },\n  \"evidence_video_items\": 3\n}",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_d_very_short_video",
+      "expected_note": "Very few frames in source; expect low frame_count_extracted.",
+      "corroboration_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"video_frame_count\": 1,\n  \"video_metadata\": {\n    \"duration_seconds\": 0.0,\n    \"frame_count_extracted\": 1,\n    \"sources\": [\n      {\n        \"path\": \"C:\\\\Users\\\\Eng-Alsawalmeh\\\\Desktop\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\app\\\\calibration\\\\mini_validation_video\\\\cases\\\\case_d_very_short_video\\\\short_clip.mp4\",\n        \"basename\": \"short_clip.mp4\",\n        \"duration_seconds\": null,\n        \"frames_extracted\": 1\n      }\n    ]\n  },\n  \"video_noise_flags\": [\n    {\n      \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n    }\n  ],\n  \"video_extraction_errors\": [],\n  \"corroboration_by_system_sample\": {\n    \"collision_system\": {\n      \"modalities\": [\n        \"code_system\",\n        \"video_frame\"\n      ],\n      \"weighted\": 0.5,\n      \"reasoning_tail\": [\n        \"code_system_detected\",\n        \"code_detection_source_unity_extractor\",\n        \"runtime_video_frames_extracted\"\n      ],\n      \"noise\": [\n        {\n          \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n        }\n      ]\n    }\n  },\n  \"evidence_video_items\": 1\n}",
+      "observed_friction": ""
+    },
+    {
+      "case_id": "case_e_video_no_other_runtime",
+      "expected_note": "Video only — expect video_noise_flags / corroboration_noise re linkage.",
+      "corroboration_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"video_frame_count\": 2,\n  \"video_metadata\": {\n    \"duration_seconds\": 0.0,\n    \"frame_count_extracted\": 2,\n    \"sources\": [\n      {\n        \"path\": \"C:\\\\Users\\\\Eng-Alsawalmeh\\\\Desktop\\\\cchat\\\\aaaa\\\\ai_grader_python (2)\\\\ai_grader_python\\\\app\\\\calibration\\\\mini_validation_video\\\\cases\\\\case_e_video_no_other_runtime\\\\orphan_video.mp4\",\n        \"basename\": \"orphan_video.mp4\",\n        \"duration_seconds\": null,\n        \"frames_extracted\": 2\n      }\n    ]\n  },\n  \"video_noise_flags\": [\n    {\n      \"flag\": \"video_frames_extracted_without_runtime_linkage\"\n    }\n  ],\n  \"video_extraction_errors\": [],\n  \"corroboration_by_system_sample\": {},\n  \"evidence_video_items\": 2\n}",
+      "observed_friction": ""
+    }
+  ]
+}

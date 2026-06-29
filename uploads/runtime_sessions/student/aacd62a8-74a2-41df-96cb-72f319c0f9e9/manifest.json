@@ -1,0 +1,70 @@
+{
+  "session_id": "aacd62a8-74a2-41df-96cb-72f319c0f9e9",
+  "engine": "scratch",
+  "submission_key": "student",
+  "status": "failed",
+  "capabilities": {
+    "supports_headless": true,
+    "supports_input_simulation": false,
+    "supports_screenshots": false,
+    "supports_video_capture": false,
+    "supports_network_isolation": false,
+    "supports_gpu": false,
+    "supports_audio": false,
+    "supports_build_from_source": false,
+    "supports_playmode_tests": false,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "signals": {
+    "enable_web_browser_automation": true,
+    "enable_android_emulator_automation": true,
+    "enable_gamemaker_runtime_verification": true,
+    "enable_scratch_runtime_verification": true,
+    "scratch_sb3": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\pytest-of-aalsa\\pytest-11\\test_build_inventory_detects_s0\\Scrath file.sb3"
+  },
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": false,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782549924.0042398,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "scratch",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\pytest-of-aalsa\\pytest-11\\test_build_inventory_detects_s0"
+      }
+    }
+  ],
+  "screenshots": [],
+  "logs": [],
+  "errors": [
+    "File is not a zip file"
+  ],
+  "artifacts": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

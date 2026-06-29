@@ -1,0 +1,11 @@
+FROM python:3.12-slim
+
+WORKDIR /sandbox
+
+RUN groupadd -r sandbox -g 10001 && useradd -r -u 10001 -g sandbox -d /sandbox sandbox \
+    && chmod 755 /sandbox
+
+# Non-root, minimal capabilities, read-only root where possible
+USER sandbox
+
+CMD ["sleep", "infinity"]

@@ -1,0 +1,86 @@
+{
+  "dry_run_id": "epistemic_trace_dry_run_submission_6_v1",
+  "title": "Epistemic trace architecture dry-run",
+  "submission_id": 6,
+  "batch_id": 4,
+  "profile_ar": "submission #6 — representational → authority drift (partial #3 pattern, NOT #3/#13 — no exe stress)",
+  "why_submission_6_ar": "مشابه جزئيًا لـ #3 (representation → authority) لكن ليس #3 ولا #13 — L0 بدون exe · اختبار drift مبكر + replay timing قبل vocabulary escalation",
+  "trace_id": "etc_6036b4c332b1",
+  "ledger_path": "app/calibration/human_cohort_workshop/epistemic_trace_captures.jsonl",
+  "observations_jsonl_appended": false,
+  "architecture_checks": [
+    {
+      "check_id": "trace_integrity",
+      "question_ar": "هل تنتقل الحقول كاملة من UI → ledger؟",
+      "pass": true,
+      "detail_ar": "groups preserved: True; replay_precedes_authority computed=True"
+    },
+    {
+      "check_id": "timing_fidelity",
+      "question_ar": "هل replay timestamps تحفظ التسلسل الحقيقي؟",
+      "pass": true,
+      "detail_ar": "2026-05-20T14:00:00Z < 2026-05-20T14:08:00Z < 2026-05-20T14:35:00Z"
+    },
+    {
+      "check_id": "quarantine_persistence",
+      "question_ar": "هل يبقى state منفصلًا عن الحكم؟",
+      "pass": true,
+      "detail_ar": "facilitator quarantine_state=maintained; wire_to_grading=False"
+    },
+    {
+      "check_id": "vocabulary_capture",
+      "question_ar": "هل يتم رصد authority lexicon تلقائيًا؟",
+      "pass": true,
+      "auto_detected": false,
+      "detail_ar": "facilitator manual select — no auto-detection from language samples yet; value preserved in ledger when set"
+    },
+    {
+      "check_id": "counterfactual_usefulness",
+      "question_ar": "هل حقل \"without replay\" يعطي insight حقيقي؟",
+      "pass": true,
+      "detail_ar": "بدون replay كان سيُغلق على Pass/Merit بناءً على جودة التحليل النصي دون رؤية L0 و screenshot_count=0 — legitimacy by narr…"
+    }
+  ],
+  "all_checks_pass": true,
+  "observer_role_drift_check_ref": "OBSERVER_ROLE_DRIFT_CHECK_v1.json",
+  "ui_invariant": "This interface records epistemic state transitions. It does not assign authority.",
+  "section_f_epistemic_trace": {
+    "schema_id": "EPISTEMIC_TRACE_CAPTURE_SCHEMA_v1",
+    "ui_invariant_ar": "هذه الواجهة تسجّل انتقالات الحالة المعرفية. لا تمنح سلطة.",
+    "replay_chronology": {
+      "replay_opened_at": "2026-05-20T14:00:00Z",
+      "replay_consulted_at": "2026-05-20T14:08:00Z",
+      "authority_language_first_seen_at": "2026-05-20T14:35:00Z",
+      "replay_precedes_authority": true
+    },
+    "authority_formation_markers": {
+      "verification_lexicon_detected": "yes",
+      "closure_trigger_detected": "جودة السرد النظري + Pass/Merit language رغم L0 — representation completeness (partial #3 pattern, no GDD collapse)",
+      "temptation_classification": "representational",
+      "authority_formation_altered": "yes"
+    },
+    "quarantine_state_capture": {
+      "quarantine_state": "maintained",
+      "qb_level": "QB3",
+      "quarantine_breach_reason": "",
+      "restraint_anchor_detected": "L0 runtime_evidence_level · absent exe · HOLD applied — quarantine descriptive not normative pass/fail"
+    },
+    "provenance_continuity": {
+      "exe_present": false,
+      "exe_identity_matches_submission": false,
+      "runtime_corroborated": false,
+      "provenance_continuity_state": "broken"
+    },
+    "counterfactual_capture": {
+      "counterfactual_without_replay": "بدون replay كان سيُغلق على Pass/Merit بناءً على جودة التحليل النصي دون رؤية L0 و screenshot_count=0 — legitimacy by narrative adequacy",
+      "intuition_closure_detected": "yes",
+      "replay_changed_outcome": "yes"
+    },
+    "advisory_enrichment": {
+      "quarantine_state_advisory": "idle",
+      "breach_severity_advisory": "QB2",
+      "entry_triggers_advisory": [],
+      "wire_to_grading": false
+    }
+  }
+}

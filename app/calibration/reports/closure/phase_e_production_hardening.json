@@ -1,0 +1,44 @@
+{
+  "schema": "production_hardening_checklist_v1",
+  "generated_at": "2026-05-26T23:02:57Z",
+  "checks": {
+    "/health": {
+      "status_code": 200,
+      "ok": true
+    },
+    "/api/health": {
+      "status_code": 200,
+      "ok": true
+    },
+    "/api/metrics": {
+      "status_code": 200,
+      "ok": true
+    },
+    "middleware_stack": [
+      "RateLimitMiddleware"
+    ],
+    "rate_limit_wired": {
+      "ok": true
+    },
+    "celery_queues": {
+      "ok": true,
+      "queues": [
+        "ai_grading",
+        "runtime_jobs",
+        "replay_jobs",
+        "ocr_jobs",
+        "calibration_jobs",
+        "dead_letter"
+      ]
+    },
+    "retry_async": {
+      "ok": true
+    },
+    "storage": {
+      "uploads_exists": true,
+      "students_exists": true,
+      "reports_exists": true
+    }
+  },
+  "overall_ok": true
+}

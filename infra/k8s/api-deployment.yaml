@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-grader-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-grader-api
+  template:
+    metadata:
+      labels:
+        app: ai-grader-api
+    spec:
+      containers:
+        - name: api
+          image: ai-grader/api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AI_GRADER_REDIS_URL
+              value: redis://redis:6379/0
+            - name: AI_GRADER_CELERY_ENABLED
+              value: "1"
+            - name: AI_GRADER_ASYNC_REASONING
+              value: "1"
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-grader-api
+spec:
+  selector:
+    app: ai-grader-api
+  ports:
+    - port: 80
+      targetPort: 8000

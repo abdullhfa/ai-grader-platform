@@ -1,0 +1,184 @@
+{
+  "session_id": "ros_21ed9a92a5b9",
+  "session_type_id": "RUNTIME_OBSERVATION_SESSION_v1",
+  "logged_at": "2026-05-25T02:17:08.722206Z",
+  "mode": "runtime_observation_session",
+  "not_mode": "final_legitimacy_session",
+  "student_folder": "D:\\تجربة\\GAME B&C\\الالعاب محمد عكاوي\\الالعاب محمد عكاوي",
+  "unity_project": "D:\\تجربة\\GAME B&C\\الالعاب محمد عكاوي\\الالعاب محمد عكاوي\\اللعبه ماريو\\العبة بعد التطوير\\العبة بعد التطوير\\kong-tutorial",
+  "sandbox_status": "no_exported_runtime_artifact",
+  "execution_phenomenology_descriptors": [
+    "executable_persisted",
+    "runtime_epistemically_unverified"
+  ],
+  "replay_phenomenology_descriptors": [
+    "replay_captured",
+    "replay_reproducible"
+  ],
+  "phenomenology_summary_en": "Unity source project and documentation artifacts observed on disk. No exported game executable available for smoke test in extracted tree. Human review required for any trust or legitimacy claim.",
+  "runtime_quarantine_states": [
+    "runtime_provenance_partial",
+    "runtime_epistemically_unverified",
+    "runtime_legitimacy_blocked"
+  ],
+  "mandatory_quarantine_present": true,
+  "code_observation": {
+    "levels_in_build": [
+      "Level1",
+      "Level2"
+    ],
+    "script_count": 5,
+    "game_manager": {
+      "lives": 3,
+      "num_levels": 2,
+      "score_on_complete": 1000
+    },
+    "player_mechanics": [
+      "move",
+      "jump",
+      "climb",
+      "objective_collision",
+      "obstacle_collision"
+    ],
+    "spawner": true,
+    "barrel_physics": true,
+    "timer_ui": true
+  },
+  "scripts": [
+    {
+      "file": "Barrel.cs",
+      "lines": 20,
+      "signals": {
+        "has_score": false,
+        "has_lives": false,
+        "has_timer": false,
+        "has_spawner": false,
+        "has_player_movement": false,
+        "has_level_complete": false
+      }
+    },
+    {
+      "file": "GameManager.cs",
+      "lines": 90,
+      "signals": {
+        "has_score": true,
+        "has_lives": true,
+        "has_timer": false,
+        "has_spawner": false,
+        "has_player_movement": false,
+        "has_level_complete": true
+      }
+    },
+    {
+      "file": "Player.cs",
+      "lines": 142,
+      "signals": {
+        "has_score": false,
+        "has_lives": false,
+        "has_timer": false,
+        "has_spawner": false,
+        "has_player_movement": true,
+        "has_level_complete": true
+      }
+    },
+    {
+      "file": "Spawner.cs",
+      "lines": 25,
+      "signals": {
+        "has_score": false,
+        "has_lives": false,
+        "has_timer": false,
+        "has_spawner": true,
+        "has_player_movement": false,
+        "has_level_complete": false
+      }
+    },
+    {
+      "file": "Timer.cs",
+      "lines": 36,
+      "signals": {
+        "has_score": false,
+        "has_lives": false,
+        "has_timer": true,
+        "has_spawner": false,
+        "has_player_movement": false,
+        "has_level_complete": false
+      }
+    }
+  ],
+  "documentation_assets": [
+    {
+      "name": "1.mp4",
+      "size_bytes": 7452273,
+      "type": ".mp4"
+    },
+    {
+      "name": "2.mp4",
+      "size_bytes": 3716378,
+      "type": ".mp4"
+    },
+    {
+      "name": "3.mp4",
+      "size_bytes": 1404699,
+      "type": ".mp4"
+    },
+    {
+      "name": "4.mp4",
+      "size_bytes": 4176066,
+      "type": ".mp4"
+    },
+    {
+      "name": "5.png",
+      "size_bytes": 20018,
+      "type": ".png"
+    },
+    {
+      "name": "6.png",
+      "size_bytes": 34565,
+      "type": ".png"
+    },
+    {
+      "name": "7.png",
+      "size_bytes": 288515,
+      "type": ".png"
+    },
+    {
+      "name": "8.png",
+      "size_bytes": 297588,
+      "type": ".png"
+    }
+  ],
+  "docx_preview_chars": 4000,
+  "docx_preview_excerpt": "المقدمة:\nفي إطار تطوير ألعاب تعليمية وترفيهية موجهة للفئة العمرية الصغيرة، تأتي هذه اللعبة المصممة باستخدام محرك Unity 2D كنتاج مشروع يهدف إلى خلق تجربة تفاعلية ممتعة وآمنة تجمع بين المرح، المهارات الحركية، واتخاذ القرار في بيئة رقمية بسيطة وواضحة.\n\nفكرة اللعبة:\nاللعبة تتمحور حول شخصية لاعب (ربما روبوت أو كائن صغير) يسير داخل طريق يحتوي على عقبات ثابتة ومتحركة (مثل الحواجز الدوّارة أو المربعات التي تسقط)، ويجب عليه تجنب الاصطدام بها للوصول إلى نقطة النهاية. تتكرر الجولات، وتزداد سرعة التحديات تدريجيًا.\n\nالجمهور المستهدف:\nالأطفال من سن 7 إلى 12 سنة\nيفضلون الألعاب ذات الإيقاع السريع والمهمات القصيرة\nالفئة التي تتعلم من خلال التجريب والاستكشاف\n\nآليات اللعب (Gameplay):\nالتحكم يتم عبر زر قفز أو حركة (Jump) بلمسة واحدة\nاللاعب يتجنب العقبات عبر القفز في التوقيت الصحيح\nاللعبة تعتمد على رد الفعل السريع وتقدير التوقيت\nالتصادم يؤدي إلى خسارة المحاولة\nعند اجتياز المستوى، يتم الانتقال تلقائيًا لمستوى جديد بسرعة أعلى أو تحديات أكثر\n\nالتحديات:\nحواجز دوارة أو متحركة\nأرضيات تختفي أو تسقط\nسرعة الحركة المتزايدة\n\nالقواعد:\nلمسة واحدة = قفز\nإذا لم يقفز اللاعب في الوقت المناسب، يخسر\nكل مستوى يتطلب اجتياز مسار معين بنجاح\n\nالمكافآت:\nعدد النقاط حسب المسافة المقطوعة أو عدد المحاولات الناجحة\nإمكانية فتح جلود/",
+  "contradictions_advisory": [
+    {
+      "id": "no_exported_executable",
+      "observation_en": "Unity source + scenes present; no exported .exe/.apk in tree for runtime smoke test.",
+      "not_claim": "game does not work"
+    },
+    {
+      "id": "build_may_be_in_rar",
+      "observation_en": "Large archive present (558 MB) — possible build not extracted.",
+      "action_ar": "استخراج الـ RAR إذا كان فيه exe/apk للـ runtime smoke"
+    },
+    {
+      "id": "timer_not_wired_to_gm",
+      "observation_en": "Timer.cs counts down but GameManager.cs does not reference Timer — timeout→LevelFailed link unclear from code alone.",
+      "hold_suggested": true
+    }
+  ],
+  "forbidden_auto_claims_en": [
+    "game validated",
+    "rubric achieved",
+    "project confirmed"
+  ],
+  "human_authority_required": true,
+  "institutional_ledger_appended": false,
+  "invariant_en": "Runtime visibility ≠ runtime legitimacy.",
+  "next_steps_ar": [
+    "استخراج العبة بعد التطوير.rar والبحث عن exe/apk",
+    "تشغيل smoke test على exe إن وُجد",
+    "مراجعة docx + mp4/png مقابل السلوك الفعلي",
+    "قرار Achieved يدوي (L5) إن لزم"
+  ]
+}

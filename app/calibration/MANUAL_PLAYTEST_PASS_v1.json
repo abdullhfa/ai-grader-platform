@@ -1,0 +1,177 @@
+{
+  "spec_id": "MANUAL_PLAYTEST_PASS_v1",
+  "purpose_en": "Interactive verification layer — mechanic observation without pedagogical or rubric inference.",
+  "parent_session_type": "RUNTIME_OBSERVATION_SESSION_v1",
+  "not_mode": "final_legitimacy_session",
+  "assigns_legitimacy": false,
+  "assigns_rubric_inference": false,
+  "invariant_en": "Mechanic observation does not imply pedagogical or rubric inference.",
+  "invariant_ar": "مراقبة الميكانيك ≠ استنتاج تربوي أو rubric.",
+  "core_separation_en": "execution continuity ≠ mechanics validation",
+  "umbrella_phenomenology": "mechanic_observed_without_pedagogical_inference",
+  "phenomenology_domain": "interactive",
+  "manifest_id": "PHENOMENOLOGY_MANIFEST_v1",
+  "forbidden_recorder_language_en": [
+    "game validated",
+    "rubric achieved",
+    "project confirmed",
+    "gameplay verified",
+    "mechanics validated",
+    "project invalid",
+    "rubric failed",
+    "achievement impossible",
+    "gameplay broken"
+  ],
+  "observation_discipline": {
+    "record": "what was observed during interactive play",
+    "do_not_record": "legitimacy, rubric, or achievement conclusions"
+  },
+  "default_test_sequence": [
+    {
+      "test_id": "start_space",
+      "prompt_en": "Does Space start the game from the start screen?",
+      "hypothesis_links": ["timescale_start_conflict", "space_key_dual_use"],
+      "observed_allowed_examples_en": [
+        "start panel hidden after Space",
+        "timeScale resumed after Space",
+        "start panel remained visible after Space"
+      ],
+      "do_not_infer_en": "project invalid · gameplay broken"
+    },
+    {
+      "test_id": "jump_after_start",
+      "prompt_en": "Does jump work after the game has started?",
+      "hypothesis_links": ["space_key_dual_use"],
+      "observed_allowed_examples_en": [
+        "player jumped on Space when grounded",
+        "Space triggered start instead of jump",
+        "no jump response observed"
+      ],
+      "do_not_infer_en": "gameplay broken · achievement impossible"
+    },
+    {
+      "test_id": "cup_score",
+      "prompt_en": "Does collecting cups increase score?",
+      "hypothesis_links": [],
+      "observed_allowed_examples_en": [
+        "score UI incremented on cup collection",
+        "cup destroyed on contact",
+        "no score change on cup contact"
+      ],
+      "do_not_infer_en": "rubric failed · project invalid"
+    },
+    {
+      "test_id": "third_cup_level",
+      "prompt_en": "Does the third cup trigger a level transition?",
+      "hypothesis_links": ["scene_name_mismatch_level2"],
+      "observed_allowed_examples_en": [
+        "scene changed after third cup",
+        "level transition failed or error observed",
+        "no transition after third cup"
+      ],
+      "do_not_infer_en": "project invalid · rubric failed"
+    },
+    {
+      "test_id": "timer_zero",
+      "prompt_en": "What happens when the timer reaches zero?",
+      "hypothesis_links": ["timer_not_wired_to_game_over"],
+      "observed_allowed_examples_en": [
+        "timer reached 00:00 with no gameplay consequence",
+        "game over triggered at timer zero",
+        "level failed state observed at timer zero"
+      ],
+      "do_not_infer_en": "rubric failed · mechanics validated"
+    },
+    {
+      "test_id": "lives_exhausted",
+      "prompt_en": "What happens when all three lives are lost?",
+      "hypothesis_links": [],
+      "observed_allowed_examples_en": [
+        "respawn observed between life losses",
+        "game over panel shown after third loss",
+        "respawn position inconsistent",
+        "lives UI decremented correctly"
+      ],
+      "do_not_infer_en": "achievement impossible · project invalid"
+    }
+  ],
+  "contradiction_severity_after_playtest": {
+    "confirmed": "hypothesis observed in playtest — hold remains, severity may increase",
+    "refuted": "hypothesis not observed — code-only concern, not runtime-confirmed",
+    "inconclusive": "playtest did not reach condition — remains advisory"
+  },
+  "observation_classification_v1": {
+    "purpose_en": "Lightweight epistemic tagging — not severity, not rubric meaning.",
+    "values": [
+      "confirmed_runtime_observation",
+      "corroborated_with_code",
+      "unresolved_runtime_behavior",
+      "contradiction_observed"
+    ],
+    "forbidden": ["severity", "rubric_meaning", "legitimacy_inference"]
+  },
+  "pass_modes": {
+    "assisted": {
+      "label_en": "Assisted pass — input injection and log tail only",
+      "may_confirm_visual_state": false,
+      "typical_status_on_incomplete": "partial_assisted"
+    },
+    "visual_human": {
+      "label_en": "Human visual pass — observable state transitions only",
+      "may_confirm_visual_state": true,
+      "typical_status_on_complete": "complete_visual",
+      "not_mode": "evaluation_completion"
+    }
+  },
+  "playtest_status_values": [
+    "pending",
+    "partial_assisted",
+    "complete_visual",
+    "complete"
+  ],
+  "epistemic_boundaries_discovered": {
+    "source": "abdullah_al_utoum_assisted_pass_1",
+    "boundaries_en": [
+      "input injection ≠ interactive verification",
+      "assisted interaction without observable state change remains epistemically insufficient",
+      "input dispatched ≠ interaction visually corroborated",
+      "interaction attempt ≠ interaction confirmation",
+      "runtime activity ≠ gameplay evidence",
+      "code inspection (structural hypothesis) must not collapse into runtime observation (phenomenological evidence)"
+    ],
+    "central_contradiction_test_id": "third_cup_level",
+    "central_contradiction_outcomes_en": {
+      "transition_succeeds": "scene_name_mismatch hypothesis weakened — not refuted alone",
+      "transition_fails": "contradiction_observed — corroborated with code hypothesis",
+      "unreachable_inconclusive": "runtime opacity persists — legitimacy remains blocked"
+    }
+  },
+  "visual_pass_recording_discipline": {
+    "central_runtime_invariant_en": "observable state transitions only",
+    "prevents_chain_en": "observed transition → mechanic meaning → gameplay quality → rubric legitimacy",
+    "record_en": "observable state transitions only",
+    "do_not_record_en": "evaluation completion · system validation · rubric meaning · semantic completion",
+    "constitutional_role_en": "Human visual corroboration discipline — not legitimacy grant, but prevention of automatic observation-to-inference collapse.",
+    "question_shift_en": "Not 'Did the runtime execute?' but 'Which observed state transitions can survive epistemic restraint?'",
+    "third_cup_level_recording_discipline": {
+      "allowed_en": [
+        "scene remained Level 1",
+        "transition not observed",
+        "scene mismatch corroborated"
+      ],
+      "forbidden_en": [
+        "progression failed pedagogically",
+        "level system invalid",
+        "submission incorrect"
+      ]
+    },
+    "examples": [
+      {"good_en": "score text increased from 0 to 1", "risky_en": "collectible system works"},
+      {"good_en": "scene remained Level 1 after third cup", "risky_en": "progression broken"},
+      {"good_en": "player fell and respawned at checkpoint", "risky_en": "life system validated"},
+      {"good_en": "timer reached 00:00 with no observed event", "risky_en": "timer system invalid"}
+    ]
+  },
+  "quarantine_unchanged_by_default": true,
+  "institutional_ledger_appended": false
+}

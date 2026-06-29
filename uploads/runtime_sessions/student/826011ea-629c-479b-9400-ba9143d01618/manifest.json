@@ -1,0 +1,69 @@
+{
+  "session_id": "826011ea-629c-479b-9400-ba9143d01618",
+  "engine": "unity",
+  "submission_key": "student",
+  "status": "completed",
+  "capabilities": {
+    "supports_headless": true,
+    "supports_input_simulation": true,
+    "supports_screenshots": true,
+    "supports_video_capture": true,
+    "supports_network_isolation": false,
+    "supports_gpu": true,
+    "supports_audio": false,
+    "supports_build_from_source": true,
+    "supports_playmode_tests": true,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "signals": {},
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": false,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782646576.1584406,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "unity",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpb0gb86bf"
+      }
+    },
+    {
+      "timestamp": 1782646576.1584523,
+      "type": "test_event",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {}
+    }
+  ],
+  "screenshots": [],
+  "logs": [],
+  "errors": [],
+  "artifacts": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

@@ -1,0 +1,956 @@
+{
+  "session_id": "03167cc6-1ebe-4026-9867-4f60b489a36f",
+  "engine": "scratch",
+  "submission_key": "العاب",
+  "status": "completed",
+  "capabilities": {
+    "supports_headless": true,
+    "supports_input_simulation": false,
+    "supports_screenshots": false,
+    "supports_video_capture": false,
+    "supports_network_isolation": false,
+    "supports_gpu": false,
+    "supports_audio": false,
+    "supports_build_from_source": false,
+    "supports_playmode_tests": false,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "signals": {
+    "enable_web_browser_automation": true,
+    "enable_android_emulator_automation": true,
+    "enable_gamemaker_runtime_verification": true,
+    "enable_scratch_runtime_verification": true,
+    "scratch_sb3": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx51\\العاب\\نموذج الأولي قبل التعديل .sb3",
+    "execution_graph_ok": true,
+    "graph_node_count": 45,
+    "loop_count": 3,
+    "condition_count": 4,
+    "variable_block_count": 5,
+    "broadcast_count": 6,
+    "has_control_flow": true,
+    "has_variables": true,
+    "has_broadcasts": true,
+    "scratch_vm_ran": true,
+    "scratch_vm_method": "scratch_vm",
+    "scratch_stage_snapshot": {
+      "target_count": 4,
+      "sprite_count": 3,
+      "sprite_names": [
+        "Bananas",
+        "Monkey",
+        "Star"
+      ],
+      "stage_running": true
+    },
+    "variable_snapshots": 3,
+    "broadcast_events": 0,
+    "output_events": 2,
+    "runtime_events": 2,
+    "functional_smoke_pass": true,
+    "execution_graph": {
+      "version": "scratch_execution_graph_v1",
+      "target_graphs": [
+        {
+          "target": "Stage",
+          "is_stage": true,
+          "hat_count": 0,
+          "chains": []
+        },
+        {
+          "target": "Bananas",
+          "is_stage": false,
+          "hat_count": 5,
+          "chains": [
+            {
+              "hat_id": "aev,0JKjC3ntr][8sX:9",
+              "node_ids": [
+                "aev,0JKjC3ntr][8sX:9",
+                "eq:K6rR.A);F,a@G79ys",
+                "UCzOk}Jn$HCT7`H6D,V,"
+              ],
+              "length": 3
+            },
+            {
+              "hat_id": ";]:y@NK4(UQ7?ckI[W.,",
+              "node_ids": [
+                ";]:y@NK4(UQ7?ckI[W.,",
+                "QtoaTSwfO]@}SfZ]luqQ"
+              ],
+              "length": 2
+            },
+            {
+              "hat_id": "D)JgYxC!)!h2hRB^a1g5",
+              "node_ids": [
+                "D)JgYxC!)!h2hRB^a1g5",
+                "xxJ,^4o[-z)|@t7a@.sY",
+                "B.u%k?mlTAU;|11S6wox",
+                "~N|(4tG9;mKAEhV}`TQk",
+                "F{EgsOQJb!U(Ua/^XZVz",
+                "Y;h`A55iau|`_c4LSODO",
+                "E||y8KWHJy?VyG(/Wi+4",
+                "QQ!?IV-vJsYj~4`O$U::",
+                "]+tcP#C22]oAK4CO/F`D",
+                "eGG49-=[?yV$khffrE}/",
+                "Af#hcUxW-eCC,SKW~X4T",
+                "J:j@7ob?hu@jW_CC!qPX"
+              ],
+              "length": 12
+            },
+            {
+              "hat_id": "Fm/Idf|)9BQpAqP*S8Gi",
+              "node_ids": [
+                "Fm/Idf|)9BQpAqP*S8Gi",
+                "5:,wImob@QUnXF9VNK[Z",
+                "*$?vC/DB`rOjywAJMK54",
+                "z1w?nbVa?Xc+[P|}~A?1",
+                "(+ve^cYwT;vQMhlF4o=h",
+                "D_xH{;}YO=%KUNL[^sIJ",
+                "f{AN%9i[$2|,pygYp_63",
+                "F8U#ZfEaadddokJ6o`X,"
+              ],
+              "length": 8
+            },
+            {
+              "hat_id": ",M*]|bMQ+J%Nr$-+xOuP",
+              "node_ids": [
+                ",M*]|bMQ+J%Nr$-+xOuP",
+                "mJg^-Q7$YzCg|9I73R5w"
+              ],
+              "length": 2
+            }
+          ]
+        },
+        {
+          "target": "Monkey",
+          "is_stage": false,
+          "hat_count": 2,
+          "chains": [
+            {
+              "hat_id": "W$rDzt18MPYg6!Nsr]EF",
+              "node_ids": [
+                "W$rDzt18MPYg6!Nsr]EF",
+                ",/071rC`TU@Hcr8s-.U6"
+              ],
+              "length": 2
+            },
+            {
+              "hat_id": "4%_k!BbbaUvQW%ojkGL=",
+              "node_ids": [
+                "4%_k!BbbaUvQW%ojkGL=",
+                "ftCdDVW8}Ap5u_jxpw57",
+                "/Cq#4EOqS1{AQAipD122",
+                "vXR{FC~.a82_D{7nx33B",
+                "?|X@;4`CeD196%q^oUC,",
+                "_WT7PJ~%nwwe}XdA/$Q?",
+                "_K`uyD99Rb:mm]V34dD=",
+                "F6(W#@RJHKw=@nsGZ0HT"
+              ],
+              "length": 8
+            }
+          ]
+        },
+        {
+          "target": "Star",
+          "is_stage": false,
+          "hat_count": 3,
+          "chains": [
+            {
+              "hat_id": "|xOk;PzP6Q^0{4{pvAJ,",
+              "node_ids": [
+                "|xOk;PzP6Q^0{4{pvAJ,",
+                "JarybDGAwptdcx-x%lHy",
+                "jbiXd[;}HC|ReCbehIn2"
+              ],
+              "length": 3
+            },
+            {
+              "hat_id": "JarybDGAwptdcx-x%lHy",
+              "node_ids": [
+                "JarybDGAwptdcx-x%lHy",
+                "jbiXd[;}HC|ReCbehIn2"
+              ],
+              "length": 2
+            },
+            {
+              "hat_id": "*,9lH~.wm`4]Po,;4$5A",
+              "node_ids": [
+                "*,9lH~.wm`4]Po,;4$5A",
+                "h4pAHB0Fe?PXZm/bCuY=",
+                "hpHHrRP^1lq)X)Gc0v,N"
+              ],
+              "length": 3
+            }
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "aev,0JKjC3ntr][8sX:9",
+          "opcode": "event_whenflagclicked",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "eq:K6rR.A);F,a@G79ys",
+          "opcode": "looks_hide",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "UCzOk}Jn$HCT7`H6D,V,",
+          "opcode": "data_hidevariable",
+          "target": "Bananas",
+          "fields": {
+            "VARIABLE": [
+              "SCORE",
+              "6+maWJH#`Wg4o5,pCs*n"
+            ]
+          }
+        },
+        {
+          "id": ";]:y@NK4(UQ7?ckI[W.,",
+          "opcode": "event_whenflagclicked",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "QtoaTSwfO]@}SfZ]luqQ",
+          "opcode": "looks_hide",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "D)JgYxC!)!h2hRB^a1g5",
+          "opcode": "event_whenbroadcastreceived",
+          "target": "Bananas",
+          "fields": {
+            "BROADCAST_OPTION": [
+              "ابدأ",
+              ")nCjJ_FCVmq73D`~aCUM"
+            ]
+          }
+        },
+        {
+          "id": "xxJ,^4o[-z)|@t7a@.sY",
+          "opcode": "looks_show",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "B.u%k?mlTAU;|11S6wox",
+          "opcode": "data_setvariableto",
+          "target": "Bananas",
+          "fields": {
+            "VARIABLE": [
+              "SCORE",
+              "6+maWJH#`Wg4o5,pCs*n"
+            ]
+          }
+        },
+        {
+          "id": "~N|(4tG9;mKAEhV}`TQk",
+          "opcode": "motion_goto",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "F{EgsOQJb!U(Ua/^XZVz",
+          "opcode": "motion_sety",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "Y;h`A55iau|`_c4LSODO",
+          "opcode": "control_forever",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "E||y8KWHJy?VyG(/Wi+4",
+          "opcode": "motion_changeyby",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "QQ!?IV-vJsYj~4`O$U::",
+          "opcode": "control_if",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "]+tcP#C22]oAK4CO/F`D",
+          "opcode": "data_changevariableby",
+          "target": "Bananas",
+          "fields": {
+            "VARIABLE": [
+              "SCORE",
+              "6+maWJH#`Wg4o5,pCs*n"
+            ]
+          }
+        },
+        {
+          "id": "eGG49-=[?yV$khffrE}/",
+          "opcode": "motion_sety",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "Af#hcUxW-eCC,SKW~X4T",
+          "opcode": "motion_goto",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "J:j@7ob?hu@jW_CC!qPX",
+          "opcode": "motion_sety",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "Fm/Idf|)9BQpAqP*S8Gi",
+          "opcode": "event_whenbroadcastreceived",
+          "target": "Bananas",
+          "fields": {
+            "BROADCAST_OPTION": [
+              "ابدأ",
+              ")nCjJ_FCVmq73D`~aCUM"
+            ]
+          }
+        },
+        {
+          "id": "5:,wImob@QUnXF9VNK[Z",
+          "opcode": "looks_show",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "*$?vC/DB`rOjywAJMK54",
+          "opcode": "control_forever",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "z1w?nbVa?Xc+[P|}~A?1",
+          "opcode": "control_if",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "(+ve^cYwT;vQMhlF4o=h",
+          "opcode": "sound_play",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "D_xH{;}YO=%KUNL[^sIJ",
+          "opcode": "data_changevariableby",
+          "target": "Bananas",
+          "fields": {
+            "VARIABLE": [
+              "SCORE",
+              "6+maWJH#`Wg4o5,pCs*n"
+            ]
+          }
+        },
+        {
+          "id": "f{AN%9i[$2|,pygYp_63",
+          "opcode": "motion_goto",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": "F8U#ZfEaadddokJ6o`X,",
+          "opcode": "motion_sety",
+          "target": "Bananas",
+          "fields": {}
+        },
+        {
+          "id": ",M*]|bMQ+J%Nr$-+xOuP",
+          "opcode": "event_whenbroadcastreceived",
+          "target": "Bananas",
+          "fields": {
+            "BROADCAST_OPTION": [
+              "ابدأ",
+              ")nCjJ_FCVmq73D`~aCUM"
+            ]
+          }
+        },
+        {
+          "id": "mJg^-Q7$YzCg|9I73R5w",
+          "opcode": "data_showvariable",
+          "target": "Bananas",
+          "fields": {
+            "VARIABLE": [
+              "SCORE",
+              "6+maWJH#`Wg4o5,pCs*n"
+            ]
+          }
+        },
+        {
+          "id": "W$rDzt18MPYg6!Nsr]EF",
+          "opcode": "event_whenflagclicked",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": ",/071rC`TU@Hcr8s-.U6",
+          "opcode": "looks_hide",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "4%_k!BbbaUvQW%ojkGL=",
+          "opcode": "event_whenbroadcastreceived",
+          "target": "Monkey",
+          "fields": {
+            "BROADCAST_OPTION": [
+              "ابدأ",
+              ")nCjJ_FCVmq73D`~aCUM"
+            ]
+          }
+        },
+        {
+          "id": "ftCdDVW8}Ap5u_jxpw57",
+          "opcode": "looks_switchbackdropto",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "/Cq#4EOqS1{AQAipD122",
+          "opcode": "looks_show",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "vXR{FC~.a82_D{7nx33B",
+          "opcode": "control_forever",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "?|X@;4`CeD196%q^oUC,",
+          "opcode": "control_if",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "_WT7PJ~%nwwe}XdA/$Q?",
+          "opcode": "motion_movesteps",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "_K`uyD99Rb:mm]V34dD=",
+          "opcode": "control_if",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "F6(W#@RJHKw=@nsGZ0HT",
+          "opcode": "motion_movesteps",
+          "target": "Monkey",
+          "fields": {}
+        },
+        {
+          "id": "|xOk;PzP6Q^0{4{pvAJ,",
+          "opcode": "event_whenthisspriteclicked",
+          "target": "Star",
+          "fields": {}
+        },
+        {
+          "id": "JarybDGAwptdcx-x%lHy",
+          "opcode": "event_broadcast",
+          "target": "Star",
+          "fields": {}
+        },
+        {
+          "id": "jbiXd[;}HC|ReCbehIn2",
+          "opcode": "looks_hide",
+          "target": "Star",
+          "fields": {}
+        },
+        {
+          "id": "JarybDGAwptdcx-x%lHy",
+          "opcode": "event_broadcast",
+          "target": "Star",
+          "fields": {}
+        },
+        {
+          "id": "jbiXd[;}HC|ReCbehIn2",
+          "opcode": "looks_hide",
+          "target": "Star",
+          "fields": {}
+        },
+        {
+          "id": "*,9lH~.wm`4]Po,;4$5A",
+          "opcode": "event_whenflagclicked",
+          "target": "Star",
+          "fields": {}
+        },
+        {
+          "id": "h4pAHB0Fe?PXZm/bCuY=",
+          "opcode": "looks_switchbackdropto",
+          "target": "Star",
+          "fields": {}
+        },
+        {
+          "id": "hpHHrRP^1lq)X)Gc0v,N",
+          "opcode": "looks_show",
+          "target": "Star",
+          "fields": {}
+        }
+      ],
+      "edges": [
+        {
+          "from": "aev,0JKjC3ntr][8sX:9",
+          "to": "eq:K6rR.A);F,a@G79ys",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "eq:K6rR.A);F,a@G79ys",
+          "to": "UCzOk}Jn$HCT7`H6D,V,",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": ";]:y@NK4(UQ7?ckI[W.,",
+          "to": "QtoaTSwfO]@}SfZ]luqQ",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "D)JgYxC!)!h2hRB^a1g5",
+          "to": "xxJ,^4o[-z)|@t7a@.sY",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "xxJ,^4o[-z)|@t7a@.sY",
+          "to": "B.u%k?mlTAU;|11S6wox",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "B.u%k?mlTAU;|11S6wox",
+          "to": "~N|(4tG9;mKAEhV}`TQk",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "~N|(4tG9;mKAEhV}`TQk",
+          "to": "F{EgsOQJb!U(Ua/^XZVz",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "F{EgsOQJb!U(Ua/^XZVz",
+          "to": "Y;h`A55iau|`_c4LSODO",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "Y;h`A55iau|`_c4LSODO",
+          "to": "E||y8KWHJy?VyG(/Wi+4",
+          "type": "substack",
+          "target": "Bananas"
+        },
+        {
+          "from": "E||y8KWHJy?VyG(/Wi+4",
+          "to": "QQ!?IV-vJsYj~4`O$U::",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "QQ!?IV-vJsYj~4`O$U::",
+          "to": "]+tcP#C22]oAK4CO/F`D",
+          "type": "substack",
+          "target": "Bananas"
+        },
+        {
+          "from": "]+tcP#C22]oAK4CO/F`D",
+          "to": "eGG49-=[?yV$khffrE}/",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "eGG49-=[?yV$khffrE}/",
+          "to": "Af#hcUxW-eCC,SKW~X4T",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "Af#hcUxW-eCC,SKW~X4T",
+          "to": "J:j@7ob?hu@jW_CC!qPX",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "Fm/Idf|)9BQpAqP*S8Gi",
+          "to": "5:,wImob@QUnXF9VNK[Z",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "5:,wImob@QUnXF9VNK[Z",
+          "to": "*$?vC/DB`rOjywAJMK54",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "*$?vC/DB`rOjywAJMK54",
+          "to": "z1w?nbVa?Xc+[P|}~A?1",
+          "type": "substack",
+          "target": "Bananas"
+        },
+        {
+          "from": "z1w?nbVa?Xc+[P|}~A?1",
+          "to": "(+ve^cYwT;vQMhlF4o=h",
+          "type": "substack",
+          "target": "Bananas"
+        },
+        {
+          "from": "(+ve^cYwT;vQMhlF4o=h",
+          "to": "D_xH{;}YO=%KUNL[^sIJ",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "D_xH{;}YO=%KUNL[^sIJ",
+          "to": "f{AN%9i[$2|,pygYp_63",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "f{AN%9i[$2|,pygYp_63",
+          "to": "F8U#ZfEaadddokJ6o`X,",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": ",M*]|bMQ+J%Nr$-+xOuP",
+          "to": "mJg^-Q7$YzCg|9I73R5w",
+          "type": "next",
+          "target": "Bananas"
+        },
+        {
+          "from": "W$rDzt18MPYg6!Nsr]EF",
+          "to": ",/071rC`TU@Hcr8s-.U6",
+          "type": "next",
+          "target": "Monkey"
+        },
+        {
+          "from": "4%_k!BbbaUvQW%ojkGL=",
+          "to": "ftCdDVW8}Ap5u_jxpw57",
+          "type": "next",
+          "target": "Monkey"
+        },
+        {
+          "from": "ftCdDVW8}Ap5u_jxpw57",
+          "to": "/Cq#4EOqS1{AQAipD122",
+          "type": "next",
+          "target": "Monkey"
+        },
+        {
+          "from": "/Cq#4EOqS1{AQAipD122",
+          "to": "vXR{FC~.a82_D{7nx33B",
+          "type": "next",
+          "target": "Monkey"
+        },
+        {
+          "from": "vXR{FC~.a82_D{7nx33B",
+          "to": "?|X@;4`CeD196%q^oUC,",
+          "type": "substack",
+          "target": "Monkey"
+        },
+        {
+          "from": "?|X@;4`CeD196%q^oUC,",
+          "to": "_K`uyD99Rb:mm]V34dD=",
+          "type": "next",
+          "target": "Monkey"
+        },
+        {
+          "from": "?|X@;4`CeD196%q^oUC,",
+          "to": "_WT7PJ~%nwwe}XdA/$Q?",
+          "type": "substack",
+          "target": "Monkey"
+        },
+        {
+          "from": "_K`uyD99Rb:mm]V34dD=",
+          "to": "F6(W#@RJHKw=@nsGZ0HT",
+          "type": "substack",
+          "target": "Monkey"
+        },
+        {
+          "from": "|xOk;PzP6Q^0{4{pvAJ,",
+          "to": "JarybDGAwptdcx-x%lHy",
+          "type": "next",
+          "target": "Star"
+        },
+        {
+          "from": "JarybDGAwptdcx-x%lHy",
+          "to": "jbiXd[;}HC|ReCbehIn2",
+          "type": "next",
+          "target": "Star"
+        },
+        {
+          "from": "JarybDGAwptdcx-x%lHy",
+          "to": "jbiXd[;}HC|ReCbehIn2",
+          "type": "next",
+          "target": "Star"
+        },
+        {
+          "from": "*,9lH~.wm`4]Po,;4$5A",
+          "to": "h4pAHB0Fe?PXZm/bCuY=",
+          "type": "next",
+          "target": "Star"
+        },
+        {
+          "from": "h4pAHB0Fe?PXZm/bCuY=",
+          "to": "hpHHrRP^1lq)X)Gc0v,N",
+          "type": "next",
+          "target": "Star"
+        }
+      ],
+      "analysis": {
+        "loops": {
+          "count": 3,
+          "items": [
+            {
+              "opcode": "control_forever",
+              "target": "Bananas",
+              "id": "Y;h`A55iau|`_c4LSODO"
+            },
+            {
+              "opcode": "control_forever",
+              "target": "Bananas",
+              "id": "*$?vC/DB`rOjywAJMK54"
+            },
+            {
+              "opcode": "control_forever",
+              "target": "Monkey",
+              "id": "vXR{FC~.a82_D{7nx33B"
+            }
+          ]
+        },
+        "conditions": {
+          "count": 4,
+          "items": [
+            {
+              "opcode": "control_if",
+              "target": "Bananas",
+              "id": "QQ!?IV-vJsYj~4`O$U::"
+            },
+            {
+              "opcode": "control_if",
+              "target": "Bananas",
+              "id": "z1w?nbVa?Xc+[P|}~A?1"
+            },
+            {
+              "opcode": "control_if",
+              "target": "Monkey",
+              "id": "?|X@;4`CeD196%q^oUC,"
+            },
+            {
+              "opcode": "control_if",
+              "target": "Monkey",
+              "id": "_K`uyD99Rb:mm]V34dD="
+            }
+          ]
+        },
+        "variables": {
+          "count": 5,
+          "items": [
+            {
+              "opcode": "data_hidevariable",
+              "target": "Bananas",
+              "id": "UCzOk}Jn$HCT7`H6D,V,",
+              "variable": "SCORE"
+            },
+            {
+              "opcode": "data_setvariableto",
+              "target": "Bananas",
+              "id": "B.u%k?mlTAU;|11S6wox",
+              "variable": "SCORE"
+            },
+            {
+              "opcode": "data_changevariableby",
+              "target": "Bananas",
+              "id": "]+tcP#C22]oAK4CO/F`D",
+              "variable": "SCORE"
+            },
+            {
+              "opcode": "data_changevariableby",
+              "target": "Bananas",
+              "id": "D_xH{;}YO=%KUNL[^sIJ",
+              "variable": "SCORE"
+            },
+            {
+              "opcode": "data_showvariable",
+              "target": "Bananas",
+              "id": "mJg^-Q7$YzCg|9I73R5w",
+              "variable": "SCORE"
+            }
+          ]
+        },
+        "broadcasts": {
+          "count": 6,
+          "items": [
+            {
+              "opcode": "event_whenbroadcastreceived",
+              "target": "Bananas",
+              "id": "D)JgYxC!)!h2hRB^a1g5",
+              "message": "ابدأ"
+            },
+            {
+              "opcode": "event_whenbroadcastreceived",
+              "target": "Bananas",
+              "id": "Fm/Idf|)9BQpAqP*S8Gi",
+              "message": "ابدأ"
+            },
+            {
+              "opcode": "event_whenbroadcastreceived",
+              "target": "Bananas",
+              "id": ",M*]|bMQ+J%Nr$-+xOuP",
+              "message": "ابدأ"
+            },
+            {
+              "opcode": "event_whenbroadcastreceived",
+              "target": "Monkey",
+              "id": "4%_k!BbbaUvQW%ojkGL=",
+              "message": "ابدأ"
+            },
+            {
+              "opcode": "event_broadcast",
+              "target": "Star",
+              "id": "JarybDGAwptdcx-x%lHy",
+              "message": ""
+            },
+            {
+              "opcode": "event_broadcast",
+              "target": "Star",
+              "id": "JarybDGAwptdcx-x%lHy",
+              "message": ""
+            }
+          ]
+        },
+        "has_control_flow": true,
+        "has_variables": true,
+        "has_broadcasts": true
+      },
+      "node_count": 45,
+      "edge_count": 35,
+      "graph_ok": true
+    },
+    "scratch_vm": {
+      "ran": true,
+      "variables": [
+        {
+          "name": "Stage:متغيري",
+          "value": "0"
+        },
+        {
+          "name": "Stage:SCORE",
+          "value": 11
+        },
+        {
+          "name": "Stage:ابدأ",
+          "value": "ابدأ"
+        }
+      ],
+      "broadcasts": [],
+      "outputs": [
+        {
+          "kind": "question",
+          "text": "undefined"
+        },
+        {
+          "kind": "question",
+          "text": "undefined"
+        }
+      ],
+      "events": [
+        {
+          "type": "PROJECT_START"
+        },
+        {
+          "type": "PROJECT_RUN_START"
+        }
+      ],
+      "steps_executed": 1200,
+      "error": null,
+      "stage_snapshot": {
+        "target_count": 4,
+        "sprite_count": 3,
+        "sprite_names": [
+          "Bananas",
+          "Monkey",
+          "Star"
+        ],
+        "stage_running": true
+      },
+      "success": true,
+      "method": "scratch_vm"
+    },
+    "scratch_runtime_verification": {
+      "version": "scratch_runtime_verification_v1",
+      "sb3": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx51\\العاب\\نموذج الأولي قبل التعديل .sb3",
+      "format": "sb3"
+    },
+    "runtime_method": "scratch_pro_runtime_verification"
+  },
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": false,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782638843.5062683,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "scratch",
+        "root": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\uploads\\students\\bx51\\العاب"
+      }
+    },
+    {
+      "timestamp": 1782638865.1970658,
+      "type": "scratch_pro_runtime_verification",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "nodes": 45,
+        "loops": 3,
+        "vm_ran": true
+      }
+    }
+  ],
+  "screenshots": [],
+  "logs": [],
+  "errors": [],
+  "artifacts": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

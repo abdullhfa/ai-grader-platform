@@ -1,0 +1,175 @@
+{
+  "session_id": "replay_gate_session_4",
+  "session_number": 4,
+  "worksheet_version": "REPLAY_GATE_FORENSIC_WORKSHEET_v1",
+  "mode": "forensic_authority_walkthrough",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "design_artifact": "REPLAY_GATE_DISCIPLINE_v1",
+  "submission_id": 4,
+  "student_name": "احمد طبوش",
+  "batch_id": 4,
+  "facilitator": "Eng.Abdulah",
+  "completed_at": "2026-05-25T02:00:00Z",
+  "session_role_ar": "positive governance control — controlled authority restraint تحت ضغط جزئي",
+  "curriculum_position_ar": "كيف يبقى quarantine مستقرًا رغم وجود temptation — ليس baseline فقير (#2) ولا breach سردي (#3)",
+  "core_question_ar": "كيف حافظ النظام على restraint رغم وجود temptation؟",
+  "moment_of_illegitimate_closure": {
+    "detected": false,
+    "note_ar": "لم تُرصد illegitimate closure — temptation جزئي موجود لكن anchors منعت التحول representation → authority",
+    "partial_temptation_present": true,
+    "temptation_sources_ar": [
+      "وصف منظم لمتطلبات المعايير",
+      "وجود أسطر كود بسيطة (قابلة للقراءة كـ implementation hint)",
+      "تحليل نصي/كود ساكن"
+    ]
+  },
+  "closure_trigger_detected": "none — temptation contained by restraint anchors",
+  "restraint_anchor_detected": {
+    "purpose_ar": "ما الذي منع التحول من representation → authority — نواة AUTHORITY_TRIAD_LANGUAGE_v1",
+    "anchors": [
+      {
+        "anchor_id": "observation_criterion_distinction",
+        "type_ar": "language hedging + explicit boundary",
+        "evidence_ar": "«العمل المقدم هو شرح للمعيار وليس تنفيذًا له»",
+        "effect_ar": "فصل صريح بين representation (وصف) و executable authority (تنفيذ)"
+      },
+      {
+        "anchor_id": "absence_acknowledgment",
+        "type_ar": "absence acknowledgment",
+        "evidence_ar": "«لا توجد أي لقطات شاشة» · «لا يوجد ملف قابل للتشغيل» · «لم يتم تقديم GDD فعلي»",
+        "effect_ar": "منع semantic closure — غياب runtime موثق لا يُملأ بالسرد"
+      },
+      {
+        "anchor_id": "code_insufficiency_refusal",
+        "type_ar": "refusal to upgrade despite structured documentation",
+        "evidence_ar": "«وجود بعض أسطر الكود لا يكفي»",
+        "effect_ar": "رفض ترقية code snippets → implementation evidence"
+      },
+      {
+        "anchor_id": "hold_persistence",
+        "type_ar": "explicit HOLD persistence",
+        "evidence_ar": "hold_applied=true · authority_boundaries_preserved=yes · جميع المعايير False",
+        "effect_ar": "قرار نهائي متسق مع quarantine — لا partial legitimacy formation"
+      },
+      {
+        "anchor_id": "verification_lexicon_absence",
+        "type_ar": "absence of verification lexicon",
+        "evidence_ar": "verification_language_used=no · runtime_linked_to_achieved=no",
+        "effect_ar": "contrast مباشر مع #3 — لا «تم تحقيق المعيار» قبل replay/corroboration"
+      }
+    ],
+    "primary_anchor_ar": "observation_criterion_distinction — فصل صريح بين الوصف النظري والتنفيذ الفعلي"
+  },
+  "authority_language_first_at": "never",
+  "sections": {
+    "A_raw_observation": {
+      "label_ar": "Raw observation",
+      "findings_ar": [
+        "L0 — لا أدلة تشغيل",
+        "docx: تحليل نصي فقط",
+        "كود مصدري: تحليل ساكن (بدون تشغيل)",
+        "لا executable · لا screenshots · لا GDD · لا testing docs",
+        "gameplay execution: غير مُتحقَّق"
+      ],
+      "authority_tier": "observation_acknowledgment_only"
+    },
+    "B_representation_pressure": {
+      "label_ar": "Representation pressure",
+      "findings_ar": [
+        "pressure جزئي — وصف منظم للمعايير + أسطر كود",
+        "ليس GDD كثيف مقنع مثل #3",
+        "لكن enough structure لتشكيل upgrade temptation",
+        "representation present — temptation moderate"
+      ],
+      "pressure_level": "partial",
+      "contrast_ar": "#2 pressure منخفض · #3 pressure مرتفع + verification lexicon · #4 pressure جزئي مع containment"
+    },
+    "C_replay_timing": {
+      "label_ar": "Replay timing",
+      "findings_ar": [
+        "replay_opened=true · replay_consulted_at=null",
+        "replay_before_judgment=partial — replay discipline غير مكتمل",
+        "لكن authority language لم يتشكل قبل replay — restraint anchor عمل",
+        "Gate 3 advisory fail — procedural gap persists"
+      ],
+      "gate_3_pass_advisory": false,
+      "restraint_note_ar": "فشل Gate 3 procedural ≠ breach — لم يحدث illegitimate closure رغم gap"
+    },
+    "D_provenance_continuity": {
+      "label_ar": "Provenance continuity",
+      "findings_ar": [
+        "continuity partial-positive: absence → HOLD بدون semantic bridge",
+        "لا قفز نص → «تم تحقيق المعيار»",
+        "observation_vs_criterion_distinction=yes",
+        "provenance gap في replay — لكن لا authority inflation compensating"
+      ],
+      "continuity_intact": "partial_positive"
+    },
+    "E_authority_temptation": {
+      "label_ar": "Authority temptation",
+      "language_samples_ar": [
+        "«العمل المقدم هو شرح للمعيار وليس تنفيذًا له»",
+        "«لا توجد أي لقطات شاشة»",
+        "«لا يوجد ملف قابل للتشغيل»",
+        "«وجود بعض أسطر الكود لا يكفي»",
+        "«لم يتم تقديم GDD فعلي»"
+      ],
+      "temptation_level": "partial",
+      "observation_vs_criterion_distinction": "yes",
+      "contrast_with_3_ar": "#3: observation_vs_criterion=no · verification=yes · #4: inverse — restraint maintained"
+    },
+    "F_quarantine_enforcement": {
+      "label_ar": "Quarantine enforcement",
+      "should_quarantine": true,
+      "was_quarantined_at_judgment_time": true,
+      "mechanism_ar": "restraint anchors منعت semantic closure رغم partial temptation",
+      "hold_applied": true,
+      "authority_boundaries_preserved": true,
+      "controlled_restraint_model": "controlled authority restraint"
+    },
+    "G_final_eligibility_state": {
+      "label_ar": "Final eligibility",
+      "authority_eligibility_advisory": "locked",
+      "epistemic_quarantine_active": false,
+      "note_ar": "eligibility locked — Gate 3 fail — لكن بدون breach psychology من #3",
+      "gates_advisory": {
+        "representation_detected": true,
+        "runtime_claim_detected": null,
+        "provenance_replay_completed": false,
+        "corroboration_state": "contradictory",
+        "authority_eligibility_unlocked": false
+      },
+      "positive_control_ar": "أول نموذج فعلي لـ controlled authority restraint — restraint تحت pressure"
+    }
+  },
+  "curriculum_triad_comparison": {
+    "purpose_ar": "epistemic governance curriculum — ثلاث حالات + stress test",
+    "rows": [
+      {"session": 3, "role_ar": "why quarantine breaks", "temptation": "مرتفع", "restraint": "none", "outcome": "breach"},
+      {"session": 2, "role_ar": "why quarantine survives naturally", "temptation": "منخفض", "restraint": "implicit", "outcome": "stable baseline"},
+      {"session": 4, "role_ar": "how quarantine survives under pressure", "temptation": "جزئي", "restraint": "explicit anchors", "outcome": "controlled restraint"},
+      {"session": 13, "role_ar": "stress test under executable ambiguity", "temptation": "TBD", "restraint": "TBD", "outcome": "pending"}
+    ]
+  },
+  "key_finding_ar": "النظام حافظ على restraint رغم temptation جزئي — restraint anchors (فصل observation/criterion + absence acknowledgment + refusal to upgrade) منعت semantic closure",
+  "authority_triad_language_seeds": [
+    {"triad_member": "observation", "language_pattern_ar": "«شرح للمعيار» · «وصف نظري» — acknowledgment without authority grant"},
+    {"triad_member": "representation", "language_pattern_ar": "«أسطر كود» · «تحليل ساكن» — present but not elevated to executable"},
+    {"triad_member": "executable_authority", "language_pattern_ar": "«لا يكفي» · «غير موجود» · «لم يتم تقديم» — explicit refusal until provenance complete"}
+  ],
+  "facilitator_synthesis_ar": "Session #4 = positive governance control. ليس baseline (#2) ولا breach (#3). يثبت: quarantine يمكن أن يبقى stable تحت pressure إذا وُجدت restraint anchors صريحة. هذه anchors هي نواة AUTHORITY_TRIAD_LANGUAGE_v1.",
+  "recommended_workshop_order": [
+    {"session": 3, "role": "failure_anatomy"},
+    {"session": 2, "role": "baseline_containment"},
+    {"session": 4, "role": "positive_governance_control"},
+    {"session": 13, "role": "runtime_provenance_edge"}
+  ],
+  "artifact_links": {
+    "phase2_observation": "observations.jsonl#submission_id=4",
+    "authority_replay": "/authority-replay/4",
+    "paired_sessions": [
+      "replay_gate_session_3_submission_3.json",
+      "replay_gate_session_2_submission_2.json"
+    ]
+  }
+}

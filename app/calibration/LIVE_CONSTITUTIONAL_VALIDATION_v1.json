@@ -1,0 +1,150 @@
+{
+  "phase_id": "LIVE_CONSTITUTIONAL_VALIDATION_v1",
+  "status": "ready_not_started",
+  "mode": "institutional_live_validation",
+  "not": [
+    "feature_expansion",
+    "l4_activation",
+    "auto_grading_pilot",
+    "observability_expansion",
+    "certainty_maximization"
+  ],
+  "institutional_question_en": "Does this philosophy remain true when real humans enter under real pressure?",
+  "institutional_question_ar": "هل تبقى هذه الفلسفة صحيحة عندما يدخل بشر حقيقيون؟",
+  "primary_metric_en": "Can humans comfortably disagree with the system?",
+  "primary_metric_ar": "هل يستطيع البشر الاختلاف مع النظام براحة؟",
+  "expansion_gate_question_en": "Does this illuminate? Or organize cognition?",
+  "expansion_gate_question_ar": "هل هذا يُضيء؟ أم ينظّم الإدراك؟",
+  "supreme_risk_en": "The quiet shift from illumination to organization.",
+  "supreme_risk_ar": "التحول الهادئ من الإضاءة إلى التنظيم.",
+  "layer_readiness": {
+    "epistemic_governance": "advanced",
+    "replay_discipline_architecture": "ready",
+    "quarantine_doctrine": "ready",
+    "authority_triad": "ready",
+    "observatory_posture_governance": "ready",
+    "constitutional_epistemics": "advanced",
+    "operational_grading": "not_ready",
+    "runtime_game_execution": "partial",
+    "live_institutional_validation": "not_started"
+  },
+  "explicitly_blocked_until_live_pass": [
+    "l4_operational_pilot",
+    "governance_freeze_v2_grading_wire",
+    "observability_expansion",
+    "stronger_ai_auto_grading",
+    "new_operational_permissions"
+  ],
+  "validates_preservation_of": [
+    "right_to_doubt",
+    "right_to_non_conviction",
+    "observability_not_becoming_authority",
+    "hints_not_becoming_psychological_pressure",
+    "replay_not_becoming_ritual_legitimacy"
+  ],
+  "cohort_spec": {
+    "size_reviewers": "3-5",
+    "submissions": "real",
+    "sessions": "real",
+    "disagreement": "required_not_avoided",
+    "goal": "posture_observation",
+    "not_goal": [
+      "accuracy",
+      "throughput",
+      "grading_correctness"
+    ]
+  },
+  "watch_questions": [
+    {
+      "id": "disagreement_comfort",
+      "question_ar": "هل أصبح disagreement غير مريح؟",
+      "severity": "high"
+    },
+    {
+      "id": "hint_psychological_direction",
+      "question_ar": "هل hint أصبح توجيهًا نفسيًا؟",
+      "severity": "high"
+    },
+    {
+      "id": "replay_ritual_authority",
+      "question_ar": "هل replay أصبح ritual authority؟",
+      "severity": "high"
+    },
+    {
+      "id": "seeking_system_want",
+      "question_ar": "هل المراجع يبحث عما «يريده النظام»؟",
+      "severity": "critical"
+    },
+    {
+      "id": "non_conviction_needs_justification",
+      "question_ar": "هل عدم الاقتناع يحتاج تبريرًا؟",
+      "severity": "constitutional_failure"
+    }
+  ],
+  "constitutional_diagnostic_triad": [
+    "freedom_of_non_conviction",
+    "non_conviction_extra_courage",
+    "non_conviction_without_leaving_system"
+  ],
+  "sequence_ordered": [
+    {
+      "step": 1,
+      "action_en": "Small live cohort",
+      "action_ar": "cohort حي صغير"
+    },
+    {
+      "step": 2,
+      "action_en": "Observer drift measurement",
+      "ledger": "observer_role_drift_checks.jsonl"
+    },
+    {
+      "step": 3,
+      "action_en": "Hint pressure observation",
+      "artifact": "possible_vocabulary_escalation_hint"
+    },
+    {
+      "step": 4,
+      "action_en": "Replay timing validation",
+      "artifact": "TRUSTED_REPLAY_DISCIPLINE_PILOT_v1"
+    },
+    {
+      "step": 5,
+      "action_en": "Disagreement comfort analysis",
+      "metric": "primary_metric_en"
+    },
+    {
+      "step": 6,
+      "action_en": "Institutional posture review",
+      "artifact": "OBSERVATORY_POSTURE_GOVERNANCE_v1"
+    },
+    {
+      "step": 7,
+      "action_en": "Only then — limited runtime validation",
+      "gate": "live_pass_required",
+      "phase_ref": "RUNTIME_OBSERVABILITY_PREPARATION_v1#step_6"
+    }
+  ],
+  "parallel_capability_track": {
+    "phase_id": "RUNTIME_OBSERVABILITY_PREPARATION_v1",
+    "artifact": "app/calibration/RUNTIME_OBSERVABILITY_PREPARATION_v1.json",
+    "mode": "observability_only",
+    "supreme_invariant_en": "Runtime observation does not imply runtime legitimacy.",
+    "note_en": "Builds capability in parallel — does not replace constitutional pilot gate"
+  },
+  "after_live_pass_only": [
+    "trusted_runtime_corroboration_layer",
+    "limited_game_execution_pilot"
+  ],
+  "value_proposition_en": "The system does not claim to know more than it possesses.",
+  "value_proposition_ar": "النظام لا يدّعي معرفة أكثر مما يملك.",
+  "not_traditional": "certainty_maximization",
+  "is_instead": "legitimacy_aware_epistemic_governance",
+  "companions": [
+    "OBSERVATORY_POSTURE_GOVERNANCE_v1.json",
+    "OBSERVER_ROLE_DRIFT_CHECK_v1.json",
+    "EPISTEMIC_TRACE_CAPTURE_SCHEMA_v1.json",
+    "human_cohort_workshop/live_constitutional_validation_state.json",
+    "human_cohort_workshop/live_constitutional_validation_cohort_template.json"
+  ],
+  "state_file": "app/calibration/human_cohort_workshop/live_constitutional_validation_state.json"
+}

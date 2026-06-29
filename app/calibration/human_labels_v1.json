@@ -1,0 +1,1695 @@
+{
+  "schema": "human_labels_v1",
+  "description_ar": "مراجع بشري — املأ decision و overall_grade قبل calibration",
+  "records": [
+    {
+      "submission_id": 1,
+      "student": "Abdullah",
+      "student_name_ar": "عبدالله العتوم",
+      "platform": "unity",
+      "reviewer": "ABDULAHFA",
+      "reviewed_at": "25-5-2026",
+      "overall_grade": "M",
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "GDD / requirements — pending teacher review"
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "Design documentation — pending"
+        },
+        "P5": {
+          "decision": "Achieved",
+          "confidence": 0.9,
+          "notes": "Gameplay loop verified manually (L5 playtest corroboration)"
+        },
+        "P6": {
+          "decision": "Achieved",
+          "confidence": 0.9,
+          "notes": "Mechanics interactively observed"
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "Testing evidence — pending"
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "pending"
+        },
+        "M3": {
+          "decision": "Achieved",
+          "confidence": null,
+          "notes": "pending"
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "pending"
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "pending"
+        }
+      }
+    },
+    {
+      "submission_id": 14,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "student_name_ar": "(ج) مهمه الالعاب محمد رمزي",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 15,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "student_name_ar": "CAT RUNNER  عمر صبري أبو عاذره",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 16,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "student_name_ar": "hashem nawasreh _ lpsc geame worde",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 17,
+      "student": "احمد طبوش",
+      "student_name_ar": "احمد طبوش",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 18,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "student_name_ar": "الالعاب سيف سليمان ابو فرده",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 19,
+      "student": "العاب حيدر عمر الزعارير",
+      "student_name_ar": "العاب حيدر عمر الزعارير",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 20,
+      "student": "عبد الرحمن بني مصطفى",
+      "student_name_ar": "عبد الرحمن بني مصطفى",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 21,
+      "student": "ايمن الشنباري",
+      "student_name_ar": "ايمن الشنباري",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 22,
+      "student": "أيهم حسن العتوم",
+      "student_name_ar": "أيهم حسن العتوم",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 23,
+      "student": "محمد عبد المعطي نوفل",
+      "student_name_ar": "محمد عبد المعطي نوفل",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 24,
+      "student": "محمد قاسم نوفل",
+      "student_name_ar": "محمد قاسم نوفل",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 25,
+      "student": "حذيفه محمد صبيحي",
+      "student_name_ar": "حذيفه محمد صبيحي",
+      "batch_id": 5,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 2,
+      "student": "(ج) مهمه الالعاب محمد رمزي",
+      "student_name_ar": "(ج) مهمه الالعاب محمد رمزي",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 3,
+      "student": "CAT RUNNER  عمر صبري أبو عاذره",
+      "student_name_ar": "CAT RUNNER  عمر صبري أبو عاذره",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 4,
+      "student": "hashem nawasreh _ lpsc geame worde",
+      "student_name_ar": "hashem nawasreh _ lpsc geame worde",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 5,
+      "student": "احمد طبوش",
+      "student_name_ar": "احمد طبوش",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 6,
+      "student": "الالعاب سيف سليمان ابو فرده",
+      "student_name_ar": "الالعاب سيف سليمان ابو فرده",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 7,
+      "student": "العاب حيدر عمر الزعارير",
+      "student_name_ar": "العاب حيدر عمر الزعارير",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 8,
+      "student": "عبد الرحمن بني مصطفى",
+      "student_name_ar": "عبد الرحمن بني مصطفى",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 9,
+      "student": "ايمن الشنباري",
+      "student_name_ar": "ايمن الشنباري",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 10,
+      "student": "أيهم حسن العتوم",
+      "student_name_ar": "أيهم حسن العتوم",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 11,
+      "student": "محمد عبد المعطي نوفل",
+      "student_name_ar": "محمد عبد المعطي نوفل",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 12,
+      "student": "محمد قاسم نوفل",
+      "student_name_ar": "محمد قاسم نوفل",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": true
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    },
+    {
+      "submission_id": 13,
+      "student": "حذيفه محمد صبيحي",
+      "student_name_ar": "حذيفه محمد صبيحي",
+      "batch_id": 4,
+      "platform": "unknown",
+      "reviewer": null,
+      "reviewed_at": null,
+      "overall_grade": null,
+      "overall_grade_notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+      "ai_system_grade_level": "U",
+      "criteria": {
+        "P3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P4": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P5": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P6": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "P7": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "M3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D2": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        },
+        "D3": {
+          "decision": null,
+          "confidence": null,
+          "notes": "PENDING_REVIEW — يُعبّأ من المعلّم",
+          "ai_system_achieved": false
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "run_purpose": "Observe UI token correlation between OCR and logs; synthetic OCR rows may be injected for determinism without Tesseract.",
+  "cases": [
+    {
+      "case_id": "case_a_score_ocr_log_overlap",
+      "expected_behavior": "score in both synthetic OCR and log with nearby timestamps → correlation_strength strong, token_overlap reasoning.",
+      "ui_token_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"token_correlation_groups\": [\n    {\n      \"token\": \"score\",\n      \"sources\": [\n        \"ocr_text\",\n        \"runtime_log\"\n      ],\n      \"temporal_overlap\": true,\n      \"correlation_strength\": \"strong\",\n      \"ocr_hit_count\": 1,\n      \"runtime_log_hit_count\": 1\n    }\n  ],\n  \"token_noise_flags\": [],\n  \"token_reasoning\": {\n    \"reasoning\": [\n      \"score_detected_in_ocr_text\",\n      \"score_detected_in_runtime_log\",\n      \"token_overlap_within_same_temporal_window\"\n    ]\n  },\n  \"window_seconds\": 5.0\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_inventory_ocr_only",
+      "expected_behavior": "inventory only in OCR → weak, single source runtime_log absent.",
+      "ui_token_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"token_correlation_groups\": [\n    {\n      \"token\": \"inventory\",\n      \"sources\": [\n        \"ocr_text\"\n      ],\n      \"temporal_overlap\": false,\n      \"correlation_strength\": \"weak\",\n      \"ocr_hit_count\": 1,\n      \"runtime_log_hit_count\": 0\n    }\n  ],\n  \"token_noise_flags\": [],\n  \"token_reasoning\": {\n    \"reasoning\": [\n      \"inventory_detected_in_ocr_text\"\n    ]\n  },\n  \"window_seconds\": 5.0\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_health_log_only",
+      "expected_behavior": "health/hp only in log lines → weak from log side only.",
+      "ui_token_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"token_correlation_groups\": [\n    {\n      \"token\": \"hp\",\n      \"sources\": [\n        \"runtime_log\"\n      ],\n      \"temporal_overlap\": false,\n      \"correlation_strength\": \"weak\",\n      \"ocr_hit_count\": 0,\n      \"runtime_log_hit_count\": 1\n    }\n  ],\n  \"token_noise_flags\": [],\n  \"token_reasoning\": {\n    \"reasoning\": [\n      \"hp_detected_in_runtime_log\"\n    ]\n  },\n  \"window_seconds\": 5.0\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_pause_menu_only",
+      "expected_behavior": "pause/menu surface in OCR only → weak; generic_ui_token_only noise likely.",
+      "ui_token_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"token_correlation_groups\": [\n    {\n      \"token\": \"pause\",\n      \"sources\": [\n        \"ocr_text\"\n      ],\n      \"temporal_overlap\": false,\n      \"correlation_strength\": \"weak\",\n      \"ocr_hit_count\": 1,\n      \"runtime_log_hit_count\": 0\n    }\n  ],\n  \"token_noise_flags\": [\n    {\n      \"flag\": \"generic_ui_token_only\",\n      \"detail\": \"pause\"\n    }\n  ],\n  \"token_reasoning\": {\n    \"reasoning\": [\n      \"pause_detected_in_ocr_text\"\n    ]\n  },\n  \"window_seconds\": 5.0\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_score_split_time",
+      "expected_behavior": "score in OCR and log but timestamps far apart → medium strength; token_without_temporal_support.",
+      "ui_token_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"token_correlation_groups\": [\n    {\n      \"token\": \"score\",\n      \"sources\": [\n        \"ocr_text\",\n        \"runtime_log\"\n      ],\n      \"temporal_overlap\": false,\n      \"correlation_strength\": \"medium\",\n      \"ocr_hit_count\": 1,\n      \"runtime_log_hit_count\": 1\n    }\n  ],\n  \"token_noise_flags\": [\n    {\n      \"flag\": \"token_without_temporal_support\",\n      \"detail\": \"score\"\n    }\n  ],\n  \"token_reasoning\": {\n    \"reasoning\": [\n      \"score_detected_in_ocr_text\",\n      \"score_detected_in_runtime_log\"\n    ]\n  },\n  \"window_seconds\": 5.0\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ],
+  "note": "Synthetic OCR rows fill gaps when Tesseract is unavailable."
+}

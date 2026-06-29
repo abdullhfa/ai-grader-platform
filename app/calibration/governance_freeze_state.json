@@ -1,0 +1,8 @@
+{
+  "active_epoch_id": "epoch_2",
+  "active_freeze_id": "GOVERNANCE_FREEZE_v2",
+  "activated_from_artifact_id": "local_deployment_completion",
+  "transition_verdict": "epoch_transition_justified_institutionally",
+  "authority_note_ar": "L4 observational sandbox enabled for deployment — human authority mandatory for P5/P6.",
+  "note": "Set AI_GRADER_ENABLE_L4=0 and remove this file to revert to v1 freeze."
+}

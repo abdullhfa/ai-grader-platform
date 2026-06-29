@@ -1,0 +1,2372 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة الإدارة - طلبات التفعيل{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ===== ADMIN DARK THEME ===== */
+    body, body.min-h-screen {
+        background: #0a0a1a !important;
+        background-color: #0a0a1a !important;
+        color: #e2e8f0 !important;
+    }
+
+    /* Override base glass-card for admin */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    /* Remove navbar bottom gap */
+    .navbar {
+        border-bottom: none !important;
+        margin-bottom: 0 !important;
+    }
+
+    .admin-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 30px 24px;
+        position: relative;
+    }
+
+    /* Animated background blobs */
+    .admin-container::before,
+    .admin-container::after {
+        content: '';
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.12;
+        z-index: -1;
+        pointer-events: none;
+    }
+    .admin-container::before {
+        width: 500px; height: 500px;
+        background: #f97316;
+        top: -100px; right: -100px;
+        animation: adminBlob1 18s ease-in-out infinite alternate;
+    }
+    .admin-container::after {
+        width: 400px; height: 400px;
+        background: #6366f1;
+        bottom: -50px; left: -80px;
+        animation: adminBlob2 20s ease-in-out infinite alternate;
+    }
+    @keyframes adminBlob1 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-60px, 80px) scale(1.15); } }
+    @keyframes adminBlob2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, -70px) scale(1.1); } }
+
+    /* Glass card base */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+    }
+
+    .admin-header {
+        background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 88, 12, 0.2));
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(249, 115, 22, 0.2);
+        color: white;
+        padding: 28px 32px;
+        border-radius: 18px;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .admin-header h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .admin-header p {
+        opacity: 0.8;
+        font-size: 0.9rem;
+        margin-top: 4px;
+    }
+
+    /* Stats cards */
+    .stats-row {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .stat-card {
+        flex: 1 1 220px;
+        min-width: 220px;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 24px 28px;
+        text-align: center;
+        transition: transform 0.25s, border-color 0.25s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(255,255,255,0.15);
+    }
+
+    .stat-card .stat-number {
+        font-size: 2.2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #818cf8, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.5);
+        margin-top: 6px;
+        font-weight: 600;
+    }
+
+    .stat-card.pending .stat-number {
+        background: linear-gradient(135deg, #fb923c, #f97316);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card.sent .stat-number {
+        background: linear-gradient(135deg, #60a5fa, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card.verified .stat-number {
+        background: linear-gradient(135deg, #4ade80, #22c55e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card.rejected .stat-number {
+        background: linear-gradient(135deg, #f87171, #ef4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Tables */
+    .requests-table {
+        width: 100%;
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 18px;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .requests-table thead {
+        background: rgba(255,255,255,0.05);
+    }
+
+    .requests-table th {
+        padding: 14px 16px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: rgba(255,255,255,0.55);
+        text-align: right;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .requests-table td {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.8);
+        border-top: 1px solid rgba(255,255,255,0.04);
+        vertical-align: middle;
+    }
+
+    .requests-table tr:hover td {
+        background: rgba(255,255,255,0.03);
+    }
+
+    /* Status badges */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: none;
+    }
+
+    .status-badge.pending {
+        background: rgba(249, 115, 22, 0.15);
+        color: #fb923c;
+        border: 1px solid rgba(249, 115, 22, 0.25);
+    }
+
+    .status-badge.code_sent {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .status-badge.verified {
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.25);
+    }
+
+    .status-badge.rejected {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    /* Inputs */
+    .code-input {
+        width: 100px;
+        padding: 8px 10px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px;
+        text-align: center;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        background: rgba(255,255,255,0.06);
+        color: white;
+        transition: border-color 0.2s;
+    }
+
+    .detail-input {
+        width: 140px;
+        padding: 8px 10px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        background: rgba(255,255,255,0.06);
+        color: white;
+        transition: border-color 0.2s;
+    }
+
+    .detail-input:focus,
+    .code-input:focus {
+        outline: none;
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+    }
+
+    /* Buttons */
+    .btn-send-code {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        white-space: nowrap;
+    }
+
+    .btn-send-code:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-send-code:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-reject {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        white-space: nowrap;
+    }
+
+    .btn-reject:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    }
+
+    .action-group {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: rgba(255,255,255,0.3);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 16px;
+    }
+
+    .back-link {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .back-link:hover {
+        opacity: 1;
+    }
+
+    /* Navigation tabs */
+    .filter-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-tab {
+        padding: 8px 18px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.5);
+        transition: all 0.25s;
+    }
+
+    .filter-tab:hover {
+        border-color: rgba(249, 115, 22, 0.4);
+        color: #fb923c;
+        background: rgba(249, 115, 22, 0.08);
+    }
+
+    .filter-tab.active {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+    }
+
+    /* Main view tabs */
+    .view-tab {
+        flex: 1;
+        min-width: 180px;
+        padding: 14px 12px;
+        border-radius: 14px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        color: rgba(255,255,255,0.5);
+        transition: all 0.3s;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .view-tab:hover {
+        border-color: rgba(249, 115, 22, 0.3);
+        color: #fb923c;
+        background: rgba(249, 115, 22, 0.06);
+    }
+
+    .view-tab.active {
+        background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(234,88,12,0.15));
+        color: #fb923c;
+        border-color: rgba(249, 115, 22, 0.35);
+        box-shadow: 0 0 20px rgba(249, 115, 22, 0.1);
+    }
+
+    /* Integration banner */
+    .integration-banner {
+        margin: 0 0 16px;
+        padding: 14px 18px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: none;
+    }
+
+    .integration-banner.ok {
+        display: block;
+        background: rgba(34,197,94,0.1);
+        color: #4ade80;
+        border: 1px solid rgba(34,197,94,0.2);
+    }
+
+    .integration-banner.warn {
+        display: block;
+        background: rgba(249,115,22,0.1);
+        color: #fb923c;
+        border: 1px solid rgba(249,115,22,0.2);
+    }
+
+    /* Toast */
+    .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        padding: 14px 28px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        z-index: 10000;
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.success {
+        background: rgba(34,197,94,0.9);
+        color: white;
+        box-shadow: 0 8px 24px rgba(34,197,94,0.3);
+    }
+
+    .toast.error {
+        background: rgba(239,68,68,0.9);
+        color: white;
+        box-shadow: 0 8px 24px rgba(239,68,68,0.3);
+    }
+
+    /* Action buttons in admin header */
+    .admin-header .admin-action-btn {
+        padding: 10px 20px;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: white;
+        transition: all 0.25s;
+        backdrop-filter: blur(8px);
+    }
+    .admin-header .admin-action-btn:hover {
+        transform: translateY(-2px);
+    }
+    .admin-action-btn.danger {
+        background: rgba(239,68,68,0.2);
+        border-color: rgba(239,68,68,0.3);
+    }
+    .admin-action-btn.danger:hover {
+        background: rgba(239,68,68,0.35);
+        box-shadow: 0 4px 16px rgba(239,68,68,0.2);
+    }
+    .admin-action-btn.warning {
+        background: rgba(249,115,22,0.2);
+        border-color: rgba(249,115,22,0.3);
+    }
+    .admin-action-btn.warning:hover {
+        background: rgba(249,115,22,0.35);
+        box-shadow: 0 4px 16px rgba(249,115,22,0.2);
+    }
+
+    /* Modal dark theme */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(6px);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-card {
+        background: #1a1a2e;
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 30px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .modal-card h2 {
+        color: white;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding-bottom: 12px;
+    }
+    .modal-card label {
+        color: rgba(255,255,255,0.7);
+    }
+    .modal-card .detail-input {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: white;
+    }
+    .modal-btn-cancel {
+        padding: 10px 20px;
+        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.06);
+        border-radius: 10px;
+        cursor: pointer;
+        color: rgba(255,255,255,0.7);
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .modal-btn-cancel:hover { background: rgba(255,255,255,0.1); }
+    .modal-btn-save {
+        padding: 10px 20px;
+        border: none;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.2s;
+    }
+    .modal-btn-save:hover { box-shadow: 0 4px 16px rgba(37,99,235,0.35); transform: translateY(-1px); }
+
+    @media (max-width: 768px) {
+        .requests-table {
+            display: block;
+            overflow-x: auto;
+        }
+        .admin-header {
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Back Button -->
+    <a href="/dashboard" style="display: inline-flex; align-items: center; gap: 8px; color: #fb923c; text-decoration: none; font-weight: 700; font-size: 0.95rem; margin-bottom: 20px; padding: 10px 22px; background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2); border-radius: 12px; transition: all 0.25s;"
+       onmouseenter="this.style.background='rgba(249,115,22,0.2)'"
+       onmouseleave="this.style.background='rgba(249,115,22,0.08)'">
+        <i class="fas fa-arrow-right"></i>
+        العودة للصفحة الرئيسية
+    </a>
+
+    <!-- Main Views Tabs -->
+    <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+        <button id="viewVerificationsBtn" class="view-tab active"
+            onclick="switchView('verifications')">
+            <i class="fas fa-shield-alt" style="margin-left:8px;"></i>طلبات التفعيل
+        </button>
+        <button id="viewReportsBtn" class="view-tab"
+            onclick="switchView('reports')">
+            <i class="fas fa-chart-bar" style="margin-left:8px;"></i>تقارير الاشتراكات
+        </button>
+        <button id="viewUsersBtn" class="view-tab"
+            onclick="switchView('users')">
+            <i class="fas fa-users" style="margin-left:8px;"></i>إدارة المستخدمين
+        </button>
+        <button id="viewAssignmentsBtn" class="view-tab"
+            onclick="switchView('assignments')">
+            <i class="fas fa-book-open" style="margin-left:8px;"></i>إدارة المهام
+        </button>
+        <button id="viewSubmissionsBtn" class="view-tab"
+            onclick="switchView('submissions')">
+            <i class="fas fa-clipboard-check" style="margin-left:8px;"></i>إدارة التصحيح
+        </button>
+        <button id="viewLogsBtn" class="view-tab"
+            onclick="switchView('logs')">
+            <i class="fas fa-history" style="margin-left:8px;"></i>سجل النشاطات
+        </button>
+        <button id="viewWhatsappBtn" class="view-tab"
+            onclick="switchView('whatsapp')" style="color:#25D366;">
+            <i class="fab fa-whatsapp" style="margin-left:8px;"></i>الواتساب
+        </button>
+        <a href="/settings" class="view-tab" style="text-decoration:none;">
+            <i class="fas fa-cog" style="margin-left:8px;"></i>إعدادات النظام
+        </a>
+    </div>
+
+    <!-- VIEW 1: Verifications -->
+    <div id="verificationsView">
+        <!-- Header -->
+        <div class="admin-header">
+            <div>
+                <h1><i class="fas fa-shield-alt" style="margin-left:10px;"></i>لوحة إدارة طلبات التفعيل</h1>
+                <p style="opacity:0.85; font-size:0.9rem; margin-top:4px;">مراجعة الحوالات والموافقة مع إرسال إشعار واتساب للمعلمين
+                </p>
+            </div>
+            <a href="/dashboard" class="back-link">
+                <i class="fas fa-arrow-right"></i>
+                العودة للرئيسية
+            </a>
+        </div>
+
+        <div id="whatsappStatusBanner" class="integration-banner" style="cursor:pointer;" onclick="switchView('whatsapp')"></div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card pending">
+                <div class="stat-number" id="countPending">0</div>
+                <div class="stat-label">بانتظار المراجعة</div>
+            </div>
+            <div class="stat-card sent">
+                <div class="stat-number" id="countSent">0</div>
+                <div class="stat-label">تم إرسال الرمز</div>
+            </div>
+            <div class="stat-card verified">
+                <div class="stat-number" id="countVerified">0</div>
+                <div class="stat-label">مفعّل</div>
+            </div>
+            <div class="stat-card rejected">
+                <div class="stat-number" id="countRejected">0</div>
+                <div class="stat-label">مرفوض</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">الكل</button>
+                <button class="filter-tab" data-filter="pending">بانتظار المراجعة</button>
+                <button class="filter-tab" data-filter="code_sent">تم إرسال الرمز</button>
+                <button class="filter-tab" data-filter="verified">مفعّل</button>
+                <button class="filter-tab" data-filter="rejected">مرفوض</button>
+            </div>
+            <button onclick="deleteAllVerifications()" style="background:#dc2626; color:#fff; border:none; padding:8px 18px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px;">
+                <i class="fas fa-trash-alt"></i> حذف جميع الطلبات
+            </button>
+        </div>
+
+        <!-- Table -->
+        <div class="requests-table" id="requestsContainer">
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>المعلم</th>
+                        <th>الهاتف</th>
+                        <th>رقم الحوالة</th>
+                        <th>الباقة</th>
+                        <th>المتبقي من التصحيح</th>
+                        <th>التخصص</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th>الهاتف للتفعيل</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsBody">
+                    <tr>
+                        <td colspan="11">
+                            <div class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>جاري التحميل...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- End Verifications View -->
+
+    <!-- VIEW 2: Reports -->
+    <div id="reportsView" style="display: none;">
+        <div class="admin-header" style="background: linear-gradient(135deg, rgba(67,56,202,0.25), rgba(49,46,129,0.2)); border-color: rgba(99,102,241,0.2);">
+            <div>
+                <h1><i class="fas fa-chart-pie" style="margin-left:10px;"></i>تقارير مبيعات واستخدام الاشتراكات</h1>
+                <p style="opacity:0.85; font-size:0.9rem; margin-top:4px;">متابعة الباقات، المبالغ المدفوعة، والمتبقي
+                    لكل معلم</p>
+            </div>
+        </div>
+
+        <div class="requests-table" id="reportsContainer">
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>المعلم</th>
+                        <th>الهاتف</th>
+                        <th>الباقة</th>
+                        <th>حالة الاشتراك</th>
+                        <th>المبلغ المدفوع</th>
+                        <th>استهلاك التصحيح</th>
+                    </tr>
+                </thead>
+                <tbody id="reportsBody">
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>جاري التحميل...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- End Reports View -->
+
+    <!-- VIEW 3: User Management -->
+    <div id="usersView" style="display: none;">
+        <div class="admin-header" style="background: linear-gradient(135deg, rgba(14,165,233,0.25), rgba(2,132,199,0.2)); border-color: rgba(56,189,248,0.2);">
+            <div>
+                <h1><i class="fas fa-users-cog" style="margin-left:10px;"></i>إدارة المستخدمين</h1>
+                <p style="opacity:0.85; font-size:0.9rem; margin-top:4px;">إضافة وتعديل وحذف حسابات المعلمين</p>
+                <div
+                    style="margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px;">
+                    إجمالي المستخدمين المسجلين: <span id="totalUsersCount">0</span>
+                </div>
+            </div>
+            <button class="btn-send-code" onclick="openAddUserModal()" style="padding: 10px 20px; font-size: 1rem;">
+                <i class="fas fa-user-plus"></i> إضافة حساب
+            </button>
+        </div>
+
+        <div class="requests-table" id="usersContainer">
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>الإيميل</th>
+                        <th>الهاتف</th>
+                        <th>تاريخ التسجيل</th>
+                        <th>الباقة الحالية</th>
+                        <th>المتبقي من التصحيح</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="usersBody">
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>جاري التحميل...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- End User Management View -->
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" class="modal-overlay">
+    <div class="modal-card">
+        <h2 style="margin-bottom:20px; color:#e2e8f0; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+            <i class="fas fa-user-plus" style="margin-left:8px; color:#38bdf8;"></i>إضافة مستخدم جديد</h2>
+        <div style="display:flex; flex-direction:column; gap:15px;">
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">الاسم الكامل</label>
+                <input type="text" id="newUserName" class="detail-input" style="width:100%; padding:10px;"
+                    placeholder="مثال: أحمد محمد">
+            </div>
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">البريد الإلكتروني</label>
+                <input type="email" id="newUserEmail" class="detail-input" style="width:100%; padding:10px;"
+                    placeholder="اسم_المستخدم@example.com">
+            </div>
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">رقم الهاتف (اختياري)</label>
+                <input type="text" id="newUserPhone" class="detail-input"
+                    style="width:100%; padding:10px; direction:ltr;" placeholder="0791234567">
+            </div>
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">كلمة المرور</label>
+                <input type="password" id="newUserPassword" class="detail-input" style="width:100%; padding:10px;">
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:25px;">
+            <button onclick="closeAddUserModal()" class="modal-btn-cancel">إلغاء</button>
+            <button onclick="submitAddUser()" class="modal-btn-save">حفظ</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal-overlay">
+    <div class="modal-card">
+        <h2 style="margin-bottom:20px; color:#e2e8f0; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+            <i class="fas fa-user-edit" style="margin-left:8px; color:#a78bfa;"></i>تعديل بيانات المستخدم</h2>
+        <input type="hidden" id="editUserId">
+        <div style="display:flex; flex-direction:column; gap:15px;">
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">الاسم الكامل</label>
+                <input type="text" id="editUserName" class="detail-input" style="width:100%; padding:10px;">
+            </div>
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">البريد الإلكتروني</label>
+                <input type="email" id="editUserEmail" class="detail-input" style="width:100%; padding:10px;">
+            </div>
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">رقم الهاتف</label>
+                <input type="text" id="editUserPhone" class="detail-input"
+                    style="width:100%; padding:10px; direction:ltr;">
+            </div>
+            <div>
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:rgba(255,255,255,0.7);">كلمة المرور الجديدة <span
+                        style="font-weight:normal; color:rgba(255,255,255,0.4); font-size:0.85rem;">(اتركه فارغاً إذا لم ترغب
+                        بتغييره)</span></label>
+                <input type="password" id="editUserPassword" class="detail-input" style="width:100%; padding:10px;">
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:25px;">
+            <button onclick="closeEditUserModal()" class="modal-btn-cancel">إلغاء</button>
+            <button onclick="submitEditUser()" class="modal-btn-save">تحديث</button>
+        </div>
+    </div>
+</div>
+
+    <!-- VIEW 4: Assignments Management -->
+    <div id="assignmentsView" style="display: none;">
+        <div class="admin-header" style="background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(124,58,237,0.2)); border-color: rgba(167,139,250,0.2);">
+            <div>
+                <h1><i class="fas fa-book-open" style="margin-left:10px;"></i>إدارة المهام والحلول النموذجية</h1>
+                <p style="opacity:0.85; font-size:0.9rem; margin-top:4px;">عرض جميع المهام وحذف الحلول النموذجية</p>
+                <div style="margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px;">
+                    إجمالي المهام: <span id="totalAssignmentsCount">0</span>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <button id="clearSelectedBtn" onclick="clearSelectedSolutions()" class="admin-action-btn danger" style="display:none;">
+                    <i class="fas fa-trash-alt" style="margin-left:6px;"></i>مسح الحلول المحددة (<span id="selectedCount">0</span>)
+                </button>
+                <button onclick="clearAllAssignments()" style="padding:10px 20px; border:2px solid rgba(255,255,255,0.5); background:rgba(255,0,0,0.3); color:white; border-radius:10px; cursor:pointer; font-size:1rem; font-weight:700;">
+                    <i class="fas fa-bomb" style="margin-left:6px;"></i>مسح جميع المهام نهائياً
+                </button>
+                <button onclick="clearSolutionCache()" style="padding:10px 20px; border:2px solid rgba(255,255,255,0.5); background:rgba(255,165,0,0.4); color:white; border-radius:10px; cursor:pointer; font-size:1rem; font-weight:700;">
+                    <i class="fas fa-database" style="margin-left:6px;"></i>مسح كاش دليل المهمة
+                </button>
+            </div>
+        </div>
+
+        <div class="requests-table" style="margin-top: 16px;">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width:40px; text-align:center;"><input type="checkbox" id="selectAllAssignments" onchange="toggleSelectAll(this)" title="تحديد الكل"></th>
+                        <th>#</th>
+                        <th>عنوان المهمة</th>
+                        <th>المنشئ</th>
+                        <th>الحالة</th>
+                        <th>دليل المهمة</th>
+                        <th>عدد المعايير</th>
+                        <th>تاريخ الإنشاء</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="assignmentsBody">
+                    <tr><td colspan="9"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- End Assignments View -->
+
+    <!-- VIEW 5: Submissions Management -->
+    <div id="submissionsView" style="display: none;">
+        <div class="admin-header" style="background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(217,119,6,0.2)); border-color: rgba(251,191,36,0.2);">
+            <div>
+                <h1><i class="fas fa-clipboard-check" style="margin-left:10px;"></i>إدارة التصحيح وواجبات الطلاب</h1>
+                <p style="opacity:0.85; font-size:0.9rem; margin-top:4px;">عرض جميع واجبات الطلاب مجمّعة حسب المشترك مع إمكانية التحميل والحذف</p>
+                <div style="margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px;">
+                    إجمالي الواجبات: <span id="totalSubmissionsCount">0</span>
+                </div>
+            </div>
+            <button onclick="clearAllSubmissions()" class="admin-action-btn danger">
+                <i class="fas fa-trash-alt" style="margin-left:6px;"></i>مسح جميع الواجبات نهائياً
+            </button>
+            <button onclick="clearGradingCache()" class="admin-action-btn warning">
+                <i class="fas fa-sync-alt" style="margin-left:6px;"></i>مسح كاش التصحيح
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div style="margin-top:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:250px; position:relative;">
+                <i class="fas fa-search" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.4); font-size:0.9rem;"></i>
+                <input type="text" id="submissionsSearch" placeholder="بحث بالاسم أو الإيميل أو التقدير (D, M, P, U)..."
+                    oninput="filterSubmissions()"
+                    style="width:100%; padding:12px 42px 12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:1rem; outline:none; direction:rtl;">
+            </div>
+            <select id="submissionsGradeFilter" onchange="filterSubmissions()"
+                style="padding:12px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:0.95rem; cursor:pointer; outline:none;">
+                <option value="">جميع التقديرات</option>
+                <option value="D">D - Distinction</option>
+                <option value="M">M - Merit</option>
+                <option value="P">P - Pass</option>
+                <option value="U">U - Unclassified</option>
+            </select>
+        </div>
+
+        <div id="submissionsFolders" style="margin-top: 16px;">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>
+        </div>
+    </div> <!-- End Submissions View -->
+
+    <!-- VIEW 6: Activity Logs -->
+    <div id="logsView" style="display: none;">
+        <div class="admin-header" style="background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(109,40,217,0.2)); border-color: rgba(139,92,246,0.2);">
+            <div>
+                <h1><i class="fas fa-history" style="margin-left:10px;"></i>سجل النشاطات</h1>
+                <p style="opacity:0.85; font-size:0.9rem; margin-top:4px;">متابعة جميع العمليات التي تتم على الموقع</p>
+                <div style="margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px;">
+                    إجمالي السجلات: <span id="totalLogsCount">0</span>
+                </div>
+            </div>
+            <button onclick="clearAllLogs()" class="admin-action-btn danger">
+                <i class="fas fa-trash-alt" style="margin-left:6px;"></i>مسح السجل بالكامل
+            </button>
+        </div>
+
+        <!-- Logs Stats Cards -->
+        <div id="logsStats" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;"></div>
+
+        <!-- Logs Filters -->
+        <div style="margin-top:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:250px; position:relative;">
+                <i class="fas fa-search" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.4); font-size:0.9rem;"></i>
+                <input type="text" id="logsSearch" placeholder="بحث في السجلات..."
+                    oninput="filterLogsLocal()"
+                    style="width:100%; padding:12px 42px 12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:1rem; outline:none; direction:rtl;">
+            </div>
+            <select id="logsCategoryFilter" onchange="filterLogsLocal()"
+                style="padding:12px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:0.95rem; cursor:pointer; outline:none;">
+                <option value="">جميع الفئات</option>
+                <option value="auth">🔐 المصادقة</option>
+                <option value="grading">📝 التصحيح</option>
+                <option value="subscription">💳 الاشتراكات</option>
+                <option value="admin">⚙️ إدارة</option>
+                <option value="export">📥 التصدير</option>
+                <option value="error">❌ الأخطاء</option>
+                <option value="system">🖥️ النظام</option>
+            </select>
+            <select id="logsLevelFilter" onchange="filterLogsLocal()"
+                style="padding:12px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:0.95rem; cursor:pointer; outline:none;">
+                <option value="">جميع المستويات</option>
+                <option value="success">✅ نجاح</option>
+                <option value="info">ℹ️ معلومات</option>
+                <option value="warning">⚠️ تحذير</option>
+                <option value="error">❌ خطأ</option>
+            </select>
+        </div>
+
+        <!-- Logs Table -->
+        <div style="margin-top:16px; overflow-x:auto;">
+            <table style="width:100%;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>التاريخ</th>
+                        <th>المستخدم</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>الفئة</th>
+                        <th>المستوى</th>
+                        <th>العملية</th>
+                        <th>التفاصيل</th>
+                        <th>IP</th>
+                        <th>المتصفح</th>
+                    </tr>
+                </thead>
+                <tbody id="logsBody">
+                    <tr><td colspan="10"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- End Logs View -->
+
+    <!-- VIEW 7: WhatsApp -->
+    <div id="whatsappView" style="display: none;">
+        <div class="admin-header" style="background: linear-gradient(135deg, rgba(37,211,102,0.25), rgba(18,140,60,0.2)); border-color: rgba(37,211,102,0.2);">
+            <div>
+                <h1><i class="fab fa-whatsapp" style="margin-left:10px;"></i>إدارة واتساب</h1>
+                <p style="opacity:0.85; font-size:0.9rem; margin-top:4px;">ربط وإدارة حساب واتساب لإرسال الإشعارات</p>
+            </div>
+        </div>
+
+        <!-- Status Card -->
+        <div id="waStatusCard" style="margin-top:16px; padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); background:rgba(30,30,50,0.5);">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                <div id="waStatusDot" style="width:14px; height:14px; border-radius:50%; background:#ef4444;"></div>
+                <span id="waStatusText" style="font-size:1.1rem; font-weight:600;">غير متصل</span>
+            </div>
+            <div id="waPhoneMismatch" style="display:none; padding:12px 14px; border-radius:12px; background:rgba(251,191,36,0.12); border:1px solid rgba(251,191,36,0.28); color:#fbbf24; font-size:0.9rem; margin-bottom:14px; line-height:1.6;"></div>
+            <div id="waConnectedInfo" style="display:none; padding:14px; border-radius:12px; background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.2); margin-bottom:16px;">
+                <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                    <div><span style="opacity:0.7;">الرقم المتصل:</span> <strong id="waPhone">-</strong></div>
+                    <div><span style="opacity:0.7;">الاسم:</span> <strong id="waName">-</strong></div>
+                    <div><span style="opacity:0.7;">الرقم المطلوب:</span> <strong id="waExpectedPhone">0786060100</strong></div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button id="waConnectBtn" onclick="refreshWhatsAppQR()" style="padding:10px 24px; border-radius:12px; border:none; background:linear-gradient(135deg,#25D366,#128C3C); color:white; font-weight:600; cursor:pointer; font-size:0.95rem;">
+                    <i class="fas fa-qrcode" style="margin-left:6px;"></i>عرض رمز QR للربط
+                </button>
+                <button id="waDisconnectBtn" onclick="disconnectWhatsApp()" style="display:none; padding:10px 24px; border-radius:12px; border:none; background:linear-gradient(135deg,#ef4444,#b91c1c); color:white; font-weight:600; cursor:pointer; font-size:0.95rem;">
+                    <i class="fas fa-sign-out-alt" style="margin-left:6px;"></i>قطع الاتصال
+                </button>
+            </div>
+            <p style="margin-top:14px; font-size:0.85rem; opacity:0.65; line-height:1.7;">
+                عند أول ربط، امسح رمز QR من هاتف <strong id="waHintPhone">0786060100</strong>.
+                بعد الربط الأول تُحفظ الجلسة تلقائياً وتعمل الخدمة عند كل تشغيل للموقع.
+            </p>
+        </div>
+
+        <!-- Default Phone Settings -->
+        <div style="margin-top:16px; padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); background:rgba(30,30,50,0.5);">
+            <h3 style="margin-bottom:14px; font-size:1rem;"><i class="fas fa-phone" style="margin-left:8px; color:#25D366;"></i>رقم واتساب النظام (المرسل)</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+                <div style="flex:1; min-width:220px;">
+                    <label style="display:block; margin-bottom:6px; font-size:0.85rem; opacity:0.7;">الرقم الافتراضي للإرسال والإشعارات</label>
+                    <input type="text" id="waSenderPhone" placeholder="0786060100" dir="ltr"
+                        style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:1rem; outline:none;">
+                </div>
+                <button id="waSavePhoneBtn" onclick="saveWhatsAppPhone()" style="padding:12px 24px; border-radius:12px; border:none; background:linear-gradient(135deg,#25D366,#128C3C); color:white; font-weight:600; cursor:pointer; font-size:0.95rem; white-space:nowrap;">
+                    <i class="fas fa-save" style="margin-left:6px;"></i>حفظ الرقم
+                </button>
+            </div>
+            <p id="waPhoneSaveResult" style="margin-top:10px; font-size:0.9rem; display:none;"></p>
+        </div>
+
+        <!-- QR Code Section -->
+        <div id="waQRSection" style="display:none; margin-top:16px; text-align:center; padding:30px; border-radius:16px; border:1px solid rgba(37,211,102,0.2); background:rgba(30,30,50,0.5);">
+            <p style="margin-bottom:16px; font-size:1rem; opacity:0.85;"><i class="fas fa-mobile-alt" style="margin-left:6px;"></i>امسح رمز QR التالي من تطبيق واتساب على هاتفك</p>
+            <div id="waQRLoading" style="display:none;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; opacity:0.5;"></i><p style="margin-top:10px; opacity:0.6;">جاري تحميل رمز QR...</p></div>
+            <img id="waQRImage" src="" alt="QR Code" style="display:none; max-width:280px; border-radius:12px; border:3px solid rgba(37,211,102,0.3); margin:0 auto;">
+            <p id="waQRError" style="display:none; color:#ef4444; margin-top:10px;"></p>
+            <button onclick="refreshWhatsAppQR()" style="margin-top:16px; padding:8px 20px; border-radius:10px; border:1px solid rgba(37,211,102,0.3); background:transparent; color:#25D366; cursor:pointer; font-size:0.9rem;">
+                <i class="fas fa-sync-alt" style="margin-left:6px;"></i>تحديث رمز QR
+            </button>
+        </div>
+
+        <!-- Test Message Section -->
+        <div style="margin-top:16px; padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); background:rgba(30,30,50,0.5);">
+            <h3 style="margin-bottom:14px; font-size:1rem;"><i class="fas fa-paper-plane" style="margin-left:8px; color:#25D366;"></i>إرسال رسالة تجريبية</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+                <div style="flex:1; min-width:200px;">
+                    <label style="display:block; margin-bottom:6px; font-size:0.85rem; opacity:0.7;">رقم الهاتف (مع رمز الدولة)</label>
+                    <input type="text" id="waTestPhone" placeholder="962791234567" dir="ltr"
+                        style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:1rem; outline:none;">
+                </div>
+                <div style="flex:2; min-width:250px;">
+                    <label style="display:block; margin-bottom:6px; font-size:0.85rem; opacity:0.7;">نص الرسالة</label>
+                    <input type="text" id="waTestMessage" placeholder="رسالة تجريبية من نظام التصحيح" dir="rtl"
+                        style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(30,30,50,0.6); color:white; font-size:1rem; outline:none;">
+                </div>
+                <button id="waTestSendBtn" onclick="sendTestWhatsApp()" style="padding:12px 24px; border-radius:12px; border:none; background:linear-gradient(135deg,#25D366,#128C3C); color:white; font-weight:600; cursor:pointer; font-size:0.95rem; white-space:nowrap;">
+                    <i class="fas fa-paper-plane" style="margin-left:6px;"></i>إرسال
+                </button>
+            </div>
+            <p id="waTestResult" style="margin-top:10px; font-size:0.9rem; display:none;"></p>
+        </div>
+    </div> <!-- End WhatsApp View -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+    let allRequests = [];
+    let currentFilter = 'all';
+
+    // Subject map for Arabic names
+    const subjectMap = {
+        'IT': 'تكنولوجيا المعلومات',
+        'Engineering': 'الهندسة',
+        'Business': 'إدارة الأعمال',
+        'ArtDesign': 'الفن والتصميم',
+        'Hospitality': 'الضيافة',
+        'Sport': 'الرياضة'
+    };
+
+    // Status labels
+    const statusLabels = {
+        'pending': 'بانتظار المراجعة',
+        'code_sent': 'تم إرسال الرمز',
+        'verified': 'مفعّل',
+        'rejected': 'مرفوض'
+    };
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    async function loadRequests() {
+        try {
+            const res = await fetch('/api/admin/verifications');
+            const data = await res.json();
+            if (data.status === 'success') {
+                allRequests = data.requests;
+                updateStats();
+                renderTable();
+            } else {
+                showToast(data.message || 'خطأ في تحميل البيانات', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    async function loadWhatsAppStatus() {
+        const banner = document.getElementById('whatsappStatusBanner');
+        if (!banner) return;
+
+        try {
+            const res = await fetch('/api/admin/whatsapp-status');
+            const data = await res.json();
+
+            if (data.status !== 'success') {
+                banner.className = 'integration-banner warn';
+                banner.textContent = 'خدمة واتساب غير متاحة — تأكد من تشغيل سيرفر واتساب.';
+                return;
+            }
+
+            if (data.connected) {
+                banner.className = data.phone_match === false ? 'integration-banner warn' : 'integration-banner ok';
+                const name = data.info?.name || '';
+                const phone = data.info?.phone || '';
+                if (data.phone_match === false) {
+                    banner.textContent = `واتساب متصل برقم مختلف (${phone}) — المطلوب ${data.expected_phone || '0786060100'}.`;
+                } else {
+                    banner.textContent = `واتساب متصل وجاهز${name ? ' — ' + name : ''}${phone ? ' (' + phone + ')' : ''}.`;
+                }
+            } else if (data.hasQR) {
+                banner.className = 'integration-banner warn';
+                banner.textContent = `واتساب بانتظار مسح QR من ${data.expected_phone || '0786060100'} — اضغط للربط.`;
+            } else {
+                banner.className = 'integration-banner warn';
+                banner.textContent = `واتساب غير متصل — امسح QR من ${data.expected_phone || '0786060100'}.`;
+            }
+        } catch (e) {
+            banner.className = 'integration-banner warn';
+            banner.textContent = 'خدمة واتساب غير متاحة — تُشغَّل تلقائياً مع الموقع.';
+        }
+    }
+
+    async function loadWhatsAppSettings() {
+        try {
+            const res = await fetch('/api/admin/whatsapp-settings');
+            const data = await res.json();
+            if (data.status === 'success') {
+                const phone = data.sender_phone || '0786060100';
+                document.getElementById('waSenderPhone').value = phone;
+                document.getElementById('waExpectedPhone').textContent = phone;
+                document.getElementById('waHintPhone').textContent = phone;
+            }
+        } catch (e) {}
+    }
+
+    async function saveWhatsAppPhone() {
+        const phone = document.getElementById('waSenderPhone').value.trim();
+        const result = document.getElementById('waPhoneSaveResult');
+        const btn = document.getElementById('waSavePhoneBtn');
+        if (!phone) { showToast('أدخل رقم الواتساب', 'error'); return; }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-left:6px;"></i>جاري الحفظ...';
+        try {
+            const res = await fetch('/api/admin/whatsapp-settings', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({sender_phone: phone})
+            });
+            const data = await res.json();
+            result.style.display = 'block';
+            if (data.status === 'success') {
+                result.style.color = '#25D366';
+                result.textContent = '✅ ' + (data.message || 'تم الحفظ');
+                loadWhatsAppSettings();
+                loadWhatsAppStatus();
+            } else {
+                result.style.color = '#ef4444';
+                result.textContent = '❌ ' + (data.message || 'فشل الحفظ');
+            }
+        } catch (e) {
+            result.style.display = 'block';
+            result.style.color = '#ef4444';
+            result.textContent = '❌ خطأ في الاتصال بالخادم';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save" style="margin-left:6px;"></i>حفظ الرقم';
+        }
+    }
+
+    async function loadWhatsAppPanel() {
+        await loadWhatsAppSettings();
+        try {
+            const res = await fetch('/api/admin/whatsapp-status');
+            const data = await res.json();
+
+            const statusDot = document.getElementById('waStatusDot');
+            const statusText = document.getElementById('waStatusText');
+            const connectedInfo = document.getElementById('waConnectedInfo');
+            const mismatchBox = document.getElementById('waPhoneMismatch');
+            const connectBtn = document.getElementById('waConnectBtn');
+            const disconnectBtn = document.getElementById('waDisconnectBtn');
+            const qrSection = document.getElementById('waQRSection');
+
+            if (data.expected_phone) {
+                document.getElementById('waExpectedPhone').textContent = data.expected_phone;
+                document.getElementById('waHintPhone').textContent = data.expected_phone;
+            }
+
+            if (data.status === 'success' && data.connected) {
+                statusDot.style.background = data.phone_match === false ? '#fbbf24' : '#25D366';
+                statusText.textContent = data.phone_match === false ? 'متصل — رقم مختلف' : 'متصل';
+                connectedInfo.style.display = 'block';
+                document.getElementById('waPhone').textContent = data.info?.phone || '-';
+                document.getElementById('waName').textContent = data.info?.name || '-';
+                if (data.phone_match === false) {
+                    mismatchBox.style.display = 'block';
+                    mismatchBox.textContent = `الرقم المتصل (${data.info?.phone || '-'}) لا يطابق الرقم المطلوب (${data.expected_phone}). قطع الاتصال ثم امسح QR من الهاتف الصحيح.`;
+                } else {
+                    mismatchBox.style.display = 'none';
+                }
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'inline-flex';
+                qrSection.style.display = 'none';
+            } else {
+                statusDot.style.background = '#ef4444';
+                statusText.textContent = data.service_running === false ? 'الخدمة تُشغَّل...' : 'غير متصل';
+                connectedInfo.style.display = 'none';
+                mismatchBox.style.display = 'none';
+                connectBtn.style.display = 'inline-flex';
+                disconnectBtn.style.display = 'none';
+                if (data.hasQR) {
+                    qrSection.style.display = 'block';
+                    refreshWhatsAppQR();
+                } else if (data.service_running !== false) {
+                    qrSection.style.display = 'block';
+                    refreshWhatsAppQR();
+                }
+            }
+        } catch (e) {
+            document.getElementById('waStatusDot').style.background = '#ef4444';
+            document.getElementById('waStatusText').textContent = 'خدمة واتساب غير متاحة';
+        }
+    }
+
+    async function refreshWhatsAppQR() {
+        const qrSection = document.getElementById('waQRSection');
+        const qrLoading = document.getElementById('waQRLoading');
+        const qrImage = document.getElementById('waQRImage');
+        const qrError = document.getElementById('waQRError');
+
+        qrSection.style.display = 'block';
+        qrLoading.style.display = 'block';
+        qrImage.style.display = 'none';
+        qrError.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/admin/whatsapp-qr');
+            const data = await res.json();
+            qrLoading.style.display = 'none';
+
+            if (data.status === 'success' && data.qr) {
+                qrImage.src = data.qr;
+                qrImage.style.display = 'block';
+                // Auto-refresh QR every 20 seconds
+                if (window._waQRTimer) clearInterval(window._waQRTimer);
+                window._waQRTimer = setInterval(async () => {
+                    try {
+                        const r = await fetch('/api/admin/whatsapp-status');
+                        const d = await r.json();
+                        if (d.connected) {
+                            clearInterval(window._waQRTimer);
+                            loadWhatsAppPanel();
+                            loadWhatsAppStatus();
+                            showToast('تم ربط واتساب بنجاح!', 'success');
+                        } else {
+                            const qr = await fetch('/api/admin/whatsapp-qr');
+                            const qd = await qr.json();
+                            if (qd.qr) qrImage.src = qd.qr;
+                        }
+                    } catch(e) {}
+                }, 5000);
+            } else if (data.connected) {
+                qrSection.style.display = 'none';
+                loadWhatsAppPanel();
+                showToast('واتساب متصل بالفعل!', 'success');
+            } else {
+                qrError.textContent = data.message || 'لم يتم إنشاء رمز QR بعد — انتظر قليلاً ثم حاول مرة أخرى.';
+                qrError.style.display = 'block';
+                setTimeout(refreshWhatsAppQR, 4000);
+            }
+        } catch (e) {
+            qrLoading.style.display = 'none';
+            qrError.textContent = 'تعذر الاتصال بخدمة واتساب — تأكد من تشغيل السيرفر.';
+            qrError.style.display = 'block';
+        }
+    }
+
+    async function disconnectWhatsApp() {
+        if (!confirm('هل أنت متأكد من قطع اتصال واتساب؟')) return;
+        try {
+            const res = await fetch('/api/admin/whatsapp-logout', {method: 'POST'});
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast('تم قطع اتصال واتساب', 'success');
+                if (window._waQRTimer) clearInterval(window._waQRTimer);
+                loadWhatsAppPanel();
+                loadWhatsAppStatus();
+            } else {
+                showToast(data.message || 'خطأ في قطع الاتصال', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    async function sendTestWhatsApp() {
+        const phone = document.getElementById('waTestPhone').value.trim();
+        const message = document.getElementById('waTestMessage').value.trim();
+        const result = document.getElementById('waTestResult');
+        const btn = document.getElementById('waTestSendBtn');
+
+        if (!phone) { showToast('أدخل رقم الهاتف', 'error'); return; }
+        if (!message) { showToast('أدخل نص الرسالة', 'error'); return; }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-left:6px;"></i>جاري الإرسال...';
+        result.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/admin/whatsapp-send-test', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({phone, message})
+            });
+            const data = await res.json();
+            result.style.display = 'block';
+            if (data.status === 'success') {
+                result.style.color = '#25D366';
+                result.textContent = '✅ تم إرسال الرسالة بنجاح!';
+            } else {
+                result.style.color = '#ef4444';
+                result.textContent = '❌ ' + (data.message || 'فشل الإرسال');
+            }
+        } catch (e) {
+            result.style.display = 'block';
+            result.style.color = '#ef4444';
+            result.textContent = '❌ خطأ في الاتصال بالخادم';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane" style="margin-left:6px;"></i>إرسال';
+        }
+    }
+
+    let allReports = [];
+
+    async function loadReports() {
+        try {
+            const res = await fetch('/api/admin/reports');
+            const data = await res.json();
+            if (data.status === 'success') {
+                allReports = data.reports;
+                renderReportsTable();
+            } else {
+                showToast(data.message || 'خطأ في تحميل التقارير', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    function renderReportsTable() {
+        const tbody = document.getElementById('reportsBody');
+        if (allReports.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-inbox"></i><p>لا يوجد مشتركون</p></div></td></tr>`;
+            return;
+        }
+
+        const statusMap = {
+            'pending': '<span class="status-badge pending">بانتظار المراجعة</span>',
+            'active': '<span class="status-badge verified">نشط/مفعّل</span>',
+            'expired': '<span class="status-badge rejected">منتهي</span>',
+            'cancelled': '<span class="status-badge rejected">ملغي</span>'
+        };
+
+        tbody.innerHTML = allReports.map((r, i) => {
+            const isExhausted = r.assignments_used >= r.assignments_limit && r.assignments_limit > 0;
+            const usageColor = isExhausted ? 'color: #ef4444; font-weight: bold;' : 'color: #16a34a; font-weight: bold;';
+
+            return `<tr>
+            <td>${i + 1}</td>
+            <td><strong>${r.user_name}</strong></td>
+            <td style="direction:ltr; text-align:center;">${r.phone}</td>
+            <td><span style="background:rgba(99,102,241,0.15); padding:4px 8px; border-radius:6px; font-weight:600; color:#a5b4fc; border:1px solid rgba(99,102,241,0.25);">${r.package_name}</span></td>
+            <td>${statusMap[r.status] || r.status}</td>
+            <td style="font-weight:700; color:#0ea5e9;">${r.amount_paid} JOD</td>
+            <td>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="${usageColor}">${r.assignments_used}</span> 
+                    <span style="color:#94a3b8; font-size:0.8rem;">من</span> 
+                    <span style="color:#475569; font-weight:600;">${r.assignments_limit}</span>
+                </div>
+                <!-- Progress bar -->
+                <div style="width:100%; height:6px; background:#e2e8f0; border-radius:4px; margin-top:6px; overflow:hidden;">
+                    <div style="height:100%; background:${isExhausted ? '#ef4444' : '#10b981'}; width:${r.assignments_limit > 0 ? Math.min(100, (r.assignments_used / r.assignments_limit) * 100) : 0}%"></div>
+                </div>
+            </td>
+        </tr>`;
+        }).join('');
+    }
+
+    function switchView(viewName) {
+        document.getElementById('viewVerificationsBtn').classList.remove('active');
+        document.getElementById('viewReportsBtn').classList.remove('active');
+        document.getElementById('viewUsersBtn').classList.remove('active');
+        document.getElementById('viewAssignmentsBtn').classList.remove('active');
+        document.getElementById('viewSubmissionsBtn').classList.remove('active');
+        document.getElementById('viewLogsBtn').classList.remove('active');
+        document.getElementById('viewWhatsappBtn').classList.remove('active');
+
+        document.getElementById('verificationsView').style.display = 'none';
+        document.getElementById('reportsView').style.display = 'none';
+        document.getElementById('usersView').style.display = 'none';
+        document.getElementById('assignmentsView').style.display = 'none';
+        document.getElementById('submissionsView').style.display = 'none';
+        document.getElementById('logsView').style.display = 'none';
+        document.getElementById('whatsappView').style.display = 'none';
+
+        if (viewName === 'verifications') {
+            document.getElementById('viewVerificationsBtn').classList.add('active');
+            document.getElementById('verificationsView').style.display = 'block';
+            loadRequests();
+        } else if (viewName === 'reports') {
+            document.getElementById('viewReportsBtn').classList.add('active');
+            document.getElementById('reportsView').style.display = 'block';
+            loadReports();
+        } else if (viewName === 'users') {
+            document.getElementById('viewUsersBtn').classList.add('active');
+            document.getElementById('usersView').style.display = 'block';
+            loadUsers();
+        } else if (viewName === 'assignments') {
+            document.getElementById('viewAssignmentsBtn').classList.add('active');
+            document.getElementById('assignmentsView').style.display = 'block';
+            loadAssignments();
+        } else if (viewName === 'submissions') {
+            document.getElementById('viewSubmissionsBtn').classList.add('active');
+            document.getElementById('submissionsView').style.display = 'block';
+            loadSubmissions();
+        } else if (viewName === 'logs') {
+            document.getElementById('viewLogsBtn').classList.add('active');
+            document.getElementById('logsView').style.display = 'block';
+            loadLogs();
+        } else if (viewName === 'whatsapp') {
+            document.getElementById('viewWhatsappBtn').classList.add('active');
+            document.getElementById('whatsappView').style.display = 'block';
+            loadWhatsAppPanel();
+        }
+    }
+
+    let allUsers = [];
+
+    async function loadUsers() {
+        try {
+            const res = await fetch('/api/admin/users');
+            const data = await res.json();
+            if (data.status === 'success') {
+                allUsers = data.users;
+                document.getElementById('totalUsersCount').textContent = data.total_users;
+                renderUsersTable();
+            } else {
+                showToast(data.message || 'خطأ في تحميل المستخدمين', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    function renderUsersTable() {
+        const tbody = document.getElementById('usersBody');
+        if (allUsers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-users-slash"></i><p>لا يوجد مستخدمون</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = allUsers.map((u, i) => {
+            const limitColor = u.remaining_limit > 0 ? '#10b981' : '#ef4444';
+
+            // Build per-subject breakdown if available
+            let balanceCell = '';
+            if (u.subject_details && u.subject_details.length > 0) {
+                const rows = u.subject_details.map(s => {
+                    const color = s.remaining > 0 ? '#10b981' : '#ef4444';
+                    return `<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+                        <span style="color:#a5b4fc;font-size:0.82rem;">${s.subject}</span>
+                        <span style="color:${color};font-weight:700;font-size:0.82rem;">${s.remaining}<span style="color:#64748b;font-weight:400;">/${s.limit}</span></span>
+                    </div>`;
+                }).join('');
+                balanceCell = `<div style="min-width:130px;">${rows}</div>`;
+            } else {
+                balanceCell = `<strong style="color:${limitColor}">${u.remaining_limit}</strong>`;
+            }
+
+            return `<tr>
+            <td>${i + 1}</td>
+            <td><strong>${u.name}</strong></td>
+            <td>${u.email}</td>
+            <td style="direction:ltr; text-align:center;">${u.phone || '-'}</td>
+            <td><span style="color:#64748b; font-size:0.9rem;">${u.created_at}</span></td>
+            <td><span style="background:rgba(99,102,241,0.15); padding:4px 8px; border-radius:6px; font-weight:600; color:#a5b4fc; border:1px solid rgba(99,102,241,0.25);">${u.package_name}</span></td>
+            <td>${balanceCell}</td>
+            <td>
+                <div class="action-group" style="justify-content:center;">
+                    <button class="btn-send-code" style="background:#3b82f6; width:35px; height:35px; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center;" onclick="openEditUserModal(${u.id})" title="تعديل">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-reject" style="width:35px; height:35px; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center;" onclick="deleteUser(${u.id})" title="حذف">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+        }).join('');
+    }
+
+    // Modal Logic
+    function openAddUserModal() {
+        document.getElementById('newUserName').value = '';
+        document.getElementById('newUserEmail').value = '';
+        document.getElementById('newUserPhone').value = '';
+        document.getElementById('newUserPassword').value = '';
+        document.getElementById('addUserModal').style.display = 'flex';
+    }
+
+    function closeAddUserModal() {
+        document.getElementById('addUserModal').style.display = 'none';
+    }
+
+    async function submitAddUser() {
+        const name = document.getElementById('newUserName').value.trim();
+        const email = document.getElementById('newUserEmail').value.trim();
+        const phone = document.getElementById('newUserPhone').value.trim();
+        const password = document.getElementById('newUserPassword').value;
+
+        if (!name || !email || !password) {
+            showToast('الاسم، الإيميل وكلمة المرور مطلوبة', 'error');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/admin/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, password })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast('تمت الإضافة بنجاح ✓');
+                closeAddUserModal();
+                loadUsers();
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (e) {
+            showToast('خطأ بالخادم', 'error');
+        }
+    }
+
+    function openEditUserModal(userId) {
+        const user = allUsers.find(u => u.id === userId);
+        if (!user) return;
+
+        document.getElementById('editUserId').value = user.id;
+        document.getElementById('editUserName').value = user.name;
+        document.getElementById('editUserEmail').value = user.email;
+        document.getElementById('editUserPhone').value = user.phone || '';
+        document.getElementById('editUserPassword').value = '';
+
+        document.getElementById('editUserModal').style.display = 'flex';
+    }
+
+    function closeEditUserModal() {
+        document.getElementById('editUserModal').style.display = 'none';
+    }
+
+    async function submitEditUser() {
+        const id = document.getElementById('editUserId').value;
+        const name = document.getElementById('editUserName').value.trim();
+        const email = document.getElementById('editUserEmail').value.trim();
+        const phone = document.getElementById('editUserPhone').value.trim();
+        const password = document.getElementById('editUserPassword').value;
+
+        try {
+            const res = await fetch(`/api/admin/users/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, password })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast('تم التعديل بنجاح ✓');
+                closeEditUserModal();
+                loadUsers();
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (e) {
+            showToast('خطأ بالخادم', 'error');
+        }
+    }
+
+    async function deleteUser(userId) {
+        if (!confirm('هل أنت متأكد من حذف هذا الحساب؟')) return;
+
+        try {
+            const res = await fetch(`/api/admin/users/${userId}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast('تم الحذف بنجاح ✓');
+                loadUsers();
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (e) {
+            showToast('خطأ بالخادم', 'error');
+        }
+    }
+
+    function updateStats() {
+        const counts = { pending: 0, code_sent: 0, verified: 0, rejected: 0 };
+        allRequests.forEach(r => {
+            if (counts[r.status] !== undefined) counts[r.status]++;
+        });
+        document.getElementById('countPending').textContent = counts.pending;
+        document.getElementById('countSent').textContent = counts.code_sent;
+        document.getElementById('countVerified').textContent = counts.verified;
+        document.getElementById('countRejected').textContent = counts.rejected;
+    }
+
+    function renderTable() {
+        const filtered = currentFilter === 'all'
+            ? allRequests
+            : allRequests.filter(r => r.status === currentFilter);
+
+        const tbody = document.getElementById('requestsBody');
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10">
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>لا توجد طلبات</p>
+            </div>
+        </td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map((r, i) => {
+            const subjects = (r.subjects || '').split(',').map(s => subjectMap[s.trim()] || s.trim()).join(', ');
+            const statusClass = r.status;
+            const statusText = statusLabels[r.status] || r.status;
+            const date = new Date(r.created_at).toLocaleDateString('ar-JO', {
+                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            let actionHtml = '';
+            if (r.status === 'pending' || r.status === 'code_sent') {
+                actionHtml = `
+                <div class="action-group">
+                    <button class="btn-send-code" onclick="sendCode(${r.id})">
+                        <i class="fas fa-check" style="margin-left:4px;"></i>موافقة
+                    </button>
+                    <button class="btn-reject" onclick="rejectRequest(${r.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>`;
+            } else if (r.status === 'verified') {
+                actionHtml = `<span style="color:#22c55e; font-weight:600;"><i class="fas fa-check-circle"></i> تم التفعيل</span>`;
+            } else if (r.status === 'rejected') {
+                actionHtml = `<span style="color:#ef4444; font-weight:600;"><i class="fas fa-ban"></i> مرفوض</span>`;
+            }
+
+            return `<tr data-status="${r.status}">
+            <td>${i + 1}</td>
+            <td>
+                <div style="margin-bottom:4px;"><strong>${r.user_name || 'غير معروف'}</strong></div>
+                ${r.status === 'pending' ?
+                    `<input type="text" class="detail-input" id="name_${r.id}" placeholder="اسم المعلم (يدوي)" value="${r.verified_teacher_name || r.user_name}">` :
+                    (r.verified_teacher_name ? `<small style="color:#0ea5e9"><i class="fas fa-user-check"></i> ${r.verified_teacher_name}</small>` : '')}
+            </td>
+            <td style="direction:ltr; text-align:center;">
+                <div>${r.phone}</div>
+                ${r.user_email ? `<div style="font-size:0.75rem; color:#38bdf8; margin-top:3px; direction:ltr;"><i class="fas fa-envelope" style="margin-right:4px;"></i>${r.user_email}</div>` : ''}
+            </td>
+            <td>
+                  <code style="background:rgba(251,191,36,0.15); color:#fbbf24; padding:2px 8px; border-radius:6px; border:1px solid rgba(251,191,36,0.25);">${r.transaction_id}</code>
+            </td>
+            <td>
+                ${r.package_name || '-'}
+                ${r.amount ? `<div style="margin-top:2px;font-weight:bold;color:#16a34a">${r.amount} JOD</div>` : ''}
+            </td>
+            <td><strong style="color:#f59e0b;">${r.remaining_limit || 0}</strong></td>
+            <td>${subjects}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td style="font-size:0.8rem;">${date}</td>
+            <td style="text-align:center; font-weight:700; letter-spacing:1px; direction:ltr;">${r.phone || '-'}</td>
+            <td>
+                ${actionHtml}
+                <button onclick="deleteVerification(${r.id})" style="background:transparent; border:1px solid #dc2626; color:#dc2626; padding:3px 8px; border-radius:6px; cursor:pointer; font-size:11px; margin-top:4px; display:block;" title="حذف الطلب">
+                    <i class="fas fa-trash"></i> حذف
+                </button>
+            </td>
+        </tr>`;
+        }).join('');
+    }
+
+    async function sendCode(requestId) {
+        const nameInput = document.getElementById(`name_${requestId}`);
+
+        const name = nameInput ? nameInput.value.trim() : '';
+
+        try {
+            const res = await fetch('/api/admin/set-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    request_id: requestId,
+                    teacher_name: name
+                })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message || 'تمت الموافقة وإرسال إشعار واتساب ✓');
+                loadRequests();
+            } else {
+                showToast(data.message || 'حدث خطأ', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال', 'error');
+        }
+    }
+
+    async function rejectRequest(requestId) {
+        if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
+
+        try {
+            const res = await fetch('/api/admin/reject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ request_id: requestId })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast('تم رفض الطلب');
+                loadRequests();
+            } else {
+                showToast(data.message || 'حدث خطأ', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال', 'error');
+        }
+    }
+
+    async function deleteVerification(requestId) {
+        if (!confirm('هل أنت متأكد من حذف هذا الطلب نهائياً؟')) return;
+        try {
+            const res = await fetch(`/api/admin/verifications/${requestId}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast('تم حذف الطلب');
+                loadRequests();
+            } else {
+                showToast(data.message || 'حدث خطأ', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال', 'error');
+        }
+    }
+
+    async function deleteAllVerifications() {
+        if (!confirm('هل أنت متأكد من حذف جميع طلبات التفعيل نهائياً؟ لا يمكن التراجع!')) return;
+        try {
+            const res = await fetch('/api/admin/verifications', { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message || 'تم حذف جميع الطلبات');
+                loadRequests();
+            } else {
+                showToast(data.message || 'حدث خطأ', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال', 'error');
+        }
+    }
+
+    // Filter tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.dataset.filter;
+            renderTable();
+        });
+    });
+
+    // ─── Assignments Management ───
+    async function loadAssignments() {
+        try {
+            const res = await fetch('/api/admin/assignments');
+            const data = await res.json();
+            if (data.status === 'success') {
+                document.getElementById('totalAssignmentsCount').textContent = data.total;
+                renderAssignmentsTable(data.assignments);
+            } else {
+                showToast(data.message || 'خطأ في تحميل المهام', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    function renderAssignmentsTable(assignments) {
+        const tbody = document.getElementById('assignmentsBody');
+        if (!assignments.length) {
+            tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد مهام</p></div></td></tr>';
+            return;
+        }
+        document.getElementById('selectAllAssignments').checked = false;
+        updateSelectedCount();
+        const statusMap = { 'draft': 'مسودة', 'ready': 'جاهز', 'archived': 'مؤرشف' };
+        tbody.innerHTML = assignments.map((a, i) => `
+            <tr>
+                <td style="text-align:center;">
+                    ${a.has_solution ? `<input type="checkbox" class="assignment-cb" value="${a.id}" data-title="${a.title.replace(/"/g, '&quot;')}" onchange="updateSelectedCount()">` : ''}
+                </td>
+                <td>${i + 1}</td>
+                <td style="font-weight:600; max-width:250px;">${a.title}</td>
+                <td>${a.creator}</td>
+                <td>
+                    <span style="padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;
+                        background:${a.status === 'ready' ? '#dcfce7' : '#fef3c7'};
+                        color:${a.status === 'ready' ? '#166534' : '#92400e'};">
+                        ${statusMap[a.status] || a.status}
+                    </span>
+                </td>
+                <td>
+                    <span style="padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;
+                        background:${a.has_solution ? '#dbeafe' : '#fee2e2'};
+                        color:${a.has_solution ? '#1e40af' : '#991b1b'};">
+                        ${a.has_solution ? '✅ موجود' : '❌ غير موجود'}
+                    </span>
+                </td>
+                <td style="text-align:center; font-weight:600;">${a.criteria_count}</td>
+                <td style="direction:ltr; text-align:center;">${a.created_at}</td>
+                <td>
+                    ${a.has_solution ? `
+                    <button onclick="clearSolution(${a.id}, '${a.title.replace(/'/g, "\\'")}')"
+                        style="padding:6px 14px; border:none; background:#ef4444; color:white; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
+                        <i class="fas fa-trash-alt" style="margin-left:4px;"></i>مسح الحل
+                    </button>` : '<span style="color:#94a3b8;">—</span>'}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function toggleSelectAll(master) {
+        document.querySelectorAll('.assignment-cb').forEach(cb => cb.checked = master.checked);
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        const checked = document.querySelectorAll('.assignment-cb:checked');
+        const btn = document.getElementById('clearSelectedBtn');
+        const span = document.getElementById('selectedCount');
+        span.textContent = checked.length;
+        btn.style.display = checked.length > 0 ? 'inline-flex' : 'none';
+    }
+
+    async function clearSelectedSolutions() {
+        const checked = document.querySelectorAll('.assignment-cb:checked');
+        if (!checked.length) return;
+        const names = Array.from(checked).map(cb => cb.dataset.title).join('\n• ');
+        if (!confirm(`هل أنت متأكد من حذف الحلول النموذجية لـ ${checked.length} مهمة؟\n\n• ${names}\n\nسيتم حذف الحلول والمعايير وذاكرة التخزين المؤقت.`)) return;
+
+        let successCount = 0;
+        for (const cb of checked) {
+            try {
+                const res = await fetch(`/api/admin/assignments/${cb.value}/solution`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.status === 'success') successCount++;
+            } catch (_) {}
+        }
+        showToast(`تم مسح ${successCount} من ${checked.length} حل نموذجي`, 'success');
+        loadAssignments();
+    }
+
+    async function clearAllAssignments() {
+        const total = document.getElementById('totalAssignmentsCount').textContent;
+        if (!confirm(`⚠️ تحذير خطير!\n\nهل أنت متأكد من حذف جميع المهام (${total}) نهائياً؟\n\nسيتم حذف:\n• جميع المهام\n• جميع الحلول النموذجية\n• جميع تصحيحات الطلاب\n• جميع التقارير والمعايير\n• جميع ذاكرة التخزين المؤقت\n\n⛔ هذا الإجراء لا يمكن التراجع عنه!`)) return;
+        if (!confirm('تأكيد نهائي: هل تريد فعلاً حذف كل شيء؟')) return;
+        try {
+            const res = await fetch('/api/admin/assignments/all', { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message, 'success');
+                loadAssignments();
+            } else {
+                showToast(data.message || 'فشل الحذف', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    async function clearSolution(assignmentId, title) {
+        if (!confirm(`هل أنت متأكد من حذف دليل المهمة للمهمة:\n"${title}"\n\nسيتم حذف الدليل والمعايير وذاكرة التخزين المؤقت.`)) return;
+        try {
+            const res = await fetch(`/api/admin/assignments/${assignmentId}/solution`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message, 'success');
+                loadAssignments();
+            } else {
+                showToast(data.message || 'فشل الحذف', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    // Load on page ready
+    document.addEventListener('DOMContentLoaded', () => {
+        loadRequests();
+        loadWhatsAppStatus();
+    });
+
+    // ===== SUBMISSIONS MANAGEMENT =====
+    let allSubmissions = [];
+
+    async function loadSubmissions() {
+        try {
+            const res = await fetch('/api/admin/submissions');
+            const data = await res.json();
+            if (data.status === 'success') {
+                allSubmissions = data.submissions;
+                document.getElementById('totalSubmissionsCount').textContent = data.total;
+                renderSubmissionsTable();
+            } else {
+                showToast(data.message || 'خطأ في تحميل الواجبات', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    function filterSubmissions() {
+        const query = (document.getElementById('submissionsSearch').value || '').trim().toLowerCase();
+        const gradeFilter = document.getElementById('submissionsGradeFilter').value;
+
+        let filtered = allSubmissions;
+        if (query) {
+            filtered = filtered.filter(s =>
+                (s.student_name || '').toLowerCase().includes(query) ||
+                (s.submitter_name || '').toLowerCase().includes(query) ||
+                (s.submitter_email || '').toLowerCase().includes(query) ||
+                (s.grade_level || '').toLowerCase().includes(query) ||
+                (s.assignment_title || '').toLowerCase().includes(query)
+            );
+        }
+        if (gradeFilter) {
+            filtered = filtered.filter(s => s.grade_level === gradeFilter);
+        }
+        renderSubmissionsTable(filtered);
+    }
+
+    function renderSubmissionsTable(submissions) {
+        submissions = submissions || allSubmissions;
+        const container = document.getElementById('submissionsFolders');
+        if (!submissions.length) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد نتائج مطابقة</p></div>';
+            return;
+        }
+
+        // Group submissions by submitter
+        const groups = {};
+        submissions.forEach(s => {
+            const key = s.submitter_id || 0;
+            if (!groups[key]) {
+                groups[key] = {
+                    name: s.submitter_name || '—',
+                    email: s.submitter_email || '',
+                    items: []
+                };
+            }
+            groups[key].items.push(s);
+        });
+
+        const statusMap = {
+            'pending': '<span class="status-badge pending">بانتظار التصحيح</span>',
+            'grading': '<span class="status-badge" style="background:#fef3c7;color:#92400e;">جاري التصحيح</span>',
+            'completed': '<span class="status-badge verified">تم التصحيح</span>',
+            'failed': '<span class="status-badge rejected">خطأ</span>'
+        };
+
+        const gradeColors = {
+            'D': { bg: '#dbeafe', color: '#1e40af', label: 'D - Distinction' },
+            'M': { bg: '#d1fae5', color: '#065f46', label: 'M - Merit' },
+            'P': { bg: '#fef9c3', color: '#854d0e', label: 'P - Pass' },
+            'U': { bg: '#fee2e2', color: '#991b1b', label: 'U - Unclassified' },
+        };
+
+        let html = '';
+        let folderIndex = 0;
+        for (const [userId, group] of Object.entries(groups)) {
+            folderIndex++;
+            const folderId = `folder_${userId}`;
+            html += `
+            <div style="margin-bottom: 16px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: rgba(30,30,50,0.5);">
+                <div onclick="toggleFolder('${folderId}')" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding: 14px 20px; background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(99,102,241,0.2)); border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class="fas fa-folder" id="${folderId}_icon" style="font-size:1.4rem; color:#f59e0b; transition: transform 0.3s;"></i>
+                        <div style="display:flex; flex-direction:column; gap:2px;">
+                            <span style="font-weight:700; font-size:1.1rem; color:white;">${group.name}</span>
+                            ${group.email ? `<span style="font-size:0.85rem; color:#60a5fa; direction:ltr; text-align:right;"><i class="fas fa-envelope" style="margin-left:6px; font-size:0.75rem;"></i>${group.email}</span>` : ''}
+                        </div>
+                        <span style="background:rgba(245,158,11,0.3); color:#fbbf24; padding:3px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">
+                            ${group.items.length} واجب
+                        </span>
+                    </div>
+                    <i class="fas fa-chevron-down" id="${folderId}_chevron" style="color:rgba(255,255,255,0.5); transition: transform 0.3s;"></i>
+                </div>
+                <div id="${folderId}" style="display:none;">
+                    <div class="requests-table" style="margin:0;">
+                        <table style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>اسم الطالب</th>
+                                    <th>المهمة</th>
+                                    <th>الحالة</th>
+                                    <th>التقدير</th>
+                                    <th>احتمالية AI</th>
+                                    <th>نسبة الاقتباس</th>
+                                    <th>التاريخ</th>
+                                    <th>إيميل المشترك</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+            group.items.forEach((s, i) => {
+                const grade = gradeColors[s.grade_level] || { bg: '#f1f5f9', color: '#64748b', label: s.grade_level || '—' };
+                const aiColor = s.ai_likelihood > 50 ? '#ef4444' : s.ai_likelihood > 25 ? '#f59e0b' : '#22c55e';
+                const plagColor = s.plagiarism > 50 ? '#ef4444' : s.plagiarism > 30 ? '#f59e0b' : '#22c55e';
+
+                html += `<tr>
+                    <td>${i + 1}</td>
+                    <td style="font-weight:600;">${s.student_name}</td>
+                    <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${s.assignment_title}">${s.assignment_title}</td>
+                    <td>${statusMap[s.status] || s.status}</td>
+                    <td>
+                        <span style="padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;
+                            background:${grade.bg}; color:${grade.color};">
+                            ${grade.label}
+                        </span>
+                    </td>
+                    <td style="font-weight:700; color:${aiColor};">${s.ai_likelihood}% <i class="fas fa-robot" style="font-size:0.75rem;"></i></td>
+                    <td style="font-weight:700; color:${plagColor};">${s.plagiarism}%</td>
+                    <td style="direction:ltr; text-align:center; font-size:0.85rem;">${s.created_at}</td>
+                    <td style="direction:ltr; text-align:center; font-size:0.82rem; color:#60a5fa;">${s.submitter_email || '—'}</td>
+                    <td>
+                        <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                            <a href="/results/${s.id}" target="_blank" title="عرض النتائج"
+                                style="width:32px; height:32px; border-radius:50%; background:#3b82f6; color:white; display:flex; align-items:center; justify-content:center; text-decoration:none;">
+                                <i class="fas fa-eye" style="font-size:0.8rem;"></i>
+                            </a>
+                            ${s.has_report ? `
+                            <a href="/api/download-report/${s.id}" title="تحميل PDF"
+                                onclick="event.preventDefault(); aiGrader.downloadReportFile(this.href, 'report_${s.id}.pdf');"
+                                style="width:32px; height:32px; border-radius:50%; background:#ef4444; color:white; display:flex; align-items:center; justify-content:center; text-decoration:none;">
+                                <i class="fas fa-file-pdf" style="font-size:0.8rem;"></i>
+                            </a>
+                            <a href="/api/download-report-word/${s.id}" title="تحميل Word"
+                                onclick="event.preventDefault(); aiGrader.downloadReportFile(this.href, 'report_${s.id}.docx');"
+                                style="width:32px; height:32px; border-radius:50%; background:#2563eb; color:white; display:flex; align-items:center; justify-content:center; text-decoration:none;">
+                                <i class="fas fa-file-word" style="font-size:0.8rem;"></i>
+                            </a>` : ''}
+                            <button onclick="deleteSubmission(${s.id}, '${s.student_name.replace(/'/g, "\\'")}')"
+                                title="حذف هذا الواجب" style="padding:5px 12px; border-radius:8px; background:#dc2626; color:white; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; font-size:0.8rem; font-weight:600; white-space:nowrap;">
+                                <i class="fas fa-trash-alt"></i> حذف
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+
+            html += `</tbody></table></div></div></div>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    function toggleFolder(folderId) {
+        const content = document.getElementById(folderId);
+        const icon = document.getElementById(folderId + '_icon');
+        const chevron = document.getElementById(folderId + '_chevron');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            icon.classList.replace('fa-folder', 'fa-folder-open');
+            chevron.style.transform = 'rotate(180deg)';
+        } else {
+            content.style.display = 'none';
+            icon.classList.replace('fa-folder-open', 'fa-folder');
+            chevron.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    async function deleteSubmission(submissionId, studentName) {
+        if (!confirm(`هل أنت متأكد من حذف واجب الطالب:\n"${studentName}"\n\nسيتم حذف الواجب ونتائج التصحيح والتقارير.`)) return;
+        try {
+            const res = await fetch(`/api/admin/submissions/${submissionId}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message, 'success');
+                loadSubmissions();
+            } else {
+                showToast(data.message || 'فشل الحذف', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    async function clearSolutionCache() {
+        if (!confirm('⚠️ هل أنت متأكد من مسح كاش دليل المهمة نهائياً؟\n\nهذا يعني أنه عند التصحيح القادم سيتم إعادة توليد دليل المهمة من الصفر.\nاستخدم هذا إذا كان دليل المهمة المُولَّد يحتوي على أخطاء.')) return;
+        try {
+            const res = await fetch('/api/admin/cache/solutions', { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message || 'فشل المسح', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    async function clearGradingCache() {
+        if (!confirm('⚠️ هل أنت متأكد من مسح كاش التصحيح؟\n\n• يمسح كاش استجابات الذكاء الاصطناعي\n• يعطّل «نسخ النتيجة السريعة» لنفس الملف (replay)\n• المرة القادمة سيُعاد التصحيح فعلياً\n\nلحذف واجبات الطلاب من قاعدة البيانات استخدم «مسح جميع الواجبات».')) return;
+        try {
+            const res = await fetch('/api/admin/cache/grading', { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message || 'فشل المسح', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    async function clearAllSubmissions() {
+        const total = document.getElementById('totalSubmissionsCount').textContent;
+        if (!confirm(`⚠️ تحذير!\n\nهل أنت متأكد من حذف جميع واجبات الطلاب (${total}) نهائياً؟\n\nسيتم حذف:\n• جميع واجبات الطلاب\n• جميع نتائج التصحيح\n• جميع التقارير\n• جميع فحوصات الاقتباس\n• ذاكرة التخزين المؤقت\n\n⛔ هذا الإجراء لا يمكن التراجع عنه!`)) return;
+        if (!confirm('تأكيد نهائي: هل تريد فعلاً حذف كل شيء؟')) return;
+        try {
+            const res = await fetch('/api/admin/submissions/all', { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message, 'success');
+                loadSubmissions();
+            } else {
+                showToast(data.message || 'فشل الحذف', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    // ===== ACTIVITY LOGS =====
+    let allLogs = [];
+
+    const logCategoryLabels = {
+        'auth': '🔐 المصادقة',
+        'grading': '📝 التصحيح',
+        'subscription': '💳 الاشتراكات',
+        'admin': '⚙️ إدارة',
+        'export': '📥 التصدير',
+        'error': '❌ الأخطاء',
+        'system': '🖥️ النظام',
+    };
+
+    const logCategoryColors = {
+        'auth': 'background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.25);',
+        'grading': 'background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.25);',
+        'subscription': 'background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.25);',
+        'admin': 'background:rgba(139,92,246,0.15); color:#c4b5fd; border:1px solid rgba(139,92,246,0.25);',
+        'export': 'background:rgba(14,165,233,0.15); color:#7dd3fc; border:1px solid rgba(14,165,233,0.25);',
+        'error': 'background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.25);',
+        'system': 'background:rgba(107,114,128,0.15); color:#d1d5db; border:1px solid rgba(107,114,128,0.25);',
+    };
+
+    const logLevelIcons = {
+        'success': '<span style="display:inline-flex; align-items:center; gap:4px; color:#10b981; font-size:0.85rem; font-weight:600;"><span style="font-size:1rem;">✅</span> ناجح</span>',
+        'info': '<span style="display:inline-flex; align-items:center; gap:4px; color:#3b82f6; font-size:0.85rem; font-weight:600;"><span style="font-size:1rem;">ℹ️</span> معلومات</span>',
+        'warning': '<span style="display:inline-flex; align-items:center; gap:4px; color:#f59e0b; font-size:0.85rem; font-weight:600;"><span style="font-size:1rem;">⚠️</span> تحذير</span>',
+        'error': '<span style="display:inline-flex; align-items:center; gap:4px; color:#ef4444; font-size:0.85rem; font-weight:600;"><span style="font-size:1rem;">❌</span> خطأ</span>',
+    };
+
+    const logActionLabels = {
+        'login': 'تسجيل دخول',
+        'login_failed': 'فشل تسجيل الدخول',
+        'register': 'تسجيل حساب جديد',
+        'logout': 'تسجيل خروج',
+        'subscribe_request': 'طلب اشتراك',
+        'approve_subscription': 'قبول اشتراك',
+        'reject_subscription': 'رفض اشتراك',
+        'batch_grade': 'تصحيح جماعي',
+        'batch_grade_error': 'خطأ بالتصحيح',
+        'create_assignment': 'إنشاء مهمة',
+        'create_assignment_error': 'خطأ بإنشاء مهمة',
+        'download_report_pdf': 'تحميل تقرير PDF',
+        'download_report_word': 'تحميل تقرير Word',
+        'download_reference_solution': 'تحميل دليل الحل',
+        'admin_add_user': 'إضافة مستخدم',
+        'clear_logs': 'مسح السجل',
+    };
+
+    async function loadLogs() {
+        try {
+            const res = await fetch('/api/admin/logs?limit=500');
+            const data = await res.json();
+            if (data.status === 'success') {
+                allLogs = data.logs;
+                document.getElementById('totalLogsCount').textContent = data.db_total ?? data.total;
+                renderLogsStats(data.stats);
+                renderLogsTable();
+            } else {
+                showToast(data.message || 'خطأ في تحميل السجلات', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    async function clearAllLogs() {
+        const total = document.getElementById('totalLogsCount').textContent;
+        if (!confirm(`⚠️ تحذير!\n\nهل أنت متأكد من مسح جميع سجلات النشاط (${total}) نهائياً من قاعدة البيانات؟\n\n⛔ هذا الإجراء لا يمكن التراجع عنه!`)) return;
+        if (!confirm('تأكيد نهائي: هل تريد فعلاً مسح السجل بالكامل؟')) return;
+        try {
+            const res = await fetch('/api/admin/logs/all', { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToast(data.message, 'success');
+                loadLogs();
+            } else {
+                showToast(data.message || 'فشل المسح', 'error');
+            }
+        } catch (e) {
+            showToast('خطأ في الاتصال بالخادم', 'error');
+        }
+    }
+
+    function renderLogsStats(stats) {
+        const container = document.getElementById('logsStats');
+        const statCards = [
+            { key: 'auth', icon: 'fas fa-sign-in-alt', label: 'المصادقة', gradient: 'linear-gradient(135deg, rgba(59,130,246,0.3), rgba(37,99,235,0.2))' },
+            { key: 'grading', icon: 'fas fa-pen-nib', label: 'التصحيح', gradient: 'linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.2))' },
+            { key: 'subscription', icon: 'fas fa-credit-card', label: 'الاشتراكات', gradient: 'linear-gradient(135deg, rgba(251,191,36,0.3), rgba(217,119,6,0.2))' },
+            { key: 'export', icon: 'fas fa-download', label: 'التصدير', gradient: 'linear-gradient(135deg, rgba(14,165,233,0.3), rgba(2,132,199,0.2))' },
+            { key: 'admin', icon: 'fas fa-user-shield', label: 'الإدارة', gradient: 'linear-gradient(135deg, rgba(139,92,246,0.3), rgba(109,40,217,0.2))' },
+            { key: 'error', icon: 'fas fa-exclamation-triangle', label: 'الأخطاء', gradient: 'linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.2))' },
+        ];
+        container.innerHTML = statCards.map(s => `
+            <div class="stat-card" style="background:${s.gradient}; cursor:pointer; min-width:150px;" onclick="quickFilterCategory('${s.key}')">
+                <div style="font-size:1.6rem;"><i class="${s.icon}"></i></div>
+                <div style="font-size:1.8rem; font-weight:800; margin:4px 0;">${stats[s.key] || 0}</div>
+                <div style="font-size:0.85rem; opacity:0.8;">${s.label}</div>
+            </div>
+        `).join('');
+    }
+
+    function quickFilterCategory(cat) {
+        document.getElementById('logsCategoryFilter').value = cat;
+        filterLogsLocal();
+    }
+
+    function filterLogsLocal() {
+        renderLogsTable();
+    }
+
+    function renderLogsTable() {
+        const tbody = document.getElementById('logsBody');
+        const search = (document.getElementById('logsSearch').value || '').toLowerCase();
+        const catFilter = document.getElementById('logsCategoryFilter').value;
+        const levelFilter = document.getElementById('logsLevelFilter').value;
+
+        let filtered = allLogs.filter(log => {
+            if (catFilter && log.category !== catFilter) return false;
+            if (levelFilter && log.level !== levelFilter) return false;
+            if (search) {
+                const haystack = `${log.user_name} ${log.user_email} ${log.action} ${log.details} ${log.ip_address}`.toLowerCase();
+                if (!haystack.includes(search)) return false;
+            }
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><i class="fas fa-clipboard-list"></i><p>لا توجد سجلات مطابقة</p></div></td></tr>`;
+            return;
+        }
+
+        function parseBrowser(ua) {
+            if (!ua) return '-';
+            if (ua.includes('Edg/')) return 'Edge';
+            if (ua.includes('Chrome/') && !ua.includes('Edg/')) return 'Chrome';
+            if (ua.includes('Firefox/')) return 'Firefox';
+            if (ua.includes('Safari/') && !ua.includes('Chrome/')) return 'Safari';
+            if (ua.includes('Opera') || ua.includes('OPR/')) return 'Opera';
+            if (ua.includes('python-requests')) return 'API/Script';
+            return ua.substring(0, 20) + '...';
+        }
+
+        tbody.innerHTML = filtered.map((log, i) => {
+            const catStyle = logCategoryColors[log.category] || logCategoryColors['system'];
+            const catLabel = logCategoryLabels[log.category] || log.category;
+            const levelIcon = logLevelIcons[log.level] || logLevelIcons['info'];
+            const actionLabel = logActionLabels[log.action] || log.action;
+            const browser = parseBrowser(log.user_agent);
+            return `<tr>
+                <td>${i + 1}</td>
+                <td style="white-space:nowrap; font-size:0.85rem; color:rgba(255,255,255,0.7); direction:ltr;">${log.created_at}</td>
+                <td><strong style="color:#e2e8f0;">${log.user_name || 'زائر'}</strong></td>
+                <td style="font-size:0.85rem; color:#93c5fd; direction:ltr;">${log.user_email || '-'}</td>
+                <td><span style="padding:4px 10px; border-radius:8px; font-size:0.8rem; font-weight:600; ${catStyle}">${catLabel}</span></td>
+                <td style="white-space:nowrap;">${levelIcon}</td>
+                <td style="font-size:0.9rem; color:rgba(255,255,255,0.8);">${actionLabel}</td>
+                <td style="font-size:0.85rem; color:rgba(255,255,255,0.6); max-width:350px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${(log.details || '').replace(/"/g, '&quot;')}">${log.details}</td>
+                <td style="font-size:0.8rem; color:rgba(255,255,255,0.4); direction:ltr; font-family:monospace;">${log.ip_address || '-'}</td>
+                <td style="font-size:0.8rem; color:rgba(255,255,255,0.5);" title="${(log.user_agent || '').replace(/"/g, '&quot;')}">${browser}</td>
+            </tr>`;
+        }).join('');
+    }
+</script>
+{% endblock %}

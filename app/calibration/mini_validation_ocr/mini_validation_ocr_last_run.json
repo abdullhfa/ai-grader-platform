@@ -1,0 +1,56 @@
+{
+  "run_purpose": "Observe raw OCR pipeline (presence flags, noise, temporal windows); requires Tesseract on PATH. No assertions.",
+  "cases": [
+    {
+      "case_id": "case_a_frame_ui_score",
+      "expected_behavior": "Screenshot under gameplay/ with clear HUD-style text → OCR returns non-empty raw_text; ocr_presence_flags may include ui_text_detected when heuristics match.",
+      "ocr_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"ocr\": {\n    \"extractor_version\": \"1.0\",\n    \"item_count\": 0,\n    \"presence_flags\": [],\n    \"noise_flags\": [\n      {\n        \"flag\": \"ocr_read_failed\",\n        \"detail\": \"tesseract is not installed or it's not in your PATH. See README file for more information.\"\n      },\n      {\n        \"flag\": \"ocr_engine_unavailable\",\n        \"detail\": \"all_targets_failed\"\n      }\n    ],\n    \"sample_raw\": []\n  },\n  \"temporal_groups_head\": [\n    {\n      \"window_start\": 50.0,\n      \"window_end\": 55.0,\n      \"events\": [\n        \"runtime_screenshot\"\n      ],\n      \"temporal_alignment_strength\": \"weak\",\n      \"event_count\": 1\n    }\n  ],\n  \"temporal_reasoning\": [],\n  \"runtime_counts\": {\n    \"screenshots\": 1,\n    \"logs\": 0,\n    \"video_frames\": 0\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_blank_frame",
+      "expected_behavior": "Solid-color image → very little or empty OCR; expect ocr_low_text_density or sparse items.",
+      "ocr_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"ocr\": {\n    \"extractor_version\": \"1.0\",\n    \"item_count\": 0,\n    \"presence_flags\": [],\n    \"noise_flags\": [\n      {\n        \"flag\": \"ocr_read_failed\",\n        \"detail\": \"tesseract is not installed or it's not in your PATH. See README file for more information.\"\n      },\n      {\n        \"flag\": \"ocr_engine_unavailable\",\n        \"detail\": \"all_targets_failed\"\n      }\n    ],\n    \"sample_raw\": []\n  },\n  \"temporal_groups_head\": [\n    {\n      \"window_start\": 50.0,\n      \"window_end\": 55.0,\n      \"events\": [\n        \"runtime_screenshot\"\n      ],\n      \"temporal_alignment_strength\": \"weak\",\n      \"event_count\": 1\n    }\n  ],\n  \"temporal_reasoning\": [],\n  \"runtime_counts\": {\n    \"screenshots\": 1,\n    \"logs\": 0,\n    \"video_frames\": 0\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_noisy_frame",
+      "expected_behavior": "High-noise RGB image → garbled or empty OCR; expect ocr_low_text_density and/or read noise.",
+      "ocr_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"ocr\": {\n    \"extractor_version\": \"1.0\",\n    \"item_count\": 0,\n    \"presence_flags\": [],\n    \"noise_flags\": [\n      {\n        \"flag\": \"ocr_read_failed\",\n        \"detail\": \"tesseract is not installed or it's not in your PATH. See README file for more information.\"\n      },\n      {\n        \"flag\": \"ocr_engine_unavailable\",\n        \"detail\": \"all_targets_failed\"\n      }\n    ],\n    \"sample_raw\": []\n  },\n  \"temporal_groups_head\": [\n    {\n      \"window_start\": 50.0,\n      \"window_end\": 55.0,\n      \"events\": [\n        \"runtime_screenshot\"\n      ],\n      \"temporal_alignment_strength\": \"weak\",\n      \"event_count\": 1\n    }\n  ],\n  \"temporal_reasoning\": [],\n  \"runtime_counts\": {\n    \"screenshots\": 1,\n    \"logs\": 0,\n    \"video_frames\": 0\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_ocr_no_logs",
+      "expected_behavior": "Visual OCR without runtime.log files → ocr_text_without_runtime_context in ocr_noise_flags when items exist.",
+      "ocr_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"ocr\": {\n    \"extractor_version\": \"1.0\",\n    \"item_count\": 0,\n    \"presence_flags\": [],\n    \"noise_flags\": [\n      {\n        \"flag\": \"ocr_read_failed\",\n        \"detail\": \"tesseract is not installed or it's not in your PATH. See README file for more information.\"\n      },\n      {\n        \"flag\": \"ocr_read_failed\",\n        \"detail\": \"tesseract is not installed or it's not in your PATH. See README file for more information.\"\n      },\n      {\n        \"flag\": \"ocr_engine_unavailable\",\n        \"detail\": \"all_targets_failed\"\n      }\n    ],\n    \"sample_raw\": []\n  },\n  \"temporal_groups_head\": [\n    {\n      \"window_start\": 0.0,\n      \"window_end\": 5.0,\n      \"events\": [\n        \"video_frame\"\n      ],\n      \"temporal_alignment_strength\": \"weak\",\n      \"event_count\": 1\n    },\n    {\n      \"window_start\": 50.0,\n      \"window_end\": 55.0,\n      \"events\": [\n        \"runtime_screenshot\"\n      ],\n      \"temporal_alignment_strength\": \"weak\",\n      \"event_count\": 1\n    }\n  ],\n  \"temporal_reasoning\": [],\n  \"runtime_counts\": {\n    \"screenshots\": 1,\n    \"logs\": 0,\n    \"video_frames\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_ocr_log_screenshot_window",
+      "expected_behavior": "OCR on screenshot + runtime log + video frame timestamps in one 5s window → temporal_groups include ocr_text alongside video_frame/runtime_log; optional ocr_text_within_same_temporal_window_as_video_frame in reasoning.",
+      "ocr_observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"ocr\": {\n    \"extractor_version\": \"1.0\",\n    \"item_count\": 0,\n    \"presence_flags\": [],\n    \"noise_flags\": [\n      {\n        \"flag\": \"ocr_read_failed\",\n        \"detail\": \"tesseract is not installed or it's not in your PATH. See README file for more information.\"\n      },\n      {\n        \"flag\": \"ocr_read_failed\",\n        \"detail\": \"tesseract is not installed or it's not in your PATH. See README file for more information.\"\n      },\n      {\n        \"flag\": \"ocr_engine_unavailable\",\n        \"detail\": \"all_targets_failed\"\n      }\n    ],\n    \"sample_raw\": []\n  },\n  \"temporal_groups_head\": [\n    {\n      \"window_start\": 0.0,\n      \"window_end\": 5.0,\n      \"events\": [\n        \"runtime_log_collision\",\n        \"runtime_screenshot\",\n        \"video_frame\"\n      ],\n      \"temporal_alignment_strength\": \"strong\",\n      \"event_count\": 3\n    }\n  ],\n  \"temporal_reasoning\": [\n    \"runtime_log_detected_within_5s_of_video_frame_window\",\n    \"runtime_screenshot_matches_alignment_window\"\n  ],\n  \"runtime_counts\": {\n    \"screenshots\": 1,\n    \"logs\": 1,\n    \"video_frames\": 1\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ],
+  "note": "If Tesseract missing, expect ocr_engine_unavailable noise flags."
+}

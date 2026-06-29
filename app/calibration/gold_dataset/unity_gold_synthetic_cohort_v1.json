@@ -1,0 +1,2528 @@
+{
+  "schema": "unity_calibration_gold_v2",
+  "synthetic": true,
+  "description": "Synthetic cohort for calibration pipeline validation — NOT teacher ground truth.",
+  "target_count": 100,
+  "records": [
+    {
+      "submission_id": "SYNTH_0000_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0001_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0002_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0003_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0004_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0005_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0006_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0007_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0008_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0009_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0010_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0011_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0012_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0013_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0014_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0015_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0016_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0017_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0018_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0019_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0020_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0021_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0022_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0023_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0024_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0025_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0026_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0027_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0028_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0029_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0030_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0031_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0032_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0033_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0034_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0035_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0036_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0037_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0038_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0039_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0040_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0041_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0042_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0043_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0044_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0045_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0046_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0047_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0048_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0049_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0050_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0051_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0052_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0053_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0054_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0055_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0056_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0057_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0058_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0059_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0060_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0061_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0062_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0063_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0064_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0065_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0066_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0067_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0068_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0069_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0070_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0071_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0072_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0073_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0074_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0075_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0076_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0077_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0078_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0079_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0080_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0081_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0082_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0083_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0084_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0085_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0086_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0087_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0088_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0089_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0090_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0091_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0092_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0093_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0094_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0095_strong_no_review",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "strong_no_review",
+      "cohort_tags": [
+        "synthetic",
+        "strong_no_review"
+      ],
+      "teacher_result": {
+        "achieved": true,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "easy",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype strong_no_review"
+      ],
+      "accepted_evidence": [
+        "synthetic_accepted"
+      ],
+      "rejected_evidence": []
+    },
+    {
+      "submission_id": "SYNTH_0096_runtime_no_corroboration",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "runtime_no_corroboration",
+      "cohort_tags": [
+        "synthetic",
+        "runtime_no_corroboration"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "moderate",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype runtime_no_corroboration"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0097_pattern_hints_only",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "pattern_hints_only",
+      "cohort_tags": [
+        "synthetic",
+        "pattern_hints_only"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype pattern_hints_only"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0098_cross_modal_conflict",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "cross_modal_conflict",
+      "cohort_tags": [
+        "synthetic",
+        "cross_modal_conflict"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "moderate",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [
+        "confirmed_fp_synthetic"
+      ],
+      "teacher_notes": [
+        "synthetic archetype cross_modal_conflict"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    },
+    {
+      "submission_id": "SYNTH_0099_sparse_noise_critical",
+      "unit": "SYNTHETIC_Unit_GameDev",
+      "criterion": "P3",
+      "submission_archetype": "sparse_noise_critical",
+      "cohort_tags": [
+        "synthetic",
+        "sparse_noise_critical"
+      ],
+      "teacher_result": {
+        "achieved": false,
+        "confidence": 0.85
+      },
+      "teacher_evidence_strength": "weak",
+      "review_complexity": "ambiguous",
+      "reviewer_taxonomy": [],
+      "teacher_notes": [
+        "synthetic archetype sparse_noise_critical"
+      ],
+      "accepted_evidence": [],
+      "rejected_evidence": [
+        "synthetic_rejected"
+      ]
+    }
+  ]
+}

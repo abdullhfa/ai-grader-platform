@@ -1,0 +1,235 @@
+{
+  "units_list": [
+    {"unit_number": "L2_1", "unit_name": "Unit 01 — Using IT for Information and Communications in Organisations", "unit_name_ar": "استخدام تكنولوجيا المعلومات لدعم المعلومات والاتصالات في المنظمات", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "01"},
+    {"unit_number": "L2_2", "unit_name": "Unit 02 — Data Modelling and Spreadsheets", "unit_name_ar": "نمذجة البيانات وجداول البيانات", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "02"},
+    {"unit_number": "L2_4", "unit_name": "Unit 04 — Introduction to Computer Networks", "unit_name_ar": "مقدمة في شبكات الحاسوب", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "04"},
+    {"unit_number": "L2_5", "unit_name": "Unit 05 — Introduction to Programming", "unit_name_ar": "مقدمة في البرمجة", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "05"},
+    {"unit_number": "L2_6", "unit_name": "Unit 06 — Introduction to Digital Graphics and Animation", "unit_name_ar": "مقدمة في الرسومات الرقمية والمتحركة", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "06"},
+    {"unit_number": "L2_7", "unit_name": "Unit 07 — Introduction to Website Development", "unit_name_ar": "مقدمة في تطوير المواقع الإلكترونية", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "07"},
+    {"unit_number": "L2_8", "unit_name": "Unit 08 — Introduction to Application Development", "unit_name_ar": "مقدمة في تطوير التطبيقات", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "08"},
+    {"unit_number": "L2_9", "unit_name": "Unit 09 — Introduction to Game Design", "unit_name_ar": "مقدمة في تصميم الألعاب", "qualification_level": "L2", "grade_level": "الصف العاشر", "jordan_unit_no": "09"},
+    {"unit_number": "L3_1", "unit_name": "Unit 01 — IT Systems: Strategy, Management and Infrastructure", "unit_name_ar": "نظم تكنولوجيا المعلومات - الإستراتيجية والإدارة والبنية التحتية", "qualification_level": "L3", "grade_level": "الأول ثانوي", "jordan_unit_no": "01"},
+    {"unit_number": "L3_6", "unit_name": "Unit 06 — Website Development", "unit_name_ar": "تطوير المواقع الالكترونية", "qualification_level": "L3", "grade_level": "الأول ثانوي", "jordan_unit_no": "06"},
+    {"unit_number": "L3_8", "unit_name": "Unit 08 — Computer Games Development", "unit_name_ar": "تطوير ألعاب الحاسوب", "qualification_level": "L3", "grade_level": "الأول ثانوي", "jordan_unit_no": "08"},
+    {"unit_number": "L3_12", "unit_name": "Unit 12 — IT Technical Support and Management", "unit_name_ar": "الدعم الفني وإدارة تكنولوجيا المعلومات", "qualification_level": "L3", "grade_level": "الأول ثانوي", "jordan_unit_no": "12"},
+    {"unit_number": "L3_11", "unit_name": "Unit 11 — Cyber Security and Incident Management", "unit_name_ar": "الأمن السيبراني وإدارة الحوادث", "qualification_level": "L3", "grade_level": "الثاني ثانوي", "jordan_unit_no": "11"},
+    {"unit_number": "L3_21", "unit_name": "Unit 21 — Fundamentals of Artificial Intelligence", "unit_name_ar": "مقدمة في الذكاء الاصطناعي", "qualification_level": "L3", "grade_level": "الثاني ثانوي", "jordan_unit_no": "21"},
+    {"unit_number": "L3_4", "unit_name": "Unit 04 — Programming", "unit_name_ar": "البرمجة", "qualification_level": "L3", "grade_level": "الثاني ثانوي", "jordan_unit_no": "04"},
+    {"unit_number": "L3_9", "unit_name": "Unit 09 — IT Project Management", "unit_name_ar": "إدارة مشاريع تكنولوجيا المعلومات", "qualification_level": "L3", "grade_level": "الثاني ثانوي", "jordan_unit_no": "09"}
+  ],
+  "units": {
+    "L2_1": {
+      "unit_number": "L2_1",
+      "unit_name": "Using IT for Information and Communications in Organisations",
+      "learning_aims": {
+        "A": "Understand how IT supports information and communication in organisations.",
+        "B": "Use IT tools to collect, process and present information for a given purpose."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain how IT is used for information and communication in an organisation.", "level": "P"},
+        {"code": "A.P2", "description": "Describe types of information and appropriate IT tools.", "level": "P"},
+        {"code": "B.P3", "description": "Use IT tools to produce information outputs that meet a brief.", "level": "P"},
+        {"code": "B.M1", "description": "Review how well IT outputs meet audience and purpose.", "level": "M"}
+      ]
+    },
+    "L2_2": {
+      "unit_number": "L2_2",
+      "unit_name": "Data Modelling and Spreadsheets",
+      "learning_aims": {
+        "A": "Understand data modelling and spreadsheet concepts.",
+        "B": "Develop spreadsheet and data models for a scenario."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain entities, fields, relationships and spreadsheet features.", "level": "P"},
+        {"code": "A.P2", "description": "Describe validation, formulas and functions used in models.", "level": "P"},
+        {"code": "B.P3", "description": "Build a working spreadsheet/data model with calculations.", "level": "P"},
+        {"code": "B.M1", "description": "Improve accuracy, structure or presentation of the model.", "level": "M"}
+      ]
+    },
+    "L2_4": {
+      "unit_number": "L2_4",
+      "unit_name": "Introduction to Computer Networks",
+      "learning_aims": {
+        "A": "Understand network hardware, topologies and protocols at introductory level.",
+        "B": "Document or configure a simple network (simulated or physical)."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Describe common network devices, media and topologies.", "level": "P"},
+        {"code": "A.P2", "description": "Explain basic addressing and connectivity concepts.", "level": "P"},
+        {"code": "B.P3", "description": "Produce a simple network design or configuration with evidence.", "level": "P"},
+        {"code": "B.M1", "description": "Explain troubleshooting steps for common connectivity issues.", "level": "M"}
+      ]
+    },
+    "L2_5": {
+      "unit_number": "L2_5",
+      "unit_name": "Introduction to Programming",
+      "learning_aims": {
+        "A": "Understand variables, control flow, input/output and testing.",
+        "B": "Implement a short program that solves a given problem."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Outline algorithm steps and programming constructs for the problem.", "level": "P"},
+        {"code": "A.P2", "description": "Describe testing approaches used.", "level": "P"},
+        {"code": "B.P3", "description": "Implement code that runs and meets basic requirements.", "level": "P"},
+        {"code": "B.M1", "description": "Refactor or extend code for clarity or error handling.", "level": "M"}
+      ]
+    },
+    "L2_6": {
+      "unit_number": "L2_6",
+      "unit_name": "Introduction to Digital Graphics and Animation",
+      "learning_aims": {
+        "A": "Understand bitmap/vector graphics and animation techniques.",
+        "B": "Create digital graphics and/or a short animation from a brief."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Compare graphics formats and animation methods for a use case.", "level": "P"},
+        {"code": "B.P2", "description": "Produce graphics or animation assets that follow a visual brief.", "level": "P"},
+        {"code": "B.M1", "description": "Justify design choices and refine using feedback.", "level": "M"}
+      ]
+    },
+    "L2_7": {
+      "unit_number": "L2_7",
+      "unit_name": "Introduction to Website Development",
+      "learning_aims": {
+        "A": "Understand web technologies, structure and accessibility basics.",
+        "B": "Design and build a simple multi-page website."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain HTML/CSS structure, navigation and hosting basics.", "level": "P"},
+        {"code": "B.P2", "description": "Build pages that meet layout and content requirements.", "level": "P"},
+        {"code": "B.M1", "description": "Improve usability, responsiveness or accessibility.", "level": "M"}
+      ]
+    },
+    "L2_8": {
+      "unit_number": "L2_8",
+      "unit_name": "Introduction to Application Development",
+      "learning_aims": {
+        "A": "Understand application design, UI and event-driven concepts.",
+        "B": "Build a simple interactive application or prototype."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Describe navigation, usability and core app components.", "level": "P"},
+        {"code": "B.P2", "description": "Implement interactions that meet a simple brief.", "level": "P"},
+        {"code": "B.M1", "description": "Test and fix issues affecting usability.", "level": "M"}
+      ]
+    },
+    "L2_9": {
+      "unit_number": "L2_9",
+      "unit_name": "Introduction to Game Design",
+      "learning_aims": {
+        "A": "Understand game genres, mechanics, assets and audience.",
+        "B": "Design and produce a simple game or playable prototype."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain core mechanics, assets and target audience for the game idea.", "level": "P"},
+        {"code": "B.P2", "description": "Produce a playable prototype or design with evidence.", "level": "P"},
+        {"code": "B.M1", "description": "Improve the design using playtesting or peer feedback.", "level": "M"}
+      ]
+    },
+    "L3_1": {
+      "unit_number": "L3_1",
+      "unit_name": "IT Systems: Strategy, Management and Infrastructure",
+      "learning_aims": {
+        "A": "Understand the value of information and IT systems in organisations.",
+        "B": "Understand how organisations use IT strategy, management and infrastructure."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain the characteristics of good information.", "level": "P"},
+        {"code": "A.P2", "description": "Explain issues related to the use of information.", "level": "P"},
+        {"code": "A.M1", "description": "Analyse the impact of different information types.", "level": "M"},
+        {"code": "B.P3", "description": "Explain how IT enables value for organisations.", "level": "P"}
+      ]
+    },
+    "L3_4": {
+      "unit_number": "L3_4",
+      "unit_name": "Programming",
+      "learning_aims": {
+        "A": "Understand programming concepts.",
+        "B": "Design, code, and test a solution."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain language constructs used in the solution.", "level": "P"},
+        {"code": "B.P2", "description": "Implement code that meets functional requirements.", "level": "P"},
+        {"code": "B.M1", "description": "Improve reliability or structure with testing evidence.", "level": "M"}
+      ]
+    },
+    "L3_6": {
+      "unit_number": "L3_6",
+      "unit_name": "Website Development",
+      "learning_aims": {
+        "A": "Understand web technologies.",
+        "B": "Design and build a multi-page site."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain structure, accessibility, and hosting basics.", "level": "P"},
+        {"code": "B.P2", "description": "Build pages that meet layout and content requirements.", "level": "P"},
+        {"code": "B.M1", "description": "Enhance UX or responsiveness.", "level": "M"}
+      ]
+    },
+    "L3_8": {
+      "unit_number": "L3_8",
+      "unit_name": "Computer Games Development",
+      "learning_aims": {
+        "A": "Understand game assets, mechanics and audience.",
+        "B": "Design and implement a playable game or prototype."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain core game mechanics, assets, tools and audience for the chosen genre.", "level": "P"},
+        {"code": "B.P2", "description": "Implement gameplay features and assets aligned to the design specification.", "level": "P"},
+        {"code": "B.M1", "description": "Iteratively improve the product using testing evidence.", "level": "M"}
+      ]
+    },
+    "L3_9": {
+      "unit_number": "L3_9",
+      "unit_name": "IT Project Management",
+      "learning_aims": {
+        "A": "Understand the roles and phases of IT project management.",
+        "B": "Plan, monitor and review an IT project with appropriate documentation."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain key project phases, resources, risks and stakeholder communication.", "level": "P"},
+        {"code": "B.P2", "description": "Produce project plans, milestones and progress records with evidence.", "level": "P"},
+        {"code": "B.M1", "description": "Evaluate project outcomes against objectives with lessons learned.", "level": "M"}
+      ]
+    },
+    "L3_11": {
+      "unit_number": "L3_11",
+      "unit_name": "Cyber Security and Incident Management",
+      "learning_aims": {
+        "A": "Understand threats, vulnerabilities and defensive controls.",
+        "B": "Apply security procedures and respond to incidents."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain common threats, vulnerabilities and mitigation techniques.", "level": "P"},
+        {"code": "B.P2", "description": "Document security controls and incident handling steps with evidence.", "level": "P"},
+        {"code": "B.M1", "description": "Assess effectiveness of controls against a scenario.", "level": "M"}
+      ]
+    },
+    "L3_12": {
+      "unit_number": "L3_12",
+      "unit_name": "IT Technical Support and Management",
+      "learning_aims": {
+        "A": "Understand support processes and service level requirements.",
+        "B": "Deliver diagnostic and resolution support using appropriate tools."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain ticketing, escalation and user communication in IT support.", "level": "P"},
+        {"code": "B.P2", "description": "Diagnose and document fixes with reproducible steps and logs/screenshots.", "level": "P"},
+        {"code": "B.M1", "description": "Evaluate support performance against agreed metrics.", "level": "M"}
+      ]
+    },
+    "L3_21": {
+      "unit_number": "L3_21",
+      "unit_name": "Fundamentals of Artificial Intelligence",
+      "learning_aims": {
+        "A": "Understand AI concepts, data and ethics.",
+        "B": "Apply a simple AI/ML workflow to a problem."
+      },
+      "criteria": [
+        {"code": "A.P1", "description": "Explain supervised/unsupervised learning, data quality and bias at an appropriate level.", "level": "P"},
+        {"code": "B.P2", "description": "Train or use a model/toolchain and report results with evidence.", "level": "P"},
+        {"code": "B.M1", "description": "Evaluate limitations, risks and ethical implications of the solution.", "level": "M"}
+      ]
+    }
+  }
+}

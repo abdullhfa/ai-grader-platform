@@ -1,0 +1,22 @@
+{
+  "cohort_layer": "disagreement_cases",
+  "governance_rehearsal": true,
+  "not_ai_benchmark": true,
+  "expected_ambiguity": "high",
+  "intended_disagreement": true,
+  "evidence_completeness": "medium",
+  "fake_confidence_risk": "medium",
+  "expected_governance_behaviour": [
+    "human_review_likely",
+    "taxonomy_ambiguous",
+    "no_automatic_authority"
+  ],
+  "assessor_split_note": "Assessor A may accept UI/video; Assessor B wants runtime log",
+  "evaluate": [
+    "uncertainty_visible",
+    "hold_when_expected",
+    "corroboration_pressure",
+    "advisory_stays_advisory",
+    "explanation_auditable"
+  ]
+}

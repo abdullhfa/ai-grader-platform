@@ -1,0 +1,62 @@
+{
+  "cohort_id": "runtime_cohort_v1",
+  "description_ar": "Controlled runtime cohort — STEP 3 operational validation",
+  "replay_trials": 3,
+  "entries": [
+    {
+      "slot_id": "unity_excellent",
+      "platform": "unity",
+      "tier": "excellent",
+      "label_ar": "Unity — مشروع مكتمل (Abdullah)",
+      "source": {
+        "type": "db",
+        "submission_id": 1,
+        "fallback_root": "D:\\تجربة\\العاب\\عبدالله العتوم"
+      }
+    },
+    {
+      "slot_id": "python_console_ok",
+      "platform": "python",
+      "tier": "good",
+      "label_ar": "Python console — يعمل",
+      "source": {"type": "path", "root": "cohort_fixtures/python_console_ok", "primary": "main.py"}
+    },
+    {
+      "slot_id": "python_syntax_error",
+      "platform": "python",
+      "tier": "broken",
+      "label_ar": "Python — syntax error",
+      "source": {"type": "path", "root": "cohort_fixtures/python_syntax_error", "primary": "main.py"}
+    },
+    {
+      "slot_id": "python_missing_dep",
+      "platform": "python",
+      "tier": "broken",
+      "label_ar": "Python — broken dependency",
+      "source": {"type": "path", "root": "cohort_fixtures/python_missing_dep", "primary": "main.py"}
+    },
+    {
+      "slot_id": "web_static",
+      "platform": "web",
+      "tier": "good",
+      "label_ar": "Web — static HTML",
+      "source": {"type": "path", "root": "cohort_fixtures/web_static", "primary": "index.html"}
+    },
+    {
+      "slot_id": "web_interactive",
+      "platform": "web",
+      "tier": "good",
+      "label_ar": "Web — JS interactive",
+      "source": {"type": "path", "root": "cohort_fixtures/web_interactive", "primary": "index.html"}
+    }
+  ],
+  "pending_slots": [
+    {"slot_id": "unity_medium", "platform": "unity", "tier": "medium", "note": "Add submission when available"},
+    {"slot_id": "unity_broken", "platform": "unity", "tier": "broken", "note": "Intentionally broken build"},
+    {"slot_id": "python_gui", "platform": "python", "tier": "medium", "note": "GUI project"},
+    {"slot_id": "android_valid", "platform": "android", "tier": "good", "note": "Valid APK"},
+    {"slot_id": "android_crash", "platform": "android", "tier": "broken", "note": "Crashing APK"},
+    {"slot_id": "godot_project", "platform": "godot", "tier": "good", "note": "Godot export"},
+    {"slot_id": "gamemaker_project", "platform": "gamemaker", "tier": "good", "note": "GameMaker export"}
+  ]
+}

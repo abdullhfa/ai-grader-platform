@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-grader.local/schemas/audit.schema.json",
+  "title": "AuditEvent",
+  "type": "object",
+  "required": ["actor", "action", "timestamp", "event_id"],
+  "properties": {
+    "event_id": { "type": "string" },
+    "actor": { "type": "string" },
+    "actor_role": { "type": "string" },
+    "action": { "type": "string" },
+    "previous": { "type": ["string", "null"] },
+    "new": { "type": ["string", "null"] },
+    "reason": { "type": ["string", "null"] },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "session_id": { "type": "string" },
+    "submission_key": { "type": "string" },
+    "replay_hash": { "type": "string" },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,173 @@
+{
+  "artifact_id": "EPISTEMIC_QUARANTINE_CONTRACT_v1",
+  "status": "design",
+  "path": "A",
+  "activation": "constitutional_state_machine_advisory_no_grading_wire",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "batch_id": 4,
+  "prerequisite_artifacts": [
+    "REPLAY_GATE_DISCIPLINE_v1",
+    "AUTHORITY_TRIAD_LANGUAGE_v1",
+    "REPLAY_GATE_MITIGATION_WORKSHOP_v1"
+  ],
+  "canonical_axiom_ar": "Quarantine لا يعني أن الادعاء خاطئ، بل يعني أن شرعيته لم تكتمل بعد.",
+  "canonical_axiom_en": "Quarantine does not mean the claim is false — it means its legitimacy has not yet completed.",
+  "implementation_stub": "app/epistemic_quarantine_contract.py",
+  "audit_ledger_path": "app/calibration/human_cohort_workshop/epistemic_quarantine_audit.jsonl",
+  "state_machine": {
+    "states": [
+      {"id": "idle", "label_ar": "خامل", "meaning_ar": "لا boundary نشط — observation/representation فقط"},
+      {"id": "quarantine_entered", "label_ar": "دخول الحجر", "meaning_ar": "boundary إلزامي — شرعية الادعاء incomplete"},
+      {"id": "quarantine_maintained", "label_ar": "حجر مُفعَّل", "meaning_ar": "boundary enforced — allowed actions only"},
+      {"id": "lifting_in_progress", "label_ar": "رفع جاري", "meaning_ar": "Gate 3+ جزئي — awaiting corroboration"},
+      {"id": "quarantine_lifted", "label_ar": "حجر مُرفَع", "meaning_ar": "protocol complete — authority language permitted"},
+      {"id": "breach_detected", "label_ar": "خرق مُرصد", "meaning_ar": "forbidden action under quarantine"}
+    ],
+    "transitions": [
+      {"from": "idle", "to": "quarantine_entered", "on": "entry_trigger_fired"},
+      {"from": "quarantine_entered", "to": "quarantine_maintained", "on": "boundary_enforced"},
+      {"from": "quarantine_maintained", "to": "lifting_in_progress", "on": "lift_step_1_replay_complete"},
+      {"from": "lifting_in_progress", "to": "quarantine_maintained", "on": "lift_step_fail"},
+      {"from": "lifting_in_progress", "to": "quarantine_lifted", "on": "lift_protocol_complete"},
+      {"from": "quarantine_maintained", "to": "breach_detected", "on": "forbidden_action"},
+      {"from": "breach_detected", "to": "quarantine_maintained", "on": "containment_restored"}
+    ]
+  },
+  "entry_conditions": {
+    "mandatory": true,
+    "triggers": [
+      {
+        "id": "T_RUNTIME_CLAIM_NO_REPLAY",
+        "condition_ar": "runtime claim without replay_consulted_at",
+        "quarantine": "mandatory"
+      },
+      {
+        "id": "T_EXECUTABLE_NO_PROVENANCE",
+        "condition_ar": "executable detected · gameplay unverified · provenance unlinked",
+        "quarantine": "mandatory"
+      },
+      {
+        "id": "T_SCREENSHOTS_NO_CORROBORATION",
+        "condition_ar": "L2+ visual inference without corroboration evaluated",
+        "quarantine": "mandatory"
+      },
+      {
+        "id": "T_VERIFICATION_LEXICON_PRE_GATE3",
+        "condition_ar": "verification/achieved/confirmed language before Gate 3",
+        "quarantine": "mandatory"
+      },
+      {
+        "id": "T_CONTRADICTION_UNRESOLVED",
+        "condition_ar": "cross-artifact or identity contradiction open",
+        "quarantine": "mandatory"
+      }
+    ],
+    "session_evidence": {
+      "3": ["T_VERIFICATION_LEXICON_PRE_GATE3", "T_RUNTIME_CLAIM_NO_REPLAY"],
+      "2": [],
+      "4": ["T_RUNTIME_CLAIM_NO_REPLAY"],
+      "13": ["T_EXECUTABLE_NO_PROVENANCE", "T_RUNTIME_CLAIM_NO_REPLAY", "T_CONTRADICTION_UNRESOLVED"]
+    }
+  },
+  "allowed_actions_inside_quarantine": [
+    {"id": "A_OBSERVATION", "label_ar": "ملاحظة structurally"},
+    {"id": "A_REPRESENTATION_PARSE", "label_ar": "تحليل تمثيل"},
+    {"id": "A_ARTIFACT_INDEX", "label_ar": "فهرسة artifacts"},
+    {"id": "A_DESCRIPTIVE_INFERENCE", "label_ar": "استدلال وصفي advisory — state: inferred"},
+    {"id": "A_REPLAY_REQUEST", "label_ar": "طلب replay / Authority Replay"}
+  ],
+  "forbidden_actions_inside_quarantine": [
+    {"id": "F_ACHIEVED_ASSIGNMENT", "label_ar": "منح Achieved/Pass"},
+    {"id": "F_VERIFICATION_WORDING", "label_ar": "لغة verification"},
+    {"id": "F_AUTHORITY_ESCALATION", "label_ar": "تصعيد سلطة triad"},
+    {"id": "F_GRADING_CLOSURE", "label_ar": "إغلاق grading نهائي"},
+    {"id": "F_RUNTIME_CONFIRMATION", "label_ar": "تأكيد runtime"}
+  ],
+  "lifting_protocol": {
+    "question_ar": "ما الذي يكمل الشرعية — ليس ما الذي يجعل الملف مقنعًا",
+    "steps_ordered": [
+      {"step": 1, "id": "LIFT_REPLAY_COMPLETED", "requires": "gate_3_provenance_replay", "fail_returns_to": "quarantine_maintained"},
+      {"step": 2, "id": "LIFT_RUNTIME_CORROBORATED", "requires": "gate_4_corroboration_not_none_or_contradictory", "fail_returns_to": "quarantine_maintained"},
+      {"step": 3, "id": "LIFT_PROVENANCE_CONTINUITY", "requires": "identity_match_chain_intact", "fail_returns_to": "lifting_in_progress"},
+      {"step": 4, "id": "LIFT_CONTRADICTIONS_BOUNDED", "requires": "resolved_or_explicit_hold", "fail_returns_to": "quarantine_maintained"},
+      {"step": 5, "id": "LIFT_HUMAN_ACK", "requires": "human_acknowledgement", "fail_returns_to": "lifting_in_progress"},
+      {"step": 6, "id": "LIFT_COMPLETE", "result_state": "quarantine_lifted"}
+    ],
+    "executable_presence_skips_nothing": true
+  },
+  "audit_trace": {
+    "purpose_ar": "epistemic audit residue — منع silent legitimacy formation",
+    "record_fields": [
+      "audit_id",
+      "submission_id",
+      "event_type",
+      "state_from",
+      "state_to",
+      "entry_triggers",
+      "temptation_detected_at",
+      "escalation_events",
+      "breach_severity",
+      "lift_basis",
+      "lifted_by",
+      "recorded_at",
+      "lineage_refs"
+    ],
+    "event_types": ["enter", "maintain", "breach", "lift_attempt", "lift_complete"],
+    "forensic_questions_ar": [
+      "متى بدأ الإغراء؟",
+      "متى حصل escalation؟",
+      "من رفع الحجر؟",
+      "على أي أساس؟"
+    ]
+  },
+  "quarantine_breach_severity": {
+    "taxonomy_id": "QB_TAXONOMY_v1",
+    "levels": [
+      {
+        "level": "QB1",
+        "id": "descriptive_drift",
+        "definition_ar": "انزلاق وصفي نحو adequacy بدون verification lexicon",
+        "example_ar": "minor modality drift"
+      },
+      {
+        "level": "QB2",
+        "id": "verification_before_replay",
+        "definition_ar": "verification wording before Gate 3 complete",
+        "session_evidence": 3
+      },
+      {
+        "level": "QB3",
+        "id": "runtime_achieved_without_provenance",
+        "definition_ar": "runtime→Achieved linkage without provenance chain",
+        "session_evidence": 13
+      },
+      {
+        "level": "QB4",
+        "id": "authority_grant_contradiction_open",
+        "definition_ar": "authority grant/closure despite unresolved contradiction",
+        "session_evidence": 13
+      }
+    ],
+    "response_matrix": [
+      {"level": "QB1", "system": "tag + audit", "human": "worksheet note"},
+      {"level": "QB2", "system": "block verification lexicon + audit", "human": "forensic session"},
+      {"level": "QB3", "system": "lock eligibility + audit + HOLD", "human": "mitigation evidence"},
+      {"level": "QB4", "system": "lock + epoch escalation flag", "human": "institutional review"}
+    ]
+  },
+  "workshop_session_contract_mapping": [
+    {"session": 3, "state": "breach_detected", "breach": "QB2", "outcome_ar": "representational breach"},
+    {"session": 2, "state": "idle", "breach": null, "outcome_ar": "natural containment"},
+    {"session": 4, "state": "quarantine_maintained", "breach": null, "outcome_ar": "restraint anchors"},
+    {"session": 13, "state": "quarantine_maintained", "breach": "QB3", "outcome_ar": "executable temptation · gap documented"}
+  ],
+  "explicit_non_goals": [
+    "wire_to_automatic_grade_mutation",
+    "replace_human_L5",
+    "enable_L4_sandbox",
+    "silent_bypass_strong_evidence",
+    "auto_lift_on_exe_presence"
+  ],
+  "companion_md": "app/calibration/EPISTEMIC_QUARANTINE_CONTRACT_v1.md",
+  "path_a_sequence_complete": true
+}

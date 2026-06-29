@@ -1,0 +1,129 @@
+{
+  "schema": "governance_calibration_cycle_v1",
+  "generated_at": "2026-05-27T19:25:16Z",
+  "run_id": "institutional_closure_2026-05-26T230244Z",
+  "cycle_status": "partial_data",
+  "description_ar": "أول Governance Learning Artifact — taxonomy من disagreements حقيقية",
+  "pilot_wave_progress": {
+    "wave_1_abdullah": {
+      "submission_ids": [
+        1
+      ],
+      "records": 1,
+      "fully_complete": 0,
+      "slots_filled": 4,
+      "slots_total": 10,
+      "pct": 40.0,
+      "ready_for_cycle": false
+    },
+    "wave_2_top5": {
+      "submission_ids": [
+        22,
+        15,
+        19,
+        14,
+        16
+      ],
+      "records": 5,
+      "fully_complete": 0,
+      "slots_filled": 0,
+      "slots_total": 50,
+      "pct": 0.0,
+      "ready_for_cycle": false
+    },
+    "wave_3_bottom5": {
+      "submission_ids": [
+        20,
+        21,
+        17,
+        18,
+        25
+      ],
+      "records": 5,
+      "fully_complete": 0,
+      "slots_filled": 0,
+      "slots_total": 50,
+      "pct": 0.0,
+      "ready_for_cycle": false
+    },
+    "pilot_cohort_size": 11,
+    "pilot_fully_complete": 0,
+    "pilot_ready": false
+  },
+  "calibration_metrics": {
+    "gold_rows_used": 3,
+    "cohens_kappa": 0.0,
+    "agreement_rate": 0.6666666666666666,
+    "false_positives": 0,
+    "false_negatives": 1,
+    "criterion_mismatch_count": 2,
+    "note_ar": "Kappa مؤشر — taxonomy = القيمة المؤسسية"
+  },
+  "disagreement_taxonomy_matrix": [
+    {
+      "taxonomy_type": "no_runtime_build",
+      "count": 1,
+      "governance_decision": "submission policy",
+      "pct_of_mismatches": 50.0
+    },
+    {
+      "taxonomy_type": "overall_grade_mismatch",
+      "count": 1,
+      "governance_decision": "moderation review",
+      "pct_of_mismatches": 50.0
+    }
+  ],
+  "governance_decision_summary": [
+    {
+      "decision": "submission policy",
+      "count": 1
+    },
+    {
+      "decision": "moderation review",
+      "count": 1
+    }
+  ],
+  "classified_mismatches": [
+    {
+      "submission_id": "1",
+      "criterion": "M3",
+      "teacher_achieved": true,
+      "system_achieved": false,
+      "teacher_confidence": null,
+      "notes": "pending",
+      "replay_verified": true,
+      "runtime_status": "gated",
+      "hallucination_risk": null,
+      "taxonomy_type": "no_runtime_build",
+      "governance_decision": "submission policy",
+      "rationale_ar": "المعلم Achieved والنظام Not — لا build قابل للتشغيل",
+      "defensibility_question_ar": "هل replay/evidence تدعم قرار المعلم؟"
+    },
+    {
+      "submission_id": "1",
+      "criterion": "__overall_grade__",
+      "teacher_achieved": "M",
+      "system_achieved": "U",
+      "mismatch_type": "overall_grade_level",
+      "taxonomy_type": "overall_grade_mismatch",
+      "governance_decision": "moderation review",
+      "rationale_ar": "اختلاف overall grade — مراجعة moderation",
+      "defensibility_question_ar": "هل replay/evidence تدعم قرار المعلم؟"
+    }
+  ],
+  "moderation_review_agenda_ar": [
+    "أين وافق AI مع المعلم؟",
+    "أين اختلف؟ وهل الاختلاف defensible؟",
+    "هل replay كافية للدفاع؟",
+    "هل runtime evidence غيّرت القرار؟",
+    "قرارات: policy / rubric / threshold / moderation"
+  ],
+  "next_steps_ar": [
+    "إنهاء Abdullah (#1) 100% في /institutional/moderation",
+    "إنهاء Top 5 (#22, #15, #19, #14, #16)",
+    "إنهاء Bottom 5 (#20, #21, #17, #18, #25)",
+    "تشغيل run_institutional_closure.py بعد الموجة",
+    "اجتماع moderation review مع المعلّم والمشرف ومسؤول الجودة"
+  ],
+  "_labels_path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\ai_grader_python\\app\\calibration\\human_labels_v1.json"
+}

@@ -1,0 +1,2 @@
+{"timestamp": 1782646628.5633016, "type": "session_created", "severity": "info", "source": "runtime", "payload": {"engine": "gamemaker", "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmp6d4v5pw9"}}
+{"timestamp": 1782646629.0636394, "type": "gamemaker_artifact_analysis", "severity": "info", "source": "runtime", "payload": {"gml_files": 1, "yyp": true, "static_only": true}}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block nav_graded %}active{% endblock %}
+{% block extra_head %}
+<style>
+    .bnf-wrap {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: #080e1a;
+        color: #e2e8f0;
+        font-family: 'Rubik', 'Cairo', sans-serif;
+    }
+    .bnf-card {
+        max-width: 520px;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 16px;
+        padding: 32px;
+        text-align: center;
+    }
+    .bnf-card h1 { font-size: 1.35rem; margin-bottom: 12px; color: #f8fafc; }
+    .bnf-card p { font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,.75); margin-bottom: 20px; }
+    .bnf-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .bnf-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+    }
+    .bnf-primary { background: #0ea5e9; color: #fff; }
+    .bnf-secondary { background: rgba(255,255,255,.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,.15); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="bnf-wrap">
+    <div class="bnf-card">
+        <h1>الدفعة غير موجودة</h1>
+        <p>
+            رقم الدفعة <strong>#{{ batch_id }}</strong> غير مسجّل في قاعدة البيانات.
+            يحدث ذلك بعد إعادة تشغيل الخادم، مسح البيانات، أو انقطاع الحفظ أثناء «حفظ النتائج».
+        </p>
+        <p>الحل: أعد تشغيل التصحيح PRO من صفحة المهمة — الملفات على القرص قد تبقى لكن السجل في DB فُقد.</p>
+        <div class="bnf-actions">
+            {% if assignment_id %}
+            <a class="bnf-btn bnf-primary" href="/batch-grade/{{ assignment_id }}">إعادة التصحيح</a>
+            {% endif %}
+            <a class="bnf-btn bnf-secondary" href="/graded-students">الطلاب المُصحَّحون</a>
+            <a class="bnf-btn bnf-secondary" href="/dashboard">لوحة التحكم</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

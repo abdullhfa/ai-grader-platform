@@ -1,0 +1,56 @@
+{
+  "run_purpose": "Observe human review escalation gates; advisory only — does not change achieved.",
+  "cases": [
+    {
+      "case_id": "case_a_strong_no_review",
+      "expected_behavior": "human_review_required.required false; severity low; review_confidence high (>= 0.9).",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"submission\": {\n    \"required\": false,\n    \"severity\": \"low\",\n    \"reasons\": [],\n    \"review_confidence\": 1.0,\n    \"review_categories\": [],\n    \"review_reasoning\": [\n      \"automated_evidence_stack_within_advisory_thresholds\"\n    ],\n    \"triggers_fired\": []\n  },\n  \"layer_block_submission\": {\n    \"human_review_required\": {\n      \"required\": false,\n      \"severity\": \"low\",\n      \"reasons\": []\n    },\n    \"review_confidence\": 1.0,\n    \"review_categories\": [],\n    \"review_reasoning\": {\n      \"reasoning\": [\n        \"automated_evidence_stack_within_advisory_thresholds\"\n      ]\n    },\n    \"triggers_fired_count\": 0\n  },\n  \"criterion_A.P3\": {\n    \"required\": false,\n    \"severity\": \"low\",\n    \"reasons\": [],\n    \"review_confidence\": 1.0,\n    \"review_categories\": [],\n    \"review_reasoning\": [\n      \"automated_evidence_stack_within_advisory_thresholds\"\n    ],\n    \"triggers_fired\": []\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_b_runtime_no_corroboration",
+      "expected_behavior": "required true; severity medium; reasons include runtime_present_without_system_confirmation or insufficient_runtime_confirmation.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"submission\": {\n    \"required\": true,\n    \"severity\": \"medium\",\n    \"reasons\": [\n      \"cross_modal_diversity_below_threshold\",\n      \"runtime_present_without_system_confirmation\"\n    ],\n    \"review_confidence\": 0.76,\n    \"review_categories\": [\n      \"cross_modal_conflict\",\n      \"runtime_reliability\"\n    ],\n    \"review_reasoning\": [\n      \"runtime_evidence_exists_without_corroborated_system_detection\",\n      \"cross_modal_overlap_insufficient\"\n    ],\n    \"triggers_fired\": [\n      \"runtime_without_system_confirmation\",\n      \"low_cross_modal_diversity\"\n    ]\n  },\n  \"layer_block_submission\": {\n    \"human_review_required\": {\n      \"required\": true,\n      \"severity\": \"medium\",\n      \"reasons\": [\n        \"cross_modal_diversity_below_threshold\",\n        \"runtime_present_without_system_confirmation\"\n      ]\n    },\n    \"review_confidence\": 0.76,\n    \"review_categories\": [\n      \"cross_modal_conflict\",\n      \"runtime_reliability\"\n    ],\n    \"review_reasoning\": {\n      \"reasoning\": [\n        \"runtime_evidence_exists_without_corroborated_system_detection\",\n        \"cross_modal_overlap_insufficient\"\n      ]\n    },\n    \"triggers_fired_count\": 2\n  },\n  \"criterion_A.P3\": {\n    \"required\": true,\n    \"severity\": \"medium\",\n    \"reasons\": [\n      \"cross_modal_diversity_below_threshold\",\n      \"rubric_sufficiency_shadow_not_met\",\n      \"runtime_present_without_system_confirmation\"\n    ],\n    \"review_confidence\": 0.64,\n    \"review_categories\": [\n      \"cross_modal_conflict\",\n      \"evidence_sufficiency\",\n      \"runtime_reliability\"\n    ],\n    \"review_reasoning\": [\n      \"runtime_evidence_exists_without_corroborated_system_detection\",\n      \"cross_modal_overlap_insufficient\",\n      \"declarative_sufficiency_contract_not_satisfied\"\n    ],\n    \"triggers_fired\": [\n      \"runtime_without_system_confirmation\",\n      \"low_cross_modal_diversity\",\n      \"rubric_shadow_insufficient\"\n    ]\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_c_pattern_hints_only",
+      "expected_behavior": "required true; severity high; reasons include pattern_hint_only_insufficient; category evidence_sufficiency.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"submission\": {\n    \"required\": true,\n    \"severity\": \"high\",\n    \"reasons\": [\n      \"pattern_hint_only_insufficient\",\n      \"sparse_evidence_detected\"\n    ],\n    \"review_confidence\": 0.56,\n    \"review_categories\": [\n      \"evidence_sufficiency\"\n    ],\n    \"review_reasoning\": [\n      \"only_pattern_hints_without_semantic_code_confirmation\",\n      \"minimal_extracted_evidence_for_reliable_automation\"\n    ],\n    \"triggers_fired\": [\n      \"pattern_hint_only_insufficient\",\n      \"sparse_evidence\"\n    ]\n  },\n  \"layer_block_submission\": {\n    \"human_review_required\": {\n      \"required\": true,\n      \"severity\": \"high\",\n      \"reasons\": [\n        \"pattern_hint_only_insufficient\",\n        \"sparse_evidence_detected\"\n      ]\n    },\n    \"review_confidence\": 0.56,\n    \"review_categories\": [\n      \"evidence_sufficiency\"\n    ],\n    \"review_reasoning\": {\n      \"reasoning\": [\n        \"only_pattern_hints_without_semantic_code_confirmation\",\n        \"minimal_extracted_evidence_for_reliable_automation\"\n      ]\n    },\n    \"triggers_fired_count\": 2\n  },\n  \"criterion_A.P3\": {\n    \"required\": true,\n    \"severity\": \"high\",\n    \"reasons\": [\n      \"pattern_hint_only_insufficient\",\n      \"rubric_sufficiency_shadow_not_met\",\n      \"sparse_evidence_detected\"\n    ],\n    \"review_confidence\": 0.44,\n    \"review_categories\": [\n      \"evidence_sufficiency\"\n    ],\n    \"review_reasoning\": [\n      \"only_pattern_hints_without_semantic_code_confirmation\",\n      \"declarative_sufficiency_contract_not_satisfied\",\n      \"minimal_extracted_evidence_for_reliable_automation\"\n    ],\n    \"triggers_fired\": [\n      \"pattern_hint_only_insufficient\",\n      \"rubric_shadow_insufficient\",\n      \"sparse_evidence\"\n    ]\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_d_cross_modal_conflict",
+      "expected_behavior": "required true; severity high; corroboration_conflicts_detected; category cross_modal_conflict.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"submission\": {\n    \"required\": true,\n    \"severity\": \"high\",\n    \"reasons\": [\n      \"corroboration_conflicts_detected\",\n      \"cross_modal_conflict_detected\"\n    ],\n    \"review_confidence\": 0.56,\n    \"review_categories\": [\n      \"cross_modal_conflict\"\n    ],\n    \"review_reasoning\": [\n      \"corroboration_conflicts_present_in_runtime_layer\",\n      \"rubric_shadow_reported_corroboration_conflict\"\n    ],\n    \"triggers_fired\": [\n      \"corroboration_conflicts\",\n      \"sufficiency_corroboration_conflict\"\n    ]\n  },\n  \"layer_block_submission\": {\n    \"human_review_required\": {\n      \"required\": true,\n      \"severity\": \"high\",\n      \"reasons\": [\n        \"corroboration_conflicts_detected\",\n        \"cross_modal_conflict_detected\"\n      ]\n    },\n    \"review_confidence\": 0.56,\n    \"review_categories\": [\n      \"cross_modal_conflict\"\n    ],\n    \"review_reasoning\": {\n      \"reasoning\": [\n        \"corroboration_conflicts_present_in_runtime_layer\",\n        \"rubric_shadow_reported_corroboration_conflict\"\n      ]\n    },\n    \"triggers_fired_count\": 2\n  },\n  \"criterion_A.P3\": {\n    \"required\": true,\n    \"severity\": \"high\",\n    \"reasons\": [\n      \"corroboration_conflicts_detected\",\n      \"rubric_sufficiency_shadow_not_met\"\n    ],\n    \"review_confidence\": 0.66,\n    \"review_categories\": [\n      \"cross_modal_conflict\",\n      \"evidence_sufficiency\"\n    ],\n    \"review_reasoning\": [\n      \"corroboration_conflicts_present_in_runtime_layer\",\n      \"declarative_sufficiency_contract_not_satisfied\"\n    ],\n    \"triggers_fired\": [\n      \"corroboration_conflicts\",\n      \"rubric_shadow_insufficient\"\n    ]\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    },
+    {
+      "case_id": "case_e_sparse_noise_critical",
+      "expected_behavior": "required true; severity critical; excessive_submission_noise or sparse_evidence_with_upload_noise.",
+      "observation_notes": {
+        "observation_note": ""
+      },
+      "actual_behavior": "{\n  \"submission\": {\n    \"required\": true,\n    \"severity\": \"critical\",\n    \"reasons\": [\n      \"excessive_submission_noise_flags\",\n      \"pattern_hint_only_insufficient\",\n      \"sparse_evidence_with_upload_noise\"\n    ],\n    \"review_confidence\": 0.08,\n    \"review_categories\": [\n      \"evidence_sufficiency\",\n      \"submission_packaging\"\n    ],\n    \"review_reasoning\": [\n      \"only_pattern_hints_without_semantic_code_confirmation\",\n      \"upload_packaging_noise_may_degrade_automated_evidence_quality\",\n      \"very_few_evidence_items_plus_submission_packaging_noise\"\n    ],\n    \"triggers_fired\": [\n      \"pattern_hint_only_insufficient\",\n      \"excessive_submission_noise\",\n      \"sparse_evidence_with_upload_noise\"\n    ]\n  },\n  \"layer_block_submission\": {\n    \"human_review_required\": {\n      \"required\": true,\n      \"severity\": \"critical\",\n      \"reasons\": [\n        \"excessive_submission_noise_flags\",\n        \"pattern_hint_only_insufficient\",\n        \"sparse_evidence_with_upload_noise\"\n      ]\n    },\n    \"review_confidence\": 0.08,\n    \"review_categories\": [\n      \"evidence_sufficiency\",\n      \"submission_packaging\"\n    ],\n    \"review_reasoning\": {\n      \"reasoning\": [\n        \"only_pattern_hints_without_semantic_code_confirmation\",\n        \"upload_packaging_noise_may_degrade_automated_evidence_quality\",\n        \"very_few_evidence_items_plus_submission_packaging_noise\"\n      ]\n    },\n    \"triggers_fired_count\": 3\n  },\n  \"criterion_A.P3\": {\n    \"required\": true,\n    \"severity\": \"critical\",\n    \"reasons\": [\n      \"excessive_submission_noise_flags\",\n      \"pattern_hint_only_insufficient\",\n      \"rubric_sufficiency_shadow_not_met\",\n      \"sparse_evidence_with_upload_noise\"\n    ],\n    \"review_confidence\": 0.0,\n    \"review_categories\": [\n      \"evidence_sufficiency\",\n      \"submission_packaging\"\n    ],\n    \"review_reasoning\": [\n      \"only_pattern_hints_without_semantic_code_confirmation\",\n      \"declarative_sufficiency_contract_not_satisfied\",\n      \"upload_packaging_noise_may_degrade_automated_evidence_quality\",\n      \"very_few_evidence_items_plus_submission_packaging_noise\"\n    ],\n    \"triggers_fired\": [\n      \"pattern_hint_only_insufficient\",\n      \"rubric_shadow_insufficient\",\n      \"excessive_submission_noise\",\n      \"sparse_evidence_with_upload_noise\"\n    ]\n  }\n}",
+      "observed_friction": "",
+      "unexpected_result": ""
+    }
+  ],
+  "note": "Advisory only. Fill observed_friction after manual review."
+}

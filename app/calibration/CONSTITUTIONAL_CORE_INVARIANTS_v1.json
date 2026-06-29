@@ -1,0 +1,58 @@
+{
+  "core_id": "CONSTITUTIONAL_CORE_INVARIANTS_v1",
+  "purpose_en": "Distilled constitutional protections — clarity under restraint",
+  "distillation_note_en": "Can the architecture become smaller without losing its constitutional protections?",
+  "hardening_invariant_en": "Constitutional protection must remain comprehensible.",
+  "preserved_non_negotiable_en": "The system still refuses to certify itself — empty ledgers intentional.",
+  "count": 8,
+  "invariants": [
+    {
+      "id": "capability_not_legitimacy",
+      "en": "Capability built ≠ legitimacy granted.",
+      "ar": "بناء القدرة ≠ منح الشرعية."
+    },
+    {
+      "id": "observation_not_legitimacy",
+      "en": "Runtime observation does not imply runtime legitimacy.",
+      "ar": "مراقبة runtime لا تعني legitimacy."
+    },
+    {
+      "id": "visibility_not_comprehension",
+      "en": "Execution visibility ≠ execution comprehension.",
+      "ar": "رؤية التنفيذ ≠ فهم التنفيذ."
+    },
+    {
+      "id": "governance_not_understanding",
+      "en": "Governed runtime observation is still not runtime understanding.",
+      "ar": "runtime المحكوم ما يزال ليس understanding."
+    },
+    {
+      "id": "density_not_understanding",
+      "en": "Telemetry density does not imply gameplay understanding.",
+      "ar": "كثافة telemetry لا تعني فهم gameplay."
+    },
+    {
+      "id": "replay_not_validity",
+      "en": "Replay is evidence of reproducibility, not evidence of validity.",
+      "ar": "Replay دليل reproducibility — لا validity."
+    },
+    {
+      "id": "opacity_preserved",
+      "en": "Execution opacity preserved — pedagogical and rubric meaning remain partially opaque.",
+      "ar": "opacity محفوظ — المعنى pedagogical و rubric-wise opaque جزئيًا."
+    },
+    {
+      "id": "no_self_certification",
+      "en": "Empty ledgers are intentional — the project refuses self-certification.",
+      "ar": "الفراغ مقصود — المشروع يرفض self-certification."
+    }
+  ],
+  "forbidden_even_if_capable": [
+    "auto_inference",
+    "confidence_escalation",
+    "ai_validated_runtime",
+    "rubric_linking_automatic",
+    "automated_achievement_semantics"
+  ],
+  "l4_clause_en": "L4 may observe runtime phenomenology. L4 may not infer gameplay legitimacy."
+}

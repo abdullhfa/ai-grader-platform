@@ -1,0 +1,120 @@
+{
+  "packet_id": "EPOCH_REREVIEW_PACKET_PATH_A_v1",
+  "packet_type": "path_a_mitigation_epoch_rereview",
+  "status": "complete",
+  "facilitator": "Eng.Abdulah",
+  "completed_at": "2026-05-25T06:00:00Z",
+  "reference_cohort": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+  "batch_id": 4,
+  "prior_epoch_verdict_artifact": "art_396d6d2036154ced",
+  "prior_transition_verdict": "not_yet_requires_mitigation",
+  "freeze_context": {
+    "current_epoch_id": "epoch_1",
+    "current_freeze_id": "GOVERNANCE_FREEZE_v1",
+    "proposed_freeze_id": "GOVERNANCE_FREEZE_v2",
+    "v2_activation": false
+  },
+  "institutional_axiom_ar": "النظام أصبح أفضل في تأخير الشرعية، وليس في ادعاء اليقين.",
+  "institutional_axiom_en": "The system improved at delaying legitimacy — not at claiming certainty.",
+  "section_1_cohort_recap": {
+    "purpose_ar": "لماذا احتاجت الورشة mitigation — ليس إعادة شرح Batch 4",
+    "summary_ar": "Batch 4 أثبت أن النظام قادر على كشف الغموض وإبقاء contradictions مرئية، لكنه أظهر أيضًا ميلًا متكررًا لتحويل representation إلى authority قبل اكتمال provenance.",
+    "key_signals": {
+      "hold_universal": "21/21",
+      "replay_partial": "16/21",
+      "l3_confusion": "14/21",
+      "contradictions_visible": true,
+      "semantic_leakage_documented": true
+    }
+  },
+  "section_2_curriculum": {
+    "model_type": "epistemic_progression",
+    "not": "case_studies_only",
+    "progression": [
+      {"session": 3, "role": "breach_anatomy", "question_ar": "كيف يتحول السرد إلى legitimacy؟", "outcome": "QB2 breach", "artifact": "replay_gate_session_3_submission_3.json"},
+      {"session": 2, "role": "baseline_containment", "question_ar": "كيف يبقى quarantine stable طبيعيًا؟", "outcome": "stable_low_temptation", "artifact": "replay_gate_session_2_submission_2.json"},
+      {"session": 4, "role": "controlled_restraint", "question_ar": "كيف restraint تحت temptation؟", "outcome": "restraint_anchors_no_breach", "artifact": "replay_gate_session_4_submission_4.json"},
+      {"session": 13, "role": "executable_stress_test", "question_ar": "هل exe يكفي لكسر quarantine؟", "outcome": "partial_containment_QB3_gap", "artifact": "replay_gate_session_13_submission_13.json"}
+    ],
+    "progression_logic_ar": "failure (#3) → natural baseline (#2) → positive control (#4) → edge stress (#13)"
+  },
+  "section_3_extracted_principles": [
+    {"principle_en": "Narrative completeness can simulate legitimacy.", "sessions": [3]},
+    {"principle_en": "Executable presence can simulate provenance completion.", "sessions": [13]},
+    {"principle_en": "Replay timing matters more than replay existence.", "sessions": [3, 13], "batch4_evidence": "16/21 replay partial"},
+    {"principle_en": "Language drift precedes authority drift.", "sessions": [3, 4], "artifact": "AUTHORITY_TRIAD_LANGUAGE_v1"},
+    {"principle_en": "Quarantine is an execution boundary, not a warning state.", "artifact": "EPISTEMIC_QUARANTINE_CONTRACT_v1"},
+    {"principle_en": "Restraint anchors can contain temptation without eliminating it.", "sessions": [4]},
+    {"principle_en": "Absence of narrative seduction enables natural quarantine respect.", "sessions": [2]},
+    {"principle_en": "Vocabulary drift is authority formation.", "artifact": "AUTHORITY_TRIAD_LANGUAGE_v1"}
+  ],
+  "section_4_mitigation_architecture": {
+    "layers": [
+      {
+        "artifact_id": "REPLAY_GATE_DISCIPLINE_v1",
+        "addresses": "when transition to authority is blocked",
+        "gap_exposed_ar": "replay opened ≠ trusted · Gate 3 failure locus"
+      },
+      {
+        "artifact_id": "AUTHORITY_TRIAD_LANGUAGE_v1",
+        "addresses": "how authority leaks linguistically",
+        "gap_exposed_ar": "verification lexicon before provenance · exe shortcut language"
+      },
+      {
+        "artifact_id": "EPISTEMIC_QUARANTINE_CONTRACT_v1",
+        "addresses": "systemic behaviour during incomplete legitimacy",
+        "gap_exposed_ar": "partial legitimacy (#13) despite locked eligibility · audit need"
+      }
+    ],
+    "combined_effect_ar": "anti-semantic hallucination + anti-runtime shortcut legitimacy",
+    "wired_to_grading": false
+  },
+  "section_5_unresolved_gaps": [
+    {"area": "trusted replay discipline", "status": "incomplete", "evidence": "replay_trusted=no · Gate 3 fail sessions #3 #13"},
+    {"area": "runtime provenance automation", "status": "absent", "evidence": "L4 gated"},
+    {"area": "semantic leakage recurrence", "status": "reduced_not_eliminated", "evidence": "#13 QB3 · 14/21 L3 confusion"},
+    {"area": "L4 authority readiness", "status": "blocked", "evidence": "GOVERNANCE_FREEZE_v1 active"},
+    {"area": "quarantine breach auto-detection", "status": "advisory_only", "evidence": "stub eval only"},
+    {"area": "executable identity continuity", "status": "manual", "evidence": "#13 identity mismatch"}
+  ],
+  "section_6_epoch_recommendation": {
+    "verdict_id": "mitigation_containment_progress_accepted",
+    "verdict_en": "Mitigation architecture accepted as containment progress, not as authority readiness proof.",
+    "verdict_ar": "قُبلت بنية mitigation كتقدّم في الاحتواء — لا كبرهان على جاهزية السلطة.",
+    "explicitly_not": [
+      "epoch_transition_justified_institutionally",
+      "authority_readiness_proof",
+      "automatic_L4_escalation",
+      "GOVERNANCE_FREEZE_v2_activation"
+    ],
+    "answers": {
+      "containment_thinking_evidence": "yes",
+      "architecture_eliminates_leakage": "no",
+      "replay_trusted": "no",
+      "freeze_v2_justified": "no",
+      "phase_4_design_only_eligible": "yes",
+      "l4_sandbox_authorized": "no"
+    },
+    "unlocks": {
+      "allowed": ["phase_4_design_only_rfc", "advisory_stub_hardening", "mitigation_ledger_updates", "doctrine_reference"],
+      "blocked": ["l4_operational_sandbox", "governance_freeze_v2", "grading_pipeline_wire", "trusted_replay_claim"]
+    }
+  },
+  "lineage_refs": [
+    "art_396d6d2036154ced",
+    "ism_27544be77f0a",
+    "REPLAY_GATE_MITIGATION_WORKSHOP_v1",
+    "REPLAY_GATE_DISCIPLINE_v1",
+    "AUTHORITY_TRIAD_LANGUAGE_v1",
+    "EPISTEMIC_QUARANTINE_CONTRACT_v1",
+    "led_8f0ec9362fa3",
+    "led_c535f44fcb3c",
+    "led_e37fe61794c7"
+  ],
+  "companion_md": "app/calibration/EPOCH_REREVIEW_PACKET_PATH_A_v1.md",
+  "signatory": {
+    "name": "Eng.Abdulah",
+    "role": "governance_facilitator",
+    "affirmation_ar": "أؤكد أن هذا re-review packet يوثّق تقدّم containment — ولا يُinterpret كإذن escalation أو certainty claim."
+  }
+}

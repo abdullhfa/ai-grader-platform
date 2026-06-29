@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-grader.local/schemas/evidence.schema.json",
+  "title": "CriterionEvidenceGraph",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["criterion_id"],
+    "properties": {
+      "criterion_id": { "type": "string" },
+      "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+      "nodes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["node_id", "claim"],
+          "properties": {
+            "node_id": { "type": "string" },
+            "claim": { "type": "string" },
+            "source": { "type": "string" },
+            "confidence": { "type": "number" },
+            "verified": { "type": "boolean" },
+            "artifact_ref": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

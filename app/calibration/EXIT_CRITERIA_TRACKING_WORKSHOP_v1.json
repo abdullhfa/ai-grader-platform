@@ -1,0 +1,99 @@
+{
+  "workshop_id": "EXIT_CRITERIA_TRACKING_WORKSHOP_v1",
+  "status": "active",
+  "mode": "evidence_accumulation",
+  "not": ["system_development", "activation_license", "grading_wire"],
+  "institutional_invariant_en": "Containment evidence is not activation evidence.",
+  "institutional_invariant_ar": "دليل الاحتواء ليس دليل تفعيل.",
+  "purpose_en": "Measure whether mitigation changes epistemic behaviour across cohorts over time.",
+  "failure_mode_ar": "architecture elegant but non-effective — if metrics do not improve",
+  "prerequisite_artifacts": [
+    "PHASE4_OBSERVATIONAL_SANDBOX_RFC_v1",
+    "EPOCH_REREVIEW_PACKET_PATH_A_v1",
+    "EPISTEMIC_QUARANTINE_CONTRACT_v1",
+    "AUTHORITY_TRIAD_LANGUAGE_v1"
+  ],
+  "parallel_track": "TRUSTED_REPLAY_DISCIPLINE_PILOT_v1",
+  "metrics_ledger_path": "app/calibration/human_cohort_workshop/exit_criteria_metrics.jsonl",
+  "implementation_stub": "app/exit_criteria_tracking.py",
+  "metrics_fixed": [
+    {
+      "id": "M1_replay_before_judgment_rate",
+      "question_ar": "هل replay يسبق authority فعلاً؟",
+      "source": "section_e_epistemic_behaviour.answers.replay_before_judgment",
+      "rfc_exit_maps_to": "trusted_replay_discipline"
+    },
+    {
+      "id": "M2_qb_recurrence",
+      "question_ar": "هل QB2/QB3 تنخفض؟",
+      "source": "epistemic_quarantine_contract.classify_breach_severity",
+      "rfc_exit_maps_to": "breach_recurrence_reduction"
+    },
+    {
+      "id": "M3_vocabulary_drift_frequency",
+      "question_ar": "هل لغة verified/achieved انخفضت؟",
+      "source": "verification_language_used + forbidden shortcut samples",
+      "rfc_exit_maps_to": "implicit_language_containment"
+    },
+    {
+      "id": "M4_quarantine_persistence",
+      "question_ar": "هل يبقى الحجر ثابتًا تحت temptation؟",
+      "source": "quarantine_state stable/maintained vs breach",
+      "rfc_exit_maps_to": "quarantine_enforcement_proxy"
+    },
+    {
+      "id": "M5_provenance_continuity_success",
+      "question_ar": "هل exe ↔ gameplay ↔ identity أصبحت مرتبطة؟",
+      "source": "replay_consulted_at + identity + gameplay verified proxy",
+      "rfc_exit_maps_to": "provenance_continuity"
+    }
+  ],
+  "baseline_cohort": {
+    "cohort_id": "REFERENCE_GOVERNANCE_COHORT_BATCH4",
+    "batch_id": 4,
+    "observation_count": 21,
+    "recorded_at": "2026-05-25T08:00:00Z",
+    "metrics": {
+      "M1_replay_before_judgment_rate": {
+        "yes": 1,
+        "partial": 16,
+        "not_observed": 4,
+        "no": 0,
+        "denominator": 21,
+        "rate_yes": 0.048,
+        "replay_consulted_at_set": 1,
+        "replay_consulted_rate": 0.048
+      },
+      "M2_qb_recurrence": {"QB2": 3, "QB3": 9, "QB4": 0, "none": 9},
+      "M3_vocabulary_drift_frequency": {
+        "verification_yes": 11,
+        "verification_partial": 6,
+        "verification_no": 4,
+        "verification_yes_rate": 0.524
+      },
+      "M4_quarantine_persistence": {
+        "stable_or_maintained": 9,
+        "breach_qb2_plus": 12,
+        "note_ar": "advisory eval from Batch 4 observations"
+      },
+      "M5_provenance_continuity_success": {
+        "replay_consulted_rate": 0.048,
+        "identity_continuity": "weak",
+        "example_ar": "#13 Bomber Quest vs Kitten Run"
+      }
+    },
+    "improvement_demonstrated": false,
+    "interpretation_ar": "baseline — mitigation documented · behaviour change not demonstrated"
+  },
+  "success_test_ar": "≥2 cohorts جديدة: انخفاض QB2/QB3 + ارتفاع M1 yes-rate + انخفاض M3 — still not activation alone",
+  "explicit_non_goals": [
+    "grading_retune",
+    "l4_activation",
+    "governance_freeze_v2",
+    "metrics_green_implies_deploy",
+    "replace_human_audit"
+  ],
+  "facilitator": "Eng.Abdulah",
+  "activated_at": "2026-05-25T08:00:00Z",
+  "companion_md": "app/calibration/EXIT_CRITERIA_TRACKING_WORKSHOP_v1.md"
+}

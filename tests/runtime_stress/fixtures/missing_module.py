@@ -1,0 +1,3 @@
+import totally_missing_native_dll_xyz
+
+print(totally_missing_native_dll_xyz.value)

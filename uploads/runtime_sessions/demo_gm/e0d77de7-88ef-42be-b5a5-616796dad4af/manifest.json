@@ -1,0 +1,146 @@
+{
+  "session_id": "e0d77de7-88ef-42be-b5a5-616796dad4af",
+  "engine": "gamemaker",
+  "submission_key": "demo_gm",
+  "status": "completed",
+  "capabilities": {
+    "supports_headless": false,
+    "supports_input_simulation": true,
+    "supports_screenshots": true,
+    "supports_video_capture": false,
+    "supports_network_isolation": false,
+    "supports_gpu": false,
+    "supports_audio": false,
+    "supports_build_from_source": true,
+    "supports_playmode_tests": false,
+    "supports_log_parsing": true,
+    "supports_telemetry": true
+  },
+  "signals": {
+    "gamemaker_layout": {
+      "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplmny4e2w",
+      "yyp_path": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplmny4e2w\\Game.yyp",
+      "yyz_path": null,
+      "gml_file_count": 1,
+      "executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpn8y40phd\\student\\game.exe",
+      "html_entry": null,
+      "has_objects_tree": true,
+      "resource_count": 0
+    },
+    "yyp_metadata": {
+      "ok": true,
+      "resource_type": "GMProject",
+      "name": "Game",
+      "resource_count": 2,
+      "meta_version": null
+    },
+    "artifact_analysis": {
+      "mode": "artifact_analysis",
+      "layout": {
+        "project_root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplmny4e2w",
+        "yyp_path": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplmny4e2w\\Game.yyp",
+        "yyz_path": null,
+        "gml_file_count": 1,
+        "executable": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmpn8y40phd\\student\\game.exe",
+        "html_entry": null,
+        "has_objects_tree": true,
+        "resource_count": 0
+      },
+      "runnable_build_present": true,
+      "yyp_metadata": {
+        "ok": true,
+        "resource_type": "GMProject",
+        "name": "Game",
+        "resource_count": 2,
+        "meta_version": null
+      },
+      "resource_count": 2,
+      "gml_analysis": {
+        "sample_count": 1,
+        "total_lines_sampled": 2,
+        "keyword_hits": {
+          "keyboard": 0,
+          "collision": 0,
+          "draw": 0,
+          "step": 0,
+          "score": 1,
+          "room": 1
+        },
+        "event_mapping": {
+          "Step": 1
+        },
+        "complexity_estimate": 0.254,
+        "samples": [
+          {
+            "path": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplmny4e2w\\objects\\obj_ctrl\\Step_0.gml",
+            "lines": 2,
+            "object_hint": "obj_ctrl",
+            "event_hint": "Step"
+          }
+        ]
+      },
+      "project_graph": {
+        "object_count": 1,
+        "room_count": 0,
+        "event_files": 1,
+        "has_objects_tree": true,
+        "has_rooms_tree": false
+      },
+      "completeness_hint": 0.8
+    },
+    "runtime_method": "gamemaker_artifact_analysis"
+  },
+  "metrics": {
+    "avg_fps": null,
+    "crash_detected": false,
+    "freeze_detected": false,
+    "input_responsive": null,
+    "frame_delta_score": 0.0
+  },
+  "telemetry": {
+    "fps_samples": [],
+    "frame_times_ms": [],
+    "memory_usage_mb": [],
+    "scene_transitions": [],
+    "crash_events": [],
+    "ui_events": [],
+    "process_exit_code": null,
+    "runtime_duration_seconds": null,
+    "avg_fps": null,
+    "peak_memory_mb": null
+  },
+  "events": [
+    {
+      "timestamp": 1782645301.3931446,
+      "type": "session_created",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "engine": "gamemaker",
+        "root": "C:\\Users\\aalsa\\AppData\\Local\\Temp\\tmplmny4e2w"
+      }
+    },
+    {
+      "timestamp": 1782645301.8138032,
+      "type": "gamemaker_artifact_analysis",
+      "severity": "info",
+      "source": "runtime",
+      "payload": {
+        "gml_files": 1,
+        "yyp": true,
+        "static_only": true
+      }
+    }
+  ],
+  "screenshots": [],
+  "logs": [],
+  "errors": [],
+  "artifacts": {
+    "screenshots": [],
+    "traces": [],
+    "logs": [],
+    "fps": [],
+    "gameplay_video": [],
+    "runtime_events": []
+  }
+}

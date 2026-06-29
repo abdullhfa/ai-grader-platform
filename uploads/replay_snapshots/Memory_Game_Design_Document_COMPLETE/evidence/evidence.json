@@ -1,0 +1,212 @@
+[
+  {
+    "criterion": "B.D2",
+    "criterion_level": "B.D2",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "B.M2",
+    "criterion_level": "B.M2",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "B.P3",
+    "criterion_level": "B.P3",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "B.P4",
+    "criterion_level": "B.P4",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "C.D3",
+    "criterion_level": "C.D3",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "C.M3",
+    "criterion_level": "C.M3",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "C.P5",
+    "criterion_level": "C.P5",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "C.P6",
+    "criterion_level": "C.P6",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "D2",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "D3",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "M2",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "M3",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "P3",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "P4",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "P5",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "P6",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "game_launch",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "gameplay_loop",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "lose_health",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "testing_evidence",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  },
+  {
+    "criterion": "win_lose_state",
+    "criterion_level": "",
+    "evidence_nodes": [],
+    "supporting_events": [],
+    "contradicting_events": [],
+    "confidence": 0.35,
+    "corroboration_strength": "weak",
+    "node_count": 0
+  }
+]
