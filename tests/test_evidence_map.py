@@ -42,6 +42,26 @@ def test_evidence_map_summary_flags_gate():
     assert summary["gate_downgrade_count"] >= 1
 
 
+def test_evidence_map_uses_arabic_coverage_keys():
+    snap = {
+        "criteria_results": [{"criteria_level": "8/C.P5", "achieved": False}],
+        "artifact_inventory": {"has_executable_artifacts": True, "runtime_artifacts": {"scratch_detected": True}},
+        "submission_paths": ["game.sb3"],
+        "evidence_coverage_by_criterion": [
+            {
+                "criteria_level": "8/C.P5",
+                "coverage_pct": 50,
+                "evidence_found_ar": ["كود مصدري / مشروع"],
+                "evidence_missing_ar": ["تشغيل مُتحقق (L4+)"],
+            }
+        ],
+    }
+    rows = build_evidence_map(snap)
+    p5 = next(r for r in rows if r["criterion_code"] == "P5")
+    assert "كود مصدري" in p5["available_evidence"][0]
+    assert "تشغيل" in p5["missing_evidence"][0]
+
+
 def test_evidence_map_empty_snapshot():
     assert build_evidence_map(None) == []
     assert build_evidence_map({}) == []

@@ -172,8 +172,8 @@ def build_evidence_map(snapshot: Optional[Dict[str, Any]]) -> List[Dict[str, Any
         required = list(_REQUIRED_BY_SHORT.get(short, ["documentary_evidence"]))
         required_labels = [_REQUIRED_LABELS_AR.get(k, k) for k in required]
 
-        available = [str(x) for x in (cov.get("evidence_found") or []) if x]
-        missing = [str(x) for x in (cov.get("evidence_missing") or []) if x]
+        available = [str(x) for x in (cov.get("evidence_found_ar") or cov.get("evidence_found") or []) if x]
+        missing = [str(x) for x in (cov.get("evidence_missing_ar") or cov.get("evidence_missing") or []) if x]
         if not missing and global_missing and short in RUNTIME_GATED_SHORT:
             missing = list(global_missing[:4])
 
