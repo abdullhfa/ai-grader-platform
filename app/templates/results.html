@@ -103,6 +103,83 @@
             </div>
             {% endif %}
 
+            <!-- Evidence Map (teacher) -->
+            {% if evidence_map %}
+            <div class="glass-card rounded-2xl p-6 border border-slate-200 mb-8">
+                <div class="flex items-center justify-between gap-4 mb-4">
+                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-map text-primary"></i>
+                        خريطة الأدلة — Evidence Map
+                    </h3>
+                    {% if evidence_map_summary.has_gate_issue %}
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-800">
+                        بوابة تشغيل: {{ evidence_map_summary.gate_downgrade_count }} معيار
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-slate-500 mb-4">
+                    يوضح ما هو مطلوب لكل معيار، ما وُجد في الواجب، ولماذا قد تختلف الدرجة عن اقتراح AI.
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-right border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-600">
+                                <th class="p-3 border">المعيار</th>
+                                <th class="p-3 border">القرار النهائي</th>
+                                <th class="p-3 border">Gate</th>
+                                <th class="p-3 border">التغطية %</th>
+                                <th class="p-3 border">موجود</th>
+                                <th class="p-3 border">ناقص</th>
+                                <th class="p-3 border">سبب التنزيل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in evidence_map %}
+                            <tr class="border-t {% if not row.achieved_final %}bg-red-50/40{% endif %}">
+                                <td class="p-3 border font-bold">{{ row.criterion_level }}</td>
+                                <td class="p-3 border">
+                                    {% if row.achieved_final %}
+                                    <span class="text-green-700 font-bold">تحقق</span>
+                                    {% else %}
+                                    <span class="text-red-600 font-bold">لم يتحقق</span>
+                                    {% endif %}
+                                    {% if row.achieved_ai_suggestion is not none and row.achieved_ai_suggestion != row.achieved_final %}
+                                    <div class="text-xs text-amber-700 mt-1">اقتراح AI/قواعد: {{ 'تحقق' if row.achieved_ai_suggestion else 'لم يتحقق' }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="p-3 border text-xs">
+                                    {% if not row.gate_relevant %}
+                                    <span class="text-slate-400">—</span>
+                                    {% elif row.gate_satisfied %}
+                                    <span class="text-green-700">مُرضى</span>
+                                    {% elif row.gate_applied %}
+                                    <span class="text-red-600">محجوب</span>
+                                    {% else %}
+                                    <span class="text-slate-500">غير مطبّق</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-3 border">
+                                    {% if row.coverage_score is not none %}{{ row.coverage_score|round(0) }}%{% else %}—{% endif %}
+                                </td>
+                                <td class="p-3 border text-xs text-slate-700">
+                                    {% if row.available_evidence %}
+                                    <ul class="list-disc pr-4">{% for e in row.available_evidence[:4] %}<li>{{ e }}</li>{% endfor %}</ul>
+                                    {% else %}—{% endif %}
+                                </td>
+                                <td class="p-3 border text-xs text-red-700">
+                                    {% if row.missing_evidence %}
+                                    <ul class="list-disc pr-4">{% for m in row.missing_evidence[:4] %}<li>{{ m }}</li>{% endfor %}</ul>
+                                    {% else %}—{% endif %}
+                                </td>
+                                <td class="p-3 border text-xs text-slate-600">{{ row.downgrade_reason_ar or '—' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Criteria Results -->
             <div class="space-y-6">
                 <div class="flex items-center gap-2 mb-4">

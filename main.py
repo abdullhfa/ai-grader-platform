@@ -3219,6 +3219,8 @@ async def results_page(
     _snap_dirty = False
     official_grade = None
     grade_display_metrics = None
+    evidence_map: List[Dict[str, Any]] = []
+    evidence_map_summary: Dict[str, Any] = {}
     if getattr(submission, "grading_snapshot_json", None):
         try:
             from app.btec_criteria_governance import ensure_clean_grading_result_feedback
@@ -3242,6 +3244,13 @@ async def results_page(
             )
             official_grade = official.to_dict()
             grade_display_metrics = official.grade_display_metrics
+            try:
+                from app.evidence_map import build_evidence_map, build_evidence_map_summary
+
+                evidence_map = build_evidence_map(_snap_fix)
+                evidence_map_summary = build_evidence_map_summary(evidence_map)
+            except Exception as _emap_err:
+                print(f"⚠️ [EVIDENCE-MAP] submission {submission.id}: {_emap_err}")
             if _snap_dirty:
                 from app.criteria_result_finalizer import sync_criteria_results_to_db
 
@@ -3369,6 +3378,8 @@ async def results_page(
             "percentage": summary.percentage if summary else 0,
             "grade_display_metrics": grade_display_metrics,
             "official_grade": official_grade,
+            "evidence_map": evidence_map,
+            "evidence_map_summary": evidence_map_summary,
             "subscription": sub_info,
             "has_governance_replay": bool(getattr(submission, "grading_snapshot_json", None)),
             "has_runtime_replay": _submission_has_runtime_replay(submission),
