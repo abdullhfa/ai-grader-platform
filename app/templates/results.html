@@ -50,10 +50,8 @@
                 <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                     <div class="flex-1">
                         <h3 class="text-gray-500 font-bold mb-1 uppercase tracking-wider text-sm">التقدير العام</h3>
-                        {% set inst = (explainability.institutional_resolution or {}) if explainability else {} %}
-                        {% set btec = inst.btec_grade or (summary.grade_level or 'U') %}
-                        {% set short_grade = btec.split(' ')[0] if btec else 'U' %}
-                        {% if short_grade not in ['D', 'M', 'P', 'U'] %}{% set short_grade = 'U' %}{% endif %}
+                        {% set og = official_grade or {} %}
+                        {% set short_grade = og.grade if og.grade else 'U' %}
                         <div class="flex flex-col gap-4">
                             <!-- التقدير المعتمد -->
                             <div class="rounded-xl border border-gray-200 bg-white/80 p-4">
@@ -80,6 +78,15 @@
                                 </p>
                                 {% endif %}
                             </div>
+                            {% if official_grade and official_grade.get('source') == 'pipeline' %}
+                            <p class="text-xs text-slate-500 mt-3 border-t border-gray-100 pt-2">
+                                التقدير المعتمد من حوكمة BTEC وبوابة التشغيل — ليس من تقييم Gemini المباشر.
+                            </p>
+                            {% elif official_grade and official_grade.get('is_stale') %}
+                            <p class="text-xs text-amber-600 mt-3 border-t border-gray-100 pt-2">
+                                نتيجة قديمة — يُفضّل إعادة التصحيح في وضع PRO للحصول على قرار مؤسسي محدّث.
+                            </p>
+                            {% endif %}
                         </div>
                     </div>
 

@@ -784,10 +784,8 @@
                     {% set official_counts = {'U': 0, 'P': 0, 'M': 0, 'D': 0} %}
                     {% for result in results %}
                     {% if result.summary %}
-                    {% set inst_gl = (result.explainability.institutional_resolution or {}) if result.explainability else {} %}
-                    {% set gl = inst_gl.btec_grade or (result.summary.grade_level or '') %}
-                    {% set gl_short = gl.split(' ')[0] if gl else 'U' %}
-                    {% if gl_short not in ['D','M','P','U'] %}{% set gl_short = 'U' %}{% endif %}
+                    {% set og = result.official_grade or {} %}
+                    {% set gl_short = og.grade if og.grade else 'U' %}
                     {% if gl_short == 'D' %}{% if official_counts.update({'D': official_counts['D'] + 1}) %}{% endif %}
                     {% elif gl_short == 'M' %}{% if official_counts.update({'M': official_counts['M'] + 1}) %}{% endif %}
                     {% elif gl_short == 'P' %}{% if official_counts.update({'P': official_counts['P'] + 1}) %}{% endif %}
@@ -942,12 +940,9 @@
                                 {% if result.submission.status and result.submission.status.value == 'failed' %}
                                 <span class="grade-badge grade-u">فشل</span>
                                 {% elif result.summary %}
-                                {% set inst = (result.explainability.institutional_resolution or {}) if result.explainability else {} %}
-                                {% set btec = inst.btec_grade or (result.summary.grade_level or 'U') %}
-                                {% set btec_short = btec.split(' ')[0] if btec else 'U' %}
-                                {% if not inst.btec_grade and btec_short not in ['D', 'M', 'P', 'U'] %}
-                                {% set btec_short = 'U' %}
-                                {% endif %}
+                                {% set og = result.official_grade or {} %}
+                                {% set btec_short = og.grade if og.get('grade') else (result.summary.grade_level or 'U').split()[0] %}
+                                {% if btec_short not in ['D', 'M', 'P', 'U'] %}{% set btec_short = 'U' %}{% endif %}
                                 <div class="grade-stack">
                                     {{ render_grade_badge(btec_short) }}
                                 </div>

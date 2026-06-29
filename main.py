@@ -2920,6 +2920,8 @@ async def batch_results_page(
         explainability = None
         pearson_criteria_rows = None
         pearson_engine_summary = None
+        grade_display_metrics = None
+        official_grade = None
         if submission.grading_snapshot_json:
             try:
                 snap = _json.loads(str(submission.grading_snapshot_json))
@@ -2930,10 +2932,30 @@ async def batch_results_page(
                 except Exception:
                     pass
                 from app.explainability_migration import extract_explainability_for_ui
-                from app.evidence_registry import build_grade_display_metrics
+                from app.official_grade import resolve_official_grade
 
+                official = resolve_official_grade(
+                    snap,
+                    reapply_pipeline=True,
+                    legacy_grade_level=summary.grade_level if summary else None,
+                )
+                if official.reapply_change_count > 0:
+                    try:
+                        from app.criteria_result_finalizer import sync_criteria_results_to_db
+
+                        submission.grading_snapshot_json = _json.dumps(  # type: ignore
+                            snap, ensure_ascii=False
+                        )
+                        sync_criteria_results_to_db(db, submission.id, snap)
+                        db.commit()
+                    except Exception as _persist_err:
+                        print(
+                            f"⚠️ [OFFICIAL-GRADE] persist batch_results "
+                            f"submission {submission.id}: {_persist_err}"
+                        )
+                official_grade = official.to_dict()
+                grade_display_metrics = official.grade_display_metrics
                 explainability = extract_explainability_for_ui(snap)
-                grade_display_metrics = build_grade_display_metrics(snap)
                 pearson_criteria_rows = None
                 pearson_engine_summary = None
                 try:
@@ -2991,7 +3013,8 @@ async def batch_results_page(
                 "report": report,
                 "failure_error": failure_error,
                 "explainability": explainability,
-                "grade_display_metrics": grade_display_metrics if submission.grading_snapshot_json else None,
+                "grade_display_metrics": grade_display_metrics,
+                "official_grade": official_grade,
                 "pearson_criteria_rows": pearson_criteria_rows
                 if submission.grading_snapshot_json
                 else None,
@@ -3194,27 +3217,34 @@ async def results_page(
 
     snapshot_by_level: Dict[str, Dict[str, Any]] = {}
     _snap_dirty = False
+    official_grade = None
+    grade_display_metrics = None
     if getattr(submission, "grading_snapshot_json", None):
         try:
-            from app.criteria_result_finalizer import (
-                finalize_grading_criteria_results,
-                sync_criteria_results_to_db,
-            )
+            from app.btec_criteria_governance import ensure_clean_grading_result_feedback
+            from app.official_grade import resolve_official_grade
 
             _snap_fix = json.loads(str(submission.grading_snapshot_json))
             _snap_before = json.dumps(
                 _snap_fix.get("criteria_results") or [], ensure_ascii=False
             )
-            _fin = finalize_grading_criteria_results(
+            official = resolve_official_grade(
                 _snap_fix,
-                artifact_inventory=_snap_fix.get("artifact_inventory"),
+                reapply_pipeline=True,
+                legacy_grade_level=summary.grade_level if summary else None,
             )
             ensure_clean_grading_result_feedback(_snap_fix)
             _snap_after = json.dumps(
                 _snap_fix.get("criteria_results") or [], ensure_ascii=False
             )
-            _snap_dirty = _snap_before != _snap_after or _fin.get("change_count", 0) > 0
+            _snap_dirty = (
+                _snap_before != _snap_after or official.reapply_change_count > 0
+            )
+            official_grade = official.to_dict()
+            grade_display_metrics = official.grade_display_metrics
             if _snap_dirty:
+                from app.criteria_result_finalizer import sync_criteria_results_to_db
+
                 submission.grading_snapshot_json = json.dumps(  # type: ignore
                     _snap_fix, ensure_ascii=False
                 )
@@ -3312,13 +3342,18 @@ async def results_page(
         except (json.JSONDecodeError, TypeError):
             pass
 
-    grade_display_metrics = None
-    if getattr(submission, "grading_snapshot_json", None):
+    if grade_display_metrics is None and getattr(submission, "grading_snapshot_json", None):
         try:
-            from app.evidence_registry import build_grade_display_metrics
+            from app.official_grade import resolve_official_grade
 
             _snap_gdm = json.loads(str(submission.grading_snapshot_json))
-            grade_display_metrics = build_grade_display_metrics(_snap_gdm)
+            official = resolve_official_grade(
+                _snap_gdm,
+                reapply_pipeline=False,
+                legacy_grade_level=summary.grade_level if summary else None,
+            )
+            official_grade = official.to_dict()
+            grade_display_metrics = official.grade_display_metrics
         except (json.JSONDecodeError, TypeError):
             grade_display_metrics = None
 
@@ -3333,6 +3368,7 @@ async def results_page(
             "results": parsed_results,
             "percentage": summary.percentage if summary else 0,
             "grade_display_metrics": grade_display_metrics,
+            "official_grade": official_grade,
             "subscription": sub_info,
             "has_governance_replay": bool(getattr(submission, "grading_snapshot_json", None)),
             "has_runtime_replay": _submission_has_runtime_replay(submission),
@@ -9484,16 +9520,15 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             _parsed_snapshot = json.loads(str(submission.grading_snapshot_json))
             if isinstance(_parsed_snapshot, dict):
                 grading_snapshot = _parsed_snapshot
-                from app.criteria_result_finalizer import (
-                    finalize_grading_criteria_results,
-                    sync_criteria_results_to_db,
-                )
+                from app.official_grade import resolve_official_grade
 
-                _fin_w = finalize_grading_criteria_results(
+                official_w = resolve_official_grade(
                     grading_snapshot,
-                    artifact_inventory=grading_snapshot.get("artifact_inventory"),
+                    reapply_pipeline=True,
                 )
-                if _fin_w.get("change_count", 0) > 0:
+                if official_w.reapply_change_count > 0:
+                    from app.criteria_result_finalizer import sync_criteria_results_to_db
+
                     submission.grading_snapshot_json = json.dumps(  # type: ignore
                         grading_snapshot, ensure_ascii=False
                     )
@@ -9721,11 +9756,12 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         _fill_student_info_table(info_data_snap)
 
         add_heading(" الملخص التنفيذي", level=2, color=PURPLE)
-        from app.evidence_registry import build_grade_display_metrics
+        from app.official_grade import resolve_official_grade
 
-        gdm = gs.get("grade_display_metrics") or build_grade_display_metrics(gs)
+        official_snap = resolve_official_grade(gs, reapply_pipeline=False)
+        gdm = official_snap.grade_display_metrics or gs.get("grade_display_metrics") or {}
         erg = gdm.get("expected_runtime_grade") or {}
-        grade_level_s = f"BTEC {gdm.get('final_btec_grade', gs.get('grade_level', 'U'))}"
+        grade_level_s = official_snap.grade_label
         inst_s = gs.get("institutional_resolution") or {}
         inst_label_s = inst_s.get("display_grade_ar") if inst_s else None
         if inst_label_s and str(gdm.get("final_btec_grade", "U")).upper() == "U":

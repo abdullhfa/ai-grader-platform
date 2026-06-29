@@ -533,7 +533,7 @@ def build_missing_evidence_diagnostics(
             for f in (exe.get("files") or [])
         )
     )
-    has_exe = bool(has_exe or has_scratch)
+    has_exe = (has_exe or has_scratch)
     doc_block = inventory.get("documentation") or {}
     has_doc = doc_block.get("status") in ("analyzed", "detected") and bool(doc_block.get("files"))
     if not has_doc and int(doc_block.get("file_count") or 0) > 0:

@@ -96,3 +96,6 @@ whatsapp_service/*.log
 *.tmp
 .coverage
 htmlcov/
+
+# Generated skill-pack archives (source: AI-Grader-SkillPack/ + build script)
+AI-Grader-SkillPack*.zip

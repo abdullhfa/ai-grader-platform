@@ -274,10 +274,14 @@ def generate_student_report_pdf(
 
     # Overall summary — Executive Summary per Section 8
     # Fields are at top level of grading_result (not nested under 'summary')
+    from app.official_grade import resolve_official_grade
+
+    official = resolve_official_grade(grading_result, reapply_pipeline=True)
+    grading_result["grade_display_metrics"] = official.grade_display_metrics
     total_score = grading_result.get('total_score', 0)
     max_score = grading_result.get('max_score', 100)
     percentage = grading_result.get('percentage', 0)
-    grade_level = grading_result.get('grade_level', '-')
+    grade_level = official.grade_label
 
     # Get AI and plagiarism scores for executive summary
     ai_info = grading_result.get('ai_detection_info', {})
@@ -693,18 +697,10 @@ def _criteria_achieved_mark(achieved: bool) -> str:
 
 
 def _short_btec_grade(result: dict) -> str:
-    inst = result.get("institutional_resolution") or {}
-    raw = inst.get("btec_grade") or result.get("grade_level") or "U"
-    token = str(raw).strip().split()[0].upper() if str(raw).strip() else "U"
-    if token in ("D", "M", "P", "U"):
-        return token
-    if token.startswith("DISTINCTION"):
-        return "D"
-    if token.startswith("MERIT"):
-        return "M"
-    if token.startswith("PASS"):
-        return "P"
-    return "U"
+    from app.official_grade import resolve_official_grade
+
+    official = resolve_official_grade(result, reapply_pipeline=False)
+    return official.grade
 
 
 def _expected_btec_grade(result: dict) -> str:
@@ -998,6 +994,10 @@ def rebuild_batch_summary_results_from_db(db, batch_id: int) -> tuple[str, List[
                 snap = {}
 
         gdm = build_grade_display_metrics(snap)
+        from app.official_grade import resolve_official_grade
+
+        official = resolve_official_grade(snap, reapply_pipeline=True)
+        gdm = official.grade_display_metrics or gdm
         results.append(
             {
                 "success": True,
@@ -1005,7 +1005,8 @@ def rebuild_batch_summary_results_from_db(db, batch_id: int) -> tuple[str, List[
                 "total_score": summary.total_score,
                 "max_score": summary.max_score or 100,
                 "percentage": summary.percentage,
-                "grade_level": summary.grade_level or snap.get("grade_level") or "U",
+                "grade_level": official.grade_label,
+                "official_grade": official.to_dict(),
                 "criteria_results": snap.get("criteria_results") or [],
                 "institutional_resolution": snap.get("institutional_resolution"),
                 "expected_runtime_grade": gdm.get("expected_runtime_grade"),
