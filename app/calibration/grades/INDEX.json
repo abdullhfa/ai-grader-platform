@@ -1,0 +1,10 @@
+{
+  "schema_version": "btec_grades_index_v1",
+  "grades": ["grade_10", "grade_11", "grade_12"],
+  "unit_specs": {
+    "unit_9_games": "grade_10/games/spec.json",
+    "unit_8_games": "grade_10/games/spec.json",
+    "unit9": "grade_10/games/spec.json",
+    "unit_9": "grade_10/games/spec.json"
+  }
+}

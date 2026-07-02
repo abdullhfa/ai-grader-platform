@@ -107,9 +107,12 @@ def format_criterion_feedback_for_report(
     feedback: str,
     *,
     runtime_note_ar: Optional[str] = None,
+    achieved: Optional[bool] = None,
+    awardable: Optional[bool] = None,
 ) -> str:
     """
-    Build teacher-readable Arabic sections: assessor comment first, then runtime evidence.
+    Build teacher-readable Arabic sections. When governance blocked achievement,
+    only the institutional voice is shown (no AI assessor praise).
     """
     from app.btec_criteria_governance import strip_btec_governance_feedback
 
@@ -118,20 +121,47 @@ def format_criterion_feedback_for_report(
     if runtime_note_ar and not runtime_block:
         runtime_block = runtime_note_ar
 
+    institutional_only = achieved is False or (
+        achieved is True and awardable is False
+    )
+
     parts: List[str] = []
-    if assessor:
-        parts.append("تعليق المقيّم:")
-        parts.append(assessor)
+    if institutional_only:
+        body = assessor or feedback
+        if body:
+            parts.append("قرار الحوكمة المؤسسية:")
+            parts.append(body)
+    else:
+        if assessor:
+            parts.append("تعليق المقيّم:")
+            parts.append(assessor)
 
     runtime_fmt = format_runtime_section(runtime_block) if runtime_block else ""
-    if not runtime_fmt and runtime_note_ar:
+    if not runtime_fmt and runtime_note_ar and not institutional_only:
         runtime_fmt = runtime_note_ar
-    if runtime_fmt:
+    if runtime_fmt and not institutional_only:
         parts.append(runtime_fmt)
 
     if not parts:
         return clean_report_text((feedback or "").strip())
     return clean_report_text("\n\n".join(parts))
+
+
+def criterion_report_display(
+    criteria: dict,
+) -> tuple[str, str, str, str]:
+    """Return (icon, status_text, card_bg, card_border) for Word report cards."""
+    human_review = (criteria.get("achievement_authority") or "") == "HUMAN_REVIEW_REQUIRED"
+    achieved = bool(criteria.get("achieved", False))
+    awardable = criteria.get("awardable", achieved)
+
+    if human_review:
+        return "⏸", "مراجعة بشرية مطلوبة (Human Review Required)", "FEF3C7", "F59E0B"
+    if achieved and awardable:
+        return "✅", "متحقق (Achieved)", "D1FAE5", "10B981"
+    if achieved and not awardable:
+        return "⏸", "جزئي — محجوب (Partial — Blocked)", "FEF3C7", "F59E0B"
+    return "❌", "غير متحقق (Not Achieved)", "FEE2E2", "EF4444"
 
 
 def clean_report_text(text: str) -> str:

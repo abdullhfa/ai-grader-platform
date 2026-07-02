@@ -1,0 +1,581 @@
+{
+  "unit": "grade_10/games",
+  "run_date": "2026-06-29",
+  "samples": [
+    {
+      "label": "العاب (submission 48)",
+      "submission_id": 48,
+      "batch_id": 53,
+      "moe_compliance": {
+        "compliant": true,
+        "engine": "scratch",
+        "policy": "warn",
+        "approved_engines": [
+          "gamemaker",
+          "godot",
+          "scratch",
+          "unity",
+          "unreal"
+        ],
+        "message_ar": "المحرك scratch ضمن القائمة المعتمدة من وزارة التربية للوحدة 9."
+      },
+      "official_grade": "U",
+      "evidence_summary": {
+        "total_criteria": 8,
+        "gate_downgrade_count": 4,
+        "high_coverage_not_achieved_count": 2,
+        "has_gate_issue": true,
+        "has_evidence_issue": true,
+        "coverage_threshold": 50.0
+      },
+      "runtime_criteria_evidence": {
+        "D3": {
+          "found": [
+            "قرارات تصميم موثقة",
+            "انعكاس شخصي"
+          ],
+          "missing": [
+            "سجل تطوير/يوميات"
+          ]
+        },
+        "M3": {
+          "found": [
+            "أدلة اختبار موثقة",
+            "تحسين مبني على اختبار"
+          ],
+          "missing": [
+            "تبرير التحسين"
+          ]
+        },
+        "P5": {
+          "found": [
+            "كود مصدري / مشروع",
+            "ملف تنفيذي"
+          ],
+          "missing": [
+            "تشغيل مُتحقق (L4+)",
+            "حركة/إدخال (Runtime)"
+          ]
+        },
+        "P6": {
+          "found": [
+            "اختبار مستخدم / نتائج"
+          ],
+          "missing": [
+            "خطة اختبار (Test Plan)",
+            "أدلة تشغيل (Runtime)"
+          ]
+        }
+      },
+      "gate_blocked_levels": [
+        "C.D3",
+        "C.M3",
+        "C.P5",
+        "C.P6"
+      ]
+    },
+    {
+      "label": "Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)",
+      "folder": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)",
+      "path_count": 256,
+      "file_count_scanned": 256,
+      "engine_inventory": {
+        "executables_detected": true,
+        "apk_detected": false,
+        "pck_detected": true,
+        "godot_export_detected": true,
+        "unity_build_detected": false,
+        "gamemaker_detected": false,
+        "gamemaker_build_detected": false,
+        "scratch_detected": false,
+        "html5_build_detected": false,
+        "gameplay_video_detected": true,
+        "screenshot_folder_detected": true,
+        "runtime_verified": false,
+        "runtime_observation": "unavailable",
+        "gameplay_inference": "limited",
+        "executable_files": [
+          {
+            "name": "P_03.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\P_03.exe"
+          },
+          {
+            "name": "P_03.console.console.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\P_03.console.console.exe"
+          },
+          {
+            "name": "P_03.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة قبل التعديل\\مشروع Godot\\P_03.exe"
+          },
+          {
+            "name": "P_03.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة بعد التعديل\\مشروع Godot\\P_03.exe"
+          },
+          {
+            "name": "P_03.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة قبل التعديل\\ملفات تشغيل اللعبة\\P_03.exe"
+          },
+          {
+            "name": "P_03.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة بعد التعديل\\ملفات تشغيل اللعبة\\P_03.exe"
+          },
+          {
+            "name": "P_03.console.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة بعد التعديل\\مشروع Godot\\P_03.console.exe"
+          },
+          {
+            "name": "Godot_v4.6-stable_win64.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة بعد التعديل\\أدوات التصدير\\Godot_v4.6-stable_win64.exe"
+          },
+          {
+            "name": "P_03_template.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة قبل التعديل\\مشروع Godot\\_export_template\\P_03_template.exe"
+          },
+          {
+            "name": "P_03_template.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة بعد التعديل\\مشروع Godot\\_export_template\\P_03_template.exe"
+          },
+          {
+            "name": "P_03 - نسخة نهائية اضافية.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة بعد التعديل\\ملفات تشغيل اللعبة\\P_03 - نسخة نهائية اضافية.exe"
+          },
+          {
+            "name": "P_03.pck",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\العبة قبل التعديل\\مشروع Godot\\P_03.pck"
+          }
+        ],
+        "gameplay_videos": [
+          {
+            "name": "فيديو اللعبة بعد التعديل.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\فيديو اللعبة بعد التعديل.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "فيديو اللعبة قبل التعديل.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\فيديو اللعبة قبل التعديل.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          }
+        ],
+        "screenshot_candidates": [
+          {
+            "basename": "بعد التحسين - اللعبة شغالة.png",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\صور تشغيل اللعبة\\بعد التحسين - اللعبة شغالة.png",
+            "tier": "L2",
+            "source": "folder_gameplay_evidence_path",
+            "folder_hint": "صور تشغيل اللعبة",
+            "authority": "advisory_corroborative_only",
+            "mode": "corroborative_runtime_hint",
+            "possible_signals": [
+              "visual_runtime_activity_suggested",
+              "gameplay_scene_plausible"
+            ],
+            "not_inferred": [
+              "game_verified",
+              "criterion_achieved",
+              "functional_testing_proven"
+            ]
+          },
+          {
+            "basename": "قبل التحسين - اللعبة شغالة.png",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)\\صور تشغيل اللعبة\\قبل التحسين - اللعبة شغالة.png",
+            "tier": "L2",
+            "source": "folder_gameplay_evidence_path",
+            "folder_hint": "صور تشغيل اللعبة",
+            "authority": "advisory_corroborative_only",
+            "mode": "corroborative_runtime_hint",
+            "possible_signals": [
+              "visual_runtime_activity_suggested",
+              "gameplay_scene_plausible"
+            ],
+            "not_inferred": [
+              "game_verified",
+              "criterion_achieved",
+              "functional_testing_proven"
+            ]
+          }
+        ],
+        "unity_signals": {
+          "detected": false,
+          "unity_data_folder": false,
+          "build_folder": false,
+          "unity_player_dll": false,
+          "globalgamemanagers": false,
+          "managed_dir": false,
+          "executable_with_data": false,
+          "confidence": "none"
+        },
+        "unity_source_signals": {
+          "source_present": false,
+          "scripts_analyzed": 0,
+          "assets_peeked": 0,
+          "monobehaviour_count": 0
+        },
+        "unity_source_build_alignment": "not_applicable",
+        "godot_signals": {
+          "detected": true,
+          "pck_files": [
+            "P_03.pck",
+            "P_03.pck",
+            "P_03.pck",
+            "P_03.pck"
+          ],
+          "export_binaries": [
+            "P_03.exe",
+            "P_03.exe",
+            "P_03.console.exe",
+            "Godot_v4.6-stable_win64.exe"
+          ],
+          "project_godot": true,
+          "confidence": "high"
+        },
+        "gamemaker_signals": {
+          "detected": false,
+          "project_present": false,
+          "build_present": false,
+          "data_win_present": false,
+          "runner_exe_present": false,
+          "yyp_count": 0,
+          "gml_count": 0,
+          "confidence": "none"
+        },
+        "scratch_signals": {
+          "detected": false,
+          "project_files": [],
+          "sb3_present": false,
+          "confidence": "none"
+        },
+        "html5_signals": {
+          "detected": false,
+          "index_html_count": 0,
+          "wasm_present": false,
+          "wasm_paired_with_index": false,
+          "confidence": "none"
+        }
+      },
+      "moe_compliance": {
+        "compliant": true,
+        "engine": "godot",
+        "policy": "warn",
+        "approved_engines": [
+          "gamemaker",
+          "godot",
+          "scratch",
+          "unity",
+          "unreal"
+        ],
+        "message_ar": "المحرك godot ضمن القائمة المعتمدة من وزارة التربية للوحدة 9."
+      },
+      "is_game": true,
+      "runtime_gate": {
+        "applied": false,
+        "satisfied": false,
+        "status": null,
+        "accepted_evidence": []
+      },
+      "official_grade": "U",
+      "official_source": "pipeline",
+      "evidence_summary": {
+        "total_criteria": 9,
+        "gate_downgrade_count": 4,
+        "high_coverage_not_achieved_count": 1,
+        "has_gate_issue": true,
+        "has_evidence_issue": true,
+        "coverage_threshold": 50.0
+      },
+      "runtime_criteria_evidence": {
+        "D3": {
+          "found": [],
+          "missing": [
+            "سجل تطوير/يوميات",
+            "قرارات تصميم موثقة",
+            "انعكاس شخصي"
+          ],
+          "coverage": 0.0
+        },
+        "M3": {
+          "found": [],
+          "missing": [
+            "أدلة اختبار موثقة",
+            "تحسين مبني على اختبار",
+            "تبرير التحسين"
+          ],
+          "coverage": 0.0
+        },
+        "P5": {
+          "found": [
+            "كود مصدري / مشروع",
+            "ملف تنفيذي"
+          ],
+          "missing": [
+            "تشغيل مُتحقق (L4+)",
+            "حركة/إدخال (Runtime)"
+          ],
+          "coverage": 50.0
+        },
+        "P6": {
+          "found": [],
+          "missing": [
+            "خطة اختبار (Test Plan)",
+            "اختبار مستخدم / نتائج",
+            "أدلة تشغيل (Runtime)"
+          ],
+          "coverage": 0.0
+        }
+      },
+      "gate_blocked_levels": [
+        "8/BC.D3",
+        "8/C.M3",
+        "8/C.P5",
+        "8/C.P6"
+      ],
+      "path_sample": [
+        "project.godot",
+        "project.godot",
+        "P_03.exe",
+        "P_03.console.console.exe",
+        "P_03.exe",
+        "P_03.exe",
+        "P_03.exe",
+        "P_03.exe"
+      ]
+    },
+    {
+      "label": "GAME B&C",
+      "folder": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C",
+      "path_count": 2500,
+      "file_count_scanned": 2500,
+      "engine_inventory": {
+        "executables_detected": true,
+        "apk_detected": false,
+        "pck_detected": false,
+        "godot_export_detected": true,
+        "unity_build_detected": true,
+        "gamemaker_detected": true,
+        "gamemaker_build_detected": false,
+        "scratch_detected": false,
+        "html5_build_detected": false,
+        "gameplay_video_detected": true,
+        "screenshot_folder_detected": false,
+        "runtime_verified": false,
+        "runtime_observation": "unavailable",
+        "gameplay_inference": "limited",
+        "executable_files": [
+          {
+            "name": "UnityCrashHandler64.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\حسين السلامات العاب\\نسخة نهائية\\UnityCrashHandler64.exe"
+          },
+          {
+            "name": "UnityCrashHandler64.exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\حسين السلامات العاب\\النسخة الاولية من العبة\\UnityCrashHandler64.exe"
+          },
+          {
+            "name": "Kitten Run - Infinite Runner (Complete Full Game Project).exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\حسين السلامات العاب\\نسخة نهائية\\Kitten Run - Infinite Runner (Complete Full Game Project).exe"
+          },
+          {
+            "name": "Kitten Run - Infinite Runner (Complete Full Game Project).exe",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\حسين السلامات العاب\\النسخة الاولية من العبة\\Kitten Run - Infinite Runner (Complete Full Game Project).exe"
+          }
+        ],
+        "gameplay_videos": [
+          {
+            "name": "20250604_083655.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\نور الدين\\20250604_083655.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "تسجيل اللعبة .mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\ايهم عتوم العاب\\تسجيل اللعبة .mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "فيديو العبة.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\واجب الاعاب ادم على\\فيديو العبة.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "18.05.2025_15.32.55_REC.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\حسين السلامات العاب\\18.05.2025_15.32.55_REC.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "1.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\الالعاب محمد عكاوي\\الالعاب محمد عكاوي\\التوثيقات\\1.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "2.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\الالعاب محمد عكاوي\\الالعاب محمد عكاوي\\التوثيقات\\2.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "3.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\الالعاب محمد عكاوي\\الالعاب محمد عكاوي\\التوثيقات\\3.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "4.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\الالعاب محمد عكاوي\\الالعاب محمد عكاوي\\التوثيقات\\4.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "توثيق اللعبه.mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\تقييم الالعاب ب ج احمد عثمان بنى مصطفى - Copy\\توثيق اللعبه.mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          },
+          {
+            "name": "فيديو اللعبة .mp4",
+            "path": "D:\\cchat\\aaaa\\ai_grader_python (2)\\uploads\\تجربة\\GAME B&C\\full\\ريان صابر الشوبكي تقييم الالعاب هدف ب+ج\\فيديو اللعبة .mp4",
+            "gameplay_candidate": true,
+            "status": "detected_not_analyzed"
+          }
+        ],
+        "screenshot_candidates": [],
+        "unity_signals": {
+          "detected": true,
+          "unity_data_folder": true,
+          "build_folder": true,
+          "unity_player_dll": true,
+          "globalgamemanagers": false,
+          "managed_dir": true,
+          "executable_with_data": true,
+          "confidence": "high"
+        },
+        "unity_source_signals": {
+          "source_present": false,
+          "scripts_analyzed": 0,
+          "assets_peeked": 0,
+          "monobehaviour_count": 0
+        },
+        "unity_source_build_alignment": "build_without_source",
+        "godot_signals": {
+          "detected": true,
+          "pck_files": [],
+          "export_binaries": [],
+          "project_godot": true,
+          "confidence": "medium"
+        },
+        "gamemaker_signals": {
+          "detected": true,
+          "project_present": true,
+          "build_present": false,
+          "data_win_present": false,
+          "runner_exe_present": false,
+          "yyp_count": 28,
+          "gml_count": 0,
+          "confidence": "high"
+        },
+        "scratch_signals": {
+          "detected": false,
+          "project_files": [],
+          "sb3_present": false,
+          "confidence": "none"
+        },
+        "html5_signals": {
+          "detected": false,
+          "index_html_count": 0,
+          "wasm_present": false,
+          "wasm_paired_with_index": false,
+          "confidence": "none"
+        }
+      },
+      "moe_compliance": {
+        "compliant": true,
+        "engine": "godot",
+        "policy": "warn",
+        "approved_engines": [
+          "gamemaker",
+          "godot",
+          "scratch",
+          "unity",
+          "unreal"
+        ],
+        "message_ar": "المحرك godot ضمن القائمة المعتمدة من وزارة التربية للوحدة 9."
+      },
+      "is_game": true,
+      "runtime_gate": {
+        "applied": false,
+        "satisfied": false,
+        "status": null,
+        "accepted_evidence": []
+      },
+      "official_grade": "U",
+      "official_source": "pipeline",
+      "evidence_summary": {
+        "total_criteria": 9,
+        "gate_downgrade_count": 4,
+        "high_coverage_not_achieved_count": 1,
+        "has_gate_issue": true,
+        "has_evidence_issue": true,
+        "coverage_threshold": 50.0
+      },
+      "runtime_criteria_evidence": {
+        "D3": {
+          "found": [],
+          "missing": [
+            "سجل تطوير/يوميات",
+            "قرارات تصميم موثقة",
+            "انعكاس شخصي"
+          ],
+          "coverage": 0.0
+        },
+        "M3": {
+          "found": [],
+          "missing": [
+            "أدلة اختبار موثقة",
+            "تحسين مبني على اختبار",
+            "تبرير التحسين"
+          ],
+          "coverage": 0.0
+        },
+        "P5": {
+          "found": [
+            "كود مصدري / مشروع",
+            "ملف تنفيذي"
+          ],
+          "missing": [
+            "تشغيل مُتحقق (L4+)",
+            "حركة/إدخال (Runtime)"
+          ],
+          "coverage": 50.0
+        },
+        "P6": {
+          "found": [],
+          "missing": [
+            "خطة اختبار (Test Plan)",
+            "اختبار مستخدم / نتائج",
+            "أدلة تشغيل (Runtime)"
+          ],
+          "coverage": 0.0
+        }
+      },
+      "gate_blocked_levels": [
+        "8/BC.D3",
+        "8/C.M3",
+        "8/C.P5",
+        "8/C.P6"
+      ],
+      "path_sample": [
+        "project.godot",
+        "project.godot",
+        "project.godot",
+        "UnityCrashHandler64.exe",
+        "UnityCrashHandler64.exe",
+        "shadercompiler-UnityShaderCompiler.exe-0.log",
+        "Kitten Run - Infinite Runner (Complete Full Game Project).exe",
+        "Kitten Run - Infinite Runner (Complete Full Game Project).exe"
+      ]
+    }
+  ]
+}

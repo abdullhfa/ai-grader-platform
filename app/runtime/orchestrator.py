@@ -59,6 +59,7 @@ def run_runtime_session(
     enable_android_emulator_automation: bool = False,
     enable_gamemaker_runtime_verification: bool = False,
     enable_scratch_runtime_verification: bool = False,
+    grading_mode: str | None = None,
 ) -> Dict[str, Any]:
     """Execute a single runtime engine session for a submission root."""
     cfg = get_production_config()
@@ -98,6 +99,8 @@ def run_runtime_session(
         session.signals["enable_gamemaker_runtime_verification"] = True
     if enable_scratch_runtime_verification:
         session.signals["enable_scratch_runtime_verification"] = True
+    if grading_mode:
+        session.signals["grading_mode"] = grading_mode
     engine = engine_cls()
     effective_timeout = timeout_seconds or min(
         cfg.sandbox_timeout_seconds, engine.max_timeout_seconds
@@ -194,7 +197,12 @@ def run_runtime_observation(
         enable_android_emulator_automation=enable_android_emulator_automation,
         enable_gamemaker_runtime_verification=enable_gamemaker_runtime_verification,
         enable_scratch_runtime_verification=enable_scratch_runtime_verification,
+        grading_mode=grading_mode,
     )
+
+    from app.runtime_observation_sandbox import FAST_OBSERVATION_MODE, is_fast_runtime_smoke
+
+    _fast_rt = is_fast_runtime_smoke(grading_mode)
 
     platform_analyses: List[Dict[str, Any]] = []
     if session_result.get("engine"):
@@ -210,7 +218,8 @@ def run_runtime_observation(
 
     observation: Dict[str, Any] = {
         "status": session_result.get("status", "skipped"),
-        "observation_mode": "orchestrated_runtime_v2",
+        "observation_mode": FAST_OBSERVATION_MODE if _fast_rt else "orchestrated_runtime_v2",
+        "runtime_depth": "fast" if _fast_rt else "deep",
         "runtime_session_id": session_result.get("session_id"),
         "submission_key": submission_key,
         "engine": session_result.get("engine"),
@@ -399,16 +408,19 @@ def run_runtime_observation(
         status=observation.get("status"),
     )
 
-    # Phase 3: Gameplay Intelligence Pipeline (downstream — not inside runtime engine)
-    try:
-        from app.gameplay_ai.pipeline import analyze_from_runtime_observation
+    # Phase 3: Gameplay Intelligence Pipeline — PRO only (no gameplay agent in STANDARD)
+    if not _fast_rt:
+        try:
+            from app.gameplay_ai.pipeline import analyze_from_runtime_observation
 
-        gameplay_analysis = analyze_from_runtime_observation(observation)
-        if gameplay_analysis:
-            observation["gameplay_analysis"] = gameplay_analysis
-            if gameplay_analysis.get("timeline"):
-                observation["gameplay_timeline"] = gameplay_analysis["timeline"]
-    except Exception:
-        logger.exception("Gameplay AI pipeline failed (non-fatal)")
+            gameplay_analysis = analyze_from_runtime_observation(observation)
+            if gameplay_analysis:
+                observation["gameplay_analysis"] = gameplay_analysis
+                if gameplay_analysis.get("timeline"):
+                    observation["gameplay_timeline"] = gameplay_analysis["timeline"]
+        except Exception:
+            logger.exception("Gameplay AI pipeline failed (non-fatal)")
+    else:
+        observation["gameplay_analysis_skipped"] = "standard_fast_runtime_no_agent"
 
     return wrap_failsafe_observation(observation, root=root)

@@ -395,6 +395,7 @@ def run_sandbox_observation(
                 submission_id=submission_id,
                 batch_id=batch_id,
                 student_name=student_name,
+                grading_mode=grading_mode,
             )
         except Exception as exc:
             logger.exception("L4 observation failed")

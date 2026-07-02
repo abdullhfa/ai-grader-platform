@@ -1,7 +1,11 @@
 """Tests for build_evidence_map (Phase 2)."""
 from __future__ import annotations
 
-from app.evidence_map import build_evidence_map, build_evidence_map_summary
+from app.evidence_map import (
+    build_evidence_map,
+    build_evidence_map_summary,
+    build_evidence_summary_from_snapshot,
+)
 
 
 def _scratch_snapshot() -> dict:
@@ -39,7 +43,27 @@ def test_evidence_map_summary_flags_gate():
     rows = build_evidence_map(_scratch_snapshot())
     summary = build_evidence_map_summary(rows)
     assert summary["has_gate_issue"] is True
+    assert summary["has_evidence_issue"] is True
     assert summary["gate_downgrade_count"] >= 1
+
+
+def test_evidence_summary_from_snapshot_lightweight():
+    snap = _scratch_snapshot()
+    snap["evidence_coverage_by_criterion"] = [
+        {"criteria_level": "8/C.P5", "coverage_pct": 60},
+        {"criteria_level": "8/C.P6", "coverage_pct": 40},
+    ]
+    summary = build_evidence_summary_from_snapshot(snap)
+    assert summary["has_gate_issue"] is True
+    assert summary["gate_downgrade_count"] == 2
+    assert summary["high_coverage_not_achieved_count"] == 1
+    assert summary["has_evidence_issue"] is True
+
+
+def test_evidence_summary_from_snapshot_empty():
+    summary = build_evidence_summary_from_snapshot(None)
+    assert summary["has_gate_issue"] is False
+    assert summary["high_coverage_not_achieved_count"] == 0
 
 
 def test_evidence_map_uses_arabic_coverage_keys():

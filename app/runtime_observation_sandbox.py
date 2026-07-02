@@ -32,10 +32,36 @@ from app.visual_state_classification import (
 )
 
 OBSERVATION_MODE = "controlled_static_and_smoke"
-MAX_SMOKE_SECONDS = 12  # FAST default; PRO uses resolve_smoke_timeout_seconds()
+FAST_OBSERVATION_MODE = "controlled_fast_smoke"
+MAX_SMOKE_SECONDS = 12  # STANDARD default; PRO uses resolve_smoke_timeout_seconds()
 MAX_ARTIFACTS = 6
 UNITY_LOG_MAX_BYTES = 256_000
 RUNTIME_SCREENSHOT_OFFSETS = (("launch", 2.0), ("mid_runtime", 5.0), ("pre_exit", -0.75))
+FAST_RUNTIME_SCREENSHOT_OFFSETS = (("launch", 2.0),)
+
+
+def resolve_runtime_screenshot_offsets(
+    grading_mode: str | None = None,
+) -> tuple[tuple[str, float], ...]:
+    """STANDARD: launch only (+ interaction shots). PRO: full offset set."""
+    try:
+        from app.grading_mode_policy import is_fast_grading_mode
+
+        if is_fast_grading_mode(grading_mode):
+            return FAST_RUNTIME_SCREENSHOT_OFFSETS
+    except Exception:
+        if (grading_mode or "").strip().lower() in ("fast", "basic", "standard"):
+            return FAST_RUNTIME_SCREENSHOT_OFFSETS
+    return RUNTIME_SCREENSHOT_OFFSETS
+
+
+def is_fast_runtime_smoke(grading_mode: str | None = None) -> bool:
+    try:
+        from app.grading_mode_policy import is_fast_grading_mode
+
+        return is_fast_grading_mode(grading_mode)
+    except Exception:
+        return (grading_mode or "").strip().lower() in ("fast", "basic", "standard")
 
 
 def resolve_smoke_timeout_seconds(grading_mode: str | None = None) -> int:
@@ -150,6 +176,7 @@ def capture_runtime_screenshot(
     label: str,
     elapsed_seconds: float,
     session_ctx: Optional[Dict[str, Any]] = None,
+    process_pid: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
     Best-effort desktop screenshot capture.
@@ -185,7 +212,30 @@ def capture_runtime_screenshot(
         out_dir.mkdir(parents=True, exist_ok=True)
         stamp = int(time.time() * 1000)
         out_path = out_dir / f"{label}_{stamp}.png"
-        image = ImageGrab.grab()
+        capture_bbox = None
+        game_bbox = None
+        try:
+            from app.window_focus_manager import (
+                classify_capture_scope,
+                focus_game_window,
+                resolve_game_window_bbox,
+            )
+
+            focus_game_window(process_pid=process_pid)
+            game_bbox = resolve_game_window_bbox(
+                artifact_path=path,
+                process_pid=process_pid,
+            )
+            capture_bbox = game_bbox
+            image = ImageGrab.grab(bbox=game_bbox) if game_bbox else ImageGrab.grab()
+            record["capture_scope"] = classify_capture_scope(
+                capture_bbox=capture_bbox,
+                game_bbox=game_bbox,
+            )
+            record["game_window_bbox"] = list(game_bbox) if game_bbox else None
+        except Exception:
+            image = ImageGrab.grab()
+            record["capture_scope"] = "desktop_fallback"
         image.save(out_path)
         classified = classify_visual_state_from_image(image)
         stats = classified.get("visual_stats") or compute_extended_visual_stats(image)
@@ -202,14 +252,29 @@ def capture_runtime_screenshot(
             "visual_state_confidence": classified.get("visual_state_confidence", 0.0),
             "classification_mode": classified.get("classification_mode"),
             "classification_reasons": classified.get("classification_reasons", []),
+            "capture_bbox": list(capture_bbox) if capture_bbox else None,
+            "game_window_detected": bool(game_bbox),
+            "process_pid": process_pid,
         })
+        if record.get("capture_scope") != "game_window":
+            record["warnings"] = ["capture_not_strictly_game_window"]
+        from app.runtime_screenshot_validation import validate_runtime_screenshot_record
+
+        record = validate_runtime_screenshot_record(record)
     except Exception as exc:
         record["errors"].append(str(exc))
     return record
 
 
 def summarize_runtime_screenshots(screenshots: List[Dict[str, Any]]) -> Dict[str, Any]:
+    from app.runtime_screenshot_validation import filter_gameplay_screenshots
+
     captured = [s for s in screenshots if s.get("status") == "captured"]
+    rejected = [s for s in screenshots if s.get("status") == "rejected"]
+    gameplay_captured = filter_gameplay_screenshots(screenshots)
+    game_window_captured = [
+        s for s in captured if str(s.get("capture_scope") or "") == "game_window"
+    ]
     black_possible = [
         s for s in captured
         if s.get("visual_state") == "black_screen"
@@ -218,9 +283,13 @@ def summarize_runtime_screenshots(screenshots: List[Dict[str, Any]]) -> Dict[str
     audit = build_visual_audit_summary(screenshots)
     states = audit.get("visual_states_observed") or []
     return {
-        "runtime_screenshot_count": len(captured),
+        "runtime_screenshot_count": len(gameplay_captured),
+        "runtime_screenshot_raw_count": len(captured),
+        "runtime_screenshot_rejected_count": len(rejected),
+        "runtime_game_window_screenshot_count": len(game_window_captured),
+        "runtime_non_game_window_screenshot_count": max(0, len(captured) - len(game_window_captured)),
         "runtime_screenshots": screenshots,
-        "visual_runtime_evidence": "present" if captured else "unavailable",
+        "visual_runtime_evidence": "present" if gameplay_captured else "unavailable",
         "black_screen_possible": bool(black_possible),
         "visual_states_observed": states,
         "visual_runtime_confidence": audit.get("visual_runtime_confidence", 0.0),
@@ -498,6 +567,8 @@ def smoke_test_windows_exe(
     enable_interaction_trace: bool = False,
     session_ctx: Optional[Dict[str, Any]] = None,
     cwd: Optional[Path] = None,
+    screenshot_offsets: Optional[tuple[tuple[str, float], ...]] = None,
+    grading_mode: str | None = None,
 ) -> Dict[str, Any]:
     """Limited smoke test — process launch + stability window (Windows)."""
     out: Dict[str, Any] = {
@@ -575,9 +646,14 @@ def smoke_test_windows_exe(
         )
         guard = RuntimeProcessGuard(proc.pid)
         launch_started = time.time()
+        offsets = screenshot_offsets
+        if offsets is None and grading_mode is not None:
+            offsets = resolve_runtime_screenshot_offsets(grading_mode)
+        if offsets is None:
+            offsets = RUNTIME_SCREENSHOT_OFFSETS
         screenshot_targets: List[Tuple[str, float]] = []
         if capture_screenshots:
-            for label, raw_offset in RUNTIME_SCREENSHOT_OFFSETS:
+            for label, raw_offset in offsets:
                 offset = (timeout + raw_offset) if raw_offset < 0 else raw_offset
                 if 0.5 <= offset < timeout:
                     screenshot_targets.append((label, offset))
@@ -603,6 +679,7 @@ def smoke_test_windows_exe(
                         label=label,
                         elapsed_seconds=elapsed,
                         session_ctx=session_ctx,
+                        process_pid=proc.pid if proc else None,
                     )
                     out["runtime_screenshots"].append(shot)
                     captured_labels.add(label)
@@ -620,22 +697,89 @@ def smoke_test_windows_exe(
                         label="pre_interaction",
                         elapsed_seconds=elapsed,
                         session_ctx=session_ctx,
+                        process_pid=proc.pid if proc else None,
                     )
                     out["runtime_screenshots"].append(pre_interaction_shot)
-                burst = run_interaction_burst()
-                time.sleep(0.35)
-                post_shot = capture_runtime_screenshot(
-                    path,
-                    label="post_interaction",
-                    elapsed_seconds=time.time() - launch_started,
-                    session_ctx=session_ctx,
-                )
-                out["runtime_screenshots"].append(post_shot)
-                trace = build_interaction_trace_report(
-                    burst,
-                    pre_screenshot=pre_interaction_shot,
-                    post_screenshot=post_shot,
-                )
+
+                def _capture_shot(*_args: Any, **kwargs: Any) -> Dict[str, Any]:
+                    # gameplay_verifier passes artifact_path positionally; closure `path` is authoritative.
+                    kwargs.pop("process_pid", None)
+                    return capture_runtime_screenshot(
+                        path,
+                        session_ctx=session_ctx,
+                        process_pid=proc.pid if proc else None,
+                        **kwargs,
+                    )
+
+                try:
+                    from app.gameplay_verifier import run_automated_gameplay_verification
+
+                    gameplay_verification = run_automated_gameplay_verification(
+                        artifact_path=path,
+                        process_pid=proc.pid if proc else None,
+                        capture_screenshot=_capture_shot,
+                        elapsed_seconds=elapsed,
+                    )
+                    out["gameplay_verification"] = gameplay_verification
+                    for shot in gameplay_verification.get("extra_screenshots") or []:
+                        if isinstance(shot, dict) and shot not in out["runtime_screenshots"]:
+                            out["runtime_screenshots"].append(shot)
+                    movement = gameplay_verification.get("movement_verification") or {}
+                    pre_shot = movement.get("screenshots", [None])[0] if movement.get("screenshots") else pre_interaction_shot
+                    post_shot = movement.get("screenshots", [None, None])[1] if len(movement.get("screenshots") or []) > 1 else pre_interaction_shot
+                    trace = build_interaction_trace_report(
+                        {
+                            "mode": gameplay_verification.get("mode"),
+                            "authority": gameplay_verification.get("authority"),
+                            "platform": gameplay_verification.get("platform"),
+                            "status": gameplay_verification.get("status"),
+                            "inputs_sent": [{"type": "automated_l4", "sent": True}],
+                            "input_count": 1,
+                            "errors": [],
+                            "does_not_verify_gameplay": gameplay_verification.get("does_not_verify_gameplay"),
+                            "human_playtest_required": gameplay_verification.get("human_playtest_required"),
+                            "authority_note_ar": gameplay_verification.get("authority_note_ar"),
+                        },
+                        pre_screenshot=pre_shot if isinstance(pre_shot, dict) else pre_interaction_shot,
+                        post_screenshot=post_shot if isinstance(post_shot, dict) else pre_interaction_shot,
+                    )
+                    trace.update({
+                        "l4_level": gameplay_verification.get("l4_level"),
+                        "automated_l4_level": gameplay_verification.get("automated_l4_level"),
+                        "gameplay_entered": gameplay_verification.get("gameplay_entered"),
+                        "player_movement_verified": gameplay_verification.get("player_movement_verified"),
+                        "jump_detected": gameplay_verification.get("jump_detected"),
+                        "score_change_detected": gameplay_verification.get("score_change_detected"),
+                        "mechanics_verified_count": gameplay_verification.get("mechanics_verified_count"),
+                        "gameplay_window_screenshots": gameplay_verification.get("gameplay_window_screenshots"),
+                        "menu_navigation": gameplay_verification.get("menu_navigation"),
+                        "movement_verification": movement,
+                    })
+                    if movement.get("horizontal_shift") is not None:
+                        trace["visual_delta_score"] = movement.get("horizontal_shift")
+                    if gameplay_verification.get("l4_level") in ("L4_full", "L4_partial"):
+                        trace["does_not_verify_gameplay"] = False
+                        trace["human_playtest_required"] = False
+                        trace["player_movement_verified"] = bool(
+                            gameplay_verification.get("player_movement_verified")
+                        )
+                except Exception as exc:
+                    burst = run_interaction_burst()
+                    time.sleep(0.35)
+                    post_shot = capture_runtime_screenshot(
+                        path,
+                        label="post_interaction",
+                        elapsed_seconds=time.time() - launch_started,
+                        session_ctx=session_ctx,
+                        process_pid=proc.pid if proc else None,
+                    )
+                    out["runtime_screenshots"].append(post_shot)
+                    trace = build_interaction_trace_report(
+                        burst,
+                        pre_screenshot=pre_interaction_shot,
+                        post_screenshot=post_shot,
+                    )
+                    trace.setdefault("errors", []).append(str(exc))
                 out["interaction_trace"] = trace
                 apply_interaction_signals(out.setdefault("signals", {}), trace)
                 interaction_done = True
@@ -955,6 +1099,7 @@ def observe_runtime_artifacts(
                     capture_screenshots=True,
                     enable_interaction_trace=True,
                     session_ctx=session_ctx,
+                    grading_mode=grading_mode,
                 )
             )
 
@@ -996,7 +1141,14 @@ def observe_runtime_artifacts(
     )
     level = 4 if (smoke_ok or (any_valid and len(analyses) >= 2)) else (3 if any_valid else 1)
 
-    return {
+    gv_levels = [
+        str((a.get("gameplay_verification") or {}).get("l4_level") or "")
+        for a in analyses
+        if isinstance(a.get("gameplay_verification"), dict)
+    ]
+    l4_automated = any(level in ("L4_full", "L4_partial") for level in gv_levels)
+
+    result = {
         "status": "completed",
         "contract_id": CONTRACT_ID,
         "observation_mode": OBSERVATION_MODE,
@@ -1028,15 +1180,33 @@ def observe_runtime_artifacts(
             for a in analyses
             if isinstance(a.get("interaction_trace"), dict)
         ],
+        "gameplay_verification": next(
+            (a.get("gameplay_verification") for a in analyses if isinstance(a.get("gameplay_verification"), dict)),
+            None,
+        ),
         "runtime_session_id": session_ctx.get("runtime_session_id"),
         "runtime_session_context": session_ctx,
         "observation_summary_ar": graph.get("observation_summary_ar"),
-        "human_authority_required": True,
+        "human_authority_required": not l4_automated,
         "language_note_ar": (
-            "ملاحظات runtime استشارية/تشغيلية — runtime observation remains advisory "
-            "until human review — Achieved النهائي يتطلب L5."
+            "ملاحظات runtime: L4 آلي يثبت gameplay بدون مراجعة بشرية عند نجاح MenuNavigator+Movement."
+            if l4_automated
+            else (
+                "ملاحظات runtime استشارية/تشغيلية — runtime observation remains advisory "
+                "until automated L4 or human review."
+            )
         ),
     }
+    try:
+        from app.mechanics_verifier import verify_mechanics
+
+        result["mechanics_verification"] = verify_mechanics(
+            result,
+            inventory={"gameplay_verification": result.get("gameplay_verification")},
+        )
+    except Exception:
+        pass
+    return result
 
 
 def format_observation_for_grading(observation: Dict[str, Any]) -> str:

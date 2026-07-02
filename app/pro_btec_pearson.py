@@ -88,6 +88,24 @@ _RUNTIME_ONLY_AUTHORITIES = frozenset(
 
 _EXECUTION_SHORT = frozenset({"P5", "P6", "P7", "M3"})
 
+_PREREQUISITE_GATE_AR = {
+    "missing_pass_criteria": "محجوب — C.P5/C.P6 لم يُتحققا (Prerequisite)",
+    "missing_merit_criteria": "محجوب — معايير Merit ناقصة (Prerequisite)",
+}
+
+
+def _compact_gate_reason(cr: Dict[str, Any], *, gate_summary: str) -> str:
+    block_code = str(cr.get("award_block_reason") or "")
+    if block_code in _PREREQUISITE_GATE_AR:
+        return _PREREQUISITE_GATE_AR[block_code]
+    return (
+        str(cr.get("award_block_reason_ar") or "")
+        or str(cr.get("governance_adjustment_ar") or "")
+        or (gate_summary if cr.get("runtime_gate_block") else "")
+        or ""
+    )
+
+
 _AI_ASSERTION_ONLY = frozenset(
     {
         "",
@@ -960,6 +978,8 @@ def build_criteria_breakdown_for_ui(
 ) -> List[Dict[str, Any]]:
     """Per-criterion rows for batch-results UI (PRO / IV review)."""
     rows: List[Dict[str, Any]] = []
+    gate = grading_result.get("runtime_evidence_gate") or {}
+    gate_summary = str(gate.get("summary_ar") or "")
     for cr in grading_result.get("criteria_results") or []:
         if not isinstance(cr, dict):
             continue
@@ -967,17 +987,36 @@ def build_criteria_breakdown_for_ui(
         awardable = cr.get("awardable")
         if awardable is None:
             awardable = achieved
+        awardable = bool(awardable)
+        gate_blocked = bool(cr.get("runtime_gate_block"))
+        block_ar = _compact_gate_reason(cr, gate_summary=gate_summary)
+        if achieved and not awardable and str(cr.get("award_block_reason") or "") == "missing_pass_criteria":
+            achieved_display_ar = "جزئي — محجوب (Prerequisite)"
+        elif achieved and not awardable:
+            achieved_display_ar = "جزئي — محجوب"
+        elif achieved:
+            achieved_display_ar = "نعم"
+        else:
+            achieved_display_ar = "لا"
+        if gate_blocked:
+            awardable_display_ar = "لا — Gate"
+        elif awardable:
+            awardable_display_ar = "نعم"
+        else:
+            awardable_display_ar = "لا"
         rows.append(
             {
                 "criteria_level": cr.get("criteria_level"),
                 "achieved": achieved,
-                "awardable": bool(awardable),
+                "awardable": awardable,
+                "achieved_display_ar": achieved_display_ar,
+                "awardable_display_ar": awardable_display_ar,
+                "gate_blocked": gate_blocked,
+                "gate_reason_ar": block_ar,
                 "score": cr.get("score"),
                 "achievement_authority": cr.get("achievement_authority"),
                 "evidence_weighted_score": cr.get("evidence_weighted_score"),
-                "governance_ar": cr.get("governance_adjustment_ar")
-                or cr.get("award_block_reason_ar")
-                or "",
+                "governance_ar": block_ar,
             }
         )
     return rows

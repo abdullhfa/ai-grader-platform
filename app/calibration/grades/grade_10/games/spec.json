@@ -1,0 +1,389 @@
+{
+  "schema_version": "unit_calibration_v1",
+  "status": "draft",
+  "frozen_at": null,
+
+  "calibration": {
+    "status": "active",
+    "notes_ar": "معايرة 3/3 — العاب (48) + Ahmad Bakr (Godot) + GAME B&C (Unity/GameMaker/Godot) — كلها U مع Gate على C.P5/C.P6/C.M3/C.D3",
+    "samples_dir": "uploads/تجربة",
+    "last_calibration_report": "reports/calibration_2026-06-29.json",
+    "verified_submissions": [
+      {
+        "submission_id": 48,
+        "batch_id": 53,
+        "student_label": "العاب",
+        "official_grade": "U",
+        "moe_engine": "scratch",
+        "gate_criteria_blocked": ["C.P5", "C.P6", "C.M3", "C.D3"],
+        "verified_at": "2026-06-29",
+        "source": "db_snapshot"
+      },
+      {
+        "folder": "Ahmad Bakr Hatem Abu Shaira TF(77644)  هدف (ب+ج)",
+        "submission_id": 50,
+        "batch_id": 55,
+        "student_label": "Ahmad Bakr",
+        "official_grade": "U",
+        "moe_engine": "godot",
+        "engines_detected": ["godot"],
+        "gate_criteria_blocked": ["C.P5", "C.P6", "C.M3", "C.D3"],
+        "verified_at": "2026-06-29",
+        "source": "platform_ui",
+        "notes_ar": "معايرة UI+Word مكتملة — L4 تشغيل آلي؛ Gate يحجب معايير التشغيل رغم تغطية 75%/50%"
+      },
+      {
+        "folder": "GAME B&C",
+        "student_label": "GAME B&C",
+        "official_grade": "U",
+        "moe_engine": "godot",
+        "engines_detected": ["godot", "unity", "gamemaker"],
+        "gate_criteria_blocked": ["C.P5", "C.P6", "C.M3", "C.D3"],
+        "verified_at": "2026-06-29",
+        "source": "offline_calibration",
+        "notes_ar": "مجلد مركّب (عدة طلاب)؛ Unity+GameMaker+Godot؛ لا runtime موثّق"
+      }
+    ],
+    "freeze_checklist": {
+      "evidence_map_labels": true,
+      "runtime_gate_blocks_runtime_criteria": true,
+      "governance_cumulative_awardability": true,
+      "gemini_cannot_award_runtime_alone": true,
+      "all_five_moe_engines_detectable": "partial",
+      "min_three_real_submissions": true,
+      "readme_documented": true
+    }
+  },
+
+  "moe_software_compliance": {
+    "accepted_engines": ["godot", "unreal", "unity", "scratch", "gamemaker"],
+    "non_compliant_action": "warn_teacher",
+    "source_ref": "moe_it_software_2025"
+  },
+
+  "unit": {
+    "unit_key": "unit_9_games",
+    "moe_number": 9,
+    "pearson_number": 8,
+    "grade_level": 10,
+    "platform_criteria_prefix": "8/",
+    "title_ar": "مقدمة في تصميم الألعاب",
+    "title_en": "Introduction to Computer Games Development",
+    "grade_year_ar": "الصف العاشر",
+    "btec_level": 2
+  },
+
+  "sources": [
+    {
+      "id": "pearson_unit_book",
+      "label_ar": "كتاب الوحدة — Pearson (عربي)",
+      "type": "unit_book"
+    },
+    {
+      "id": "wjb-lmhmh",
+      "label_ar": "واجب بيرسون الرسمي — wjb-lmhmh",
+      "type": "assignment_brief"
+    },
+    {
+      "id": "moe_it_software_2025",
+      "label_ar": "قائمة البرمجيات المعتمدة — وزارة التربية (IT-Software 08-03-2025)",
+      "type": "moe_software_list"
+    }
+  ],
+
+  "learning_aims": {
+    "B": {
+      "title_ar": "تصميم لعبة حاسوب استجابة لمتطلبات محددة",
+      "title_en": "Design a computer game to meet a given brief"
+    },
+    "C": {
+      "title_ar": "تقديم تصميمات ألعاب الحاسوب لجماهير مختلفة",
+      "title_en": "Present computer game designs to different audiences"
+    }
+  },
+
+  "assignment_tasks": [
+    {
+      "id": "task_1_design",
+      "title_ar": "المهمة 1 — التصميم الفني والبصري",
+      "criteria_codes": ["B.P3", "B.P4", "B.M2", "B.D2"]
+    },
+    {
+      "id": "task_2_prototype",
+      "title_ar": "المهمة 2 — النموذج الأولي والعرض",
+      "criteria_codes": ["C.P5", "C.P6", "C.M3", "C.D3"]
+    }
+  ],
+
+  "moe_approved_engines": {
+    "policy": "warn",
+    "policy_ar": "تحذير المعلم عند استخدام محرك غير معتمد — لا يمنع التصحيح تلقائياً",
+    "engines": [
+      {
+        "id": "godot",
+        "name_en": "Godot",
+        "extensions": [".gd", ".tscn", ".pck", "project.godot"],
+        "build_artifacts": [".exe", ".pck"]
+      },
+      {
+        "id": "unity",
+        "name_en": "Unity",
+        "extensions": [".unity"],
+        "build_artifacts": [".exe"]
+      },
+      {
+        "id": "unreal",
+        "name_en": "Unreal Development Kit",
+        "extensions": [".uproject"],
+        "build_artifacts": [".exe"]
+      },
+      {
+        "id": "scratch",
+        "name_en": "Scratch",
+        "extensions": [".sb3", ".sb2", ".sb"],
+        "build_artifacts": [".sb3", ".sb2"]
+      },
+      {
+        "id": "gamemaker",
+        "name_en": "GameMaker Studio",
+        "extensions": [".yyp", ".yy", ".gml", ".yyz"],
+        "build_artifacts": [".exe", "data.win"]
+      }
+    ]
+  },
+
+  "runtime_gate": {
+    "version": "runtime_evidence_gate_v1",
+    "criteria_short": ["P5", "P6", "M3", "D3"],
+    "golden_rule_ar": "لا يُمنح معيار تشغيل بدون إثبات تشغيل/لعب فعلي — وجود الملفات وحده لا يكفي",
+    "accepted_evidence": [
+      "runtime_pass",
+      "gameplay_video",
+      "human_playtest_l5",
+      "human_review_recorded"
+    ],
+    "not_sufficient_alone": [
+      "source_only",
+      "documents_only",
+      "screenshots_only",
+      "static_analysis",
+      "ai_description"
+    ]
+  },
+
+  "governance": {
+    "awardability_model": "pearson_cumulative",
+    "pass_required_for_merit": true,
+    "pass_and_merit_required_for_distinction": true,
+    "cp6_dependency_threshold_pct": 40
+  },
+
+  "gemini_role": {
+    "text_criteria": {
+      "codes": ["B.P3", "B.P4", "B.M2", "B.D2", "C.P7"],
+      "allowed": ["achieved_suggestion", "confidence", "feedback_ar"],
+      "final_authority": "governance_pipeline"
+    },
+    "runtime_criteria": {
+      "codes": ["C.P5", "C.P6", "C.M3", "C.D3"],
+      "allowed": ["achieved_suggestion", "confidence", "feedback_ar"],
+      "final_authority": "runtime_gate",
+      "note_ar": "اقتراح Gemini لا يُمنح المعيار — Runtime Gate يحسم"
+    }
+  },
+
+  "criteria": [
+    {
+      "code": "B.P3",
+      "platform_level": "8/B.P3",
+      "band": "P",
+      "aim": "B",
+      "task_id": "task_1_design",
+      "in_assignment_brief": true,
+      "title_ar": "إنتاج تصميمات فنية أساسية لألعاب الحاسوب",
+      "title_en": "Produce basic artistic designs for computer games",
+      "evidence_types": ["gdd_doc", "design_text", "word_pdf"],
+      "evidence_labels_ar": ["وثيقة Word/PDF", "GDD / تصميم اللعبة", "محتوى تصميم في النص"],
+      "evidence_found_ar": ["وثيقة Word/PDF", "محتوى تصميم في النص", "تصميمات فنية أساسية"],
+      "evidence_missing_ar": ["GDD / وثيقة تصميم اللعبة"],
+      "ai_role": "analyze_document_quality",
+      "gate": null,
+      "prerequisites": [],
+      "requires_runtime": false,
+      "requires_test_or_eval": false,
+      "runtime_gate": false,
+      "platform_modules": ["evidence_coverage_score", "academic_explainability"]
+    },
+    {
+      "code": "B.P4",
+      "platform_level": "8/B.P4",
+      "band": "P",
+      "aim": "B",
+      "task_id": "task_1_design",
+      "in_assignment_brief": true,
+      "title_ar": "إنتاج تصميمات بصرية أساسية",
+      "title_en": "Produce basic visual designs",
+      "evidence_types": ["visual_design", "flowchart", "word_pdf", "peer_design"],
+      "evidence_labels_ar": ["تصاميم بصرية / storyboard", "مخطط انسيابي", "وثيقة Word/PDF", "مراجعة تصميم مع الآخرين"],
+      "evidence_found_ar": ["تصاميم بصرية", "وثيقة Word/PDF"],
+      "evidence_missing_ar": ["ملف مراجعة تصميم / GDD", "نص مراجعة تصميم مع الآخرين"],
+      "ai_role": "analyze_document_quality",
+      "gate": null,
+      "prerequisites": [],
+      "requires_runtime": false,
+      "requires_test_or_eval": false,
+      "runtime_gate": false,
+      "platform_modules": ["evidence_coverage_score"]
+    },
+    {
+      "code": "C.P5",
+      "platform_level": "8/C.P5",
+      "band": "P",
+      "aim": "C",
+      "task_id": "task_2_prototype",
+      "in_assignment_brief": true,
+      "title_ar": "إنتاج نموذج أولي للعبة الأساسية (قابل للعب)",
+      "title_en": "Produce a playable game prototype",
+      "evidence_types": ["source_or_project", "executable_build", "runtime_verified", "runtime_movement"],
+      "evidence_labels_ar": ["كود مصدري / مشروع", "ملف تنفيذي", "تشغيل مُتحقق (L4+)", "حركة/إدخال (Runtime)"],
+      "evidence_found_ar": ["كود مصدري / مشروع", "ملف تنفيذي"],
+      "evidence_missing_ar": ["تشغيل مُتحقق (L4+)", "حركة/إدخال (Runtime)"],
+      "ai_role": "none_runtime_only",
+      "gate": "runtime_gate_block",
+      "prerequisites": [],
+      "runtime_signals": ["engine_detected", "project_launches", "player_movement", "basic_interaction"],
+      "requires_runtime": true,
+      "requires_test_or_eval": false,
+      "runtime_gate": true,
+      "platform_modules": ["runtime_evidence_gate", "runtime_observation_sandbox", "evidence_coverage_score"]
+    },
+    {
+      "code": "C.P6",
+      "platform_level": "8/C.P6",
+      "band": "P",
+      "aim": "C",
+      "task_id": "task_2_prototype",
+      "in_assignment_brief": true,
+      "title_ar": "توصيل فكرة اللعبة لجمهور تقني بطريقة مناسبة",
+      "title_en": "Communicate game idea to a technical audience",
+      "evidence_types": ["test_plan", "user_testing", "presentation", "runtime_or_playtest"],
+      "evidence_labels_ar": ["خطة اختبار (Test Plan)", "اختبار مستخدم / نتائج", "عرض تقديمي", "أدلة تشغيل (Runtime)"],
+      "evidence_found_ar": ["اختبار مستخدم / نتائج", "عرض تقديمي"],
+      "evidence_missing_ar": ["خطة اختبار (Test Plan)", "أدلة تشغيل (Runtime)"],
+      "ai_role": "analyze_presentation_quality",
+      "gate": "runtime_gate_block",
+      "prerequisites": ["C.P5"],
+      "requires_runtime": true,
+      "requires_test_or_eval": true,
+      "runtime_gate": true,
+      "cp6_weights": {"test_plan": 50, "user_testing": 30, "runtime": 20},
+      "platform_modules": ["runtime_evidence_gate", "evidence_coverage_score"]
+    },
+    {
+      "code": "C.P7",
+      "platform_level": "8/C.P7",
+      "band": "P",
+      "aim": "C",
+      "task_id": null,
+      "in_assignment_brief": false,
+      "title_ar": "مراجعة اللعبة (ذاتية / مع الآخرين)",
+      "title_en": "Review own and others' games",
+      "evidence_types": ["requirements_review", "cp6_linkage"],
+      "evidence_labels_ar": ["جدول/نص مراجعة المتطلبات", "ربط بنتائج اختبار (P6)", "ربط باللعبة/التنفيذ"],
+      "requires_runtime": false,
+      "requires_test_or_eval": true,
+      "runtime_gate": false,
+      "cp6_dependency": true,
+      "platform_modules": ["evidence_coverage_score"]
+    },
+    {
+      "code": "B.M2",
+      "platform_level": "8/B.M2",
+      "band": "M",
+      "aim": "B",
+      "task_id": "task_1_design",
+      "in_assignment_brief": true,
+      "title_ar": "تصميمات فنية/مرئية مفصّلة وفعّالة",
+      "title_en": "Detailed and effective artistic/visual designs",
+      "evidence_types": ["design_analysis", "gdd_doc", "word_pdf"],
+      "evidence_labels_ar": ["تحليل مبرر في النص", "أدلة تصميم", "وثائق داعمة"],
+      "evidence_found_ar": ["تحليل مبرر في النص", "وثائق داعمة"],
+      "evidence_missing_ar": ["خريطة منطقية للميكانيك", "تبرير قرارات التصميم"],
+      "ai_role": "analyze_reasoning_quality",
+      "gate": "cumulative_block_if_pass_missing",
+      "prerequisites": ["B.P3", "B.P4"],
+      "requires_runtime": false,
+      "requires_test_or_eval": false,
+      "runtime_gate": false,
+      "governance_note_ar": "قد يتحقق أكاديمياً لكن لا يُمنح إذا Pass ناقص",
+      "platform_modules": ["btec_criteria_governance", "evidence_coverage_score"]
+    },
+    {
+      "code": "C.M3",
+      "platform_level": "8/C.M3",
+      "band": "M",
+      "aim": "C",
+      "task_id": "task_2_prototype",
+      "in_assignment_brief": true,
+      "title_ar": "عرض فعّال + نموذج أولي يعمل بشكل أساسي",
+      "title_en": "Effective presentation with fundamentally working prototype",
+      "evidence_types": ["testing_evidence", "refinement", "runtime_verified"],
+      "evidence_labels_ar": ["أدلة اختبار موثقة", "تحسين مبني على اختبار", "تبرير التحسين"],
+      "evidence_found_ar": ["أدلة اختبار موثقة", "تحسين مبني على اختبار"],
+      "evidence_missing_ar": ["تبرير التحسين", "ملاحظات مستخدم واضحة"],
+      "ai_role": "analyze_improvement_quality",
+      "gate": "runtime_gate_block",
+      "prerequisites": ["C.P5", "C.P6"],
+      "runtime_signals": ["engine_detected", "project_launches", "scoring_system", "win_lose_condition"],
+      "requires_runtime": true,
+      "requires_test_or_eval": true,
+      "runtime_gate": true,
+      "cp6_dependency": true,
+      "platform_modules": ["runtime_evidence_gate", "evidence_coverage_score", "btec_criteria_governance"]
+    },
+    {
+      "code": "B.D2",
+      "platform_level": "8/BC.D2",
+      "band": "D",
+      "aim": "B",
+      "task_id": "task_1_design",
+      "in_assignment_brief": true,
+      "title_ar": "تصميمات فنية/مرئية شاملة",
+      "title_en": "Comprehensive artistic/visual designs",
+      "evidence_types": ["critical_evaluation", "strengths_weaknesses", "comparison"],
+      "evidence_labels_ar": ["تقييم نقدي", "نقاط قوة وضعف", "مقارنة تقنيات/عمليات"],
+      "evidence_found_ar": ["تقييم نقدي"],
+      "evidence_missing_ar": ["نقاط قوة وضعف", "مقارنة تقنيات/عمليات", "تحليل شامل لكل عناصر اللعبة"],
+      "ai_role": "analyze_critical_evaluation",
+      "gate": "cumulative_block_if_merit_missing",
+      "prerequisites": ["B.P3", "B.P4", "B.M2"],
+      "requires_runtime": false,
+      "requires_test_or_eval": true,
+      "runtime_gate": false,
+      "cp6_dependency": true,
+      "platform_modules": ["evidence_coverage_score", "btec_criteria_governance"]
+    },
+    {
+      "code": "C.D3",
+      "platform_level": "8/BC.D3",
+      "band": "D",
+      "aim": "C",
+      "task_id": "task_2_prototype",
+      "in_assignment_brief": true,
+      "title_ar": "عرض شامل ومقنع + نموذج أولي فعّال لجمهور تقني",
+      "title_en": "Comprehensive convincing presentation with effective prototype",
+      "evidence_types": ["development_log", "design_decisions", "reflection", "runtime_verified"],
+      "evidence_labels_ar": ["سجل تطوير/يوميات", "قرارات تصميم موثقة", "انعكاس شخصي"],
+      "evidence_found_ar": ["قرارات تصميم موثقة", "انعكاس شخصي"],
+      "evidence_missing_ar": ["سجل تطوير/يوميات", "تغذية راجعة من مستخدمين"],
+      "ai_role": "analyze_reflection_and_polish",
+      "gate": "runtime_gate_block",
+      "prerequisites": ["C.P5", "C.P6", "C.M3"],
+      "runtime_signals": ["engine_detected", "project_launches", "full_gameplay_loop", "polished_ui"],
+      "requires_runtime": true,
+      "requires_test_or_eval": true,
+      "runtime_gate": true,
+      "platform_modules": ["runtime_evidence_gate", "evidence_coverage_score", "btec_criteria_governance"]
+    }
+  ]
+}

@@ -6,6 +6,8 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from app.grading_mode import GradingMode
+
 
 FAST_PACKAGE_NAMES = {
     "basic",
@@ -28,13 +30,8 @@ DEEP_PACKAGE_NAMES = {
 
 
 def normalize_grading_mode_choice(value: str | None) -> str:
-    """Map UI/API values (basic/pro/fast/deep) to fast|deep."""
-    v = (value or "deep").strip().lower()
-    if v in ("fast", "basic"):
-        return "fast"
-    if v in ("deep", "pro"):
-        return "deep"
-    return "deep"
+    """Map UI/API values (standard/pro/basic/fast/deep) to fast|deep wire format."""
+    return GradingMode.from_wire(value).to_wire()
 
 
 def grading_mode_display_label(mode: str) -> str:
@@ -46,10 +43,11 @@ def is_fast_grading_mode(grading_mode: str | None) -> bool:
 
 
 def fast_grading_flags(grading_mode: str | None) -> Dict[str, bool]:
-    """Feature gates for BASIC (fast) — skip expensive verification layers."""
+    """Feature gates for STANDARD (fast) — lightweight runtime + docs; no gameplay agent."""
     fast = is_fast_grading_mode(grading_mode)
     return {
-        "skip_runtime_observation": fast,
+        "skip_runtime_observation": False,
+        "fast_runtime_smoke": fast,
         "skip_godot_pck_analysis": fast,
         "skip_gameplay_video_inference": fast,
         "skip_l2_l3_corroborative": fast,
@@ -738,6 +736,29 @@ def slim_artifact_inventory_for_snapshot(inventory: Optional[Dict[str, Any]]) ->
     rt_pkg = inventory.get("runtime_evidence_package")
     if isinstance(rt_pkg, dict):
         out["runtime_evidence_package"] = rt_pkg
+    gv = inventory.get("gameplay_verification")
+    if isinstance(gv, dict) and gv:
+        out["gameplay_verification"] = {
+            k: gv.get(k)
+            for k in (
+                "version",
+                "mode",
+                "status",
+                "l4_level",
+                "automated_l4_level",
+                "gameplay_entered",
+                "player_movement_verified",
+                "jump_detected",
+                "score_change_detected",
+                "mechanics_verified_count",
+                "gameplay_window_screenshots",
+                "menu_navigation",
+            )
+            if gv.get(k) is not None
+        }
+    rv = inventory.get("runtime_validation")
+    if isinstance(rv, dict) and rv:
+        out["runtime_validation"] = rv
     req_checklist = inventory.get("requirement_checklist")
     if isinstance(req_checklist, dict):
         out["requirement_checklist"] = req_checklist
@@ -944,8 +965,8 @@ def resolve_grading_policy(package_name: str | None) -> Dict[str, Any]:
             "vision_enabled": False,
             "label_ar": "Basic — تصحيح سريع",
             "description_ar": (
-                "Basic — Flash سريع: Word ~2–3 د + Vision لصور Word (حتى 10). "
-                "كود من ZIP. لا Runtime. 30 طالب ≈ 8 معاً (~25–50 د)."
+                "STANDARD — Flash سريع + Runtime خفيف (launch + sweep قصير، بدون Agent). "
+                "Word ~2–3 د + Vision لصور Word (حتى 10). 30 طالب ≈ 8 معاً (~25–50 د)."
             ),
         }
     if name in DEEP_PACKAGE_NAMES:

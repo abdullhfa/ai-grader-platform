@@ -37,6 +37,7 @@ from app.grading_snapshot_governance import (  # type: ignore
     reconcile_canonical_drift_for_assignment,
 )
 from app.archive_extraction_utils import hash_submission_file
+from app.core.grading_profiles import attach_grading_mode_metadata
 from app.grading_mode_policy import (
     compact_snapshot_for_storage,
     grading_mode_display_label,
@@ -1093,9 +1094,11 @@ async def run_batch_grading_job(
                 grade_level=str(result.get("grade_level") or ""),
                 percentage=float(result.get("percentage") or 0),
             )
+            _mode_for_snap = prog.get("grading_mode") or policy.get("grading_mode") or grading_mode
+            _snap = attach_grading_mode_metadata(_snap, _mode_for_snap)
             _snap = compact_snapshot_for_storage(
                 _snap,
-                prog.get("grading_mode") or policy.get("grading_mode") or grading_mode,
+                _mode_for_snap,
             )
             _sub_for_snap = db.query(Submission).filter(Submission.id == sub_id).first()
             if _sub_for_snap:

@@ -1,0 +1,26 @@
+{
+  "grade_id": "grade_10",
+  "title_ar": "الصف العاشر",
+  "title_en": "Year 10",
+  "btec_level": 2,
+  "active_units": [
+    {
+      "slug": "games",
+      "unit_key": "unit_9_games",
+      "moe_unit": 9,
+      "pearson_unit": 8,
+      "title_ar": "مقدمة في تصميم الألعاب",
+      "status": "draft",
+      "spec": "games/spec.json"
+    }
+  ],
+  "planned_units": [
+    {"slug": "programming", "moe_unit": 5, "title_ar": "مقدمة في البرمجة", "status": "pending"},
+    {"slug": "web", "moe_unit": 7, "title_ar": "مقدمة في تطوير المواقع", "status": "pending"},
+    {"slug": "apps", "moe_unit": 8, "title_ar": "مقدمة في تطوير التطبيقات", "status": "pending"},
+    {"slug": "spreadsheets", "moe_unit": 2, "title_ar": "نمذجة البيانات وجداول البيانات", "status": "pending"},
+    {"slug": "ict_org", "moe_unit": 1, "title_ar": "استخدام تكنولوجيا المعلومات", "status": "pending"},
+    {"slug": "networks", "moe_unit": 4, "title_ar": "مقدمة في شبكات الحاسوب", "status": "pending"},
+    {"slug": "digital_graphics", "moe_unit": 6, "title_ar": "مقدمة في الرسومات الرقمية", "status": "pending"}
+  ]
+}

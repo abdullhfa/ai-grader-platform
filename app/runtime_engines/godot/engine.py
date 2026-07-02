@@ -130,15 +130,17 @@ class GodotRuntimeEngine(RuntimeEngine):
                 smoke_test_windows_exe,
             )
 
+            _gm = session.signals.get("grading_mode")
             smoke = smoke_test_windows_exe(
                 Path(executable),
-                timeout=resolve_smoke_timeout_seconds("deep"),
+                timeout=resolve_smoke_timeout_seconds(_gm),
                 capture_screenshots=True,
                 enable_interaction_trace=True,
                 session_ctx={
                     "runtime_session_id": session.session_id,
                     "student_name": session.submission_key,
                 },
+                grading_mode=_gm,
             )
             observation = build_godot_smoke_observation(
                 smoke,
@@ -167,15 +169,22 @@ class GodotRuntimeEngine(RuntimeEngine):
             if export_result.get("artifact"):
                 executable = export_result["artifact"]
                 session.signals["executable"] = executable
-                from app.runtime_observation_sandbox import smoke_test_windows_exe
+                from app.runtime_observation_sandbox import (
+                    resolve_smoke_timeout_seconds,
+                    smoke_test_windows_exe,
+                )
 
+                _gm = session.signals.get("grading_mode")
                 smoke = smoke_test_windows_exe(
                     Path(executable),
+                    timeout=resolve_smoke_timeout_seconds(_gm),
                     capture_screenshots=True,
+                    enable_interaction_trace=True,
                     session_ctx={
                         "runtime_session_id": session.session_id,
                         "student_name": session.submission_key,
                     },
+                    grading_mode=_gm,
                 )
                 observation = build_godot_smoke_observation(smoke, pairing_meta=pairing_meta)
                 _merge_observation(session, observation, "godot_exe_smoke")

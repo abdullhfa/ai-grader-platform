@@ -9,30 +9,44 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+from app.unit_calibration import UNIT9_KEY, to_pearson_registry_entry
+
 REGISTRY_VERSION = "pearson_unit_spec_v1"
 
 # unit_key → {title, criteria: [{code, level, command_verb, evidence_types}]}
 UNIT_SPECS: Dict[str, Dict[str, Any]] = {
-    # Example shape — extend with approved Pearson unit packs:
-    # "unit_6_games": {
-    #     "title": "Unit 6: Games Development",
-    #     "pearson_edition": "2024",
-    #     "criteria": [
-    #         {"code": "B.P3", "level": "P", "command_verb": "Produce", ...},
-    #     ],
-    # },
+    UNIT9_KEY: to_pearson_registry_entry(),
+    # Alias: Pearson platform uses unit 8 criterion prefix for the same games unit.
+    "unit_8_games": to_pearson_registry_entry(),
 }
+
+
+def _normalize_criterion_code(raw: Any) -> str:
+    text = str(raw or "").strip().upper()
+    if "/" in text:
+        text = text.split("/")[-1]
+    return text
 
 
 def lookup_unit_spec(unit_key: str) -> Optional[Dict[str, Any]]:
     key = (unit_key or "").strip().lower().replace(" ", "_")
-    return UNIT_SPECS.get(key)
+    if key in UNIT_SPECS:
+        return UNIT_SPECS.get(key)
+    aliases = {
+        "unit9": UNIT9_KEY,
+        "unit_9": UNIT9_KEY,
+        "unit8": "unit_8_games",
+        "unit_8": "unit_8_games",
+        "games": UNIT9_KEY,
+    }
+    return UNIT_SPECS.get(aliases.get(key, key))
 
 
 def compare_uploaded_criteria_to_official(
     uploaded: List[Dict[str, Any]],
     *,
     unit_key: str,
+    brief_only: bool = False,
 ) -> Dict[str, Any]:
     """
     Diff teacher-uploaded criteria against bundled official spec.
@@ -46,17 +60,20 @@ def compare_uploaded_criteria_to_official(
             "message_ar": "لا يوجد مرجع رسمي مُخزّن لهذه الوحدة — يعتمد التصحيح على ما رفعه المعلم.",
         }
 
-    official_codes = {
-        str(c.get("code") or "").strip().upper()
-        for c in official.get("criteria") or []
-        if c.get("code")
-    }
-    uploaded_codes = {
-        str(c.get("code") or c.get("criteria_level") or "").strip().upper()
-        for c in uploaded
-        if isinstance(c, dict)
-    }
-    uploaded_codes = {c for c in uploaded_codes if c}
+    official_codes = set()
+    for c in official.get("criteria") or []:
+        if brief_only and not c.get("in_assignment_brief"):
+            continue
+        code = _normalize_criterion_code(c.get("platform_level") or c.get("code"))
+        if code:
+            official_codes.add(code)
+    uploaded_codes = set()
+    for c in uploaded:
+        if not isinstance(c, dict):
+            continue
+        code = _normalize_criterion_code(c.get("code") or c.get("criteria_level"))
+        if code:
+            uploaded_codes.add(code)
 
     missing = sorted(official_codes - uploaded_codes)
     extra = sorted(uploaded_codes - official_codes)

@@ -329,6 +329,45 @@
         color: #fff;
         font-weight: 700;
     }
+    .diag-confidence--file {
+        color: #93c5fd;
+        background: rgba(59, 130, 246, 0.18);
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+    .diag-confidence--runtime {
+        color: #86efac;
+        background: rgba(34, 197, 94, 0.18);
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+    .diag-confidence--l3 {
+        color: #fdba74;
+        background: rgba(249, 115, 22, 0.18);
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+    .diag-confidence--l4 {
+        color: #86efac;
+        background: rgba(34, 197, 94, 0.18);
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+    .diag-confidence--l5 {
+        color: #d8b4fe;
+        background: rgba(168, 85, 247, 0.18);
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+    .diag-status-gate { color: #fbbf24; font-weight: 600; }
+    .diag-gate-note { color: #fcd34d; font-size: 12px; line-height: 1.4; }
+    .grade-u-reason { font-size: 11px; color: #fbbf24; margin-top: 4px; line-height: 1.3; }
+    .runtime-shot-rejected { opacity: 0.55; border: 1px dashed #f87171; }
 
     /* Student accordion list */
     .students-list {
@@ -344,7 +383,7 @@
     }
     .student-item-header {
         display: grid;
-        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 120px 90px 90px 1fr;
+        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 120px 90px 90px 88px 1fr;
         align-items: center;
         gap: 8px;
         padding: 14px 20px;
@@ -437,7 +476,7 @@
     }
     .students-list-head {
         display: grid;
-        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 120px 90px 90px 1fr;
+        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 120px 90px 90px 88px 1fr;
         gap: 8px;
         padding: 14px 20px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -456,16 +495,16 @@
     }
     .batch-results--pro .students-list-head,
     .batch-results--pro .student-item-header {
-        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 90px 90px 1fr;
+        grid-template-columns: 44px minmax(140px, 1.4fr) 120px 90px 90px 88px 1fr;
     }
     .batch-results--pro .col-expected {
         display: none !important;
     }
     .batch-results--pro .students-list-wrap {
-        min-width: 740px;
+        min-width: 820px;
     }
     .batch-results--basic .students-list-wrap {
-        min-width: 860px;
+        min-width: 940px;
     }
 
     .br-page-inner {
@@ -693,6 +732,74 @@
         margin-left: 8px;
     }
 
+    .evidence-radar-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+        padding: 14px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.35);
+    }
+    .evidence-filter-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.82);
+        cursor: pointer;
+        user-select: none;
+    }
+    .evidence-filter-label input {
+        accent-color: #38ef7d;
+        width: 16px;
+        height: 16px;
+    }
+    .evidence-filter-hint {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        font-weight: 600;
+    }
+    .evidence-issue-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 36px;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+    .evidence-issue-badge--gate {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(251, 191, 36, 0.35);
+    }
+    .evidence-issue-badge--cov {
+        background: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(96, 165, 250, 0.35);
+    }
+    .evidence-issue-badge--both {
+        background: rgba(248, 113, 113, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(248, 113, 113, 0.35);
+    }
+    .evidence-issue-none {
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 14px;
+    }
+    .student-item.is-filter-hidden {
+        display: none !important;
+    }
+    .evidence-filter-count {
+        font-size: 12px;
+        color: #38ef7d;
+        font-weight: 700;
+    }
+
     @media (max-width: 900px) {
         .students-list-head,
         .student-item-header {
@@ -893,6 +1000,21 @@
                 {% endif %}
                 </div>
             </div>
+
+            {% if batch_evidence_stats %}
+            <div class="stat-card" title="طلبة لديهم معايير تشغيل محجوبة (Runtime Gate)">
+                <div class="stat-label">تأثر بـ Gate</div>
+                <div class="stat-body">
+                    <div class="stat-value stat-value--amber">{{ batch_evidence_stats.gate_affected_count }}</div>
+                </div>
+            </div>
+            <div class="stat-card" title="طلبة U مع تغطية أدلة ≥ {{ batch_evidence_stats.coverage_threshold }}% على معايير غير محققة">
+                <div class="stat-label">U بتغطية عالية</div>
+                <div class="stat-body">
+                    <div class="stat-value stat-value--blue">{{ batch_evidence_stats.high_coverage_u_count }}</div>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Results Table -->
@@ -900,6 +1022,21 @@
             <div class="gcard-header">
                 <h3 class="gcard-title">قائمة نتائج الطلاب</h3>
             </div>
+
+            {% if batch_evidence_stats and results|length > 0 %}
+            <div class="evidence-radar-bar" id="evidence-radar-bar">
+                <label class="evidence-filter-label">
+                    <input type="checkbox" id="filter-gate-only" />
+                    Gate فقط
+                </label>
+                <label class="evidence-filter-label">
+                    <input type="checkbox" id="filter-high-cov-u" />
+                    U بتغطية ≥ {{ batch_evidence_stats.coverage_threshold }}%
+                </label>
+                <span class="evidence-filter-hint">رادار الأدلة — فلترة سريعة دون فتح كل طالب</span>
+                <span class="evidence-filter-count" id="evidence-filter-count"></span>
+            </div>
+            {% endif %}
 
             <div class="table-scroll">
             <div class="students-list-wrap">
@@ -910,7 +1047,8 @@
                 <span>التقدير المعتمد</span>
                 <span class="col-expected">التقدير المتوقع</span>
                 <span>نسبة الذكاء الإصطناعي</span>
-                <span title="تشابه النص مع زملاء نفس الدفعة — اللون يتدرج حسب النسبة">نسبة التشابة</span>
+                <span title="أقصى تشابه نصي مع زملاء نفس الدفعة (مقارنة داخلية — ليس Turnitin)">نسبة التشابة</span>
+                <span title="مشاكل أدلة: Gate أو تغطية عالية دون تحقق">⚠ الأدلة</span>
                 <span>التقارير</span>
             </div>
 
@@ -918,7 +1056,15 @@
                 {% for result in results %}
                 {% set has_diag = (result.explainability and result.explainability.missing_evidence_diagnostics and (result.explainability.missing_evidence_diagnostics.rows or [])) or (result.explainability and result.explainability.evidence_coverage_by_criterion) or (result.explainability and result.explainability.runtime_evidence_package and result.explainability.runtime_evidence_package.requirement_confidence) or (result.pearson_criteria_rows or []) %}
                 {% set student_label = result.submission.file_path.split('\\')[-1].split('/')[-1] if result.submission.file_path else result.submission.student_name %}
-                <div class="student-item{% if has_diag %} student-item--has-diag{% endif %}" data-student-id="{{ result.submission.id }}">
+                {% set es = result.evidence_summary or {} %}
+                {% set has_gate = es.get('has_gate_issue') %}
+                {% set is_hcu = result.is_u_high_coverage %}
+                {% set has_ev_issue = es.get('has_evidence_issue') %}
+                <div class="student-item{% if has_diag %} student-item--has-diag{% endif %}"
+                     data-student-id="{{ result.submission.id }}"
+                     data-gate-issue="{{ 'true' if has_gate else 'false' }}"
+                     data-high-coverage-u="{{ 'true' if is_hcu else 'false' }}"
+                     data-evidence-issue="{{ 'true' if has_ev_issue else 'false' }}">
                     <div class="student-item-header">
                         <span class="student-index">{{ loop.index }}</span>
                         <div>
@@ -943,8 +1089,13 @@
                                 {% set og = result.official_grade or {} %}
                                 {% set btec_short = og.grade if og.get('grade') else (result.summary.grade_level or 'U').split()[0] %}
                                 {% if btec_short not in ['D', 'M', 'P', 'U'] %}{% set btec_short = 'U' %}{% endif %}
-                                <div class="grade-stack">
+                                <div class="grade-stack"{% if btec_short == 'U' and has_gate %} title="U — لم تتحقق C.P5/C.P6 بسبب عدم وجود أدلة Gameplay (Runtime PASS / فيديو لعب / L5 Playtest)."{% elif btec_short == 'U' and is_hcu %} title="U — تغطية أدلة عالية من الملفات لكن المعايير التنفيذية لم تُمنح."{% endif %}>
                                     {{ render_grade_badge(btec_short) }}
+                                    {% if btec_short == 'U' and has_gate %}
+                                    <div class="grade-u-reason">U بسبب Gate على C.P5/C.P6</div>
+                                    {% elif btec_short == 'U' and is_hcu %}
+                                    <div class="grade-u-reason">U — تغطية عالية دون تحقق</div>
+                                    {% endif %}
                                 </div>
                                 {% else %}
                                 <span class="text-placeholder">-</span>
@@ -972,6 +1123,7 @@
                         <div class="student-col">
                                 {% if result.summary %}
                                 {% set ai = result.summary.ai_likelihood or 0 %}
+                                <span title="تقدير احتمالية أن النص مُولَّد بالذكاء الاصطناعي (للمراجعة فقط)">
                                 {% if ai >= 80 %}
                                 <span class="metric-pct metric-pct--high">{{ ai }}%</span>
                                 {% elif ai >= 40 %}
@@ -982,6 +1134,7 @@
                                 {% else %}
                                 <span class="text-placeholder">-</span>
                                 {% endif %}
+                                </span>
                         </div>
                         <div class="student-col">
                                 {% if result.summary %}
@@ -1003,6 +1156,27 @@
                                 {% endif %}
                                 {% else %}
                                 <span class="text-placeholder">-</span>
+                                {% endif %}
+                        </div>
+                        <div class="student-col" title="{% if has_gate %}Gate: {{ es.get('gate_downgrade_count', 0) }} معيار{% endif %}{% if is_hcu %}{% if has_gate %} · {% endif %}U بتغطية عالية: {{ es.get('high_coverage_not_achieved_count', 0) }} معيار{% endif %}">
+                                {% if has_gate and is_hcu %}
+                                <span class="evidence-issue-badge evidence-issue-badge--both" title="Gate + U بتغطية عالية">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </span>
+                                {% elif has_gate %}
+                                <span class="evidence-issue-badge evidence-issue-badge--gate" title="Runtime Gate — {{ es.get('gate_downgrade_count', 0) }} معيار">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </span>
+                                {% elif is_hcu %}
+                                <span class="evidence-issue-badge evidence-issue-badge--cov" title="U مع تغطية ≥ {{ es.get('coverage_threshold', 50) }}%">
+                                    <i class="fa-solid fa-chart-simple"></i>
+                                </span>
+                                {% elif has_ev_issue %}
+                                <span class="evidence-issue-badge evidence-issue-badge--gate" title="مشكلة أدلة">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                </span>
+                                {% else %}
+                                <span class="evidence-issue-none">—</span>
                                 {% endif %}
                         </div>
                         <div class="student-col">
@@ -1062,26 +1236,44 @@
                             {% if result.explainability and result.explainability.runtime_evidence_package and result.explainability.runtime_evidence_package.requirement_confidence %}
                             {% set rep = result.explainability.runtime_evidence_package %}
                             {% if rep.requirement_confidence %}
+                            <p class="diag-coverage-note diag-runtime-note">
+                                <strong class="diag-coverage-strong">{{ rep.confidence_model_ar or 'أرقام الثقة استشارية' }}</strong>
+                            </p>
                             <table class="diag-table diag-table--spaced">
-                                <thead><tr><th>المتطلب</th><th>ثقة الأدلة</th></tr></thead>
+                                <thead><tr><th>المتطلب</th><th>المصدر</th><th>الثقة</th></tr></thead>
                                 <tbody>
                                     {% for rc in rep.requirement_confidence %}
                                     <tr>
                                         <td class="diag-req">{{ rc.label_ar or rc.requirement }}</td>
-                                        <td class="diag-confidence">{{ rc.confidence_pct }}%</td>
+                                        <td class="diag-status">
+                                            {% if rc.confidence_source == 'runtime_l5' %}
+                                            <span class="diag-confidence--l5">{{ rc.confidence_source_ar or 'ثقة playtest L5' }}</span>
+                                            {% elif rc.confidence_source == 'runtime_l4' or rc.confidence_source == 'runtime' %}
+                                            <span class="diag-confidence--l4">{{ rc.confidence_source_ar or 'ثقة تشغيل L4' }}</span>
+                                            {% elif rc.confidence_source == 'runtime_l3' %}
+                                            <span class="diag-confidence--l3">{{ rc.confidence_source_ar or 'ثقة تشغيل L3' }}</span>
+                                            {% else %}
+                                            <span class="diag-confidence--file">{{ rc.confidence_source_ar or 'ثقة تحليل ملفات' }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="diag-confidence {% if rc.confidence_source == 'runtime_l5' %}diag-confidence--l5{% elif rc.confidence_source == 'runtime_l4' or rc.confidence_source == 'runtime' %}diag-confidence--l4{% elif rc.confidence_source == 'runtime_l3' %}diag-confidence--l3{% else %}diag-confidence--file{% endif %}">{{ rc.confidence_pct }}%</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                             {% endif %}
                             {% if rep.screenshots %}
+                            <p class="diag-coverage-note diag-runtime-note">
+                                التشغيل الآلي على الخادم وفحص الملفات <strong class="diag-coverage-strong">لا يُعتبر دليلاً كاملاً على اللعب الفعلي (Gameplay)</strong>.
+                                لتحقيق C.P5/C.P6/C.M3/C.D3 يُطلب فيديو لعب من داخل اللعبة (حركة اللاعب، النقاط، تفاعل العدو) أو اختبار بشري موثّق (L5).
+                            </p>
                             <div class="student-diag-title student-diag-title--spaced-sm">لقطات التشغيل (مرصودة — لا تثبت gameplay)</div>
                             <div class="runtime-shots-grid">
                                 {% for shot in rep.screenshots %}
                                 {% if shot.url or shot.path %}
-                                <a href="{{ shot.url or shot.path }}" target="_blank" rel="noopener" class="runtime-shot-link">
+                                <a href="{{ shot.url or shot.path }}" target="_blank" rel="noopener" class="runtime-shot-link{% if shot.status == 'rejected' %} runtime-shot-rejected{% endif %}">
                                     <img src="{{ shot.url or shot.path }}" alt="{{ shot.label or shot.slot or 'screenshot' }}" class="runtime-shot-img">
-                                    <div class="runtime-shot-label">{{ shot.label or shot.slot }}</div>
+                                    <div class="runtime-shot-label">{{ shot.label or shot.slot }}{% if shot.status == 'rejected' %} (مرفوضة){% endif %}</div>
                                 </a>
                                 {% endif %}
                                 {% endfor %}
@@ -1098,11 +1290,18 @@
                                 <thead>
                                     <tr>
                                         <th>المعيار</th>
-                                        <th>التغطية</th>
+                                        <th>تغطية الأدلة (ملفات الطالب)</th>
+                                        <th>ملاحظة Gate</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for cr in result.explainability.evidence_coverage_by_criterion %}
+                                    {% set pearson_match = namespace(row=none) %}
+                                    {% if result.pearson_criteria_rows %}
+                                    {% for pr in result.pearson_criteria_rows %}
+                                    {% if pr.criteria_level == cr.criteria_level %}{% set pearson_match.row = pr %}{% endif %}
+                                    {% endfor %}
+                                    {% endif %}
                                     <tr>
                                         <td class="diag-req">{{ cr.criteria_level }}</td>
                                         <td class="diag-status">
@@ -1112,6 +1311,15 @@
                                             <span class="coverage-pct--warn">{{ cr.coverage_pct }}%</span>
                                             {% else %}
                                             <span class="diag-status-bad">{{ cr.coverage_pct }}%</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="diag-gate-note">
+                                            {% if pearson_match.row and pearson_match.row.gate_blocked %}
+                                            محجوب — {{ pearson_match.row.gate_reason_ar or 'Runtime Gate' }}
+                                            {% elif pearson_match.row and pearson_match.row.achieved and not pearson_match.row.awardable %}
+                                            {{ pearson_match.row.gate_reason_ar or 'تحقق جزئي — Prerequisite غير مكتمل' }}
+                                            {% else %}
+                                            —
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -1128,15 +1336,31 @@
                                         <th>تحقق</th>
                                         <th>قابل للمنح</th>
                                         <th>الدرجة</th>
+                                        <th>سبب الحجب</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for cr in result.pearson_criteria_rows %}
                                     <tr>
                                         <td class="diag-req">{{ cr.criteria_level }}</td>
-                                        <td class="diag-status">{% if cr.achieved %}<span class="diag-status-ok">نعم</span>{% else %}<span class="diag-status-bad">لا</span>{% endif %}</td>
-                                        <td class="diag-status">{% if cr.awardable %}<span class="diag-status-ok">نعم</span>{% else %}<span class="diag-status-bad">لا</span>{% endif %}</td>
+                                        <td class="diag-status">
+                                            {% if cr.achieved and not cr.awardable %}
+                                            <span class="diag-status-gate">{{ cr.achieved_display_ar or 'جزئي — محجوب' }}</span>
+                                            {% elif cr.achieved %}
+                                            <span class="diag-status-ok">{{ cr.achieved_display_ar or 'نعم' }}</span>
+                                            {% else %}
+                                            <span class="diag-status-bad">{{ cr.achieved_display_ar or 'لا' }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="diag-status">
+                                            {% if cr.awardable %}
+                                            <span class="diag-status-ok">{{ cr.awardable_display_ar or 'نعم' }}</span>
+                                            {% else %}
+                                            <span class="diag-status-bad">{{ cr.awardable_display_ar or 'لا' }}</span>
+                                            {% endif %}
+                                        </td>
                                         <td class="diag-grade">{{ cr.score }}{% if cr.evidence_weighted_score is not none %} / {{ cr.evidence_weighted_score }}{% endif %}</td>
+                                        <td class="diag-gate-note">{{ cr.gate_reason_ar or '—' }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -1230,6 +1454,34 @@
             btn.setAttribute('aria-expanded', 'true');
         }
     }
+
+    var filterGate = document.getElementById('filter-gate-only');
+    var filterHighCovU = document.getElementById('filter-high-cov-u');
+    var filterCountEl = document.getElementById('evidence-filter-count');
+
+    function applyEvidenceFilters() {
+        var gateOnly = filterGate && filterGate.checked;
+        var highCovOnly = filterHighCovU && filterHighCovU.checked;
+        var items = document.querySelectorAll('.student-item');
+        var visible = 0;
+        items.forEach(function (item) {
+            var show = true;
+            if (gateOnly && item.getAttribute('data-gate-issue') !== 'true') show = false;
+            if (highCovOnly && item.getAttribute('data-high-coverage-u') !== 'true') show = false;
+            item.classList.toggle('is-filter-hidden', !show);
+            if (show) visible += 1;
+        });
+        if (filterCountEl) {
+            if (gateOnly || highCovOnly) {
+                filterCountEl.textContent = 'يعرض ' + visible + ' من ' + items.length;
+            } else {
+                filterCountEl.textContent = '';
+            }
+        }
+    }
+
+    if (filterGate) filterGate.addEventListener('change', applyEvidenceFilters);
+    if (filterHighCovU) filterHighCovU.addEventListener('change', applyEvidenceFilters);
 })();
 </script>
 {% endblock %}

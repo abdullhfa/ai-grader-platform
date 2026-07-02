@@ -8,6 +8,7 @@ import logging
 from typing import Any, Callable, Dict, List, Optional
 
 from app.batch_grader import grade_batch_async
+from app.core.grading_context import SubmissionProcessingContext
 from app.core.logging_setup import append_audit_record, log_structured
 from app.core.production_config import get_production_config
 from app.evidence_completeness_gate import expand_submission_paths
@@ -55,7 +56,8 @@ async def run_batch_grading(
     """
     cfg = get_production_config()
     retries = max_retries if max_retries is not None else cfg.grading_max_retries
-    prepared = _prepare_student_files(student_files, grading_mode=grading_mode)
+    ctx = SubmissionProcessingContext.from_wire(grading_mode)
+    prepared = _prepare_student_files(student_files, grading_mode=ctx.wire_mode)
     sel = selected_criteria if selected_criteria is not None else []
 
     last_error: Optional[Exception] = None
@@ -66,7 +68,7 @@ async def run_batch_grading(
                 reference_solution,
                 grading_criteria,
                 selected_criteria=sel,
-                grading_mode=grading_mode,
+                grading_mode=ctx.wire_mode,
                 skip_grading_cache=skip_grading_cache,
                 progress_callback=progress_callback,
                 start_callback=start_callback,
@@ -78,6 +80,8 @@ async def run_batch_grading(
                 students=len(results),
                 attempt=attempt + 1,
                 success=sum(1 for r in results if r.get("success")),
+                grading_mode=ctx.grading_mode.value,
+                profile_version=ctx.profile.version,
             )
             append_audit_record(
                 cfg.audit_log_path,

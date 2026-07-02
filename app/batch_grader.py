@@ -1902,7 +1902,8 @@ async def grade_batch_async(
         _mode_flags = grading_flags(grading_mode)
     except Exception:
         _mode_flags = {
-            "skip_runtime_observation": fast_mode,
+            "skip_runtime_observation": False,
+            "fast_runtime_smoke": fast_mode,
             "skip_godot_pck_analysis": fast_mode,
             "skip_gameplay_video_inference": fast_mode,
             "skip_l2_l3_corroborative": fast_mode,
@@ -1920,7 +1921,7 @@ async def grade_batch_async(
         if len(student_files) > 8:
             _mode_flags["skip_institutional_resolution"] = True
     if fast_mode:
-        print("⚡ [BASIC] Fast path — Word-embedded Vision + doc/code; no Runtime")
+        print("⚡ [STANDARD] Fast path — Word Vision + lightweight Runtime smoke (no gameplay agent)")
     elif len(student_files) > 1:
         print(
             "🔬 [PRO] gemini-pro + Runtime/Vision; "
@@ -3166,7 +3167,12 @@ async def grade_batch_async(
                     skip_gameplay_video_when_runtime_verified=_mode_flags.get(
                         "skip_gameplay_video_when_runtime_verified", False
                     ),
+                    grading_mode=grading_mode,
                 )
+                if isinstance(artifact_inventory.get("gameplay_verification"), dict):
+                    grading_result["gameplay_verification"] = artifact_inventory[
+                        "gameplay_verification"
+                    ]
             try:
                 from app.grading_mode_policy import (
                     enrich_artifact_inventory_from_snapshot_meta,

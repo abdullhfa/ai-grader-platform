@@ -489,6 +489,16 @@ def finalize_grading_criteria_results(
         )
         if gate_report.get("changes"):
             changes.extend(gate_report["changes"])
+        if grading_result.get("pearson_btec_pro") and gate_report.get("changes"):
+            try:
+                from app.btec_criteria_governance import apply_btec_awardability
+                from app.pro_btec_pearson import institutional_grade_from_awardable
+
+                criteria = grading_result.get("criteria_results") or []
+                apply_btec_awardability(criteria)
+                grading_result["grade_level"] = institutional_grade_from_awardable(criteria)
+            except Exception:
+                pass
     except Exception:
         pass
 

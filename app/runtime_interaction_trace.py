@@ -272,6 +272,7 @@ def apply_interaction_signals(signals: Dict[str, Any], trace: Dict[str, Any]) ->
         or trace.get("status") in ("completed", "partial")
         else "no"
     )
-    # Governance: automated trace must not imply player movement
-    if signals.get("player_moved") in (None, ""):
+    if trace.get("player_movement_verified"):
+        signals["player_moved"] = "detected"
+    elif signals.get("player_moved") in (None, ""):
         signals["player_moved"] = "unknown"

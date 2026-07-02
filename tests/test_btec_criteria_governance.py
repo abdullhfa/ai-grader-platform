@@ -205,9 +205,41 @@ def test_not_achieved_positive_feedback_gets_governance_prefix():
     apply_btec_criteria_governance(gr)
     fb = gr["criteria_results"][0]["feedback"]
     assert "لم يتحقق المعيار مؤسسياً" in fb
+    assert "حقق الطالب" not in fb
     assert "[تحليل الذكاء الاصطناعي" not in fb
     assert "⚠️ [حوكمة BTEC]" not in fb
     assert gr["criteria_results"][0]["decision_matrix"][0]["met"] is False
+
+
+def test_achieved_not_awardable_replaces_ai_praise():
+    crit = _base_criteria()
+    apply_btec_awardability(crit)
+    by = _by_level(crit)
+    assert by["8/B.M2"]["awardable"] is False
+    from app.btec_criteria_governance import enforce_achieved_not_awardable_feedback
+
+    by["8/B.M2"]["feedback"] = "تم تحقيق المعيار بشكل ممتاز."
+    changes = enforce_achieved_not_awardable_feedback(crit)
+    assert changes
+    assert "جزئياً" in by["8/B.M2"]["feedback"]
+    assert "ممتاز" not in by["8/B.M2"]["feedback"]
+    assert "C.P5" in by["8/B.M2"]["feedback"] or "Prerequisite" in by["8/B.M2"]["feedback"]
+
+
+def test_align_overall_feedback_removes_distinction_praise_for_u():
+    from app.btec_criteria_governance import align_overall_feedback_with_institutional_grade
+
+    gr = {
+        "grade_level": "U",
+        "overall_feedback": "أداء ممتاز ومتميز. قدرتك على التقييم النقدي دليل على Distinction.",
+        "runtime_evidence_gate": {"runtime_status": "BLOCKED"},
+    }
+    changes = align_overall_feedback_with_institutional_grade(gr)
+    assert changes
+    fb = gr["overall_feedback"]
+    assert "C.P5" in fb or "Gameplay" in fb
+    assert "أداء ممتاز" not in fb
+    assert "Distinction" not in fb
 
 
 def test_execution_demotion_skipped_when_gate_sees_exe(tmp_path):

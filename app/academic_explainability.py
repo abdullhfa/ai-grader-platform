@@ -594,6 +594,12 @@ def build_missing_evidence_diagnostics(
             criteria_results=inventory.get("criteria_results") or [],
         )
         p6_auth = get_criterion_authority(inventory, "P6")
+    cp6_achieved = any(
+        isinstance(cr, dict)
+        and str(cr.get("criteria_level") or "").upper().endswith("P6")
+        and cr.get("achieved")
+        for cr in (inventory.get("criteria_results") or [])
+    )
     legacy_obs = (obs.get("platform_analyses") or [{}])[0].get("signals", {}).get(
         "legacy_observation", {}
     ) if obs.get("platform_analyses") else {}
@@ -705,13 +711,17 @@ def build_missing_evidence_diagnostics(
             "status_ar": (
                 _exe_not_run_ar
                 if has_exe and structure_only
-                else _neg(
-                    "ملف اللعبة (exe/build)",
-                    PRESENT_STATUS_AR if has_exe else "مفقود",
-                    has_exe,
+                else (
+                    "⚠ الملف موجود — لم يُثبت تشغيل اللعبة"
+                    if has_exe and not runtime_verified
+                    else _neg(
+                        "ملف اللعبة (exe/build)",
+                        PRESENT_STATUS_AR if has_exe else "مفقود",
+                        has_exe,
+                    )
                 )
             ),
-            "present": has_exe and not structure_only,
+            "present": has_exe and runtime_verified,
             "blocks_achievement_ar": (
                 _exe_block_ar
                 if has_exe and structure_only
@@ -729,14 +739,20 @@ def build_missing_evidence_diagnostics(
             "status_ar": (
                 f"{PRESENT_STATUS_AR} — أدلة اختبار (Authority C.P6 ✓)"
                 if has_testing
+                and cp6_achieved
                 and str(testing.get("status") or "") in ("partial", "detected", "analyzed", "documented")
                 else (
-                    BASIC_PRO_UPGRADE_STATUS_AR
+                    "أدلة اختبار موجودة — لم يُمنح C.P6 (Gate/Governance)"
                     if has_testing
-                    else _neg("أدلة الاختبار (خطط/سجلات)", "مفقود", False)
+                    and not cp6_achieved
+                    else (
+                        BASIC_PRO_UPGRADE_STATUS_AR
+                        if has_testing
+                        else _neg("أدلة الاختبار (خطط/سجلات)", "مفقود", False)
+                    )
                 )
             ),
-            "present": has_testing,
+            "present": has_testing and cp6_achieved,
             "blocks_achievement_ar": (
                 ""
                 if has_testing
@@ -848,8 +864,11 @@ def build_missing_evidence_diagnostics(
             ),
             "present": runtime_verified,
             "blocks_achievement_ar": (
-                ""
-                if runtime_verified
+                (
+                    "C.P5/C.P6/C.M3/C.D3 — التشغيل آلياً (L4) لا يُعادل لعباً فعلياً؛ "
+                    "يُطلب فيديو gameplay من داخل اللعبة أو اختبار بشري (L5)."
+                )
+                if runtime_verified and not l5.get("pass")
                 else (
                     (
                         "اللعبة لم تُشغَّل على الخادم — C.P5/C.P7 تحتاج playtest أو تفعيل L4 لـ GameMaker"
@@ -866,6 +885,33 @@ def build_missing_evidence_diagnostics(
             ),
         },
     ]
+
+    # Text Suppression: avoid positive phrasing if evidence has not reached L5.
+    runtime_row = next(
+        (r for r in rows if r.get("requirement_ar") == "التحقق من التشغيل (runtime)"),
+        None,
+    )
+    media_row = next(
+        (r for r in rows if r.get("requirement_ar") == "التحقق من الصور والفيديو"),
+        None,
+    )
+    mechanics = obs.get("mechanics_verification") or inventory.get("mechanics_verification") or {}
+    l5_human = bool(l5.get("pass"))
+    mechanics_level = str(mechanics.get("mechanics_level") or "").upper()
+    reached_l5 = l5_human or mechanics_level == "L5"
+    fast_mode = (grading_mode or "").strip().lower() in ("fast", "basic", "standard")
+    if runtime_row and not reached_l5 and not fast_mode:
+        runtime_row["status_ar"] = "ملاحظة تشغيل L4/L3 فقط — لا تحقق gameplay نهائي بدون L5"
+        runtime_row["present"] = False
+        runtime_row["blocks_achievement_ar"] = (
+            "C.P5/C.P6/C.M3/C.D3 — يلزم إثبات ميكانيك اللعب (Jump/Score/Win-Lose) عبر L5."
+        )
+    runtime_signal_present = bool(obs.get("runtime_observed") or obs.get("runtime_verified"))
+    if media_row and not reached_l5 and media_row.get("present") and runtime_signal_present and not fast_mode:
+        media_row["status_ar"] = "تحليل بصري استشاري — لا يثبت صحة الميكانيك بدون L5"
+        media_row["blocks_achievement_ar"] = (
+            "الصور/الفيديو وحدها غير كافية لاعتماد الإنجاز دون تحقق ميكانيكي L5."
+        )
 
     missing = [r["requirement_ar"] for r in rows if not r.get("present")]
     core_missing = [

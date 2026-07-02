@@ -1102,6 +1102,25 @@ def build_artifact_inventory(
             _obs["runtime_validation"] = validate_runtime_observation(_obs)
             inventory["runtime_observation_report"] = _obs
             inventory["runtime_validation"] = _obs.get("runtime_validation")
+            if isinstance(_obs.get("gameplay_verification"), dict):
+                inventory["gameplay_verification"] = _obs["gameplay_verification"]
+            elif isinstance(_obs.get("artifact_analyses"), list):
+                for _aa in _obs["artifact_analyses"]:
+                    if isinstance(_aa, dict) and isinstance(
+                        _aa.get("gameplay_verification"), dict
+                    ):
+                        inventory["gameplay_verification"] = _aa["gameplay_verification"]
+                        break
+            try:
+                from app.grading_mode_policy import is_fast_grading_mode
+
+                if is_fast_grading_mode(grading_mode):
+                    inventory["grading_mode_note_ar"] = (
+                        "وضع STANDARD — Runtime خفيف (تشغيل + sweep قصير، بدون Agent gameplay). "
+                        "القواعد الأكاديمية ثابتة؛ الأدلة أقل من PRO."
+                    )
+            except Exception:
+                pass
             if _obs.get("status") == "completed":
                 unity_summaries = _obs.get("unity_observation_summary") or []
                 visual_summaries = _obs.get("visual_observation_summary") or []

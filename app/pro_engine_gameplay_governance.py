@@ -197,7 +197,14 @@ def is_structure_only_runtime(inv: Dict[str, Any]) -> bool:
 
 
 def _count_core_mechanics(checks: Dict[str, Any]) -> int:
-    core = ("win_state", "lose_state", "scene_transition", "score_hud")
+    core = (
+        "win_state",
+        "lose_state",
+        "scene_transition",
+        "score_hud",
+        "player_movement",
+        "jump_mechanic",
+    )
     return sum(1 for k in core if (checks.get(k) or {}).get("observed"))
 
 
@@ -276,9 +283,38 @@ def assess_playtest_evidence(
     inv = artifact_inventory or {}
     engine_id = detect_primary_game_engine(inv, submission_paths=submission_paths)
     policy = get_engine_policy(engine_id)
-    checks = gameplay_checks or {}
-    telemetry = build_runtime_telemetry(inv, gameplay_checks=checks)
+    checks = dict(gameplay_checks or {})
     obs = inv.get("runtime_observation_report") or {}
+
+    gv = inv.get("gameplay_verification") or obs.get("gameplay_verification") or {}
+    if not gv:
+        for analysis in obs.get("artifact_analyses") or []:
+            if isinstance(analysis, dict) and isinstance(analysis.get("gameplay_verification"), dict):
+                gv = analysis["gameplay_verification"]
+                break
+    if gv:
+        try:
+            from app.gameplay_verifier import build_gameplay_checks_from_verification
+
+            auto_checks = build_gameplay_checks_from_verification(gv)
+            checks = {**auto_checks, **checks}
+        except Exception:
+            pass
+    telemetry = build_runtime_telemetry(inv, gameplay_checks=checks)
+
+    smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
+        "functional_smoke"
+    ) or {}
+    try:
+        from app.gameplay_verifier import _test_document_present, assess_automated_l4_gate
+
+        automated_gate = assess_automated_l4_gate(
+            gv,
+            test_document_present=_test_document_present(inv),
+            functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
+        )
+    except Exception:
+        automated_gate = {}
 
     l5 = inv.get("l5_human_playtest") or {}
     human_playtest = bool(
@@ -329,8 +365,25 @@ def assess_playtest_evidence(
         "gameplay_video_documented": gameplay_video_documented,
         "runtime_gameplay_validated": runtime_gameplay_validated,
         "human_review_recorded": human_review_recorded,
+        "automated_l4_full": bool(automated_gate.get("l4_full")),
+        "automated_l4_partial": bool(automated_gate.get("l4_partial")),
+        "automated_l4_verified": bool(
+            automated_gate.get("l4_full") or automated_gate.get("l4_partial")
+        ),
     }
-    any_path = any(paths.values())
+    if paths["automated_l4_full"]:
+        paths["runtime_gameplay_validated"] = True
+    # L4_partial is tracked for per-criterion gate decisions (P5 only) in
+    # apply_runtime_evidence_gate — it must NOT satisfy the overall gate alone.
+    any_path = any(
+        (
+            paths["human_playtest"],
+            paths["gameplay_video_documented"],
+            paths["runtime_gameplay_validated"],
+            paths["human_review_recorded"],
+            paths["automated_l4_full"],
+        )
+    )
 
     return {
         "version": GOVERNANCE_VERSION,
@@ -342,6 +395,7 @@ def assess_playtest_evidence(
         "core_mechanics_observed": mechanics_n,
         "min_core_mechanics_required": min_mech,
         "structure_only_runtime": telemetry.get("structure_only"),
+        "automated_l4_gate": automated_gate,
         "summary_ar": _summary_ar(engine_id, policy, paths, telemetry, mechanics_n, min_mech),
     }
 
@@ -364,6 +418,8 @@ def _summary_ar(
         return f"{eng_label}: playtest بشري (L5) موثّق."
     if paths["gameplay_video_documented"]:
         return f"{eng_label}: فيديو gameplay موثّق."
+    if paths.get("automated_l4_verified"):
+        return f"{eng_label}: تحقق L4 آلي (MenuNavigator + حركة/قفز/HUD)."
     if paths["runtime_gameplay_validated"]:
         return (
             f"{eng_label}: تحقق تشغيل + gameplay ({mechanics_n}/{min_mech} آليات أساسية)."
@@ -401,6 +457,9 @@ def apply_pro_engine_gameplay_governance(
         gameplay_checks=gameplay_checks,
     )
     changes: List[str] = []
+    automated_gate = assessment.get("automated_l4_gate") or {}
+    criterion_pass = automated_gate.get("criterion_pass") or {}
+
     if assessment["any_path_satisfied"]:
         return changes, assessment
 
@@ -411,6 +470,8 @@ def apply_pro_engine_gameplay_governance(
             continue
         short = _short_level(str(row.get("criteria_level") or ""))
         if short not in _PLAYTEST_GATED_SHORT:
+            continue
+        if criterion_pass.get(short):
             continue
 
         if engine_id == "gamemaker" and policy.get("human_review_required"):

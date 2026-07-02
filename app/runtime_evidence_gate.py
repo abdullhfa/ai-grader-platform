@@ -50,6 +50,19 @@ _GATE_REASON_AR = (
     "بشرية (L5 Playtest)."
 )
 
+# Teacher-facing copy — L4 automated run ≠ in-game gameplay evidence (Unit 9 calibration).
+RUNTIME_L4_TEACHER_NOTE_AR = (
+    "التشغيل الآلي على الخادم وفحص الملفات لا يُعتبر دليلاً كاملاً على اللعب الفعلي "
+    "(Gameplay). لتحقيق C.P5/C.P6/C.M3/C.D3 يجب تقديم أدلة تشغيل واضحة من داخل "
+    "اللعبة: فيديو لعب يظهر حركة اللاعب ونظام النقاط وتفاعل العدو، أو اختبار بشري "
+    "موثّق (L5 Playtest)."
+)
+
+RUNTIME_SCREENSHOTS_CAPTION_AR = (
+    "لقطات التشغيل (مرصودة — لا تثبت gameplay): هذه اللقطات من جلسة التشغيل الآلي "
+    "على منصة التصحيح، وليست من داخل اللعبة نفسها."
+)
+
 
 def _collect_paths(
     grading_result: Optional[Dict[str, Any]],
@@ -171,6 +184,40 @@ def apply_runtime_evidence_gate(
 
     verdict = evaluate_runtime_evidence(inv, submission_paths=submission_paths)
 
+    gv = inv.get("gameplay_verification") or {}
+    obs = inv.get("runtime_observation_report") or {}
+    if not gv:
+        gv = grading_result.get("gameplay_verification") or {}
+    if not gv:
+        gv = obs.get("gameplay_verification") or {}
+    if not gv:
+        for analysis in obs.get("artifact_analyses") or []:
+            if isinstance(analysis, dict) and isinstance(analysis.get("gameplay_verification"), dict):
+                gv = analysis["gameplay_verification"]
+                break
+    smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
+        "functional_smoke"
+    ) or {}
+    automated_gate: Dict[str, Any] = {}
+    try:
+        from app.gameplay_verifier import _test_document_present, assess_automated_l4_gate
+
+        automated_gate = assess_automated_l4_gate(
+            gv,
+            test_document_present=_test_document_present(
+                {
+                    **inv,
+                    "intake_relative_paths": grading_result.get("intake_relative_paths")
+                    or inv.get("intake_relative_paths")
+                    or [],
+                }
+            ),
+            functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
+        )
+    except Exception:
+        automated_gate = {}
+    criterion_pass = automated_gate.get("criterion_pass") or {}
+
     changes: List[str] = []
     if not verdict["satisfied"]:
         for row in criteria:
@@ -178,6 +225,16 @@ def apply_runtime_evidence_gate(
                 continue
             short = _short_level(str(row.get("criteria_level") or ""))
             if short not in RUNTIME_GATED_SHORT:
+                continue
+            if criterion_pass.get(short):
+                row.pop("runtime_gate_block", None)
+                row.pop("achievement_authority", None)
+                if row.get("award_block_reason") == "runtime_not_verified":
+                    row.pop("award_block_reason", None)
+                    row.pop("award_block_reason_ar", None)
+                row["awardable"] = True
+                row["runtime_l4_verified"] = True
+                changes.append(f"{row.get('criteria_level')}:runtime_gate_l4_open")
                 continue
             # Record a change only when this row was actually awarding something.
             was_awarding = bool(row.get("achieved") or row.get("awardable"))
@@ -219,6 +276,7 @@ def apply_runtime_evidence_gate(
         "engine_id": verdict.get("engine_id"),
         "gated_criteria": sorted(RUNTIME_GATED_SHORT),
         "changes": changes,
+        "automated_l4_gate": automated_gate,
         "summary_ar": verdict.get("summary_ar"),
     }
     grading_result["runtime_evidence_gate"] = report

@@ -2922,6 +2922,8 @@ async def batch_results_page(
         pearson_engine_summary = None
         grade_display_metrics = None
         official_grade = None
+        evidence_summary = None
+        is_u_high_coverage = False
         if submission.grading_snapshot_json:
             try:
                 snap = _json.loads(str(submission.grading_snapshot_json))
@@ -2955,6 +2957,18 @@ async def batch_results_page(
                         )
                 official_grade = official.to_dict()
                 grade_display_metrics = official.grade_display_metrics
+                try:
+                    from app.evidence_map import build_evidence_summary_from_snapshot
+
+                    evidence_summary = build_evidence_summary_from_snapshot(snap)
+                    grade_short = str(official.grade or "U").strip().upper()
+                    is_u_high_coverage = (
+                        grade_short == "U"
+                        and bool(evidence_summary.get("high_coverage_not_achieved_count"))
+                    )
+                except Exception:
+                    evidence_summary = None
+                    is_u_high_coverage = False
                 explainability = extract_explainability_for_ui(snap)
                 pearson_criteria_rows = None
                 pearson_engine_summary = None
@@ -3021,8 +3035,23 @@ async def batch_results_page(
                 "pearson_engine_summary": pearson_engine_summary
                 if submission.grading_snapshot_json
                 else None,
+                "evidence_summary": evidence_summary,
+                "is_u_high_coverage": is_u_high_coverage,
             }
         )
+
+    batch_evidence_stats = {
+        "gate_affected_count": sum(
+            1 for r in results_data if (r.get("evidence_summary") or {}).get("has_gate_issue")
+        ),
+        "high_coverage_u_count": sum(
+            1 for r in results_data if r.get("is_u_high_coverage")
+        ),
+        "evidence_issue_count": sum(
+            1 for r in results_data if (r.get("evidence_summary") or {}).get("has_evidence_issue")
+        ),
+        "coverage_threshold": 50,
+    }
 
     user_id = get_current_user_id(request)
     sub_info = get_subscription_info(db, user_id) if user_id else None
@@ -3044,6 +3073,7 @@ async def batch_results_page(
             "results": results_data,
             "assignment_id": batch.assignment_id,
             "subscription": sub_info,
+            "batch_evidence_stats": batch_evidence_stats,
         },
     )
 
@@ -9786,6 +9816,8 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         from app.rule_bundle import format_rule_bundle_label, provenance_from_payload
 
         rule_bundle_s = format_rule_bundle_label(provenance_from_payload(gs))
+        _gp = gs.get("grading_profile") if isinstance(gs.get("grading_profile"), dict) else {}
+        _mode_label_s = str(gs.get("grading_mode_label") or _gp.get("mode_label") or "PRO")
         ai_info_s = gs.get("ai_detection_info") or {}
         try:
             ai_score_s = int(ai_info_s.get("score", gs.get("ai_likelihood", 0)))
@@ -9801,7 +9833,27 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
         summary_data_s = [
             ("التقدير المعتمد:", _ltr_embed(grade_level_s)),
+            ("وضع التصحيح:", _ltr_embed(_mode_label_s)),
         ]
+        if _gp:
+            summary_data_s.append(
+                ("عمق التحقق:", _ltr_embed(str(_gp.get("runtime_depth") or "—")))
+            )
+            summary_data_s.append(
+                (
+                    "Agent لعب:",
+                    _ltr_embed(
+                        str(
+                            _gp.get("agent_play_label_ar")
+                            or (
+                                "نعم"
+                                if _gp.get("gameplay_agent_used")
+                                else "لا"
+                            )
+                        )
+                    ),
+                )
+            )
         if expected_grade_s and erg.get("expected_btec_grade") != gdm.get("final_btec_grade"):
             summary_data_s.append(
                 ("التقدير المتوقع (عند إكمال التشغيل والتأكد من اللعبة):", _ltr_embed(str(expected_grade_s)))
@@ -9856,6 +9908,21 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
         doc.add_paragraph().paragraph_format.space_after = Pt(10)
         doc.add_paragraph().paragraph_format.space_after = Pt(12)
+
+        _rt_gate = gs.get("runtime_evidence_gate") or {}
+        if _rt_gate.get("gate_applied") and not _rt_gate.get("runtime_evidence_satisfied"):
+            from app.runtime_evidence_gate import RUNTIME_L4_TEACHER_NOTE_AR
+
+            add_heading(" ملاحظة معايير التشغيل (C.P5–C.D3)", level=2, color=PURPLE)
+            _rt_p = doc.add_paragraph()
+            set_rtl(_rt_p)
+            _rt_r = _rt_p.add_run(RUNTIME_L4_TEACHER_NOTE_AR)
+            _rt_r.font.size = Pt(12)
+            _rt_r.font.color.rgb = BODY_TEXT
+            _rt_r.font.name = 'Calibri'
+            _set_run_cs(_rt_r)
+            _rt_p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
         add_heading("🔗 تحليل الانتحال (Plagiarism Analysis)", level=2, color=PURPLE)
         if plag_max_s <= 10:
@@ -9996,23 +10063,10 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         add_heading(" تفاصيل المعايير", level=2, color=PURPLE)
         for criteria in sorted(crs_snap, key=_criteria_sort_from_dict):
             level_c = criteria.get("criteria_level", "")
-            is_ok = bool(criteria.get("achieved", False))
+            from app.report_feedback_formatter import criterion_report_display
+
+            st_icon, st_txt, card_ac, card_bd = criterion_report_display(criteria)
             human_review = (criteria.get("achievement_authority") or "") == "HUMAN_REVIEW_REQUIRED"
-            if human_review:
-                card_ac = "FEF3C7"
-                card_bd = "F59E0B"
-                st_icon = "⏸"
-                st_txt = "مراجعة بشرية مطلوبة (Human Review Required)"
-            elif is_ok:
-                card_ac = "D1FAE5"
-                card_bd = "10B981"
-                st_icon = "✅"
-                st_txt = "متحقق (Achieved)"
-            else:
-                card_ac = "FEE2E2"
-                card_bd = "EF4444"
-                st_icon = "❌"
-                st_txt = "غير متحقق (Not Achieved)"
 
             card_tbl_c = doc.add_table(rows=1, cols=2)
             card_tbl_c.alignment = WD_TABLE_ALIGNMENT.RIGHT
@@ -10073,6 +10127,8 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 fb = format_criterion_feedback_for_report(
                     fb_raw,
                     runtime_note_ar=criteria.get("runtime_observation_note_ar"),
+                    achieved=bool(criteria.get("achieved", False)),
+                    awardable=criteria.get("awardable", criteria.get("achieved")),
                 )
                 fb_p = doc.add_paragraph()
                 set_rtl(fb_p)
@@ -10516,17 +10572,16 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             if result.criteria:
                 criteria_level = result.criteria.criteria_level or ""
 
-            is_achieved = bool(result.achieved)
-            if is_achieved:
-                card_accent = "D1FAE5"  # green bg
-                card_border = "10B981"
-                _st_icon = "✅"
-                status_text_plain = "متحقق (Achieved)"
-            else:
-                card_accent = "FEE2E2"  # red bg
-                card_border = "EF4444"
-                _st_icon = "❌"
-                status_text_plain = "غير متحقق (Not Achieved)"
+            from app.report_feedback_formatter import criterion_report_display
+
+            crit_snap = {
+                "achieved": bool(result.achieved),
+                "awardable": getattr(result, "awardable", result.achieved),
+                "achievement_authority": getattr(result, "achievement_authority", None),
+            }
+            _st_icon, status_text_plain, card_accent, card_border = criterion_report_display(
+                crit_snap
+            )
 
             # Criterion header table
             card_tbl = doc.add_table(rows=1, cols=2)

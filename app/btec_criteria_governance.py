@@ -7,6 +7,28 @@ from typing import Any, Dict, List, Optional
 
 EXECUTION_SHORT_LEVELS = frozenset({"P5", "P6", "P7", "M3"})
 
+# Pearson prerequisite chain (short level codes, unit prefix stripped).
+BTEC_PREREQUISITE_CHAIN: Dict[str, List[str]] = {
+    "B.M2": ["B.P3", "B.P4"],
+    "C.M3": ["C.P5", "C.P6"],
+    "B.D2": ["B.P3", "B.P4", "B.M2"],
+    "C.D3": ["C.P5", "C.P6", "C.M3"],
+    "BC.D2": ["B.P3", "B.P4", "B.M2"],
+    "BC.D3": ["C.P5", "C.P6", "C.M3"],
+}
+
+_PRAISE_WHEN_LOW_GRADE = re.compile(
+    r"(?:"
+    r"أداء\s+ممتاز|"
+    r"متميز|"
+    r"مستوى\s*Distinction|"
+    r"Distinction-level|"
+    r"Distinction\s*level|"
+    r"بشكل\s+ممتاز"
+    r")",
+    re.IGNORECASE,
+)
+
 # Strong «not achieved» signals in Arabic/English feedback (achieved=True is invalid).
 _FEEDBACK_DENIES_ACHIEVEMENT = re.compile(
     r"(?:"
@@ -304,12 +326,106 @@ def enforce_not_achieved_feedback_consistency(
         if not _FEEDBACK_CLAIMS_ACHIEVEMENT.search(fb):
             continue
         reason_ar = _institutional_not_achieved_reason_ar(row)
-        row["feedback"] = f"لم يتحقق المعيار مؤسسياً. {reason_ar}\n\n{fb}"
+        row["feedback"] = f"لم يتحقق المعيار مؤسسياً. {reason_ar}"
         if isinstance(row.get("decision_matrix"), list) and row["decision_matrix"]:
             if isinstance(row["decision_matrix"][0], dict):
                 row["decision_matrix"][0]["met"] = False
         changes.append(f"{row.get('criteria_level')}:not_achieved_feedback_aligned")
     return changes
+
+
+def _short_criterion_code(level: str) -> str:
+    lv = str(level or "").strip()
+    if "/" in lv:
+        lv = lv.split("/", 1)[-1]
+    return lv
+
+
+def _achieved_short_levels(criteria_results: List[Dict[str, Any]]) -> Dict[str, bool]:
+    out: Dict[str, bool] = {}
+    for row in criteria_results:
+        if not isinstance(row, dict):
+            continue
+        code = _short_criterion_code(str(row.get("criteria_level") or ""))
+        if code:
+            out[code] = bool(row.get("achieved"))
+    return out
+
+
+def _prerequisite_block_reason_ar(level: str, achieved_map: Dict[str, bool]) -> str:
+    code = _short_criterion_code(level)
+    prereqs = BTEC_PREREQUISITE_CHAIN.get(code) or []
+    missing = [p for p in prereqs if not achieved_map.get(p)]
+    if missing:
+        joined = " و".join(missing)
+        return f"محجوب — {joined} لم يُتحققا (Prerequisite)"
+    return AWARD_BLOCK_REASONS_AR.get("missing_pass_criteria", "")
+
+
+def enforce_achieved_not_awardable_feedback(
+    criteria_results: List[Dict[str, Any]],
+) -> List[str]:
+    """Replace AI praise when achieved=True but awardable=False (Merit blocked by Pass)."""
+    changes: List[str] = []
+    achieved_map = _achieved_short_levels(criteria_results)
+    for row in criteria_results:
+        if not isinstance(row, dict) or not row.get("achieved"):
+            continue
+        if row.get("awardable", True):
+            continue
+        level = str(row.get("criteria_level") or "")
+        reason = str(row.get("award_block_reason_ar") or "").strip()
+        if not reason:
+            reason = _prerequisite_block_reason_ar(level, achieved_map)
+        if not reason:
+            reason = str(
+                AWARD_BLOCK_REASONS_AR.get(str(row.get("award_block_reason") or ""), "")
+            )
+        row["feedback"] = f"تحقق أكاديمياً جزئياً — لا يُمنح رسمياً. {reason}"
+        row["report_display_status"] = "partial_blocked"
+        changes.append(f"{level}:achieved_not_awardable_feedback")
+    return changes
+
+
+def align_overall_feedback_with_institutional_grade(
+    grading_result: Dict[str, Any],
+) -> List[str]:
+    """When institutional grade is U/R, remove Distinction praise and add honest guidance."""
+    grade = str(grading_result.get("grade_level") or "").strip().upper()
+    if grade not in ("U", "R", "REFERRAL"):
+        return []
+
+    fb = str(grading_result.get("overall_feedback") or "").strip()
+    gate = grading_result.get("runtime_evidence_gate") or {}
+    gate_blocked = isinstance(gate, dict) and gate.get("runtime_status") == "BLOCKED"
+    has_praise = bool(_PRAISE_WHEN_LOW_GRADE.search(fb))
+    if not has_praise and not gate_blocked:
+        return []
+
+    corrective = (
+        "الطالب أنتج وثائق تصميم ومواد مشروع تدل على جهد حقيقي، "
+        "لكن لم تُثبَت أدلة تشغيل الألعاب الفعلية (Gameplay) المطلوبة لتحقيق معايير التنفيذ "
+        "(مثل C.P5/C.P6). للحصول على Pass أو أعلى: يُطلب فيديو gameplay موثّق، "
+        "أو Runtime PASS يثبت اللعب الفعلي (L4/L5)."
+    )
+
+    gov_note = ""
+    if _GOVERNANCE_NOTE in fb:
+        idx = fb.index(_GOVERNANCE_NOTE)
+        gov_note = fb[idx:].strip()
+        fb = fb[:idx].strip()
+
+    cleaned_lines = [
+        ln for ln in fb.split("\n") if ln.strip() and not _PRAISE_WHEN_LOW_GRADE.search(ln)
+    ]
+    rest = "\n".join(cleaned_lines).strip()
+    parts = [corrective]
+    if rest:
+        parts.append(rest)
+    if gov_note:
+        parts.append(gov_note)
+    grading_result["overall_feedback"] = "\n\n".join(parts)
+    return ["overall_feedback_aligned_with_grade"]
 
 
 def enforce_feedback_achieved_consistency(
@@ -464,6 +580,21 @@ def apply_btec_awardability(criteria_results: List[Dict[str, Any]]) -> Dict[str,
 
     missing_pass = [str(r.get("criteria_level")) for r in p_rows if not r.get("achieved")]
     missing_merit = [str(r.get("criteria_level")) for r in m_rows if not r.get("achieved")]
+    missing_pass_short = [_short_criterion_code(x) for x in missing_pass if x]
+    missing_pass_label = " و".join(missing_pass_short) if missing_pass_short else ""
+
+    if missing_pass_label:
+        block_ar = f"محجوب — {missing_pass_label} لم يُتحققا (Prerequisite)"
+        for row in criteria_results:
+            if not isinstance(row, dict):
+                continue
+            if (
+                row.get("achieved")
+                and not row.get("awardable")
+                and row.get("award_block_reason") == "missing_pass_criteria"
+            ):
+                row["award_block_reason_ar"] = block_ar
+
     institutional_grade = recalculate_institutional_grade(criteria_results)
 
     if institutional_grade == "U" and missing_pass:
@@ -533,7 +664,9 @@ def apply_btec_criteria_governance(
     new_grade = awardability["institutional_grade"]
     grading_result["btec_institutional_award"] = awardability
     all_changes.extend(enforce_not_achieved_feedback_consistency(working))
+    all_changes.extend(enforce_achieved_not_awardable_feedback(working))
     all_changes.extend(sanitize_all_criteria_feedback(working))
+    all_changes.extend(align_overall_feedback_with_institutional_grade(grading_result))
     grading_result["criteria_results"] = working
     grading_result["grade_level"] = new_grade
     grading_result["criteria_score_pct"] = criteria_score_pct

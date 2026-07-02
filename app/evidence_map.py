@@ -214,8 +214,15 @@ def build_evidence_map(snapshot: Optional[Dict[str, Any]]) -> List[Dict[str, Any
     return results
 
 
-def build_evidence_map_summary(rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
-    """Compact summary for batch list / filters."""
+HIGH_COVERAGE_THRESHOLD_PCT = 50.0
+
+
+def build_evidence_map_summary(
+    rows: Sequence[Dict[str, Any]],
+    *,
+    coverage_threshold: float = HIGH_COVERAGE_THRESHOLD_PCT,
+) -> Dict[str, Any]:
+    """Compact summary for batch list / filters (from full evidence-map rows)."""
     gated_down = [
         r for r in rows
         if r.get("gate_relevant") and r.get("gate_applied") and r.get("gate_satisfied") is False
@@ -223,11 +230,94 @@ def build_evidence_map_summary(rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
     high_cov_u = [
         r for r in rows
         if not r.get("achieved_final")
-        and (r.get("coverage_score") or 0) >= 50
+        and (r.get("coverage_score") or 0) >= coverage_threshold
     ]
+    return _finalize_evidence_summary(
+        total_criteria=len(rows),
+        gate_downgrade_count=len(gated_down),
+        high_coverage_not_achieved_count=len(high_cov_u),
+        coverage_threshold=coverage_threshold,
+    )
+
+
+def _finalize_evidence_summary(
+    *,
+    total_criteria: int,
+    gate_downgrade_count: int,
+    high_coverage_not_achieved_count: int,
+    coverage_threshold: float,
+) -> Dict[str, Any]:
+    has_gate = gate_downgrade_count > 0
+    has_high_cov = high_coverage_not_achieved_count > 0
     return {
-        "total_criteria": len(rows),
-        "gate_downgrade_count": len(gated_down),
-        "high_coverage_not_achieved_count": len(high_cov_u),
-        "has_gate_issue": bool(gated_down),
+        "total_criteria": total_criteria,
+        "gate_downgrade_count": gate_downgrade_count,
+        "high_coverage_not_achieved_count": high_coverage_not_achieved_count,
+        "has_gate_issue": has_gate,
+        "has_evidence_issue": has_gate or has_high_cov,
+        "coverage_threshold": coverage_threshold,
     }
+
+
+def build_evidence_summary_from_snapshot(
+    snapshot: Optional[Dict[str, Any]],
+    *,
+    coverage_threshold: float = HIGH_COVERAGE_THRESHOLD_PCT,
+) -> Dict[str, Any]:
+    """
+    Lightweight per-submission radar for batch_results.
+
+    Reads ``criteria_results`` and ``evidence_coverage_by_criterion`` only —
+    no explainability diagnostics or coverage recompute.
+    """
+    empty = _finalize_evidence_summary(
+        total_criteria=0,
+        gate_downgrade_count=0,
+        high_coverage_not_achieved_count=0,
+        coverage_threshold=coverage_threshold,
+    )
+    if not snapshot or not isinstance(snapshot, dict):
+        return empty
+
+    inv = snapshot.get("artifact_inventory") or {}
+    paths = snapshot.get("submission_paths") or []
+    game = is_game_submission(inv, submission_paths=list(paths))
+
+    gate_down = 0
+    achieved_by_short: Dict[str, bool] = {}
+    for row in snapshot.get("criteria_results") or []:
+        if not isinstance(row, dict):
+            continue
+        short = _short_level(str(row.get("criteria_level") or ""))
+        if not short:
+            continue
+        achieved_by_short[short] = bool(row.get("achieved"))
+        if short in RUNTIME_GATED_SHORT and game and row.get("runtime_gate_block"):
+            gate_down += 1
+
+    cov_by_short: Dict[str, Dict[str, Any]] = {}
+    for row in snapshot.get("evidence_coverage_by_criterion") or inv.get("evidence_coverage_by_criterion") or []:
+        if not isinstance(row, dict):
+            continue
+        short = _short_level(str(row.get("criteria_level") or ""))
+        if short:
+            cov_by_short[short] = row
+
+    high_cov_u = 0
+    for short, cov in cov_by_short.items():
+        pct = cov.get("coverage_pct")
+        if pct is None:
+            continue
+        try:
+            pct_f = float(pct)
+        except (TypeError, ValueError):
+            continue
+        if not achieved_by_short.get(short, False) and pct_f >= coverage_threshold:
+            high_cov_u += 1
+
+    return _finalize_evidence_summary(
+        total_criteria=len(achieved_by_short),
+        gate_downgrade_count=gate_down,
+        high_coverage_not_achieved_count=high_cov_u,
+        coverage_threshold=coverage_threshold,
+    )
