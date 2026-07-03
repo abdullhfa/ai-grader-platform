@@ -139,6 +139,55 @@ def test_resolve_authoritative_prefers_capture_failure_over_trace_fallback():
     )
 
 
+def test_fixture_stable_pass_and_failure_patterns():
+    import scripts.godot_soak_test as soak
+
+    pass_runs = [
+        {"grade_level": "P", "gameplay_entered": True, "failure_reason_code": None},
+    ] * 3
+    assert soak._fixture_stable(pass_runs) is True
+
+    fail_runs = [
+        {"grade_level": "U", "gameplay_entered": False, "failure_reason_code": "PROCESS_CRASHED"},
+    ] * 3
+    assert soak._fixture_stable(fail_runs) is True
+
+    mixed = pass_runs[:2] + fail_runs[:1]
+    assert soak._fixture_stable(mixed) is False
+
+
+def test_evaluate_matrix_requires_student_godot_2_stable():
+    import scripts.godot_soak_test as soak
+
+    sub50 = [{"grade_level": "P", "gameplay_entered": True, "failure_reason_code": None, "correct": True}] * 3
+    student_ok = [{"grade_level": "P", "gameplay_entered": True, "failure_reason_code": None, "correct": True}] * 3
+    student_bad = [
+        {"grade_level": "P", "gameplay_entered": True, "failure_reason_code": None, "correct": True},
+        {"grade_level": "U", "gameplay_entered": False, "failure_reason_code": "BOOT_TIMEOUT", "correct": True},
+        {"grade_level": "P", "gameplay_entered": True, "failure_reason_code": None, "correct": True},
+    ]
+    runs_ok = sub50 + student_ok + student_bad[:0]
+    eval_ok = soak._evaluate_matrix(
+        runs_ok,
+        submission_50_runs=sub50,
+        student_godot_2_runs=student_ok,
+        student_godot_2_pending=False,
+    )
+    assert eval_ok["submission_50_stable"] is True
+    assert eval_ok["student_godot_2_stable"] is True
+    assert eval_ok["passed"] is True
+
+    runs_bad = sub50 + student_bad
+    eval_bad = soak._evaluate_matrix(
+        runs_bad,
+        submission_50_runs=sub50,
+        student_godot_2_runs=student_bad,
+        student_godot_2_pending=False,
+    )
+    assert eval_bad["student_godot_2_stable"] is False
+    assert eval_bad["passed"] is False
+
+
 def test_soak_writes_partial_report_on_error(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     reports = tmp_path / "reports"

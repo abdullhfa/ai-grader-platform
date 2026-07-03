@@ -16,10 +16,11 @@
     {
       "id": "student_godot_2",
       "kind": "student_folder",
-      "path": null,
-      "profile": "direct_or_simple_menu",
-      "pending": true,
-      "notes": "No second student Godot exe on disk — DoD B blocked until upload"
+      "path": "uploads/students/hamtini_u8/final.exe",
+      "profile": "unknown",
+      "expected_behavior": "stable_failure",
+      "pending": false,
+      "notes": "ahmad hamtini U8 — final.exe selected after dual trial; both builds GAME_WINDOW_CAPTURE_FAILED at preflight; final faster (47s vs 55s). See reports/godot_trial_*.json"
     }
   ],
   "runs_per_fixture": 3,

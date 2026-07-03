@@ -336,7 +336,34 @@ def _run_corpus_fixture(fixture: dict) -> dict[str, Any]:
     return observe_runtime_artifacts([str(exe)], grading_mode="deep", enable_smoke_test=True)
 
 
-def _evaluate_matrix(runs: list[dict], *, submission_50_runs: list[dict]) -> dict[str, Any]:
+def _run_student_folder_fixture(fixture: dict) -> dict[str, Any]:
+    from app.runtime_observation_sandbox import observe_runtime_artifacts
+
+    exe = ROOT / str(fixture["path"])
+    if not exe.is_file():
+        raise FileNotFoundError(f"student exe missing: {exe}")
+    return observe_runtime_artifacts([str(exe)], grading_mode="deep", enable_smoke_test=True)
+
+
+def _fixture_stable(runs: list[dict]) -> bool:
+    if len(runs) < 3:
+        return False
+    grades = {str(r.get("grade_level") or "") for r in runs}
+    codes = {str(r.get("failure_reason_code") or "") for r in runs}
+    all_pass = grades == {"P"} and all(r.get("gameplay_entered") is True for r in runs)
+    all_same_fail = len(codes) == 1 and codes != {""} and all(
+        r.get("gameplay_entered") is not True for r in runs
+    )
+    return all_pass or all_same_fail
+
+
+def _evaluate_matrix(
+    runs: list[dict],
+    *,
+    submission_50_runs: list[dict],
+    student_godot_2_runs: list[dict],
+    student_godot_2_pending: bool,
+) -> dict[str, Any]:
     active = [r for r in runs if not r.get("skipped")]
     correct = sum(1 for r in active if r.get("correct"))
     total = len(active)
@@ -346,15 +373,8 @@ def _evaluate_matrix(runs: list[dict], *, submission_50_runs: list[dict]) -> dic
     blocking_bugs = [r for r in active if r.get("blocking_bug")]
     errors = [r for r in active if r.get("status") == "error"]
     sub50 = submission_50_runs
-    sub50_stable = False
-    if len(sub50) >= 3:
-        grades = {str(r.get("grade_level") or "") for r in sub50}
-        codes = {str(r.get("failure_reason_code") or "") for r in sub50}
-        all_pass = grades == {"P"} and all(r.get("gameplay_entered") is True for r in sub50)
-        all_same_fail = len(codes) == 1 and codes != {""} and all(
-            r.get("gameplay_entered") is not True for r in sub50
-        )
-        sub50_stable = all_pass or all_same_fail
+    sub50_stable = _fixture_stable(sub50)
+    student2_stable = _fixture_stable(student_godot_2_runs) if not student_godot_2_pending else False
     min_correct = max(1, int(total * 8 / 9)) if total else 0
     passed = (
         total >= 1
@@ -363,12 +383,15 @@ def _evaluate_matrix(runs: list[dict], *, submission_50_runs: list[dict]) -> dic
         and not blocking_bugs
         and not errors
         and (not sub50 or len(sub50) < 3 or sub50_stable)
+        and (student_godot_2_pending or not student_godot_2_runs or len(student_godot_2_runs) < 3 or student2_stable)
     )
     return {
         "total_runs": total,
         "correct_runs": correct,
         "min_correct_required": min_correct,
         "submission_50_stable": sub50_stable,
+        "student_godot_2_stable": student2_stable,
+        "student_godot_2_pending": student_godot_2_pending,
         "failed_without_failure_code": len(failed_without_code),
         "blocking_bug_count": len(blocking_bugs),
         "error_count": len(errors),
@@ -397,6 +420,12 @@ async def run_matrix(*, runs_per_fixture: int, log_file: Optional[Path] = None) 
     cfg = _load_fixtures()
     all_runs: list[dict] = []
     submission_50_runs: list[dict] = []
+    student_godot_2_runs: list[dict] = []
+    student_godot_2_pending = True
+    for fx in cfg.get("fixtures") or []:
+        if fx.get("id") == "student_godot_2":
+            student_godot_2_pending = bool(fx.get("pending"))
+            break
     started = time.monotonic()
 
     _partial_report_state["runs"] = all_runs
@@ -438,6 +467,14 @@ async def run_matrix(*, runs_per_fixture: int, log_file: Optional[Path] = None) 
                         run_index=i,
                         duration_ms=int((time.monotonic() - t0) * 1000),
                     )
+                elif kind == "student_folder":
+                    obs = _run_student_folder_fixture(fixture)
+                    record = _observation_run_record(
+                        obs,
+                        fixture_id=fid,
+                        run_index=i,
+                        duration_ms=int((time.monotonic() - t0) * 1000),
+                    )
                 else:
                     record = {
                         "fixture_id": fid,
@@ -460,8 +497,15 @@ async def run_matrix(*, runs_per_fixture: int, log_file: Optional[Path] = None) 
             all_runs.append(record)
             if fid == "submission_50" and not record.get("skipped"):
                 submission_50_runs.append(record)
+            if fid == "student_godot_2" and not record.get("skipped"):
+                student_godot_2_runs.append(record)
 
-    evaluation = _evaluate_matrix(all_runs, submission_50_runs=submission_50_runs)
+    evaluation = _evaluate_matrix(
+        all_runs,
+        submission_50_runs=submission_50_runs,
+        student_godot_2_runs=student_godot_2_runs,
+        student_godot_2_pending=student_godot_2_pending,
+    )
     payload = {
         "harness_version": HARNESS_VERSION,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),

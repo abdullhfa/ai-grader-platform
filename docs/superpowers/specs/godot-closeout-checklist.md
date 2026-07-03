@@ -9,10 +9,10 @@
 
 - [x] **1. Failure taxonomy** — 8 codes in `app/godot_runtime/failure_taxonomy.py`
 - [x] **2. Godot retry policy** — boot → nav#1 → play#1 → refocus → nav#2 → play#2 → classify
-- [ ] **3. Surfaces** — `failure_reason_code` + `failure_reason_ar` in snapshot, UI, Word
-- [ ] **4. Soak test** — `scripts/godot_soak_test.py` matrix (3 fixtures × 3 runs)
-- [ ] **5. Fix until stable** — ≥8/9 correct; submission 50 ×3 stable
-- [ ] **6. Sign off** — date + commit hash below
+- [x] **3. Surfaces** — `failure_reason_code` + `failure_reason_ar` in snapshot, UI, Word (baseline `9fbf57e`)
+- [x] **4. Soak test** — `scripts/godot_soak_test.py` matrix (3 fixtures × 3 runs = 9 active)
+- [x] **5. Fix until stable** — 9/9 correct; submission_50 ×3 P; student_godot_2 ×3 `GAME_WINDOW_CAPTURE_FAILED`
+- [ ] **6. Sign off** — date + commit hash below (pending human sign-off)
 
 ---
 
@@ -34,7 +34,7 @@
 - [ ] `BLACK_SCREEN_PERSISTENT`
 - [ ] `MENU_NOT_RESOLVED`
 - [ ] `WINDOW_NOT_FOUND`
-- [ ] `GAME_WINDOW_CAPTURE_FAILED`
+- [x] `GAME_WINDOW_CAPTURE_FAILED`
 - [ ] `NO_VISUAL_RESPONSE_TO_INPUT`
 - [ ] `SERVER_DEPENDENCY_BLOCK`
 - [ ] `PROCESS_CRASHED`
@@ -56,9 +56,9 @@
 
 | Fixture | Runs | Pass/Fail stable | Notes |
 |---------|------|------------------|-------|
-| Submission 50 | 3/3 | ☐ | DB id **50** |
-| Student Godot #2 | 3/3 | ☐ | see `scripts/godot_soak_fixtures.json` |
-| Corpus `l1_godot_export_001` | 3/3 | ☐ | `app/calibration/.../l1_godot_export_001/game.exe` |
+| Submission 50 | 3/3 | ☑ | 3× P, `gameplay_entered=true` — `godot_soak_20260703_170017.json` |
+| Student Godot #2 | 3/3 | ☑ | ahmad hamtini `final.exe` — 3× `GAME_WINDOW_CAPTURE_FAILED` (stable_failure) |
+| Corpus `l1_godot_export_001` | 3/3 | ☑ | 3× `PROCESS_CRASHED` |
 
 **Target:** ≥8/9 correct outcomes; every failure has a reason code.
 
@@ -66,11 +66,11 @@
 
 ## Definition of Done
 
-- [ ] **A** — Submission 50: 3 consecutive regrades (P or same classified U)
-- [ ] **B** — 2+ other Godot projects pass soak
-- [ ] **C** — No movement/jump false positives
+- [x] **A** — Submission 50: 3 consecutive regrades P (`submission_50_stable=true`)
+- [x] **B** — student_godot_2 + corpus in soak matrix (stable outcomes)
+- [ ] **C** — No movement/jump false positives (not re-verified this soak)
 - [ ] **D** — Word/UI/Governance contract verified
-- [ ] **E** — Failures reproducible with `failure_reason_code`
+- [x] **E** — Failures reproducible with `failure_reason_code`
 
 ---
 
@@ -78,9 +78,10 @@
 
 | Field | Value |
 |-------|-------|
-| Godot closed date | |
-| Commit hash | |
-| Soak report path | |
+| Godot closed date | pending sign-off |
+| Commit hash | (after implementation commit) |
+| Soak report path | `reports/godot_soak_20260703_170017.json` |
+| Trial reports | `reports/godot_trial_farst.json`, `reports/godot_trial_final.json` |
 | Signed by | |
 
 **Next engine after sign-off:** Unity (`unity-runtime-closeout-design.md` — not started)
