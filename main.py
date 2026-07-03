@@ -3381,6 +3381,43 @@ async def results_page(
         except (json.JSONDecodeError, TypeError):
             pass
 
+    requirement_evidence_table = None
+    gameplay_profile_summary = None
+    if getattr(submission, "grading_snapshot_json", None):
+        try:
+            _snap_ui = json.loads(str(submission.grading_snapshot_json))
+            explainability = explainability or {}
+            requirement_evidence_table = (
+                explainability.get("requirement_evidence_table")
+                or (_snap_ui.get("artifact_inventory") or {}).get("requirement_evidence_table")
+            )
+            _gp = _snap_ui.get("grading_profile") or {}
+            _outcome = _gp.get("godot_runtime_outcome")
+            if not _outcome:
+                try:
+                    from app.gameplay_verifier import build_gameplay_verification_summary
+
+                    _inv_ui = _snap_ui.get("artifact_inventory") or {}
+                    _rt_ui = _inv_ui.get("runtime_observation_report") or {}
+                    _gv_ui = build_gameplay_verification_summary(
+                        _rt_ui if isinstance(_rt_ui, dict) else None,
+                        inventory=_inv_ui,
+                        grading_result=_snap_ui,
+                    )
+                    _outcome = _gv_ui.get("godot_runtime_outcome")
+                except Exception:
+                    _outcome = None
+            gameplay_profile_summary = {
+                "l4_level": _gp.get("l4_level"),
+                "agent_play_label_ar": _gp.get("agent_play_label_ar"),
+                "gameplay_agent_used": _gp.get("gameplay_agent_used"),
+                "automated_l4_gate": _gp.get("automated_l4_gate"),
+                "godot_runtime_outcome": _outcome,
+                "failure_reason_code": _gp.get("failure_reason_code"),
+            }
+        except (json.JSONDecodeError, TypeError):
+            pass
+
     if grade_display_metrics is None and getattr(submission, "grading_snapshot_json", None):
         try:
             from app.official_grade import resolve_official_grade
@@ -3417,6 +3454,8 @@ async def results_page(
             "l5_playtest_status": l5_playtest_status,
             "runtime_db_sync": runtime_db_sync,
             "explainability": explainability,
+            "requirement_evidence_table": requirement_evidence_table,
+            "gameplay_profile_summary": gameplay_profile_summary,
             "btec_institutional_award": btec_institutional_award,
         },
     )
@@ -9908,6 +9947,90 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
         doc.add_paragraph().paragraph_format.space_after = Pt(10)
         doc.add_paragraph().paragraph_format.space_after = Pt(12)
+
+        _godot_outcome = (_gp or {}).get("godot_runtime_outcome")
+        if not _godot_outcome:
+            try:
+                from app.gameplay_verifier import build_gameplay_verification_summary
+
+                _inv_godot = gs.get("artifact_inventory") or {}
+                _rt_godot = _inv_godot.get("runtime_observation_report") or {}
+                _gv_sum_godot = build_gameplay_verification_summary(
+                    _rt_godot if isinstance(_rt_godot, dict) else None,
+                    inventory=_inv_godot,
+                    grading_result=gs,
+                )
+                _godot_outcome = _gv_sum_godot.get("godot_runtime_outcome")
+            except Exception:
+                _godot_outcome = None
+        if _godot_outcome and (
+            _godot_outcome.get("failure_reason_code")
+            or _gp.get("gameplay_agent_used")
+            or _godot_outcome.get("gameplay_entered") is not None
+        ):
+            from app.report_feedback_formatter import format_godot_runtime_outcome_ar
+
+            add_heading(" نتيجة تشغيل Godot (Agent play)", level=2, color=PURPLE)
+            _go_p = doc.add_paragraph()
+            set_rtl(_go_p)
+            _go_r = _go_p.add_run(format_godot_runtime_outcome_ar(_godot_outcome))
+            _go_r.font.size = Pt(11)
+            _go_r.font.color.rgb = BODY_TEXT
+            _go_r.font.name = 'Calibri'
+            _set_run_cs(_go_r)
+            _go_p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            doc.add_paragraph().paragraph_format.space_after = Pt(10)
+
+        try:
+            from app.academic_explainability import build_requirement_evidence_table
+
+            _req_tbl = build_requirement_evidence_table(gs)
+            _req_rows = _req_tbl.get("rows") or []
+            if _req_rows:
+                add_heading(" جدول أدلة اختبار المتطلبات (PRO)", level=2, color=PURPLE)
+                _l4p = doc.add_paragraph()
+                set_rtl(_l4p)
+                _l4r = _l4p.add_run(
+                    f"مستوى L4: {_ltr_embed(str(_req_tbl.get('l4_level') or '—'))} — "
+                    f"gameplay_entered={_req_tbl.get('gameplay_entered')}"
+                )
+                _l4r.font.size = Pt(11)
+                _l4r.font.color.rgb = SLATE
+                _l4r.font.name = 'Calibri'
+                _set_run_cs(_l4r)
+                _rtbl = doc.add_table(rows=1, cols=5)
+                _rtbl.alignment = WD_TABLE_ALIGNMENT.RIGHT
+                set_table_bidi(_rtbl)
+                _hdrs = ("المتطلب", "الإدخال", "قبل/بعد", "النتيجة", "معيار BTEC")
+                for _ci, _ht in enumerate(_hdrs):
+                    _hc = _rtbl.rows[0].cells[_ci]
+                    _hp = _hc.paragraphs[0]
+                    set_rtl(_hp)
+                    _hr = _hp.add_run(_ht)
+                    _hr.bold = True
+                    _hr.font.size = Pt(10)
+                    _hr.font.name = 'Calibri'
+                    _set_run_cs(_hr)
+                    set_cell_shading(_hc, "EDE9FE")
+                for _row in _req_rows[:12]:
+                    _cells = _rtbl.add_row().cells
+                    _vals = (
+                        str(_row.get("requirement_ar") or _row.get("requirement_id") or "—"),
+                        str(_row.get("input_summary") or "—")[:40],
+                        f"{_row.get('before_label') or ''} → {_row.get('after_label') or ''}".strip(" →"),
+                        str(_row.get("result_ar") or "—"),
+                        ", ".join(_row.get("btec_criteria") or []) or "—",
+                    )
+                    for _ci, _val in enumerate(_vals):
+                        _cp = _cells[_ci].paragraphs[0]
+                        set_rtl(_cp)
+                        _cr = _cp.add_run(_val)
+                        _cr.font.size = Pt(9)
+                        _cr.font.name = 'Calibri'
+                        _set_run_cs(_cr)
+                doc.add_paragraph().paragraph_format.space_after = Pt(10)
+        except Exception:
+            pass
 
         _rt_gate = gs.get("runtime_evidence_gate") or {}
         if _rt_gate.get("gate_applied") and not _rt_gate.get("runtime_evidence_satisfied"):

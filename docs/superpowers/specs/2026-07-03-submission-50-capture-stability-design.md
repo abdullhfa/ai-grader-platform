@@ -93,7 +93,7 @@ Before `_nav_pass("nav_pass_1", ...)`:
 1. Call `focus_game_window(process_pid=process_pid)`.
 2. Run a lightweight **capture probe** via the same `capture_screenshot` closure passed to policy (label e.g. `capture_probe_0`).
 3. Accept probe when `shot.get("capture_scope") == "game_window"` and `shot.get("status") == "captured"`.
-4. On failure: sleep `CAPTURE_RETRY_INTERVAL_S` (default **0.5**), refocus, retry up to **`CAPTURE_PROBE_MAX_ATTEMPTS`** (default **3**).
+4. On failure: sleep `CAPTURE_RETRY_INTERVAL_S` (default **0.5**), refocus, retry up to **`CAPTURE_PROBE_MAX_ATTEMPTS`** (default **5**).
 
 ### 5.2 Early exit
 
@@ -138,7 +138,7 @@ Prefer **subclass** `CaptureFailureError(EvidenceQualityError)` so sandbox can c
 Define in `app/godot_runtime/retry_policy.py` or `app/gameplay_verifier.py` (single source):
 
 ```python
-CAPTURE_PROBE_MAX_ATTEMPTS = 3
+CAPTURE_PROBE_MAX_ATTEMPTS = 5
 CAPTURE_TAGGED_MAX_ATTEMPTS = 3
 CAPTURE_RETRY_INTERVAL_S = 0.5
 ```
@@ -274,3 +274,4 @@ Full Godot Closeout still requires DoD B (`student_godot_2` ×3) per parent spec
 | Failure code for capture pipeline | **`GAME_WINDOW_CAPTURE_FAILED`** (new) | Distinguishes running exe + failed PRO capture from `WINDOW_NOT_FOUND` and from `NO_VISUAL_RESPONSE_TO_INPUT` |
 | Primary fix | Pre-flight + tagged retry | Addresses root cause (timing/focus), not mislabeling alone |
 | Retry counts | 3 × 0.5s | Bounded latency (~1.5s extra worst case); matches existing boot poll granularity |
+| Probe attempts (v2) | **5** × 0.5s | Raised after soak evidence showed 2/3 preflight fails with 3 attempts |

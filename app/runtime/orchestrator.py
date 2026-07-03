@@ -15,6 +15,81 @@ from app.submission.failsafe import wrap_failsafe_observation, wrap_failsafe_ses
 
 logger = logging.getLogger("ai_grader.runtime.orchestrator")
 
+_NESTED_OBSERVATION_MERGE_KEYS = (
+    "unity_observation_summary",
+    "visual_observation_summary",
+    "runtime_screenshots",
+    "runtime_observed",
+    "runtime_verified",
+    "crash_detected",
+    "freeze_possible",
+    "runtime_signal_graph",
+    "runtime_duration_seconds",
+    "artifact_analyses",
+    "interaction_trace",
+    "runtime_interaction_trace",
+)
+
+
+def _gameplay_verification_richness(gv: Any) -> int:
+    if not isinstance(gv, dict) or not gv:
+        return 0
+    score = 0
+    if gv.get("failure_reason_code"):
+        score += 2
+    if gv.get("gameplay_entered") is not None:
+        score += 1
+    return score
+
+
+def promote_nested_runtime_observations(
+    observation: Dict[str, Any],
+    legacy_obs: Optional[Dict[str, Any]],
+    godot_obs: Optional[Dict[str, Any]],
+) -> None:
+    """Promote nested legacy/godot observation fields to top-level runtime report."""
+    for nested in (legacy_obs, godot_obs):
+        if not isinstance(nested, dict):
+            continue
+        observation.update(
+            {
+                k: nested.get(k)
+                for k in _NESTED_OBSERVATION_MERGE_KEYS
+                if nested.get(k) is not None
+            }
+        )
+        if nested.get("runtime_evidence_promotion") is not None:
+            observation["runtime_evidence_promotion"] = nested.get("runtime_evidence_promotion")
+        if nested.get("partial_runtime_verified") is not None:
+            observation["partial_runtime_verified"] = nested.get("partial_runtime_verified")
+        if nested.get("pck_pairing") is not None:
+            observation["pck_pairing"] = nested.get("pck_pairing")
+    if isinstance(legacy_obs, dict) and legacy_obs.get("status"):
+        observation["legacy_status"] = legacy_obs.get("status")
+
+    gv_candidates: List[tuple[str, Dict[str, Any]]] = []
+    for label, nested in (("legacy_observation", legacy_obs), ("godot_observation", godot_obs)):
+        if not isinstance(nested, dict):
+            continue
+        gv = nested.get("gameplay_verification")
+        if isinstance(gv, dict) and gv:
+            gv_candidates.append((label, gv))
+    if gv_candidates:
+        _label, best_gv = max(
+            gv_candidates,
+            key=lambda item: (_gameplay_verification_richness(item[1]), item[0] == "godot_observation"),
+        )
+        observation["gameplay_verification"] = best_gv
+
+    if not observation.get("interaction_trace"):
+        for nested in (godot_obs, legacy_obs):
+            if not isinstance(nested, dict):
+                continue
+            trace = nested.get("interaction_trace") or nested.get("runtime_interaction_trace")
+            if isinstance(trace, dict) and trace:
+                observation["interaction_trace"] = trace
+                break
+
 
 def infer_submission_root(
     paths: Sequence[str],
@@ -239,35 +314,7 @@ def run_runtime_observation(
 
     legacy_obs = (session_result.get("signals") or {}).get("legacy_observation")
     godot_obs = (session_result.get("signals") or {}).get("godot_observation")
-    for nested in (legacy_obs, godot_obs):
-        if not isinstance(nested, dict):
-            continue
-        observation.update(
-            {
-                k: nested.get(k)
-                for k in (
-                    "unity_observation_summary",
-                    "visual_observation_summary",
-                    "runtime_screenshots",
-                    "runtime_observed",
-                    "runtime_verified",
-                    "crash_detected",
-                    "freeze_possible",
-                    "runtime_signal_graph",
-                    "runtime_duration_seconds",
-                    "artifact_analyses",
-                )
-                if nested.get(k) is not None
-            }
-        )
-        if nested.get("runtime_evidence_promotion") is not None:
-            observation["runtime_evidence_promotion"] = nested.get("runtime_evidence_promotion")
-        if nested.get("partial_runtime_verified") is not None:
-            observation["partial_runtime_verified"] = nested.get("partial_runtime_verified")
-        if nested.get("pck_pairing") is not None:
-            observation["pck_pairing"] = nested.get("pck_pairing")
-        if legacy_obs.get("status"):
-            observation["legacy_status"] = legacy_obs.get("status")
+    promote_nested_runtime_observations(observation, legacy_obs, godot_obs)
 
     # Web screenshots from orchestrator
     web_shots = session_result.get("screenshots") or []

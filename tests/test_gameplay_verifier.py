@@ -4,9 +4,14 @@ from __future__ import annotations
 from app.gameplay_verifier import (
     assess_automated_l4_gate,
     build_gameplay_checks_from_verification,
+    count_test_document_entries,
     format_agent_play_summary_ar,
     resolve_gameplay_evidence_level,
 )
+
+
+def test_count_test_document_entries_partial_status():
+    assert count_test_document_entries({"testing_evidence": {"status": "partial"}}) == 1
 
 
 def test_assess_automated_l4_gate_cp5_partial():
@@ -35,7 +40,9 @@ def test_assess_automated_l4_gate_cp6_with_test_doc():
     gate = assess_automated_l4_gate(
         gv,
         test_document_present=True,
+        test_doc_entries=2,
         functional_smoke_pass=True,
+        grading_mode="standard",
     )
     assert gate["criterion_pass"]["P5"] is True
     assert gate["criterion_pass"]["P6"] is True
@@ -55,6 +62,21 @@ def test_build_gameplay_checks_from_verification():
     assert checks["scene_transition"]["observed"] is True
     assert checks["player_movement"]["observed"] is True
     assert checks["jump_mechanic"]["observed"] is True
+
+
+def test_format_agent_play_summary_requires_gameplay_entered():
+    label = format_agent_play_summary_ar(
+        "L4",
+        {
+            "l4_level": "L4_partial",
+            "gameplay_entered": False,
+            "menu_navigation": {"status": "black_screen"},
+        },
+    )
+    assert "L3" in label
+    assert "لم يدخل gameplay" in label
+    assert "black_screen" in label
+    assert "L4 جزئي" not in label
 
 
 def test_format_agent_play_summary_l4_full():

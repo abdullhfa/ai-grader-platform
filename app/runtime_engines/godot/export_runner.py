@@ -311,6 +311,12 @@ def build_godot_smoke_observation(
             obs["runtime_observed"] = True
     if smoke.get("visual_observation"):
         obs["visual_observation"] = smoke["visual_observation"]
+    gv = smoke.get("gameplay_verification")
+    if isinstance(gv, dict) and gv:
+        obs["gameplay_verification"] = gv
+    trace = smoke.get("interaction_trace") or smoke.get("runtime_interaction_trace")
+    if isinstance(trace, dict) and trace:
+        obs["interaction_trace"] = trace
     return obs
 
 

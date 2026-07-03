@@ -306,11 +306,16 @@ def assess_playtest_evidence(
         "functional_smoke"
     ) or {}
     try:
-        from app.gameplay_verifier import _test_document_present, assess_automated_l4_gate
+        from app.gameplay_verifier import (
+            _test_document_present,
+            assess_automated_l4_gate,
+            count_test_document_entries,
+        )
 
         automated_gate = assess_automated_l4_gate(
             gv,
             test_document_present=_test_document_present(inv),
+            test_doc_entries=count_test_document_entries(inv),
             functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
         )
     except Exception:

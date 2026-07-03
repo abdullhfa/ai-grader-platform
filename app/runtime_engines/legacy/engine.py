@@ -105,6 +105,7 @@ class LegacyExecutableEngine(RuntimeEngine):
                 paths,
                 enable_smoke_test=True,
                 student_name=session.submission_key,
+                grading_mode=session.signals.get("grading_mode"),
             )
         except Exception as exc:
             session.status = SessionStatus.FAILED

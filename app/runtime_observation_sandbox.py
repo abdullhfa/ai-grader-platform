@@ -170,6 +170,20 @@ def _runtime_screenshot_dir(
     return root / submission_key / session_id / _safe_artifact_stem(path.stem)
 
 
+def _attach_pro_capture_metadata(
+    record: Dict[str, Any],
+    *,
+    requirement_id: Optional[str] = None,
+    phase: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Tag screenshots for PRO requirement evidence (spec: requirement_id + phase)."""
+    if requirement_id is not None:
+        record["requirement_id"] = requirement_id
+    if phase is not None:
+        record["phase"] = phase
+    return record
+
+
 def capture_runtime_screenshot(
     path: Path,
     *,
@@ -177,12 +191,16 @@ def capture_runtime_screenshot(
     elapsed_seconds: float,
     session_ctx: Optional[Dict[str, Any]] = None,
     process_pid: Optional[int] = None,
+    requirement_id: Optional[str] = None,
+    phase: Optional[str] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     """
     Best-effort desktop screenshot capture.
 
     This is visual runtime evidence only; it does not prove gameplay correctness.
     """
+    _ = kwargs  # forward-compatible; PRO playtest may pass future metadata keys
     session_id = _runtime_session_id(session_ctx)
     record: Dict[str, Any] = {
         "label": label,
@@ -200,12 +218,16 @@ def capture_runtime_screenshot(
     }
     if sys.platform != "win32":
         record["errors"].append("screenshot_windows_only")
-        return record
+        return _attach_pro_capture_metadata(
+            record, requirement_id=requirement_id, phase=phase
+        )
     try:
         from PIL import ImageGrab  # type: ignore
     except Exception as exc:
         record["errors"].append(f"pillow_imagegrab_unavailable:{exc.__class__.__name__}")
-        return record
+        return _attach_pro_capture_metadata(
+            record, requirement_id=requirement_id, phase=phase
+        )
 
     try:
         out_dir = _runtime_screenshot_dir(path, session_ctx=session_ctx)
@@ -263,7 +285,9 @@ def capture_runtime_screenshot(
         record = validate_runtime_screenshot_record(record)
     except Exception as exc:
         record["errors"].append(str(exc))
-    return record
+    return _attach_pro_capture_metadata(
+        record, requirement_id=requirement_id, phase=phase
+    )
 
 
 def summarize_runtime_screenshots(screenshots: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -559,6 +583,85 @@ def analyze_godot_pck(path: Path) -> Dict[str, Any]:
     return out
 
 
+def _capture_failure_in_trace(out: Dict[str, Any]) -> bool:
+    trace = out.get("interaction_trace")
+    if not isinstance(trace, dict):
+        return False
+    for err in trace.get("errors") or []:
+        blob = str(err).lower()
+        if "desktop_fallback not permitted" in blob or "game_window capture failed" in blob:
+            return True
+    return False
+
+
+def _attach_terminal_godot_classify_if_missing(
+    out: Dict[str, Any],
+    path: Path,
+    *,
+    interaction_ran: bool,
+    session_ctx: Optional[Dict[str, Any]],
+    grading_mode: str | None,
+    enable_interaction_trace: bool,
+) -> None:
+    gv = out.get("gameplay_verification")
+    if isinstance(gv, dict) and gv:
+        if gv.get("failure_reason_code") == "GAME_WINDOW_CAPTURE_FAILED":
+            return
+        if gv.get("terminal_classify") == "capture_pipeline":
+            return
+        if gv.get("failure_reason_code") or gv.get("gameplay_entered") is True:
+            return
+    elif gv:
+        return
+    if _capture_failure_in_trace(out):
+        return
+    if not enable_interaction_trace or is_fast_runtime_smoke(grading_mode):
+        return
+    from app.godot_runtime.retry_policy import is_godot_runtime_path
+
+    engine_id = str((session_ctx or {}).get("engine") or "godot")
+    if not is_godot_runtime_path(path, engine_id=engine_id):
+        return
+    from app.godot_runtime.failure_taxonomy import classify_runtime_failure
+
+    shots = out.get("runtime_screenshots") or []
+    window_detected = any(
+        isinstance(s, dict) and s.get("status") == "captured" for s in shots
+    )
+    signals = out.get("signals") if isinstance(out.get("signals"), dict) else {}
+    proc_crashed = out.get("smoke_result") in ("early_exit", "launch_error") or (
+        signals.get("crash") == "observed"
+    )
+    failure = classify_runtime_failure(
+        window_detected=window_detected,
+        black_screen_duration_s=0,
+        gameplay_entered=False,
+        mechanics_verified_count=0,
+        menu_status="interaction_not_reached" if not interaction_ran else "unknown",
+        visual_response=False,
+        server_dialog_detected=False,
+        process_crashed=proc_crashed,
+        boot_timed_out=not interaction_ran
+        and out.get("smoke_result") in ("stable_window", "launch_ok"),
+    )
+    if not failure:
+        return
+    classified = {
+        "mode": "automated_gameplay_verification_v1",
+        "gameplay_entered": False,
+        "failure_reason_code": failure.code,
+        "failure_reason_ar": failure.reason_ar,
+        "failure_evidence": failure.evidence,
+        "terminal_classify": "smoke_post_loop",
+    }
+    if isinstance(gv, dict) and gv:
+        merged = dict(gv)
+        merged.update(classified)
+        out["gameplay_verification"] = merged
+    else:
+        out["gameplay_verification"] = classified
+
+
 def smoke_test_windows_exe(
     path: Path,
     *,
@@ -581,6 +684,7 @@ def smoke_test_windows_exe(
         "runtime_session_id": _runtime_session_id(session_ctx),
         "errors": [],
     }
+    interaction_done = False
     if not _safe_path(path):
         out["errors"].append("file_missing_or_empty")
         return out
@@ -658,7 +762,6 @@ def smoke_test_windows_exe(
                 if 0.5 <= offset < timeout:
                     screenshot_targets.append((label, offset))
         captured_labels: set = set()
-        interaction_done = False
         pre_interaction_shot: Optional[Dict[str, Any]] = None
         deadline = time.time() + timeout
         exit_code = None
@@ -712,13 +815,49 @@ def smoke_test_windows_exe(
                     )
 
                 try:
-                    from app.gameplay_verifier import run_automated_gameplay_verification
+                    from app.gameplay_verifier import (
+                        CaptureFailureError,
+                        run_automated_gameplay_verification,
+                    )
+                    from app.requirement_extractor import RequirementExtractor
+
+                    _pro_playtest = not is_fast_runtime_smoke(grading_mode)
+                    _paths = list(submission_paths or [])
+                    if session_ctx:
+                        _paths.extend(
+                            str(p)
+                            for p in (
+                                session_ctx.get("intake_relative_paths")
+                                or session_ctx.get("submission_paths")
+                                or []
+                            )
+                            if p
+                        )
+                    _extractor = RequirementExtractor()
+                    _plan = _extractor.default_plan(
+                        submission_id=str(session_ctx.get("submission_id") if session_ctx else ""),
+                        engine=str((session_ctx or {}).get("engine") or "godot"),
+                    )
+                    if _paths:
+                        try:
+                            _plan = _extractor.extract(
+                                document_paths=_paths[:12],
+                                submission_id=str(
+                                    session_ctx.get("submission_id") if session_ctx else ""
+                                ),
+                            )
+                        except Exception:
+                            pass
 
                     gameplay_verification = run_automated_gameplay_verification(
                         artifact_path=path,
                         process_pid=proc.pid if proc else None,
                         capture_screenshot=_capture_shot,
                         elapsed_seconds=elapsed,
+                        requirement_plan=_plan,
+                        pro_mode=_pro_playtest,
+                        engine_id=str((session_ctx or {}).get("engine") or "godot"),
+                        process_crashed=bool(proc and proc.poll() is not None),
                     )
                     out["gameplay_verification"] = gameplay_verification
                     for shot in gameplay_verification.get("extra_screenshots") or []:
@@ -763,6 +902,36 @@ def smoke_test_windows_exe(
                         trace["player_movement_verified"] = bool(
                             gameplay_verification.get("player_movement_verified")
                         )
+                except CaptureFailureError as exc:
+                    from app.gameplay_verifier import build_capture_failure_gv
+
+                    gameplay_verification = build_capture_failure_gv(
+                        exc,
+                        process_pid=proc.pid if proc else None,
+                    )
+                    out["gameplay_verification"] = gameplay_verification
+                    trace = build_interaction_trace_report(
+                        {
+                            "mode": gameplay_verification.get("mode"),
+                            "authority": "automated_l4_verification",
+                            "platform": sys.platform,
+                            "status": "capture_failed",
+                            "inputs_sent": [],
+                            "input_count": 0,
+                            "errors": [str(exc)],
+                            "does_not_verify_gameplay": True,
+                            "human_playtest_required": True,
+                        },
+                        pre_screenshot=pre_interaction_shot if isinstance(pre_interaction_shot, dict) else None,
+                        post_screenshot=pre_interaction_shot if isinstance(pre_interaction_shot, dict) else None,
+                    )
+                    trace.update(
+                        {
+                            "l4_level": gameplay_verification.get("l4_level"),
+                            "automated_l4_level": gameplay_verification.get("automated_l4_level"),
+                            "gameplay_entered": False,
+                        }
+                    )
                 except Exception as exc:
                     burst = run_interaction_burst()
                     time.sleep(0.35)
@@ -833,6 +1002,14 @@ def smoke_test_windows_exe(
                 pass
     if capture_screenshots:
         out["visual_observation"] = summarize_runtime_screenshots(out.get("runtime_screenshots") or [])
+    _attach_terminal_godot_classify_if_missing(
+        out,
+        path,
+        interaction_ran=interaction_done,
+        session_ctx=session_ctx,
+        grading_mode=grading_mode,
+        enable_interaction_trace=enable_interaction_trace,
+    )
     return out
 
 
@@ -1181,7 +1358,12 @@ def observe_runtime_artifacts(
             if isinstance(a.get("interaction_trace"), dict)
         ],
         "gameplay_verification": next(
-            (a.get("gameplay_verification") for a in analyses if isinstance(a.get("gameplay_verification"), dict)),
+            (
+                a.get("gameplay_verification")
+                for a in analyses
+                if isinstance(a.get("gameplay_verification"), dict)
+                and a.get("gameplay_verification")
+            ),
             None,
         ),
         "runtime_session_id": session_ctx.get("runtime_session_id"),

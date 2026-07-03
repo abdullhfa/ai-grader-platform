@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import html
 import re
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 _RUNTIME_HEADER_RE = re.compile(
     r"^[✅❌⏸]\s*\[(Runtime observation L4|Runtime adjudication|Runtime partial)\]\s*"
@@ -103,12 +103,102 @@ def format_runtime_section(runtime_block: str) -> str:
     return "\n".join(lines)
 
 
+def build_godot_runtime_outcome(
+    gv: Optional[Dict[str, Any]] = None,
+    gate: Optional[Dict[str, Any]] = None,
+    *,
+    agent_play_label_ar: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Structured Godot runtime outcome for Word/UI (no raw JSON)."""
+    gv = gv or {}
+    gate = gate or {}
+    criterion_pass = gate.get("criterion_pass") or {}
+    failure_code = str(gv.get("failure_reason_code") or "").strip() or None
+    failure_ar = str(gv.get("failure_reason_ar") or "").strip() or None
+    gameplay_entered = gv.get("gameplay_entered")
+    l4_level = gv.get("l4_level") or gv.get("automated_l4_level") or gate.get("l4_level")
+    evidence = gv.get("failure_evidence") if isinstance(gv.get("failure_evidence"), dict) else {}
+
+    if gameplay_entered is True and not failure_code:
+        agent_result_ar = agent_play_label_ar or "نعم — دخل gameplay (L4)"
+    elif failure_code or failure_ar:
+        agent_result_ar = agent_play_label_ar or "لا — لم يُثبت gameplay"
+    else:
+        agent_result_ar = agent_play_label_ar or "غير محدد — لم تُكتمل ملاحظة التشغيل"
+
+    evidence_lines: List[str] = []
+    if failure_code:
+        evidence_lines.append(f"رمز التصنيف: {failure_code}")
+    if l4_level:
+        evidence_lines.append(f"مستوى L4: {l4_level}")
+    if gameplay_entered is not None:
+        evidence_lines.append(
+            f"gameplay_entered: {'نعم' if gameplay_entered else 'لا'}"
+        )
+    menu = gv.get("menu_navigation") if isinstance(gv.get("menu_navigation"), dict) else {}
+    if menu.get("status"):
+        evidence_lines.append(f"حالة القائمة: {menu.get('status')}")
+    if evidence.get("process_crashed"):
+        evidence_lines.append("تعطل العملية أثناء المراقبة")
+    if evidence.get("server_dialog_detected"):
+        evidence_lines.append("حوار شبكة/خادم مُكتشف")
+    retry_count = len(gv.get("godot_retry_attempts") or [])
+    if retry_count:
+        evidence_lines.append(f"محاولات Godot retry: {retry_count}")
+
+    p5_open = bool(criterion_pass.get("P5"))
+    p6_open = bool(criterion_pass.get("P6"))
+    impact_lines = [
+        f"C.P5: {'Gate مفتوح — يمكن منح المعيار عند استيفاء أدلة الملفات' if p5_open else 'Gate مغلق — يتطلب gameplay L4'}",
+        f"C.P6: {'Gate مفتوح — يتطلب وثائق اختبار + L4' if p6_open else 'Gate مغلق — يتطلب gameplay L4 ووثائق اختبار'}",
+    ]
+
+    return {
+        "agent_play_result_ar": agent_result_ar,
+        "final_failure_reason_ar": failure_ar or ("—" if not failure_code else failure_code),
+        "failure_reason_code": failure_code,
+        "evidence_summary_ar": evidence_lines,
+        "impact_cp5_cp6_ar": impact_lines,
+        "gameplay_entered": gameplay_entered,
+        "l4_level": l4_level,
+        "criterion_pass_p5": p5_open,
+        "criterion_pass_p6": p6_open,
+    }
+
+
+def format_godot_runtime_outcome_ar(outcome: Optional[Dict[str, Any]] = None) -> str:
+    """Arabic Word block: agent result, failure, evidence, C.P5/C.P6 impact."""
+    if not outcome:
+        return ""
+    lines = [
+        "نتيجة Agent play (Godot):",
+        f"• {outcome.get('agent_play_result_ar') or '—'}",
+        "",
+        "سبب الفشل النهائي:",
+        f"• {outcome.get('final_failure_reason_ar') or '—'}",
+        "",
+        "ملخص الأدلة (runtime — ليس أدلة ملفات):",
+    ]
+    for item in outcome.get("evidence_summary_ar") or []:
+        lines.append(f"• {item}")
+    if not outcome.get("evidence_summary_ar"):
+        lines.append("• —")
+    lines.extend(["", "الأثر على C.P5 / C.P6:"])
+    for item in outcome.get("impact_cp5_cp6_ar") or []:
+        lines.append(f"• {item}")
+    lines.append(
+        "• تنويه: أدلة الملفات (B.P3/B.P4) منفصلة عن أدلة التشغيل (C.P5/C.P6)."
+    )
+    return clean_report_text("\n".join(lines))
+
+
 def format_criterion_feedback_for_report(
     feedback: str,
     *,
     runtime_note_ar: Optional[str] = None,
     achieved: Optional[bool] = None,
     awardable: Optional[bool] = None,
+    godot_runtime_outcome: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Build teacher-readable Arabic sections. When governance blocked achievement,
@@ -142,6 +232,10 @@ def format_criterion_feedback_for_report(
     if runtime_fmt and not institutional_only:
         parts.append(runtime_fmt)
 
+    godot_fmt = format_godot_runtime_outcome_ar(godot_runtime_outcome)
+    if godot_fmt and not institutional_only:
+        parts.append(godot_fmt)
+
     if not parts:
         return clean_report_text((feedback or "").strip())
     return clean_report_text("\n\n".join(parts))
@@ -162,6 +256,17 @@ def criterion_report_display(
     if achieved and not awardable:
         return "⏸", "جزئي — محجوب (Partial — Blocked)", "FEF3C7", "F59E0B"
     return "❌", "غير متحقق (Not Achieved)", "FEE2E2", "EF4444"
+
+
+def strip_embedded_json_blocks(text: str) -> str:
+    """Remove raw AI JSON blobs accidentally appended to teacher-facing feedback."""
+    if not text:
+        return ""
+    for marker in ('```json', '{"criteria_evaluation"', '{"criteria_results"'):
+        idx = text.find(marker)
+        if idx >= 0:
+            text = text[:idx].rstrip()
+    return text
 
 
 def clean_report_text(text: str) -> str:
@@ -194,4 +299,4 @@ def clean_report_text(text: str) -> str:
         return m.group(0)
 
     t = re.sub(r"'([^']{1,120})'", _arabic_quote, t)
-    return t.strip()
+    return strip_embedded_json_blocks(t.strip())

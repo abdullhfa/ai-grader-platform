@@ -1,17 +1,22 @@
 """Automated gameplay verification (MenuNavigator + movement) for PRO L4 without human."""
 from __future__ import annotations
 
+import logging
 import sys
 import time
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
+
+logger = logging.getLogger("ai_grader.gameplay_verifier")
 
 VISUAL_DELTA_L4_THRESHOLD = 0.05
 MOVEMENT_SHIFT_THRESHOLD = 2.5
 JUMP_SHIFT_THRESHOLD = 3.0
-MENU_NAV_VERSION = "menu_navigator_v1"
+MENU_NAV_VERSION = "menu_navigator_v2"
 MOVEMENT_VERIFY_VERSION = "player_movement_verifier_v1"
 AUTOMATED_GAMEPLAY_VERSION = "automated_gameplay_verification_v1"
+PLAYTEST_ORCHESTRATOR_VERSION = "playtest_orchestrator_v1"
 
 MENU_KEYWORDS = (
     "play",
@@ -24,6 +29,9 @@ MENU_KEYWORDS = (
     "press",
 )
 MENU_VISUAL_STATES = frozenset({"main_menu_candidate", "static_ui", "loading_screen"})
+LOADING_VISUAL_STATES = frozenset({"loading_screen", "loading"})
+SCENE_CHANGE_THRESHOLD = 0.15
+PLAY_BUTTON_KEYWORDS = MENU_KEYWORDS
 HUD_KEYWORDS = (
     "score",
     "points",
@@ -41,33 +49,183 @@ HUD_KEYWORDS = (
 )
 
 
+def _enriched_observation(obs: Dict[str, Any]) -> Dict[str, Any]:
+    """Merge nested legacy/godot observation fields when top-level report is thin."""
+    if not isinstance(obs, dict) or not obs:
+        return {}
+    merged = dict(obs)
+    signals = obs.get("signals") if isinstance(obs.get("signals"), dict) else {}
+    for key in ("legacy_observation", "godot_observation"):
+        nested = signals.get(key)
+        if not isinstance(nested, dict):
+            continue
+        if not merged.get("artifact_analyses") and nested.get("artifact_analyses"):
+            merged["artifact_analyses"] = nested["artifact_analyses"]
+        if not _is_nonempty_mapping(merged.get("gameplay_verification")) and _is_nonempty_mapping(
+            nested.get("gameplay_verification")
+        ):
+            merged["gameplay_verification"] = nested["gameplay_verification"]
+        if not merged.get("interaction_trace") and nested.get("interaction_trace"):
+            merged["interaction_trace"] = nested["interaction_trace"]
+    return merged
+
+
 def _observation_from(
     observation: Optional[Dict[str, Any]],
     inventory: Optional[Dict[str, Any]],
     grading_result: Optional[Dict[str, Any]],
 ) -> Dict[str, Any]:
     if isinstance(observation, dict) and observation:
-        return observation
+        return _enriched_observation(observation)
     inv = inventory if isinstance(inventory, dict) else {}
     if isinstance(inv.get("runtime_observation_report"), dict):
-        return inv["runtime_observation_report"]
+        return _enriched_observation(inv["runtime_observation_report"])
     if isinstance(grading_result, dict) and isinstance(
         grading_result.get("runtime_observation_report"), dict
     ):
-        return grading_result["runtime_observation_report"]
+        return _enriched_observation(grading_result["runtime_observation_report"])
     return {}
+
+
+def _is_nonempty_mapping(value: Any) -> bool:
+    return isinstance(value, dict) and bool(value)
+
+
+def _interaction_trace_from_obs(obs: Dict[str, Any]) -> tuple[Dict[str, Any], Optional[str]]:
+    direct = obs.get("interaction_trace") or obs.get("runtime_interaction_trace") or {}
+    if _is_nonempty_mapping(direct):
+        return direct, None
+
+    signals = obs.get("signals") if isinstance(obs.get("signals"), dict) else {}
+    for source, nested in (
+        ("signals.legacy_observation", signals.get("legacy_observation")),
+        ("signals.godot_observation", signals.get("godot_observation")),
+        ("legacy_observation", obs.get("legacy_observation")),
+    ):
+        if not isinstance(nested, dict):
+            continue
+        trace = nested.get("interaction_trace") or nested.get("runtime_interaction_trace")
+        if _is_nonempty_mapping(trace):
+            return trace, source
+
+    for row in obs.get("interaction_trace_summary") or obs.get("artifact_analyses") or []:
+        if isinstance(row, dict) and _is_nonempty_mapping(row.get("interaction_trace")):
+            return row["interaction_trace"], "artifact_analyses[].interaction_trace"
+        if isinstance(row, dict) and row.get("visual_delta_score") is not None:
+            return row, "artifact_analyses[].visual_delta_score"
+    return {}, None
 
 
 def _interaction_trace(obs: Dict[str, Any]) -> Dict[str, Any]:
+    trace, source = _interaction_trace_from_obs(obs)
+    if source:
+        logger.warning(
+            "interaction_trace_fallback",
+            extra={"source": source},
+        )
+    return trace
+
+
+def _gameplay_verification_from_nested(obs: Dict[str, Any]) -> tuple[Dict[str, Any], Optional[str]]:
+    signals = obs.get("signals") if isinstance(obs.get("signals"), dict) else {}
+    for source, nested in (
+        ("signals.legacy_observation", signals.get("legacy_observation")),
+        ("signals.godot_observation", signals.get("godot_observation")),
+        ("legacy_observation", obs.get("legacy_observation")),
+    ):
+        if not isinstance(nested, dict):
+            continue
+        gv = nested.get("gameplay_verification")
+        if _is_nonempty_mapping(gv):
+            return dict(gv), source
+
+    for row in obs.get("artifact_analyses") or []:
+        if not isinstance(row, dict):
+            continue
+        gv = row.get("gameplay_verification")
+        if _is_nonempty_mapping(gv):
+            return dict(gv), "artifact_analyses[].gameplay_verification"
+    return {}, None
+
+
+def _ensure_failure_reason_code_on_negative_gameplay(
+    gv: Dict[str, Any],
+    obs: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Terminal classify when gameplay failed but no failure_reason_code (blocking-bug guard)."""
+    if not isinstance(gv, dict) or not gv:
+        return gv
+    if gv.get("gameplay_entered") is not False:
+        return gv
+    if gv.get("terminal_classify") == "capture_pipeline":
+        return gv
+    if gv.get("failure_reason_code"):
+        return gv
+
     trace = obs.get("interaction_trace") or obs.get("runtime_interaction_trace") or {}
-    if isinstance(trace, dict) and trace:
-        return trace
-    for row in obs.get("interaction_trace_summary") or obs.get("artifact_analyses") or []:
-        if isinstance(row, dict) and row.get("interaction_trace"):
-            return row["interaction_trace"]
-        if isinstance(row, dict) and row.get("visual_delta_score") is not None:
-            return row
-    return {}
+    if not isinstance(trace, dict):
+        trace = {}
+    trace_errors = [str(e) for e in (trace.get("errors") or [])]
+    if any(
+        "desktop_fallback not permitted" in err or "game_window capture failed" in err
+        for err in trace_errors
+    ):
+        from app.godot_runtime.failure_taxonomy import classify_capture_failure
+
+        signals = obs.get("signals") if isinstance(obs.get("signals"), dict) else {}
+        shots = obs.get("runtime_screenshots") or []
+        window_detected = bool(obs.get("runtime_observed")) or any(
+            isinstance(s, dict) and s.get("status") == "captured" for s in shots
+        )
+        failure = classify_capture_failure(
+            window_detected=window_detected,
+            process_alive=window_detected or signals.get("runtime_launch_attempted") is True,
+            capture_scope_last="desktop_fallback",
+            capture_retries_exhausted=True,
+            probe_phase="tagged_capture",
+        )
+        enriched = dict(gv)
+        enriched["failure_reason_code"] = failure.code
+        enriched["failure_reason_ar"] = failure.reason_ar
+        enriched["failure_evidence"] = failure.evidence
+        enriched.setdefault("terminal_classify", "capture_pipeline")
+        return enriched
+
+    from app.godot_runtime.failure_taxonomy import classify_runtime_failure
+
+    signals = obs.get("signals") if isinstance(obs.get("signals"), dict) else {}
+    shots = obs.get("runtime_screenshots") or []
+    window_detected = bool(obs.get("runtime_observed")) or any(
+        isinstance(s, dict) and s.get("status") == "captured" for s in shots
+    )
+    proc_crashed = signals.get("crash") == "observed" or obs.get("smoke_result") in (
+        "early_exit",
+        "launch_error",
+    )
+    interaction_ran = bool(trace.get("steps") or trace.get("interaction_done"))
+    failure = classify_runtime_failure(
+        window_detected=window_detected,
+        black_screen_duration_s=0,
+        gameplay_entered=False,
+        mechanics_verified_count=int(gv.get("mechanics_verified_count") or 0),
+        menu_status=str(
+            gv.get("menu_status")
+            or ("interaction_not_reached" if not interaction_ran else "unknown")
+        ),
+        visual_response=bool(gv.get("visual_response")),
+        server_dialog_detected=False,
+        process_crashed=proc_crashed,
+        boot_timed_out=not interaction_ran
+        and obs.get("smoke_result") in ("stable_window", "launch_ok"),
+    )
+    if failure is None:
+        return gv
+    enriched = dict(gv)
+    enriched["failure_reason_code"] = failure.code
+    enriched["failure_reason_ar"] = failure.reason_ar
+    enriched["failure_evidence"] = failure.evidence
+    enriched.setdefault("terminal_classify", "consumer_ensure")
+    return enriched
 
 
 def _gameplay_verification_blob(
@@ -77,19 +235,136 @@ def _gameplay_verification_blob(
     grading_result: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     inv = inventory if isinstance(inventory, dict) else {}
-    if isinstance(inv.get("gameplay_verification"), dict):
-        return inv["gameplay_verification"]
     obs = _observation_from(observation, inventory, grading_result)
-    if isinstance(obs.get("gameplay_verification"), dict):
-        return obs["gameplay_verification"]
-    if isinstance(grading_result, dict) and isinstance(
-        grading_result.get("gameplay_verification"), dict
+
+    def _finalize(blob: Dict[str, Any]) -> Dict[str, Any]:
+        return _ensure_failure_reason_code_on_negative_gameplay(blob, obs)
+
+    if _is_nonempty_mapping(obs.get("gameplay_verification")):
+        return _finalize(dict(obs["gameplay_verification"]))
+    if _is_nonempty_mapping(inv.get("gameplay_verification")):
+        return _finalize(dict(inv["gameplay_verification"]))
+    if isinstance(grading_result, dict) and _is_nonempty_mapping(
+        grading_result.get("gameplay_verification")
     ):
-        return grading_result["gameplay_verification"]
+        return _finalize(dict(grading_result["gameplay_verification"]))
+
+    nested_gv, source = _gameplay_verification_from_nested(obs)
+    if nested_gv:
+        submission_id = None
+        if isinstance(grading_result, dict):
+            submission_id = grading_result.get("submission_id")
+        logger.warning(
+            "gameplay_verification_fallback",
+            extra={"source": source, "submission_id": submission_id},
+        )
+        nested_gv["_resolution_source"] = source
+        return _finalize(nested_gv)
+
     trace = _interaction_trace(obs)
     if trace.get("l4_level") or trace.get("automated_l4_level"):
-        return trace
+        trace_errors = [str(e) for e in (trace.get("errors") or [])]
+        if any(
+            "desktop_fallback not permitted" in err or "game_window capture failed" in err
+            for err in trace_errors
+        ):
+            from app.godot_runtime.failure_taxonomy import classify_capture_failure
+
+            signals = obs.get("signals") if isinstance(obs.get("signals"), dict) else {}
+            window_detected = bool(obs.get("runtime_observed")) or signals.get(
+                "runtime_launch_attempted"
+            ) is True
+            failure = classify_capture_failure(
+                window_detected=window_detected,
+                process_alive=window_detected,
+                capture_scope_last="desktop_fallback",
+                probe_phase="tagged_capture",
+            )
+            blob = dict(trace)
+            blob["failure_reason_code"] = failure.code
+            blob["failure_reason_ar"] = failure.reason_ar
+            blob["failure_evidence"] = failure.evidence
+            blob["terminal_classify"] = "capture_pipeline"
+            blob["gameplay_entered"] = False
+            return blob
+        return _finalize(dict(trace))
     return {}
+
+
+def _authoritative_gv_richness(gv: Dict[str, Any]) -> int:
+    if not isinstance(gv, dict) or not gv:
+        return 0
+    score = 0
+    code = str(gv.get("failure_reason_code") or "")
+    if code == "GAME_WINDOW_CAPTURE_FAILED":
+        score += 10
+    elif code:
+        score += 3
+    if gv.get("godot_retry_attempts"):
+        score += 5
+    if gv.get("terminal_classify") == "capture_pipeline":
+        score += 8
+    if gv.get("menu_navigation"):
+        score += 2
+    if gv.get("evidence_package"):
+        score += 2
+    if gv.get("gameplay_entered") is True:
+        score += 4
+    elif gv.get("gameplay_entered") is False:
+        score += 1
+    return score
+
+
+def resolve_authoritative_gameplay_verification(
+    *,
+    artifact_inventory: Optional[Dict[str, Any]] = None,
+    grading_result: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Pick richest gameplay_verification from orchestrator outputs (never interaction trace)."""
+    from app.runtime.orchestrator import promote_nested_runtime_observations
+
+    inv = dict(artifact_inventory or {})
+    rt = dict(inv.get("runtime_observation_report") or {})
+    signals = rt.get("signals") if isinstance(rt.get("signals"), dict) else {}
+    promote_nested_runtime_observations(
+        rt,
+        signals.get("legacy_observation"),
+        signals.get("godot_observation"),
+    )
+
+    candidates: List[Dict[str, Any]] = []
+
+    def _add(gv: Any) -> None:
+        if isinstance(gv, dict) and gv:
+            candidates.append(dict(gv))
+
+    if isinstance(grading_result, dict):
+        _add(grading_result.get("gameplay_verification"))
+    _add(inv.get("gameplay_verification"))
+    _add(rt.get("gameplay_verification"))
+
+    def _walk(obj: Any, depth: int = 0) -> None:
+        if depth > 7:
+            return
+        if isinstance(obj, dict):
+            _add(obj.get("gameplay_verification"))
+            for row in obj.get("artifact_analyses") or []:
+                if isinstance(row, dict):
+                    _add(row.get("gameplay_verification"))
+            for key in ("legacy_observation", "godot_observation", "signals"):
+                nested = obj.get(key)
+                if isinstance(nested, dict):
+                    _walk(nested, depth + 1)
+        elif isinstance(obj, list):
+            for item in obj[:24]:
+                _walk(item, depth + 1)
+
+    _walk(rt)
+    _walk(inv)
+    if not candidates:
+        return {}
+    best = max(candidates, key=_authoritative_gv_richness)
+    return dict(best)
 
 
 def _ocr_image_path(path: str) -> str:
@@ -272,33 +547,149 @@ def _click_game_window_center(*, process_pid: Optional[int], artifact_path: Path
         return False
 
 
+def _shot_ocr_text(shot: Dict[str, Any]) -> str:
+    if shot.get("ocr_text") is not None:
+        return str(shot["ocr_text"]).lower()
+    return _ocr_image_path(str(shot.get("path") or ""))
+
+
+def _find_play_button_ocr(shot: Dict[str, Any]) -> Optional[Tuple[int, int]]:
+    """Return image-relative (x, y) center of a play/start OCR token, if found."""
+    path = str(shot.get("path") or "")
+    if not path or not Path(path).is_file():
+        return None
+    try:
+        import pytesseract  # type: ignore
+        from PIL import Image
+
+        data = pytesseract.image_to_data(
+            Image.open(path).convert("RGB"),
+            output_type=pytesseract.Output.DICT,
+            lang="eng",
+            config="--psm 6",
+        )
+        for idx, word in enumerate(data.get("text") or []):
+            token = (word or "").strip().lower()
+            if not token:
+                continue
+            if not any(kw in token or token in kw for kw in PLAY_BUTTON_KEYWORDS):
+                continue
+            left = int(data["left"][idx])
+            top = int(data["top"][idx])
+            width = int(data["width"][idx])
+            height = int(data["height"][idx])
+            if width <= 0 or height <= 0:
+                continue
+            return left + width // 2, top + height // 2
+    except Exception:
+        return None
+    return None
+
+
+def _click_at_image_position(
+    *,
+    shot: Dict[str, Any],
+    image_xy: Tuple[int, int],
+    process_pid: Optional[int],
+    artifact_path: Path,
+) -> bool:
+    if sys.platform != "win32":
+        return False
+    try:
+        from app.window_focus_manager import focus_game_window, resolve_game_window_bbox
+
+        focus_game_window(process_pid=process_pid)
+        bbox = shot.get("game_window_bbox")
+        if not isinstance(bbox, (list, tuple)) or len(bbox) != 4:
+            resolved = resolve_game_window_bbox(artifact_path=artifact_path, process_pid=process_pid)
+            bbox = list(resolved) if resolved else None
+        if not bbox:
+            return False
+        left, top, right, bottom = [int(v) for v in bbox]
+        img_w = int(shot.get("image_width") or (right - left) or 1)
+        img_h = int(shot.get("image_height") or (bottom - top) or 1)
+        rel_x = max(0.0, min(1.0, image_xy[0] / max(img_w, 1)))
+        rel_y = max(0.0, min(1.0, image_xy[1] / max(img_h, 1)))
+        cx = left + int((right - left) * rel_x)
+        cy = top + int((bottom - top) * rel_y)
+        import ctypes
+
+        ctypes.windll.user32.SetCursorPos(cx, cy)
+        MOUSEEVENTF_LEFTDOWN = 0x0002
+        MOUSEEVENTF_LEFTUP = 0x0004
+        ctypes.windll.user32.mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+        ctypes.windll.user32.mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+        return True
+    except Exception:
+        return False
+
+
+@dataclass
+class MenuNavigationResult:
+    status: str
+    attempts: int = 0
+    log: List[Dict[str, Any]] = field(default_factory=list)
+    screenshot: Optional[Dict[str, Any]] = None
+    entry_screenshot: Optional[Dict[str, Any]] = None
+    visual_state: str = "unknown"
+    gameplay_entered: bool = False
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "version": MENU_NAV_VERSION,
+            "status": self.status,
+            "attempts": self.attempts,
+            "log": self.log,
+            "screenshot": self.screenshot,
+            "entry_screenshot": self.entry_screenshot or self.screenshot,
+            "visual_state": self.visual_state,
+            "gameplay_entered": self.gameplay_entered,
+        }
+
+
 class MenuNavigator:
     """Detect menu screens and attempt to enter gameplay."""
 
-    def __init__(self, *, max_attempts: int = 5) -> None:
-        self.max_attempts = max_attempts
+    MAX_ATTEMPTS = 8
+    GODOT_BOOT_WAIT = 6.0
+    BOOT_POLL_INTERVAL = 1.5
+    BOOT_POLL_MAX = 10
+    BLACK_SCREEN_THRESHOLD = 0.05
+    SCENE_CHANGE_THRESHOLD = SCENE_CHANGE_THRESHOLD
 
-    def _is_menu_screen(self, shot: Dict[str, Any]) -> bool:
-        state = str(shot.get("visual_state") or "")
-        ocr = _ocr_image_path(str(shot.get("path") or ""))
-        if state in MENU_VISUAL_STATES and not _hud_keywords_in_text(ocr):
-            return True
-        if _menu_keywords_in_text(ocr) and not _hud_keywords_in_text(ocr):
-            return True
-        return False
+    def __init__(self, *, max_attempts: int = MAX_ATTEMPTS) -> None:
+        self.max_attempts = max(1, min(max_attempts, self.MAX_ATTEMPTS))
 
-    def _is_gameplay_screen(self, shot: Dict[str, Any]) -> bool:
-        state = str(shot.get("visual_state") or "")
-        ocr = _ocr_image_path(str(shot.get("path") or ""))
-        if state == "gameplay_candidate":
+    def _is_black_screen(self, shot: Dict[str, Any]) -> bool:
+        """True when the capture is mostly black (Godot splash / still loading)."""
+        state = str(shot.get("visual_state") or "").lower()
+        if state == "black_screen":
             return True
-        if _hud_keywords_in_text(ocr) and not _menu_keywords_in_text(ocr):
+        stats = shot.get("visual_stats") or {}
+        if stats.get("black_screen_possible") is True:
             return True
-        if str(shot.get("capture_scope") or "") == "game_window" and _hud_keywords_in_text(ocr):
-            return True
-        return False
+        avg_luma = stats.get("avg_luma_approx")
+        if avg_luma is not None:
+            try:
+                if float(avg_luma) < 12.0:
+                    return True
+            except (TypeError, ValueError):
+                pass
+        path = str(shot.get("path") or "")
+        if not path or not Path(path).is_file():
+            return False
+        try:
+            from PIL import Image  # type: ignore
 
-    def detect_and_enter_gameplay(
+            pixels = list(Image.open(path).convert("L").getdata())
+            if not pixels:
+                return True
+            bright = sum(1 for p in pixels if int(p) > 30)
+            return (bright / len(pixels)) < self.BLACK_SCREEN_THRESHOLD
+        except Exception:
+            return False
+
+    def _wait_for_boot_screen_clear(
         self,
         *,
         artifact_path: Path,
@@ -308,8 +699,100 @@ class MenuNavigator:
     ) -> Dict[str, Any]:
         from app.window_focus_manager import focus_game_window
 
+        last_shot: Dict[str, Any] = {}
+        for boot_attempt in range(self.BOOT_POLL_MAX):
+            focus_game_window(process_pid=process_pid)
+            if boot_attempt == 0:
+                time.sleep(self.GODOT_BOOT_WAIT)
+            else:
+                time.sleep(self.BOOT_POLL_INTERVAL)
+            shot = capture_screenshot(
+                artifact_path,
+                label=f"boot_wait_{boot_attempt}",
+                elapsed_seconds=elapsed_seconds + boot_attempt * self.BOOT_POLL_INTERVAL,
+                process_pid=process_pid,
+            )
+            last_shot = shot if isinstance(shot, dict) else {}
+            if not self._is_black_screen(last_shot):
+                return last_shot
+        return last_shot
+
+    def classify_visual_state(self, shot: Dict[str, Any]) -> str:
+        """Return: gameplay | menu | loading | unknown."""
+        if self._is_black_screen(shot):
+            return "loading"
+        state = str(shot.get("visual_state") or "").lower()
+        ocr = _shot_ocr_text(shot)
+        if state in LOADING_VISUAL_STATES:
+            return "loading"
+        if state == "gameplay_candidate":
+            return "gameplay"
+        has_hud = _hud_keywords_in_text(ocr)
+        has_menu = _menu_keywords_in_text(ocr)
+        if has_hud and not has_menu:
+            return "gameplay"
+        if state in MENU_VISUAL_STATES or has_menu:
+            return "menu"
+        return "unknown"
+
+    def _dismiss_menu(
+        self,
+        *,
+        shot: Dict[str, Any],
+        attempt: int,
+        artifact_path: Path,
+        process_pid: Optional[int],
+    ) -> str:
+        play_pos = _find_play_button_ocr(shot)
+        if play_pos and _click_at_image_position(
+            shot=shot,
+            image_xy=play_pos,
+            process_pid=process_pid,
+            artifact_path=artifact_path,
+        ):
+            return "click_play_ocr"
+        _click_game_window_center(process_pid=process_pid, artifact_path=artifact_path)
+        if attempt % 2 == 0:
+            _send_key_win(0x0D)
+        else:
+            _send_key_win(0x20)
+        return "menu_dismiss_keys"
+
+    def navigate_to_gameplay(
+        self,
+        *,
+        artifact_path: Path,
+        process_pid: Optional[int],
+        capture_screenshot: Callable[..., Dict[str, Any]],
+        elapsed_seconds: float,
+    ) -> MenuNavigationResult:
+        from app.window_focus_manager import focus_game_window
+
         log: List[Dict[str, Any]] = []
         last_shot: Optional[Dict[str, Any]] = None
+        last_state = "unknown"
+
+        boot_shot = self._wait_for_boot_screen_clear(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            elapsed_seconds=elapsed_seconds,
+        )
+        if boot_shot:
+            last_shot = boot_shot
+            boot_state = self.classify_visual_state(boot_shot)
+            if boot_state == "gameplay":
+                return MenuNavigationResult(
+                    status="gameplay_entered",
+                    attempts=0,
+                    log=[{"attempt": -1, "action": "boot_wait", "visual_state": boot_state}],
+                    screenshot=boot_shot,
+                    entry_screenshot=boot_shot,
+                    visual_state=boot_state,
+                    gameplay_entered=True,
+                )
+            last_state = boot_state
+
         for attempt in range(self.max_attempts):
             focus_game_window(process_pid=process_pid)
             time.sleep(0.35)
@@ -320,34 +803,587 @@ class MenuNavigator:
                 process_pid=process_pid,
             )
             last_shot = shot
-            if self._is_gameplay_screen(shot):
-                return {
-                    "status": "gameplay_entered",
-                    "attempts": attempt + 1,
-                    "log": log,
-                    "screenshot": shot,
-                }
-            if self._is_menu_screen(shot) or attempt == 0:
-                _send_key_win(0x0D)
-                time.sleep(0.15)
-                _send_key_win(0x20)
-                _click_game_window_center(process_pid=process_pid, artifact_path=artifact_path)
-                log.append(
-                    {
-                        "attempt": attempt,
-                        "action": "menu_dismiss",
-                        "visual_state": shot.get("visual_state"),
-                    }
+            visual_state = self.classify_visual_state(shot)
+            last_state = visual_state
+
+            if visual_state == "gameplay":
+                return MenuNavigationResult(
+                    status="gameplay_entered",
+                    attempts=attempt + 1,
+                    log=log,
+                    screenshot=shot,
+                    entry_screenshot=shot,
+                    visual_state=visual_state,
+                    gameplay_entered=True,
                 )
-                time.sleep(1.8)
+
+            if visual_state == "loading":
+                log.append({"attempt": attempt, "action": "wait_loading", "visual_state": visual_state})
+                time.sleep(2.0)
                 continue
-            log.append({"attempt": attempt, "action": "observe", "visual_state": shot.get("visual_state")})
+
+            action = self._dismiss_menu(
+                shot=shot,
+                attempt=attempt,
+                artifact_path=artifact_path,
+                process_pid=process_pid,
+            )
+            log.append({"attempt": attempt, "action": action, "visual_state": visual_state})
+            time.sleep(2.0)
+
+        status = "stuck_in_menu" if last_state == "menu" else "unknown"
+        if last_state == "loading" or (
+            last_shot and self._is_black_screen(last_shot)
+        ):
+            status = "black_screen"
+        return MenuNavigationResult(
+            status=status,
+            attempts=self.max_attempts,
+            log=log,
+            screenshot=last_shot,
+            visual_state=last_state,
+            gameplay_entered=False,
+        )
+
+    def detect_and_enter_gameplay(
+        self,
+        *,
+        artifact_path: Path,
+        process_pid: Optional[int],
+        capture_screenshot: Callable[..., Dict[str, Any]],
+        elapsed_seconds: float,
+    ) -> Dict[str, Any]:
+        """Backward-compatible dict result for runtime_observation_sandbox."""
+        return self.navigate_to_gameplay(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            elapsed_seconds=elapsed_seconds,
+        ).to_dict()
+
+
+class EvidenceQualityError(RuntimeError):
+    """Raised when PRO mode cannot accept a screenshot as gameplay evidence."""
+
+
+class CaptureFailureError(EvidenceQualityError):
+    """PRO game_window capture failed after retries."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        requirement_id: str = "",
+        phase: str = "",
+        capture_scope_last: str = "",
+        probe_phase: str = "tagged_capture",
+    ) -> None:
+        super().__init__(message)
+        self.requirement_id = requirement_id
+        self.phase = phase
+        self.capture_scope_last = capture_scope_last
+        self.probe_phase = probe_phase
+
+
+def build_capture_failure_gv(
+    exc: CaptureFailureError,
+    *,
+    process_pid: Optional[int] = None,
+) -> Dict[str, Any]:
+    from app.godot_runtime.failure_taxonomy import classify_capture_failure
+
+    failure = classify_capture_failure(
+        window_detected=process_pid is not None,
+        process_alive=process_pid is not None,
+        capture_scope_last=exc.capture_scope_last,
+        capture_retries_exhausted=True,
+        probe_phase=exc.probe_phase,
+        requirement_id=exc.requirement_id,
+        phase=exc.phase,
+    )
+    return {
+        "mode": AUTOMATED_GAMEPLAY_VERSION,
+        "gameplay_entered": False,
+        "failure_reason_code": failure.code,
+        "failure_reason_ar": failure.reason_ar,
+        "failure_evidence": failure.evidence,
+        "terminal_classify": "capture_pipeline",
+        "l4_level": "L3",
+        "automated_l4_level": "L3",
+    }
+
+
+@dataclass
+class RequirementResult:
+    req_id: str
+    verified: bool
+    confidence: float = 0.0
+    reason: str = ""
+    btec_criteria: List[str] = field(default_factory=list)
+    before_screenshot: Optional[Dict[str, Any]] = None
+    after_screenshot: Optional[Dict[str, Any]] = None
+    detail: str = ""
+
+    def to_dict(self) -> Dict[str, Any]:
         return {
-            "status": "stuck_in_menu" if last_shot and self._is_menu_screen(last_shot) else "unknown",
-            "attempts": self.max_attempts,
-            "log": log,
-            "screenshot": last_shot,
+            "req_id": self.req_id,
+            "verified": self.verified,
+            "confidence": self.confidence,
+            "reason": self.reason,
+            "btec_criteria": list(self.btec_criteria),
+            "detail": self.detail,
+            "before_screenshot": self.before_screenshot,
+            "after_screenshot": self.after_screenshot,
         }
+
+
+@dataclass
+class EvidencePackage:
+    submission_id: str = ""
+    results: List[RequirementResult] = field(default_factory=list)
+    gameplay_entered: bool = False
+    screenshots: List[Dict[str, Any]] = field(default_factory=list)
+    version: str = PLAYTEST_ORCHESTRATOR_VERSION
+
+    def get_result(self, req_id: str) -> Optional[RequirementResult]:
+        for row in self.results:
+            if row.req_id == req_id:
+                return row
+        return None
+
+    def verified_mechanic_ids(self) -> List[str]:
+        mechanics = ("player_movement", "player_jump", "score_system", "win_lose_condition")
+        return [m for m in mechanics if (r := self.get_result(m)) and r.verified]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "version": self.version,
+            "submission_id": self.submission_id,
+            "gameplay_entered": self.gameplay_entered,
+            "results": [r.to_dict() for r in self.results],
+            "screenshots": self.screenshots,
+            "mechanics_verified_count": len(self.verified_mechanic_ids()),
+        }
+
+    def to_movement_verification_dict(self) -> Dict[str, Any]:
+        movement = self.get_result("player_movement")
+        jump = self.get_result("player_jump")
+        score = self.get_result("score_system")
+        movement_ok = bool(self.gameplay_entered and movement and movement.verified)
+        jump_ok = bool(self.gameplay_entered and jump and jump.verified)
+        score_ok = bool(self.gameplay_entered and score and score.verified)
+        mechanics = int(movement_ok) + int(jump_ok) + int(score_ok)
+        l4_level = calculate_l4_level(
+            gameplay_entered=self.gameplay_entered,
+            mechanics_verified_count=mechanics,
+        )
+        shots = []
+        for row in self.results:
+            if row.before_screenshot:
+                shots.append(row.before_screenshot)
+            if row.after_screenshot:
+                shots.append(row.after_screenshot)
+        h_shift = 0.0
+        v_shift = 0.0
+        if movement and movement.detail.startswith("h_shift="):
+            try:
+                h_shift = float(movement.detail.split("=", 1)[1])
+            except ValueError:
+                h_shift = 0.0
+        if jump and jump.detail.startswith("v_shift="):
+            try:
+                v_shift = float(jump.detail.split("=", 1)[1])
+            except ValueError:
+                v_shift = 0.0
+        return {
+            "version": MOVEMENT_VERIFY_VERSION,
+            "movement": movement_ok,
+            "jump": jump_ok,
+            "score_change": score_ok,
+            "horizontal_shift": h_shift,
+            "vertical_shift": v_shift,
+            "mechanics_verified_count": mechanics,
+            "l4_level": l4_level,
+            "automated_l4_level": l4_level,
+            "player_movement_verified": movement_ok,
+            "jump_detected": jump_ok,
+            "score_change_detected": score_ok,
+            "screenshots": shots,
+            "requirement_results": [r.to_dict() for r in self.results],
+        }
+
+
+def _execute_input_action(
+    action: Any,
+    *,
+    artifact_path: Path,
+    process_pid: Optional[int],
+) -> str:
+    from app.requirement_extractor import InputAction
+
+    if not isinstance(action, InputAction):
+        return "skipped"
+    if action.action == "click_center":
+        _click_game_window_center(process_pid=process_pid, artifact_path=artifact_path)
+        return "click_center"
+    if action.action == "key":
+        key = (action.key or "Return").upper()
+        vk_map = {"RETURN": 0x0D, "ENTER": 0x0D, "SPACE": 0x20}
+        vk = vk_map.get(key, 0x0D)
+        _send_key_win(vk)
+        return f"key:{key}"
+    if action.action == "key_hold":
+        label = (action.key or "D").upper()
+        _key_hold(label, max(action.duration, 0.1))
+        return f"key_hold:{label}"
+    return "unknown"
+
+
+def _hud_ocr_text(shot: Dict[str, Any]) -> str:
+    path = str(shot.get("path") or "")
+    if not path or not Path(path).is_file():
+        return _shot_ocr_text(shot)
+    try:
+        from PIL import Image  # type: ignore
+
+        img = Image.open(path).convert("RGB")
+        w, h = img.size
+        hud = img.crop((0, 0, w, max(1, int(h * 0.15))))
+        tmp = path + ".hud.png"
+        hud.save(tmp)
+        text = _ocr_image_path(tmp)
+        try:
+            Path(tmp).unlink(missing_ok=True)
+        except OSError:
+            pass
+        return text
+    except Exception:
+        return _shot_ocr_text(shot)
+
+
+def _extract_numbers(text: str) -> Tuple[int, ...]:
+    import re
+
+    nums = re.findall(r"\d+", text or "")
+    return tuple(int(n) for n in nums)
+
+
+class RequirementVerifier:
+    """Verify individual requirement tests from before/after screenshots."""
+
+    def _horizontal_centroid_shift(self, before: Dict[str, Any], after: Dict[str, Any]) -> float:
+        h, _ = _center_band_shift(str(before.get("path") or ""), str(after.get("path") or ""))
+        return h
+
+    def _vertical_centroid_shift(self, before: Dict[str, Any], after: Dict[str, Any]) -> float:
+        _, v = _center_band_shift(str(before.get("path") or ""), str(after.get("path") or ""))
+        return v
+
+    def verify_pixel_shift_horizontal(
+        self,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        threshold: float,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        if not gameplay_entered:
+            return False, 0.0, "gameplay_not_entered"
+        shift = self._horizontal_centroid_shift(before, after)
+        conf = min(shift / max(threshold, 1e-6), 1.0)
+        return shift > threshold, conf, f"h_shift={shift:.3f}"
+
+    def verify_pixel_shift_vertical(
+        self,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        threshold: float,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        if not gameplay_entered:
+            return False, 0.0, "gameplay_not_entered"
+        shift = self._vertical_centroid_shift(before, after)
+        conf = min(shift / max(threshold, 1e-6), 1.0)
+        return shift > threshold, conf, f"v_shift={shift:.3f}"
+
+    def verify_ocr_hud_change(
+        self,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        threshold: float,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        if not gameplay_entered:
+            return False, 0.0, "gameplay_not_entered"
+        nums_b = _extract_numbers(_hud_ocr_text(before))
+        nums_a = _extract_numbers(_hud_ocr_text(after))
+        changed = bool(nums_a) and nums_b != nums_a
+        conf = threshold if changed else 0.0
+        return changed, conf, f"hud={nums_b}→{nums_a}"
+
+    def verify_ocr_endgame_screen(
+        self,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        threshold: float,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        if not gameplay_entered:
+            return False, 0.0, "gameplay_not_entered"
+        text = _shot_ocr_text(after)
+        markers = ("win", "victory", "game over", "lose", "فوز", "خسارة", "حاول")
+        found = any(m in text for m in markers)
+        conf = threshold if found else 0.0
+        return found, conf, f"endgame_text={found}"
+
+    def verify_scene_change(
+        self,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        threshold: float,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        _ = gameplay_entered
+        try:
+            from PIL import Image  # type: ignore
+            from skimage.metrics import structural_similarity as ssim  # type: ignore
+            import numpy as np
+
+            b_img = Image.open(str(before.get("path") or "")).convert("L")
+            a_img = Image.open(str(after.get("path") or "")).convert("L")
+            if b_img.size != a_img.size:
+                a_img = a_img.resize(b_img.size)
+            b = np.array(b_img)
+            a = np.array(a_img)
+            score, _ = ssim(b, a, full=True)
+            delta = 1.0 - float(score)
+            return delta > threshold, delta, f"ssim_delta={delta:.3f}"
+        except Exception:
+            h = self._horizontal_centroid_shift(before, after)
+            v = self._vertical_centroid_shift(before, after)
+            delta = max(h, v) / 100.0
+            return delta > threshold, delta, f"fallback_delta={delta:.3f}"
+
+    def verify(
+        self,
+        method: str,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        threshold: float,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        dispatch = {
+            "pixel_shift_horizontal": self.verify_pixel_shift_horizontal,
+            "pixel_shift_vertical": self.verify_pixel_shift_vertical,
+            "ocr_hud_change": self.verify_ocr_hud_change,
+            "ocr_endgame_screen": self.verify_ocr_endgame_screen,
+            "scene_change": self.verify_scene_change,
+        }
+        fn = dispatch.get(method)
+        if fn is None:
+            return False, 0.0, f"unsupported_method:{method}"
+        return fn(before, after, threshold, gameplay_entered=gameplay_entered)
+
+
+class PlaytestOrchestrator:
+    """Run RequirementPlan against a live game window."""
+
+    def __init__(
+        self,
+        *,
+        pro_mode: bool = True,
+        verifier: Optional[RequirementVerifier] = None,
+    ) -> None:
+        self.pro_mode = pro_mode
+        self.verifier = verifier or RequirementVerifier()
+        self.gameplay_entered = False
+
+    def _capture_tagged(
+        self,
+        *,
+        artifact_path: Path,
+        process_pid: Optional[int],
+        capture_screenshot: Callable[..., Dict[str, Any]],
+        req_id: str,
+        phase: str,
+        elapsed_seconds: float,
+    ) -> Dict[str, Any]:
+        from app.godot_runtime.retry_policy import CAPTURE_RETRY_INTERVAL_S, CAPTURE_TAGGED_MAX_ATTEMPTS
+
+        last_shot: Dict[str, Any] = {}
+        for attempt in range(CAPTURE_TAGGED_MAX_ATTEMPTS):
+            last_shot = dict(
+                capture_screenshot(
+                    artifact_path,
+                    label=f"req_{req_id}_{phase}",
+                    elapsed_seconds=elapsed_seconds,
+                    process_pid=process_pid,
+                    requirement_id=req_id,
+                    phase=phase,
+                )
+                or {}
+            )
+            last_shot["requirement_id"] = req_id
+            last_shot["phase"] = phase
+            scope = str(last_shot.get("capture_scope") or "game_window")
+            last_shot["capture_scope"] = scope
+            if not self.pro_mode or scope == "game_window":
+                return last_shot
+            if attempt + 1 < CAPTURE_TAGGED_MAX_ATTEMPTS:
+                try:
+                    from app.window_focus_manager import focus_game_window
+
+                    focus_game_window(process_pid=process_pid)
+                except Exception:
+                    pass
+                time.sleep(CAPTURE_RETRY_INTERVAL_S)
+
+        raise CaptureFailureError(
+            f"game_window capture failed for {req_id}/{phase} — "
+            "desktop_fallback not permitted in PRO mode",
+            requirement_id=req_id,
+            phase=phase,
+            capture_scope_last=str(last_shot.get("capture_scope") or "desktop_fallback"),
+            probe_phase="tagged_capture",
+        )
+
+    def _test_requirement(
+        self,
+        req: Any,
+        *,
+        artifact_path: Path,
+        process_pid: Optional[int],
+        capture_screenshot: Callable[..., Dict[str, Any]],
+        elapsed_seconds: float,
+    ) -> RequirementResult:
+        from app.requirement_extractor import RequirementTest
+
+        if not isinstance(req, RequirementTest):
+            return RequirementResult(req_id="unknown", verified=False, reason="invalid_requirement")
+
+        before = self._capture_tagged(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            req_id=req.req_id,
+            phase="before",
+            elapsed_seconds=elapsed_seconds,
+        )
+        for action in req.input_sequence:
+            _execute_input_action(action, artifact_path=artifact_path, process_pid=process_pid)
+            time.sleep(0.15)
+        after = self._capture_tagged(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            req_id=req.req_id,
+            phase="after",
+            elapsed_seconds=elapsed_seconds + 0.5,
+        )
+        verified, confidence, detail = self.verifier.verify(
+            req.verification_method,
+            before,
+            after,
+            req.success_threshold,
+            gameplay_entered=self.gameplay_entered or req.req_id == "menu_navigation",
+        )
+        return RequirementResult(
+            req_id=req.req_id,
+            verified=verified,
+            confidence=confidence,
+            reason="" if verified else detail,
+            btec_criteria=list(req.btec_criteria),
+            before_screenshot=before,
+            after_screenshot=after,
+            detail=detail,
+        )
+
+    def _package_from_results(
+        self,
+        *,
+        submission_id: str,
+        gameplay_entered: bool,
+        results: List[RequirementResult],
+        screenshots: Optional[List[Dict[str, Any]]] = None,
+    ) -> EvidencePackage:
+        return EvidencePackage(
+            submission_id=submission_id,
+            results=results,
+            gameplay_entered=gameplay_entered,
+            screenshots=screenshots or [],
+        )
+
+    def run(
+        self,
+        *,
+        artifact_path: Path,
+        process_pid: Optional[int],
+        capture_screenshot: Callable[..., Dict[str, Any]],
+        plan: Any,
+        elapsed_seconds: float,
+        gameplay_entered: bool = False,
+    ) -> EvidencePackage:
+        from app.requirement_extractor import RequirementPlan
+
+        if not isinstance(plan, RequirementPlan):
+            raise TypeError("plan must be a RequirementPlan")
+
+        self.gameplay_entered = gameplay_entered
+        results: List[RequirementResult] = []
+        screenshots: List[Dict[str, Any]] = []
+
+        for req in plan.requirements:
+            if req.req_id == "menu_navigation" and self.gameplay_entered:
+                results.append(
+                    RequirementResult(
+                        req_id=req.req_id,
+                        verified=True,
+                        confidence=1.0,
+                        reason="",
+                        btec_criteria=list(req.btec_criteria),
+                        detail="skipped_menu_already_entered",
+                    )
+                )
+                continue
+
+            if not self.gameplay_entered and req.req_id != "menu_navigation":
+                results.append(
+                    RequirementResult(
+                        req_id=req.req_id,
+                        verified=False,
+                        confidence=0.0,
+                        reason="gameplay_not_entered — skipped",
+                        btec_criteria=list(req.btec_criteria),
+                    )
+                )
+                continue
+
+            result = self._test_requirement(
+                req,
+                artifact_path=artifact_path,
+                process_pid=process_pid,
+                capture_screenshot=capture_screenshot,
+                elapsed_seconds=elapsed_seconds,
+            )
+            results.append(result)
+            if result.before_screenshot:
+                screenshots.append(result.before_screenshot)
+            if result.after_screenshot:
+                screenshots.append(result.after_screenshot)
+            if req.req_id == "menu_navigation" and result.verified:
+                self.gameplay_entered = True
+
+        return self._package_from_results(
+            submission_id=plan.submission_id,
+            gameplay_entered=self.gameplay_entered,
+            results=results,
+            screenshots=screenshots,
+        )
 
 
 class PlayerMovementVerifier:
@@ -446,27 +1482,62 @@ def run_automated_gameplay_verification(
     process_pid: Optional[int],
     capture_screenshot: Callable[..., Dict[str, Any]],
     elapsed_seconds: float,
+    requirement_plan: Optional[Any] = None,
+    pro_mode: bool = True,
+    engine_id: Optional[str] = None,
+    process_crashed: bool = False,
 ) -> Dict[str, Any]:
-    """Menu navigation then movement verification — PRO automated L4 path."""
-    nav = MenuNavigator(max_attempts=5)
-    nav_result = nav.detect_and_enter_gameplay(
-        artifact_path=artifact_path,
-        process_pid=process_pid,
-        capture_screenshot=capture_screenshot,
-        elapsed_seconds=elapsed_seconds,
-    )
-    gameplay_entered = nav_result.get("status") == "gameplay_entered"
-    movement = PlayerMovementVerifier().verify(
-        artifact_path=artifact_path,
-        process_pid=process_pid,
-        capture_screenshot=capture_screenshot,
-        elapsed_seconds=elapsed_seconds + 2.0,
-    )
+    """Menu navigation then requirement-driven playtest — PRO automated L4 path."""
+    from app.godot_runtime.retry_policy import GodotRetryPolicy, is_godot_runtime_path
 
-    extra_shots = []
-    if isinstance(nav_result.get("screenshot"), dict):
-        extra_shots.append(nav_result["screenshot"])
-    extra_shots.extend(movement.get("screenshots") or [])
+    if is_godot_runtime_path(artifact_path, engine_id=engine_id):
+        outcome = GodotRetryPolicy().run(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            elapsed_seconds=elapsed_seconds,
+            requirement_plan=requirement_plan,
+            pro_mode=pro_mode,
+            process_crashed=process_crashed,
+        )
+        nav_result = outcome.nav_result
+        gameplay_entered = outcome.gameplay_entered
+        package = outcome.package
+        movement = outcome.movement
+    else:
+        from app.requirement_extractor import RequirementExtractor
+
+        nav = MenuNavigator(max_attempts=MenuNavigator.MAX_ATTEMPTS)
+        nav_result = nav.navigate_to_gameplay(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            elapsed_seconds=elapsed_seconds,
+        )
+        gameplay_entered = nav_result.gameplay_entered
+        plan = requirement_plan or RequirementExtractor().default_plan()
+        package = PlaytestOrchestrator(pro_mode=pro_mode).run(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            plan=plan,
+            elapsed_seconds=elapsed_seconds + 2.0,
+            gameplay_entered=gameplay_entered,
+        )
+        movement = package.to_movement_verification_dict()
+        if not gameplay_entered:
+            movement["player_movement_verified"] = False
+            movement["jump_detected"] = False
+            movement["score_change_detected"] = False
+            movement["mechanics_verified_count"] = 0
+            movement["l4_level"] = "L3"
+            movement["automated_l4_level"] = "L3"
+        outcome = None
+
+    extra_shots: List[Dict[str, Any]] = []
+    if isinstance(nav_result.screenshot, dict):
+        extra_shots.append(nav_result.screenshot)
+    extra_shots.extend(package.screenshots or movement.get("screenshots") or [])
 
     gameplay_window_shots = sum(
         1
@@ -476,9 +1547,12 @@ def run_automated_gameplay_verification(
         and str(s.get("capture_scope") or "") == "game_window"
     )
 
-    l4_level = str(movement.get("l4_level") or "L3")
-    if gameplay_entered and l4_level == "L3" and movement.get("mechanics_verified_count", 0) >= 1:
-        l4_level = "L4_partial"
+    l4_level = calculate_l4_level(
+        gameplay_entered=gameplay_entered,
+        mechanics_verified_count=int(movement.get("mechanics_verified_count") or 0),
+    )
+    movement["l4_level"] = l4_level
+    movement["automated_l4_level"] = l4_level
 
     report: Dict[str, Any] = {
         "version": AUTOMATED_GAMEPLAY_VERSION,
@@ -486,9 +1560,10 @@ def run_automated_gameplay_verification(
         "authority": "automated_l4_verification",
         "platform": sys.platform,
         "status": "completed",
-        "menu_navigation": nav_result,
+        "menu_navigation": nav_result.to_dict(),
         "gameplay_entered": gameplay_entered,
         "movement_verification": movement,
+        "evidence_package": package.to_dict(),
         "l4_level": l4_level,
         "automated_l4_level": l4_level,
         "player_movement_verified": bool(movement.get("player_movement_verified")),
@@ -505,6 +1580,36 @@ def run_automated_gameplay_verification(
         ),
         "extra_screenshots": extra_shots,
     }
+    if outcome is not None:
+        report["godot_retry_attempts"] = outcome.retry_attempts
+        if outcome.failure is not None:
+            report["failure_reason_code"] = outcome.failure.code
+            report["failure_reason_ar"] = outcome.failure.reason_ar
+            report["failure_evidence"] = outcome.failure.evidence
+        elif not gameplay_entered:
+            from app.godot_runtime.failure_taxonomy import classify_runtime_failure
+
+            terminal = classify_runtime_failure(
+                window_detected=process_pid is not None,
+                black_screen_duration_s=0,
+                gameplay_entered=False,
+                mechanics_verified_count=0,
+                menu_status=str(nav_result.status or nav_result.visual_state or ""),
+                visual_response=False,
+                server_dialog_detected=False,
+                process_crashed=process_crashed,
+                boot_timed_out=False,
+            )
+            if terminal is not None:
+                report["failure_reason_code"] = terminal.code
+                report["failure_reason_ar"] = terminal.reason_ar
+                report["failure_evidence"] = terminal.evidence
+    try:
+        from app.runtime_evidence_gate import BTECCriterionMapper
+
+        report["gate_decisions"] = BTECCriterionMapper(grading_mode="pro").evaluate(report)
+    except Exception:
+        pass
     return report
 
 
@@ -536,55 +1641,81 @@ def build_gameplay_checks_from_verification(verification: Dict[str, Any]) -> Dic
     }
 
 
+def calculate_l4_level(*, gameplay_entered: bool, mechanics_verified_count: int) -> str:
+    """L3 / L4_partial / L4_full from gameplay entry and verified mechanic count."""
+    if not gameplay_entered:
+        return "L3"
+    if mechanics_verified_count >= 3:
+        return "L4_full"
+    if mechanics_verified_count >= 1:
+        return "L4_partial"
+    return "L3"
+
+
+def count_test_document_entries(inventory: Dict[str, Any]) -> int:
+    """Count test-plan / survey / questionnaire document paths (C.P6 min entries)."""
+    paths = inventory.get("intake_relative_paths") or inventory.get("submission_paths") or []
+    tokens = (
+        "test plan",
+        "bug log",
+        "استبيان",
+        "اختبار",
+        "survey",
+        "questionnaire",
+        "test_plan",
+        "testing",
+    )
+    count = 0
+    seen: set[str] = set()
+    for raw in paths:
+        low = str(raw).lower().replace("\\", "/")
+        if low in seen:
+            continue
+        seen.add(low)
+        if any(tok in low for tok in tokens):
+            count += 1
+            continue
+        if low.endswith((".pdf", ".docx", ".doc")) and any(
+            x in low for x in ("test", "اختبار", "survey", "استبيان", "plan")
+        ):
+            count += 1
+    assets = inventory.get("assets_detected") or inventory.get(
+        "evidence_completeness_gate", {}
+    ).get("assets_detected") or {}
+    if assets.get("testing_documentation"):
+        count = max(count, 2)
+    testing = inventory.get("testing_evidence") or {}
+    status = str(testing.get("status") or "").lower()
+    if status in ("partial", "present", "complete", "detected"):
+        count = max(count, 1)
+    entries = testing.get("entries") or testing.get("documents") or []
+    if isinstance(entries, list) and entries:
+        count = max(count, len(entries))
+    return count
+
+
 def assess_automated_l4_gate(
     verification: Optional[Dict[str, Any]],
     *,
     test_document_present: bool = False,
+    test_doc_entries: int = 0,
     functional_smoke_pass: bool = False,
+    teacher_confirmed: Optional[Dict[str, bool]] = None,
+    grading_mode: str | None = None,
 ) -> Dict[str, Any]:
-    """Criterion-level automated L4 gate decisions (no human)."""
+    """Criterion-level automated L4 gate decisions (Option C policy)."""
+    from app.runtime_evidence_gate import BTECCriterionMapper
+
     gv = verification or {}
-    l4 = str(gv.get("l4_level") or gv.get("automated_l4_level") or "L3")
-    mechanics = int(gv.get("mechanics_verified_count") or 0)
-    shots = int(gv.get("gameplay_window_screenshots") or 0)
-    movement = bool(gv.get("player_movement_verified"))
-    delta = float(gv.get("visual_delta_score") or 0)
-
-    l4_full = (
-        functional_smoke_pass
-        and movement
-        and mechanics >= 2
-        and shots >= 2
-        and l4 == "L4_full"
+    if test_doc_entries <= 0 and test_document_present:
+        test_doc_entries = 1
+    mapper = BTECCriterionMapper(grading_mode=grading_mode)
+    return mapper.evaluate(
+        gv,
+        test_doc_entries=test_doc_entries,
+        teacher_confirmed=teacher_confirmed,
+        functional_smoke_pass=functional_smoke_pass,
     )
-    l4_partial = (
-        l4 in ("L4_full", "L4_partial")
-        and (movement or mechanics >= 1 or bool(gv.get("gameplay_entered")))
-    ) or (
-        functional_smoke_pass
-        and (
-            l4 in ("L4_full", "L4_partial")
-            or (mechanics >= 1 and shots >= 1)
-            or (delta >= VISUAL_DELTA_L4_THRESHOLD and movement)
-        )
-    )
-
-    return {
-        "l4_level": l4,
-        "l4_full": l4_full,
-        "l4_partial": l4_partial and not l4_full,
-        "criterion_pass": {
-            "P5": l4_full or l4_partial,
-            "P6": (l4_full or l4_partial) and test_document_present,
-            "M3": l4_full and test_document_present,
-            "D3": l4_full and test_document_present,
-        },
-        "summary_ar": (
-            f"L4 آلي ({l4}) — ميكانيكا={mechanics} لقطات={shots}"
-            if l4_partial or l4_full
-            else "L3 — إطلاق بدون gameplay مؤكد"
-        ),
-    }
 
 
 def _test_document_present(inventory: Dict[str, Any]) -> bool:
@@ -676,10 +1807,23 @@ def resolve_gameplay_evidence_level(
 
 def format_agent_play_summary_ar(level: str, verification: Optional[Dict[str, Any]] = None) -> str:
     gv = verification or {}
+    failure_ar = str(gv.get("failure_reason_ar") or "").strip()
+    failure_code = str(gv.get("failure_reason_code") or "").strip()
+    if failure_ar:
+        prefix = f"لا — {failure_code}: {failure_ar}" if failure_code else f"لا — {failure_ar}"
+        return prefix
+    if gv.get("gameplay_entered") is False:
+        menu = gv.get("menu_navigation") or {}
+        reason = str(menu.get("status") or menu.get("visual_state") or "unknown")
+        return f"لا — لم يدخل gameplay (إطلاق فقط)\nسبب: {reason}"
+    if gv.get("gameplay_entered") is not True:
+        l4 = str(gv.get("l4_level") or gv.get("automated_l4_level") or "")
+        if l4 in ("L4_full", "L4_partial"):
+            return f"لا — {l4} غير مؤكد (gameplay_entered غير مثبت)"
     l4 = str(gv.get("l4_level") or gv.get("automated_l4_level") or "")
-    if l4 == "L4_full":
+    if gv.get("gameplay_entered") is True and l4 == "L4_full":
         return "نعم — L4 كامل (حركة + قفز/نقاط — Gate مفتوح)"
-    if l4 == "L4_partial":
+    if gv.get("gameplay_entered") is True and l4 == "L4_partial":
         return "نعم — L4 جزئي (ميكانيكا أساسية — Gate مفتوح لـ C.P5)"
     labels = {
         "L5": "نعم — L5 (Gameplay مؤكد / playtest بشري)",
@@ -707,19 +1851,31 @@ def build_gameplay_verification_summary(
     smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
         "functional_smoke"
     ) or {}
+    grading_mode = None
+    if isinstance(grading_result, dict):
+        grading_mode = grading_result.get("grading_mode")
     gate = assess_automated_l4_gate(
         gv,
         test_document_present=_test_document_present(inv),
+        test_doc_entries=count_test_document_entries(inv),
         functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
+        grading_mode=grading_mode,
     )
+    agent_label = format_agent_play_summary_ar(level, gv)
+    from app.report_feedback_formatter import build_godot_runtime_outcome
+
+    godot_outcome = build_godot_runtime_outcome(gv, gate, agent_play_label_ar=agent_label)
     return {
         "evidence_level": level,
         "l4_level": gv.get("l4_level") or gate.get("l4_level"),
-        "agent_play_label_ar": format_agent_play_summary_ar(level, gv),
+        "agent_play_label_ar": agent_label,
         "gameplay_agent_used": level in ("L3", "L4", "L5") or bool(gv.get("gameplay_entered")),
         "visual_delta_score": trace.get("visual_delta_score") or gv.get("visual_delta_score"),
         "runtime_verified": level in ("L4", "L5") or gate.get("l4_full") or gate.get("l4_partial"),
         "player_movement_verified": gv.get("player_movement_verified"),
         "automated_l4_gate": gate,
         "gameplay_entered": gv.get("gameplay_entered"),
+        "failure_reason_code": gv.get("failure_reason_code"),
+        "failure_reason_ar": gv.get("failure_reason_ar"),
+        "godot_runtime_outcome": godot_outcome,
     }

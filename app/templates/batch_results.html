@@ -661,6 +661,31 @@
         margin-top: 4px;
         color: rgba(255, 255, 255, 0.55);
     }
+    .godot-runtime-outcome {
+        margin: 0.75rem 0 1rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(167, 139, 250, 0.45);
+        border-radius: 0.5rem;
+        background: rgba(91, 33, 182, 0.12);
+        text-align: right;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.88);
+    }
+    .godot-runtime-outcome-title {
+        font-weight: 700;
+        color: #c4b5fd;
+        margin-bottom: 0.35rem;
+    }
+    .godot-failure-badge {
+        display: inline-block;
+        padding: 0.1rem 0.45rem;
+        border-radius: 0.25rem;
+        background: rgba(251, 191, 36, 0.2);
+        color: #fcd34d;
+        font-family: ui-monospace, monospace;
+        font-size: 0.7rem;
+        margin-left: 0.35rem;
+    }
     .diag-coverage-note {
         font-size: 12px;
         color: rgba(255, 255, 255, 0.55);
@@ -1233,6 +1258,32 @@
                                 </tbody>
                             </table>
                             {% endif %}
+                            {% if result.explainability and result.explainability.godot_runtime_outcome %}
+                            {% set gro = result.explainability.godot_runtime_outcome %}
+                            <div class="godot-runtime-outcome">
+                                <div class="godot-runtime-outcome-title">نتيجة Agent play (Godot)</div>
+                                <p>{{ gro.agent_play_result_ar }}</p>
+                                <div class="godot-runtime-outcome-title" style="margin-top:0.5rem">سبب الفشل النهائي</div>
+                                <p>
+                                    {% if gro.failure_reason_code %}
+                                    <span class="godot-failure-badge">{{ gro.failure_reason_code }}</span>
+                                    {% endif %}
+                                    {{ gro.final_failure_reason_ar }}
+                                </p>
+                                <div class="godot-runtime-outcome-title" style="margin-top:0.5rem">ملخص الأدلة (runtime)</div>
+                                <ul style="margin:0;padding-right:1.1rem">
+                                    {% for line in gro.evidence_summary_ar or [] %}
+                                    <li>{{ line }}</li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="godot-runtime-outcome-title" style="margin-top:0.5rem">الأثر على C.P5 / C.P6</div>
+                                <ul style="margin:0;padding-right:1.1rem">
+                                    {% for line in gro.impact_cp5_cp6_ar or [] %}
+                                    <li>{{ line }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
                             {% if result.explainability and result.explainability.runtime_evidence_package and result.explainability.runtime_evidence_package.requirement_confidence %}
                             {% set rep = result.explainability.runtime_evidence_package %}
                             {% if rep.requirement_confidence %}
@@ -1261,6 +1312,9 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                            <p class="diag-coverage-note text-amber-700 text-xs mt-2">
+                                ⚠️ نسب «ثقة تحليل ملفات» لا تُثبت gameplay — Gate يعتمد على التشغيل الفعلي (L4/L5) فقط.
+                            </p>
                             {% endif %}
                             {% if rep.screenshots %}
                             <p class="diag-coverage-note diag-runtime-note">
