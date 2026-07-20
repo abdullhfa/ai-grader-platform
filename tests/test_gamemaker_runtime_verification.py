@@ -93,6 +93,19 @@ def test_assess_blocks_launch_without_data_win(tmp_path: Path):
     smoke = smoke_test_windows_exe(exe, session_ctx={"submission_root": str(tmp_path)})
     assert smoke["attempted"] is False
     assert smoke["smoke_result"] == "skipped_missing_data_win"
+    assert smoke["verification_outcome"] == "NOT_VERIFIED"
+    assert smoke["academic_outcome"] == "PENDING"
+
+
+def test_smoke_early_returns_always_have_governed_result(tmp_path: Path):
+    missing = smoke_test_windows_exe(tmp_path / "missing.exe")
+    non_exe = tmp_path / "readme.txt"
+    non_exe.write_text("x", encoding="utf-8")
+    invalid = smoke_test_windows_exe(non_exe)
+    for result, expected in ((missing, "skipped_missing_executable"), (invalid, "skipped_not_executable")):
+        assert result["smoke_result"] == expected
+        assert result["verification_outcome"] == "NOT_VERIFIED"
+        assert result["academic_outcome"] == "PENDING"
 
 
 def test_materialize_data_win_from_upload_zip(tmp_path: Path):

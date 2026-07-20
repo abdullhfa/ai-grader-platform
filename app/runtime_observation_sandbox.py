@@ -580,6 +580,9 @@ def smoke_test_windows_exe(
         "artifact": path.name,
         "type": "exe",
         "attempted": False,
+        "smoke_result": "not_attempted",
+        "verification_outcome": "NOT_VERIFIED",
+        "academic_outcome": "PENDING",
         "signals": {},
         "runtime_screenshots": [],
         "interaction_trace": None,
@@ -588,15 +591,19 @@ def smoke_test_windows_exe(
     }
     if not _safe_path(path):
         out["errors"].append("file_missing_or_empty")
+        out["smoke_result"] = "skipped_missing_executable"
         return out
     if path.suffix.lower() != ".exe":
         out["errors"].append("not_exe")
+        out["smoke_result"] = "skipped_not_executable"
         return out
     if "console" in path.name.lower():
         out["errors"].append("skipped_console_wrapper")
+        out["smoke_result"] = "skipped_console_wrapper"
         return out
     if sys.platform != "win32":
         out["errors"].append("smoke_test_windows_only")
+        out["smoke_result"] = "runtime_environment_unsupported"
         out["signals"] = {"runtime_launch_attempted": False, "crash": "unknown"}
         return out
 
@@ -624,6 +631,7 @@ def smoke_test_windows_exe(
                 out["attempted"] = False
                 out["launch_cwd"] = str(launch_cwd)
                 out["smoke_result"] = "skipped_missing_data_win"
+                out["skip_reason"] = "missing_data_win"
                 out["errors"].append("gamemaker_missing_data_win")
                 out["signals"] = {
                     "runtime_launch_attempted": False,
