@@ -24,6 +24,7 @@ MENU_KEYWORDS = (
     "press",
 )
 MENU_VISUAL_STATES = frozenset({"main_menu_candidate", "static_ui", "loading_screen"})
+MENU_NAV_WINDOW_LOST = "window_lost"
 HUD_KEYWORDS = (
     "score",
     "points",
@@ -320,6 +321,14 @@ class MenuNavigator:
                 process_pid=process_pid,
             )
             last_shot = shot
+            if "RUNTIME_CAPTURE_LOST" in (shot.get("errors") or []) or shot.get("capture_scope") == "capture_lost":
+                return {
+                    "status": MENU_NAV_WINDOW_LOST,
+                    "reason_code": "RUNTIME_CAPTURE_LOST",
+                    "attempts": attempt + 1,
+                    "log": log,
+                    "screenshot": shot,
+                }
             if self._is_gameplay_screen(shot):
                 return {
                     "status": "gameplay_entered",
