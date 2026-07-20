@@ -1,6 +1,8 @@
 """GameMaker runtime execution — EXE smoke + HTML5 delegation."""
 from __future__ import annotations
 
+import os
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -14,12 +16,32 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
 
         exe = executable.resolve()
         search_root = session.root if session.root else None
+        # The session root is the security boundary.  Never discover sibling uploads.
         if search_root is not None:
-            for anc in [search_root, *list(search_root.parents)[:6]]:
-                if any(anc.rglob("*.yyp")) or any(anc.rglob("*.gml")):
-                    if any(anc.rglob("*.exe")):
-                        search_root = anc
-                        break
+            search_root = search_root.resolve()
+            try:
+                exe.relative_to(search_root)
+            except ValueError:
+                raise ValueError("RUNTIME_EVIDENCE_IDENTITY_MISMATCH: executable outside submission_root")
+
+        # Host execution is prohibited.  A deployment must explicitly provide a
+        # Windows sandbox implementation with isolation, timeout, window/input,
+        # capture, logs and cleanup before an EXE can be considered runnable.
+        sandbox_ready = sys.platform == "win32" and os.environ.get("AI_GRADER_WINDOWS_SANDBOX") == "1"
+        if not sandbox_ready:
+            observation = {
+                "status": "skipped",
+                "contract_id": "gamemaker_exe_smoke",
+                "verification_outcome": "NOT_VERIFIED",
+                "verification_blocker_origin": "SYSTEM",
+                "reason_code": "RUNTIME_ENVIRONMENT_UNSUPPORTED",
+                "runtime_screenshots": [],
+                "errors": ["windows_sandbox_unavailable"],
+            }
+            session.signals["gamemaker_observation"] = observation
+            session.signals["runtime_method"] = "gamemaker_runtime_unavailable"
+            session.status = SessionStatus.SKIPPED
+            return {"success": False, "observation": observation, "skipped": True, "reason": observation["reason_code"]}
         launch_assessment = assess_gamemaker_exe_launch(exe, search_root=search_root)
         runtime_cwd = Path(launch_assessment.get("runtime_cwd") or exe.parent)
         session.signals["gamemaker_runtime_cwd"] = str(runtime_cwd)
