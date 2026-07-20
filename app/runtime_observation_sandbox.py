@@ -179,7 +179,7 @@ def capture_runtime_screenshot(
     process_pid: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
-    Best-effort desktop screenshot capture.
+    Process-owned game-window screenshot capture.
 
     This is visual runtime evidence only; it does not prove gameplay correctness.
     """
@@ -192,7 +192,7 @@ def capture_runtime_screenshot(
         "runtime_session_id": session_id,
         "submission_key": _runtime_submission_key(session_ctx),
         "status": "unavailable",
-        "mode": "desktop_capture_best_effort",
+        "mode": "process_owned_window_capture",
         "path": "",
         "errors": [],
         "authority": "advisory_visual_runtime_only",
@@ -218,24 +218,31 @@ def capture_runtime_screenshot(
             from app.window_focus_manager import (
                 classify_capture_scope,
                 focus_game_window,
+                pin_game_window_for_sandbox,
                 resolve_game_window_bbox,
             )
 
+            pin_game_window_for_sandbox(artifact_path=path, process_pid=process_pid)
             focus_game_window(process_pid=process_pid)
             game_bbox = resolve_game_window_bbox(
                 artifact_path=path,
                 process_pid=process_pid,
             )
+            if not game_bbox:
+                record["errors"].append("RUNTIME_CAPTURE_LOST")
+                record["capture_scope"] = "capture_lost"
+                return record
             capture_bbox = game_bbox
-            image = ImageGrab.grab(bbox=game_bbox) if game_bbox else ImageGrab.grab()
+            image = ImageGrab.grab(bbox=game_bbox)
             record["capture_scope"] = classify_capture_scope(
                 capture_bbox=capture_bbox,
                 game_bbox=game_bbox,
             )
             record["game_window_bbox"] = list(game_bbox) if game_bbox else None
-        except Exception:
-            image = ImageGrab.grab()
-            record["capture_scope"] = "desktop_fallback"
+        except Exception as exc:
+            record["errors"].append(f"RUNTIME_CAPTURE_LOST:{exc.__class__.__name__}")
+            record["capture_scope"] = "capture_lost"
+            return record
         image.save(out_path)
         classified = classify_visual_state_from_image(image)
         stats = classified.get("visual_stats") or compute_extended_visual_stats(image)
@@ -256,8 +263,6 @@ def capture_runtime_screenshot(
             "game_window_detected": bool(game_bbox),
             "process_pid": process_pid,
         })
-        if record.get("capture_scope") != "game_window":
-            record["warnings"] = ["capture_not_strictly_game_window"]
         from app.runtime_screenshot_validation import validate_runtime_screenshot_record
 
         record = validate_runtime_screenshot_record(record)
