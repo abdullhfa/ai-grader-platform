@@ -457,19 +457,38 @@ def run_automated_gameplay_verification(
     elapsed_seconds: float,
 ) -> Dict[str, Any]:
     """Menu navigation then movement verification — PRO automated L4 path."""
-    nav = MenuNavigator(max_attempts=5)
-    nav_result = nav.detect_and_enter_gameplay(
-        artifact_path=artifact_path,
-        process_pid=process_pid,
-        capture_screenshot=capture_screenshot,
-        elapsed_seconds=elapsed_seconds,
-    )
+    nav_result: Dict[str, Any]
+    try:
+        from app.runtime_engines.gamemaker.menu_navigator import MenuNavResult, navigate_menu_deterministic
+        from app.runtime_engines.gamemaker.project_probe import assess_gamemaker_exe_launch
+        from app.window_focus_manager import resolve_game_window_bbox, resolve_game_window_handle
+        is_gamemaker = bool(assess_gamemaker_exe_launch(artifact_path).get("is_gamemaker"))
+        hwnd = resolve_game_window_handle(artifact_path=artifact_path, process_pid=process_pid)
+        rect = resolve_game_window_bbox(artifact_path=artifact_path, process_pid=process_pid)
+        if is_gamemaker and hwnd and rect:
+            result = navigate_menu_deterministic(hwnd, rect)
+            nav_result = {"status": "gameplay_entered" if result is MenuNavResult.GAMEPLAY_ENTERED else result.value.lower(), "result": result.value}
+        elif is_gamemaker:
+            nav_result = {"status": MENU_NAV_WINDOW_LOST, "result": MenuNavResult.WINDOW_LOST.value, "reason_code": "RUNTIME_CAPTURE_LOST"}
+        else:
+            raise LookupError("non_gamemaker_runtime")
+    except LookupError:
+        nav = MenuNavigator(max_attempts=5)
+        nav_result = nav.detect_and_enter_gameplay(
+            artifact_path=artifact_path, process_pid=process_pid, capture_screenshot=capture_screenshot, elapsed_seconds=elapsed_seconds,
+        )
+    except Exception:
+        nav_result = {"status": MENU_NAV_WINDOW_LOST, "result": "WINDOW_LOST", "reason_code": "RUNTIME_CAPTURE_LOST"}
     gameplay_entered = nav_result.get("status") == "gameplay_entered"
-    movement = PlayerMovementVerifier().verify(
-        artifact_path=artifact_path,
-        process_pid=process_pid,
-        capture_screenshot=capture_screenshot,
-        elapsed_seconds=elapsed_seconds + 2.0,
+    movement = (
+        PlayerMovementVerifier().verify(
+            artifact_path=artifact_path,
+            process_pid=process_pid,
+            capture_screenshot=capture_screenshot,
+            elapsed_seconds=elapsed_seconds + 2.0,
+        )
+        if gameplay_entered
+        else {"l4_level": "L3", "mechanics_verified_count": 0, "screenshots": []}
     )
 
     extra_shots = []
