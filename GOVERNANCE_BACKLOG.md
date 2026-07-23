@@ -16,3 +16,11 @@ as part of that performance work.
 health check and retries when Ollama/OpenAI is unavailable. Make the test
 self-contained by injecting or mocking provider health in a separate change;
 do not treat external network availability as a unit-test requirement.
+## Evidence Integrity — Urgent: HWND-bound visual capture
+
+`Win32WindowAdapter.capture()` previously used a general Pillow window capture that
+returned an image whose dimensions did not match the target HWND client area during
+a live CheeseChase session. This can turn template matching into false evidence.
+Keep capture bound to `PrintWindow(hwnd, ..., PW_CLIENTONLY)`, validate every frame
+against `GetClientRect`, and fail closed with `CAPTURE_DIMENSION_MISMATCH`. Do not
+use visual runtime evidence or change a student decision when that condition occurs.
