@@ -89,6 +89,43 @@ def focus_game_window(*, process_pid: Optional[int] = None, hwnd: Optional[int] 
         return False
 
 
+def resolve_game_window_handle(*, artifact_path: Path, process_pid: Optional[int] = None) -> Optional[int]:
+    """Resolve one process-owned game HWND; never select an unrelated desktop window."""
+    try:
+        rows = _enum_windows(process_pid=process_pid)
+    except Exception:
+        return None
+    if not rows:
+        return None
+    scored = sorted(
+        ((_score_window(str(row.get("title") or ""), artifact_path.stem.lower()), row) for row in rows),
+        key=lambda item: item[0], reverse=True,
+    )
+    return int(scored[0][1]["hwnd"]) if scored and scored[0][0] >= 25 else None
+
+
+def pin_game_window_for_sandbox(*, artifact_path: Path, process_pid: Optional[int] = None) -> bool:
+    """Keep the process-owned game window foregrounded inside an approved sandbox.
+
+    This deliberately does not run on a host desktop: pinning/minimising controls
+    outside a sandbox would interfere with the teacher's own applications.
+    """
+    import os
+    if os.environ.get("AI_GRADER_WINDOWS_SANDBOX") != "1":
+        return False
+    try:
+        hwnd = resolve_game_window_handle(artifact_path=artifact_path, process_pid=process_pid)
+        if not hwnd:
+            return False
+        user32 = ctypes.windll.user32
+        user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+        user32.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 0x0001 | 0x0002)  # TOPMOST, no move/resize
+        user32.SetForegroundWindow(hwnd)
+        return True
+    except Exception:
+        return False
+
+
 def resolve_game_window_bbox(
     *,
     artifact_path: Path,

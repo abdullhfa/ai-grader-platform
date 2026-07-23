@@ -1,6 +1,9 @@
 name: Staging Deploy
 
 on:
+  push:
+    branches:
+      - fix/gamemaker-governance-contract-v1
   workflow_dispatch:
     inputs:
       skip_smoke:
@@ -38,7 +41,7 @@ jobs:
   deploy-staging:
     needs: preflight
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
+
     steps:
       - uses: actions/checkout@v4
 

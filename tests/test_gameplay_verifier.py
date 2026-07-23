@@ -2,11 +2,29 @@
 from __future__ import annotations
 
 from app.gameplay_verifier import (
+    MENU_NAV_WINDOW_LOST,
+    MenuNavigator,
     assess_automated_l4_gate,
     build_gameplay_checks_from_verification,
     format_agent_play_summary_ar,
     resolve_gameplay_evidence_level,
 )
+
+
+def test_menu_navigator_reports_window_lost_not_scene_change_failure(tmp_path):
+    navigator = MenuNavigator(max_attempts=2)
+
+    def capture(*_args, **_kwargs):
+        return {"capture_scope": "capture_lost", "errors": ["RUNTIME_CAPTURE_LOST"]}
+
+    outcome = navigator.detect_and_enter_gameplay(
+        artifact_path=tmp_path / "CheeseChase.exe",
+        process_pid=123,
+        capture_screenshot=capture,
+        elapsed_seconds=0,
+    )
+    assert outcome["status"] == MENU_NAV_WINDOW_LOST
+    assert outcome["reason_code"] == "RUNTIME_CAPTURE_LOST"
 
 
 def test_assess_automated_l4_gate_cp5_partial():
