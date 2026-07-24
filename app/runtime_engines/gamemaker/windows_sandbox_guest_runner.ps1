@@ -21,6 +21,8 @@ try {
     if ($Probe) {
         Save-Capture (Join-Path $EvidenceDir 'probe.png')
         @{ status='probe_completed'; host_execution_used=$false; timestamp=(Get-Date).ToString('o') } | ConvertTo-Json | Set-Content -Encoding UTF8 (Join-Path $EvidenceDir 'result.json')
+        Start-Sleep -Seconds 2
+        Stop-Computer -Force
         exit 0
     }
     $exe = Join-Path $PSScriptRoot $ExecutableRelativePath
@@ -30,7 +32,11 @@ try {
     Save-Capture (Join-Path $EvidenceDir 'launch.png')
     if (-not $process.WaitForExit($TimeoutSeconds * 1000)) { $process.Kill(); throw 'guest_runtime_timeout' }
     @{ status='completed'; guest_pid=$process.Id; exit_code=$process.ExitCode; host_execution_used=$false; timestamp=(Get-Date).ToString('o') } | ConvertTo-Json | Set-Content -Encoding UTF8 (Join-Path $EvidenceDir 'result.json')
+    Start-Sleep -Seconds 2
+    Stop-Computer -Force
 } catch {
     @{ status='error'; errors=@($_.Exception.Message); host_execution_used=$false; timestamp=(Get-Date).ToString('o') } | ConvertTo-Json | Set-Content -Encoding UTF8 (Join-Path $EvidenceDir 'result.json')
+    Start-Sleep -Seconds 2
+    Stop-Computer -Force
     exit 1
 }
