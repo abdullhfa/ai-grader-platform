@@ -3040,6 +3040,12 @@ async def batch_results_page(
             }
         )
 
+    from app.batch_completion_status import completion_scope_from_batch, display_status_ar, static_only_message
+    _stored_batch_status = batch.status.value if hasattr(batch.status, "value") else str(batch.status)
+    batch_completion_scope = completion_scope_from_batch(_stored_batch_status, batch.failure_message)
+    batch_display_status_ar = display_status_ar(batch_completion_scope)
+    batch_runtime_message_ar = static_only_message(batch.failure_message)
+
     batch_evidence_stats = {
         "gate_affected_count": sum(
             1 for r in results_data if (r.get("evidence_summary") or {}).get("has_gate_issue")
@@ -3070,6 +3076,9 @@ async def batch_results_page(
             "user": user,
             "app_title": os.getenv("APP_TITLE", "أداة تصحيح واجبات الذكاء الاصطناعي"),
             "batch": batch,
+            "batch_completion_scope": batch_completion_scope,
+            "batch_display_status_ar": batch_display_status_ar,
+            "batch_runtime_message_ar": batch_runtime_message_ar,
             "results": results_data,
             "assignment_id": batch.assignment_id,
             "subscription": sub_info,

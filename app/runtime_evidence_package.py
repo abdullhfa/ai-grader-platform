@@ -71,10 +71,12 @@ def _boot_gate(obs: Dict[str, Any], inv: Dict[str, Any]) -> Dict[str, Any]:
             if isinstance(a, dict)
         )
     )
+    runtime_status = str(obs.get("runtime_status") or "").upper()
     launch_attempted = bool(
-        obs.get("runtime_observed")
+        obs.get("game_launch_attempted")
+        or obs.get("runtime_attempted")
+        or obs.get("runtime_observed")
         or obs.get("runtime_verified")
-        or obs.get("status") == "completed"
         or smoke_ok
         or signals.get("runtime_launch_attempted")
     )
@@ -108,7 +110,9 @@ def _boot_gate(obs: Dict[str, Any], inv: Dict[str, Any]) -> Dict[str, Any]:
         "level_transition"
     ) in ("partial", "detected", "yes")
 
-    if crash and not smoke_ok:
+    if runtime_status == "SKIPPED_UNSUPPORTED_ENVIRONMENT":
+        status = "SKIPPED"
+    elif crash and not smoke_ok:
         status = "FAIL"
     elif launch_attempted and (smoke_ok or obs.get("runtime_verified")):
         status = "PASS"
@@ -428,6 +432,11 @@ def build_runtime_evidence_package(
     semantics = _semantics(obs, inv)
     events = _extract_events(obs, inv, boot, semantics)
     screenshots = _normalize_screenshots(obs, inv)
+    runtime_skipped = boot.get("runtime_status") == "SKIPPED"
+    if runtime_skipped:
+        # Static inspection may remain available, but it is never operational evidence.
+        events = []
+        screenshots = []
     try:
         from app.runtime_screenshot_validation import filter_gameplay_screenshots
 
@@ -468,6 +477,10 @@ def build_runtime_evidence_package(
         "version": PACKAGE_VERSION,
         "engine": engine if engine != "unknown" else None,
         "runtime_status": boot["runtime_status"],
+        "static_coverage": "AVAILABLE" if inv else "UNAVAILABLE",
+        "runtime_verification": "NOT_VERIFIED" if boot["runtime_status"] == "SKIPPED" else boot["runtime_status"],
+        "academic_criterion_status": "RUNTIME_GATE_REQUIRED" if boot["runtime_status"] == "SKIPPED" else "EVIDENCE_REVIEW_REQUIRED",
+        "runtime_evidence_count": len(screenshots) + len(events),
         "launch_time_ms": boot["launch_time_ms"],
         "crash_detected": boot["crash_detected"],
         "window_detected": boot["window_detected"],

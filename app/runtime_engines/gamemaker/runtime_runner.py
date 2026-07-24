@@ -1,18 +1,35 @@
 """GameMaker runtime execution — EXE smoke + HTML5 delegation."""
 from __future__ import annotations
 
-import os
-import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from app.runtime_engines.base import RuntimeSession, SessionStatus
+from app.runtime_engines.gamemaker.sandbox_provider import (
+    GameMakerSandboxProvider,
+    assess_gamemaker_sandbox_readiness,
+)
 
 
-def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds: int) -> Dict[str, Any]:
+def _unsupported_observation(readiness: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "status": "skipped", "runtime_status": "SKIPPED_UNSUPPORTED_ENVIRONMENT",
+        "completion_scope": "COMPLETED_STATIC_ONLY", "contract_id": "gamemaker_exe_smoke",
+        "verification_outcome": "NOT_VERIFIED", "verification_blocker_origin": "SYSTEM",
+        "reason_code": "RUNTIME_ENVIRONMENT_UNSUPPORTED",
+        "user_message_ar": "لم يُنفّذ اختبار اللعبة لأن بيئة Windows Sandbox غير متاحة؛ أُكمل التحليل الساكن فقط.",
+        "runtime_attempted": False,
+        "game_launch_attempted": False, "runtime_gate_passed": False, "evidence_count": 0,
+        "academic_runtime_verified": False, "runtime_screenshots": [],
+        "sandbox_readiness": readiness, "errors": ["windows_sandbox_unavailable"],
+    }
+
+
+def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds: int,
+                  provider: Optional[GameMakerSandboxProvider] = None) -> Dict[str, Any]:
     try:
         from app.runtime_engines.gamemaker.project_probe import assess_gamemaker_exe_launch
-        from app.runtime_observation_sandbox import resolve_smoke_timeout_seconds, smoke_test_windows_exe
+        from app.runtime_observation_sandbox import resolve_smoke_timeout_seconds
 
         exe = executable.resolve()
         search_root = session.root if session.root else None
@@ -24,22 +41,15 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
             except ValueError:
                 raise ValueError("RUNTIME_EVIDENCE_IDENTITY_MISMATCH: executable outside submission_root")
 
-        # Host execution is prohibited.  A deployment must explicitly provide a
-        # Windows sandbox implementation with isolation, timeout, window/input,
-        # capture, logs and cleanup before an EXE can be considered runnable.
-        sandbox_ready = sys.platform == "win32" and os.environ.get("AI_GRADER_WINDOWS_SANDBOX") == "1"
-        if not sandbox_ready:
-            observation = {
-                "status": "skipped",
-                "contract_id": "gamemaker_exe_smoke",
-                "verification_outcome": "NOT_VERIFIED",
-                "verification_blocker_origin": "SYSTEM",
-                "reason_code": "RUNTIME_ENVIRONMENT_UNSUPPORTED",
-                "runtime_screenshots": [],
-                "errors": ["windows_sandbox_unavailable"],
-            }
+        sandbox_provider, readiness = assess_gamemaker_sandbox_readiness(
+            executable=exe, submission_root=search_root, provider=provider
+        )
+        if sandbox_provider is None or not readiness.ready:
+            observation = _unsupported_observation(readiness.to_dict())
             session.signals["gamemaker_observation"] = observation
             session.signals["runtime_method"] = "gamemaker_runtime_unavailable"
+            session.signals["runtime_status"] = observation["runtime_status"]
+            session.signals["completion_scope"] = observation["completion_scope"]
             session.status = SessionStatus.SKIPPED
             return {"success": False, "observation": observation, "skipped": True, "reason": observation["reason_code"]}
         launch_assessment = assess_gamemaker_exe_launch(exe, search_root=search_root)
@@ -56,6 +66,9 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
                 "freeze_possible": False,
                 "analyses": [],
                 "gamemaker_runtime_cwd": str(runtime_cwd),
+                "runtime_attempted": False,
+                "game_launch_attempted": False,
+                "sandbox_readiness": readiness.to_dict(),
                 "skip_reason": launch_assessment.get("skip_reason") or "missing_data_win",
                 "errors": ["gamemaker_missing_data_win"],
             }
@@ -69,17 +82,15 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
                 "reason": observation["skip_reason"],
             }
 
-        smoke = smoke_test_windows_exe(
-            exe,
-            timeout=resolve_smoke_timeout_seconds("deep"),
-            capture_screenshots=True,
-            enable_interaction_trace=True,
-            session_ctx={
+        smoke = sandbox_provider.launch_and_observe(
+            executable=exe,
+            runtime_cwd=runtime_cwd,
+            timeout_seconds=min(timeout_seconds, resolve_smoke_timeout_seconds("deep")),
+            session_context={
                 "student_name": session.submission_key,
                 "submission_root": str(search_root) if search_root else None,
                 "project_root": str(search_root) if search_root else None,
             },
-            cwd=runtime_cwd,
         )
         smoke_ok = smoke.get("smoke_result") in ("stable_window", "launch_ok")
         observation = {
@@ -90,6 +101,9 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
             "freeze_possible": bool((smoke.get("visual_observation") or {}).get("freeze_possible")),
             "analyses": [smoke],
             "gamemaker_runtime_cwd": str(runtime_cwd),
+            "runtime_attempted": bool(smoke.get("attempted")),
+            "game_launch_attempted": bool(smoke.get("attempted")),
+            "sandbox_readiness": readiness.to_dict(),
         }
         if smoke.get("errors"):
             observation["errors"] = smoke["errors"]

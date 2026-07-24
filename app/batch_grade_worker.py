@@ -38,6 +38,12 @@ from app.grading_snapshot_governance import (  # type: ignore
 )
 from app.archive_extraction_utils import hash_submission_file
 from app.core.grading_profiles import attach_grading_mode_metadata
+from app.batch_completion_status import (
+    COMPLETED_STATIC_ONLY,
+    STATIC_ONLY_MARKER,
+    STATIC_ONLY_MESSAGE_AR,
+    completion_scope_for_results,
+)
 from app.grading_mode_policy import (
     compact_snapshot_for_storage,
     grading_mode_display_label,
@@ -997,9 +1003,14 @@ async def run_batch_grading_job(
             else:
                 batch.failure_message = "لم يُصحَّح أي طالب — تحقق من ملف التسليم."  # type: ignore[assignment]
         else:
+            # The persisted enum remains ``completed`` for database compatibility.
+            # API and UI expose COMPLETED_STATIC_ONLY when no runtime was permitted.
             batch.status = BatchStatus.COMPLETED  # type: ignore[assignment]
+            scope = completion_scope_for_results(results)
             if failed_students:
                 batch.failure_message = f"اكتمل جزئياً: {len(failed_students)} من {len(results)} فشل"  # type: ignore[assignment]
+            elif scope == COMPLETED_STATIC_ONLY:
+                batch.failure_message = f"{STATIC_ONLY_MARKER} {STATIC_ONLY_MESSAGE_AR}"  # type: ignore[assignment]
             else:
                 batch.failure_message = None  # type: ignore[assignment]
         db.commit()

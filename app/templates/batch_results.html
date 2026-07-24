@@ -985,7 +985,13 @@
             <div class="stat-card">
                 <div class="stat-label">حالة الدفعة</div>
                 <div class="stat-body">
-                {% if batch.status and batch.status.value == 'failed' %}
+                {% if batch_completion_scope == 'COMPLETED_STATIC_ONLY' %}
+                <div class="stat-value stat-value--status stat-value--amber">
+                    <i class="fa-solid fa-triangle-exclamation"></i> {{ batch_display_status_ar }}
+                </div>
+                <div class="stat-note">{{ batch_runtime_message_ar }}</div>
+                <div class="stat-note">Runtime Verification: غير منفّذ — البيئة غير متاحة</div>
+                {% elif batch.status and batch.status.value == 'failed' %}
                 <div class="stat-value stat-value--status stat-value--red">
                     <i class="fa-solid fa-circle-xmark"></i> فشل
                 </div>

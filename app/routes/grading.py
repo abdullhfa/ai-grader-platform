@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.batch_completion_status import completion_scope_from_batch, display_status_ar, static_only_message
 from app.models import BatchGrading, BatchStatus
 from app.routes.deps import get_batch_progress_dict
 
@@ -341,11 +342,15 @@ async def get_batch_meta(batch_id: int, db: Session = Depends(get_db)):
     if not batch:
         return {"found": False, "batch_id": batch_id}
     status = batch.status.value if hasattr(batch.status, "value") else str(batch.status)
+    completion_scope = completion_scope_from_batch(status, batch.failure_message)
     return {
         "found": True,
         "batch_id": batch.id,
         "assignment_id": batch.assignment_id,
-        "status": status,
+        "status": completion_scope.lower(),
+        "completion_scope": completion_scope,
+        "display_status_ar": display_status_ar(completion_scope),
+        "runtime_verification_message_ar": static_only_message(batch.failure_message),
         "processed_students": batch.processed_students,
         "total_students": batch.total_students,
     }
@@ -362,10 +367,14 @@ async def get_latest_batch_for_assignment(assignment_id: int, db: Session = Depe
     if not batch:
         return {"found": False}
     status = batch.status.value if hasattr(batch.status, "value") else str(batch.status)
+    completion_scope = completion_scope_from_batch(status, batch.failure_message)
     return {
         "found": True,
         "batch_id": batch.id,
-        "status": status,
+        "status": completion_scope.lower(),
+        "completion_scope": completion_scope,
+        "display_status_ar": display_status_ar(completion_scope),
+        "runtime_verification_message_ar": static_only_message(batch.failure_message),
         "processed_students": batch.processed_students,
         "total_students": batch.total_students,
         "failure_message": batch.failure_message or "",

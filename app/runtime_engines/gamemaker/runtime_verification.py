@@ -139,8 +139,18 @@ def run_gameplay_replay(
     }
 
     if layout.executable:
-        run_exe_smoke(session, layout.executable, timeout_seconds=timeout_seconds)
-        if session.signals.get("runtime_method") == "gamemaker_static_only":
+        smoke_result = run_exe_smoke(session, layout.executable, timeout_seconds=timeout_seconds)
+        observation = smoke_result.get("observation") or {}
+        if observation.get("runtime_status") == "SKIPPED_UNSUPPORTED_ENVIRONMENT":
+            replay.update({
+                "method": "sandbox_unavailable",
+                "skipped": True,
+                "reason": observation.get("reason_code"),
+                "runtime_status": observation.get("runtime_status"),
+                "completion_scope": observation.get("completion_scope"),
+                "sandbox_readiness": observation.get("sandbox_readiness") or {},
+            })
+        elif session.signals.get("runtime_method") == "gamemaker_static_only":
             replay["method"] = "static_only"
             replay["skipped"] = True
             replay["reason"] = (
@@ -197,6 +207,13 @@ def run_gamemaker_runtime_verification(
             and replay.get("gameplay_observed")
             and replay.get("method") in ("exe_smoke", "html5_headless")
         ),
+        "runtime_status": replay.get("runtime_status") or ("PASS" if replay.get("gameplay_observed") else "NOT_VERIFIED"),
+        "runtime_attempted": bool((session.signals.get("gamemaker_observation") or {}).get("runtime_attempted")),
+        "game_launch_attempted": bool((session.signals.get("gamemaker_observation") or {}).get("game_launch_attempted")),
+        "runtime_gate_passed": bool(replay.get("gameplay_observed")),
+        "evidence_count": len(replay.get("screenshots") or []),
+        "academic_runtime_verified": bool(replay.get("gameplay_observed")),
+        "completion_scope": replay.get("completion_scope") or "RUNTIME_VERIFIED",
     }
 
     result = {
@@ -224,6 +241,10 @@ def run_gamemaker_runtime_verification(
 
     if replay.get("gameplay_observed"):
         session.status = SessionStatus.COMPLETED
+    elif replay.get("runtime_status") == "SKIPPED_UNSUPPORTED_ENVIRONMENT":
+        # Static inspection succeeded, but no runtime operation occurred.
+        session.status = SessionStatus.SKIPPED
+        session.signals["completion_scope"] = "COMPLETED_STATIC_ONLY"
     elif inspection.get("inspection_ok") and build.get("yyp_ready"):
         session.status = SessionStatus.COMPLETED
         session.signals["runtime_partial"] = True
