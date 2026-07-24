@@ -47,6 +47,8 @@ def resolve_gamemaker_sandbox_provider() -> tuple[Optional[GameMakerSandboxProvi
         return None, _unavailable("RUNTIME_ENVIRONMENT_UNSUPPORTED", "platform_not_windows", provider_name=provider_name)
     if flag != "1":
         return None, _unavailable("RUNTIME_ENVIRONMENT_UNSUPPORTED", "windows_sandbox_feature_disabled", provider_name=provider_name)
+    if provider_name == "windows-sandbox" and not adapter_path:
+        adapter_path = "app.runtime_engines.gamemaker.windows_sandbox_adapter:create_windows_sandbox_provider"
     if not adapter_path or ":" not in adapter_path:
         return None, _unavailable("RUNTIME_ENVIRONMENT_UNSUPPORTED", "windows_sandbox_adapter_not_configured", provider_name=provider_name)
     module_name, factory_name = adapter_path.split(":", 1)
