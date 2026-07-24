@@ -123,7 +123,7 @@ class WindowsSandboxGameMakerProvider:
         while time.monotonic() < deadline:
             if result_path.is_file():
                 try:
-                    return json.loads(result_path.read_text(encoding="utf-8"))
+                    return json.loads(result_path.read_text(encoding="utf-8-sig"))
                 except (OSError, json.JSONDecodeError):
                     pass
             time.sleep(0.5)

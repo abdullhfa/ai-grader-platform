@@ -49,3 +49,10 @@ def test_builtin_provider_selection_does_not_enable_host_execution(monkeypatch):
     assert provider is not None
     assert readiness.ready is False
     assert readiness.provider_configured is True
+
+
+def test_guest_result_with_utf8_bom_is_read(tmp_path: Path):
+    evidence = tmp_path / "evidence"
+    evidence.mkdir()
+    (evidence / "result.json").write_text('{"status":"probe_completed"}', encoding="utf-8-sig")
+    assert WindowsSandboxGameMakerProvider._wait_for_result(evidence, 1) == {"status": "probe_completed"}
