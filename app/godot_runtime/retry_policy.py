@@ -294,6 +294,8 @@ class GodotRetryPolicy:
 
         shots = _collect_shots(nav_result, package)
         mechanics_count = int(movement.get("mechanics_verified_count") or 0)
+        from app.gameplay_verifier import _capture_scope_degraded
+
         failure = classify_runtime_failure(
             window_detected=process_pid is not None,
             black_screen_duration_s=_black_screen_duration_s(nav_result),
@@ -304,6 +306,7 @@ class GodotRetryPolicy:
             server_dialog_detected=detect_server_dialog(shots),
             process_crashed=process_crashed,
             boot_timed_out=_boot_timed_out(nav_result),
+            capture_scope_degraded=_capture_scope_degraded(shots),
         )
         if failure is None and gameplay_entered and mechanics_count == 0:
             failure = classify_runtime_failure(
@@ -321,7 +324,7 @@ class GodotRetryPolicy:
         return GodotRetryOutcome(
             nav_result=nav_result,
             gameplay_entered=gameplay_entered,
-            package=package,
+                      package=package,
             movement=movement,
             retry_attempts=retry_attempts,
             failure=failure,

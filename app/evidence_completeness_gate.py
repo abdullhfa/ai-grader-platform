@@ -1,4 +1,4 @@
-"""
+﻿"""
 Evidence Completeness Pre-Gate — deterministic required-artifact check before AI grading.
 
 Non-destructive: records gaps in snapshot; does not block grading unless strict mode.
@@ -16,6 +16,11 @@ _CODE_EXT = frozenset(
     {".cs", ".py", ".java", ".cpp", ".c", ".js", ".ts", ".gd", ".gml", ".html", ".yyp", ".yy"}
 )
 _EXE_EXT = frozenset({".exe", ".apk", ".pck", ".app", ".sb3", ".sb2", ".win"})
+# Deep submissions also need their media evidence exposed to the inventory layer.
+# Keep this separate from executable extensions: a video/image is evidence, not a
+# runnable build, and must never by itself satisfy the runtime gate.
+_MEDIA_EXT = frozenset({".mp4", ".avi", ".mov", ".mkv", ".wmv", ".webm", ".m4v", ".flv"})
+_IMAGE_EXT = frozenset({".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"})
 # Scratch playable project + GameMaker exported build are runnable deliverables —
 # sourced from the shared single-source registry to avoid drift across paths.
 from app.game_engine_signatures import (  # noqa: E402
@@ -166,7 +171,7 @@ def expand_submission_paths(
             if should_skip_grading_path(f):
                 continue
             ext = f.suffix.lower()
-            if ext in _DOC_EXT | _CODE_EXT | _EXE_EXT:
+            if ext in (_DOC_EXT | _CODE_EXT | _EXE_EXT | _MEDIA_EXT | _IMAGE_EXT):
                 if ext == ".exe" and "unitycrashhandler" in f.name.lower():
                     continue
                 if ext == ".exe":
@@ -461,3 +466,4 @@ def attach_evidence_completeness_to_snapshot(
             items.append({"kind": "evidence_completeness", "message_ar": line})
         notice["items"] = items
         notice["has_gaps"] = True
+

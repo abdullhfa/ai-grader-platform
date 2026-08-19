@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import re
+import shutil
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, List, Optional
@@ -17,6 +21,7 @@ class GameMakerLayout:
     html_entry: Optional[Path] = None
     has_objects_tree: bool = False
     resource_count: int = 0
+    version_evidence: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -28,6 +33,7 @@ class GameMakerLayout:
             "html_entry": str(self.html_entry) if self.html_entry else None,
             "has_objects_tree": self.has_objects_tree,
             "resource_count": self.resource_count,
+            "version_evidence": self.version_evidence,
         }
 
 
@@ -41,7 +47,7 @@ def resolve_gamemaker_runtime_cwd(executable: Path) -> Path:
     exe = executable.resolve()
     if not exe.is_file():
         return exe.parent
-    data_win_dir = _find_gamemaker_data_win_directory(exe)
+    data_win_dir = _find_gamemaker_data_win_directory(exe, max_parent_levels=1)
     if data_win_dir is not None:
         return data_win_dir
     return exe.parent
@@ -51,11 +57,25 @@ def _find_gamemaker_data_win_directory(
     executable: Path,
     *,
     search_root: Optional[Path] = None,
-    max_parent_levels: int = 6,
+    max_parent_levels: int = 0,
 ) -> Optional[Path]:
     """Locate the folder containing ``data.win`` near a GameMaker export."""
     exe = executable.resolve()
-    for base in [exe.parent, *list(exe.parents)[:max_parent_levels]]:
+    allowed_root = (
+        search_root.resolve()
+        if search_root is not None
+        else (exe.parent.parent if max_parent_levels else exe.parent)
+    )
+    if allowed_root.is_file():
+        allowed_root = allowed_root.parent
+    bases = [exe.parent]
+    for parent in list(exe.parents)[: max_parent_levels + 1]:
+        try:
+            parent.relative_to(allowed_root)
+        except ValueError:
+            continue
+        bases.append(parent)
+    for base in bases:
         if (base / "data.win").is_file():
             return base
     roots: List[Path] = []
@@ -73,6 +93,157 @@ def _find_gamemaker_data_win_directory(
         except OSError:
             continue
     return None
+
+
+def _gamemaker_version_rank(path: Path) -> int:
+    """Return the highest V<number> marker found in a runtime path."""
+    versions = []
+    for part in path.parent.parts:
+        match = re.fullmatch(r"v(\d+)", part.strip(), flags=re.IGNORECASE)
+        if match:
+            versions.append(int(match.group(1)))
+    filename_match = re.search(
+        r"(?:^|[^a-z0-9])v(\d+)(?:[^0-9]|$)",
+        path.name,
+        flags=re.IGNORECASE,
+    )
+    if filename_match:
+        versions.append(int(filename_match.group(1)))
+    return max(versions, default=0)
+
+
+def _artifact_rank(path: Path) -> tuple:
+    try:
+        stat = path.stat()
+        mtime = stat.st_mtime_ns
+        size = stat.st_size
+    except OSError:
+        mtime = size = 0
+    return (_gamemaker_version_rank(path), mtime, size, str(path).lower())
+
+
+def _sample_fingerprint(path: Path) -> str:
+    """Stable, bounded fingerprint for comparing large V1/V2 build artifacts."""
+    digest = hashlib.sha256()
+    try:
+        size = path.stat().st_size
+        digest.update(str(size).encode("ascii"))
+        with path.open("rb") as handle:
+            digest.update(handle.read(2 * 1024 * 1024))
+            if size > 4 * 1024 * 1024:
+                handle.seek(max(0, size - (2 * 1024 * 1024)))
+                digest.update(handle.read(2 * 1024 * 1024))
+        return digest.hexdigest()
+    except OSError:
+        return ""
+
+
+def summarize_gamemaker_versions(root: Path) -> Dict[str, Any]:
+    """Describe submitted V1/V2 evidence without treating filenames as achievement."""
+    base = root.parent if root.is_file() else root
+    by_version: Dict[int, List[Path]] = {}
+    try:
+        candidates = [
+            p for p in base.rglob("*")
+            if p.is_file()
+            and (p.suffix.lower() in {".yyp", ".yyz", ".exe"} or p.name.lower() == "data.win")
+        ]
+    except OSError:
+        candidates = []
+    for candidate in candidates:
+        version = _gamemaker_version_rank(candidate)
+        if version:
+            by_version.setdefault(version, []).append(candidate)
+
+    rows: List[Dict[str, Any]] = []
+    for version in sorted(by_version):
+        files = sorted(by_version[version], key=_artifact_rank, reverse=True)
+        representatives = [
+            p for p in files
+            if p.name.lower() == "data.win" or p.suffix.lower() in {".yyz", ".yyp"}
+        ] or files
+        representative = representatives[0] if representatives else None
+        rows.append(
+            {
+                "version": f"V{version}",
+                "number": version,
+                "file_count": len(files),
+                "representative": str(representative) if representative else None,
+                "fingerprint": _sample_fingerprint(representative) if representative else "",
+                "files": [str(p) for p in files[:12]],
+            }
+        )
+
+    v1 = next((row for row in rows if row["number"] == 1), None)
+    v2 = next((row for row in rows if row["number"] == 2), None)
+    comparable = bool(v1 and v2 and v1.get("fingerprint") and v2.get("fingerprint"))
+    return {
+        "v1_present": bool(v1),
+        "v2_present": bool(v2),
+        "latest_version": rows[-1]["version"] if rows else None,
+        "versions": rows,
+        "comparison_available": comparable,
+        "updated_version_differs": (
+            bool(v1["fingerprint"] != v2["fingerprint"]) if comparable else None
+        ),
+        "authority": "artifact_version_evidence_only",
+    }
+
+
+def _best_submission_data_win(executable: Path, search_root: Optional[Path]) -> Optional[Path]:
+    """Choose the newest submitted GameMaker data bundle for this submission."""
+    exe = executable.resolve()
+    candidates: List[Path] = []
+    sibling = exe.parent / "data.win"
+    if sibling.is_file():
+        candidates.append(sibling)
+    if search_root is not None:
+        root = search_root.resolve()
+        if root.is_file():
+            root = root.parent
+        try:
+            candidates.extend(p for p in root.rglob("data.win") if p.is_file())
+        except OSError:
+            pass
+    if not candidates:
+        return None
+    unique = {str(p.resolve()).lower(): p.resolve() for p in candidates}
+    return max(
+        unique.values(),
+        key=lambda p: (
+            _gamemaker_version_rank(p),
+            p.stat().st_mtime_ns,
+            p.stat().st_size,
+            str(p).lower(),
+        ),
+    )
+
+
+def _stage_gamemaker_runtime_bundle(
+    executable: Path,
+    data_win: Path,
+) -> Dict[str, Any]:
+    """Build an isolated runnable bundle without changing the student's upload."""
+    exe = executable.resolve()
+    data = data_win.resolve()
+    stage = Path(tempfile.mkdtemp(prefix="ai_grader_gamemaker_"))
+    staged_exe = stage / exe.name
+    staged_data = stage / "data.win"
+    shutil.copy2(exe, staged_exe)
+    shutil.copy2(data, staged_data)
+    options_sources = (data.parent / "options.ini", exe.parent / "options.ini")
+    for source in options_sources:
+        if source.is_file():
+            shutil.copy2(source, stage / "options.ini")
+            break
+    return {
+        "runtime_executable": str(staged_exe),
+        "runtime_cwd": str(stage),
+        "data_win_path": str(staged_data),
+        "data_win_source_path": str(data),
+        "cleanup_runtime_dir": str(stage),
+        "staged": True,
+    }
 
 
 def _submission_anchor_tokens(search_root: Optional[Path]) -> List[str]:
@@ -293,14 +464,29 @@ def assess_gamemaker_exe_launch(
             "skip_reason": None,
         }
 
-    data_win_dir = _find_gamemaker_data_win_directory(exe, search_root=search_root)
-    if data_win_dir is not None:
-        data_win = data_win_dir / "data.win"
+    data_win = _best_submission_data_win(exe, search_root)
+    if data_win is None:
+        data_win_dir = _find_gamemaker_data_win_directory(exe, search_root=search_root)
+        data_win = (data_win_dir / "data.win") if data_win_dir is not None else None
+    if data_win is not None and data_win.is_file():
+        sibling = exe.parent / "data.win"
+        if data_win.resolve() != sibling.resolve():
+            staged = _stage_gamemaker_runtime_bundle(exe, data_win)
+            return {
+                "is_gamemaker": True,
+                "launch_allowed": True,
+                "skip_reason": None,
+                "materialize": materialize_info,
+                **staged,
+            }
         return {
             "is_gamemaker": True,
             "launch_allowed": True,
-            "runtime_cwd": str(data_win_dir),
+            "runtime_executable": str(exe),
+            "runtime_cwd": str(data_win.parent),
             "data_win_path": str(data_win),
+            "data_win_source_path": str(data_win),
+            "staged": False,
             "skip_reason": None,
             "materialize": materialize_info,
         }
@@ -378,16 +564,17 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
         elif root.suffix.lower() == ".exe" and _is_gamemaker_exe(root, project_root=search_root):
             layout.executable = root
 
-    for fp in search_root.rglob("*.yyp"):
-        layout.yyp_path = fp
-        layout.project_root = fp.parent
-        break
+    yyp_candidates = list(search_root.rglob("*.yyp"))
+    if yyp_candidates:
+        layout.yyp_path = max(yyp_candidates, key=_artifact_rank)
+        layout.project_root = layout.yyp_path.parent
 
     if not layout.yyz_path:
-        for fp in search_root.rglob("*.yyz"):
-            layout.yyz_path = fp
-            layout.project_root = fp.parent
-            break
+        yyz_candidates = list(search_root.rglob("*.yyz"))
+        if yyz_candidates:
+            layout.yyz_path = max(yyz_candidates, key=_artifact_rank)
+            if not layout.yyp_path:
+                layout.project_root = layout.yyz_path.parent
 
     layout.gml_files = _collect_gml_files(layout.project_root or search_root)
     layout.has_objects_tree = any(
@@ -397,16 +584,10 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
     )
 
     if not layout.executable:
-        # Search the full submission tree — .yyp may live under code/ while .exe is in V1/.
-        search_bases: List[Path] = []
-        for base in (
-            layout.project_root,
-            search_root,
-            *((layout.project_root.parents if layout.project_root else [])),
-            *((search_root.parents if search_root else [])),
-        ):
-            if base and base not in search_bases:
-                search_bases.append(base)
+        # Search only this submission tree. Walking parent folders can mix students.
+        search_bases: List[Path] = [search_root]
+        if layout.project_root and layout.project_root not in search_bases:
+            search_bases.append(layout.project_root)
         candidates: List[Path] = []
         for pr in search_bases[:6]:
             for fp in pr.rglob("*.exe"):
@@ -415,18 +596,10 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
             if candidates:
                 break
         if candidates:
-            preferred: Optional[Path] = None
-            if layout.yyp_path:
-                yyp_stem = layout.yyp_path.stem.lower()
-                for fp in candidates:
-                    if fp.stem.lower() == yyp_stem:
-                        preferred = fp
-                        break
-            layout.executable = preferred or max(
-                candidates, key=lambda p: p.stat().st_size
-            )
+            layout.executable = max(candidates, key=_artifact_rank)
 
-    layout.html_entry = _find_html_export(layout.project_root or search_root)
+    layout.html_entry = _find_html_export(search_root)
+    layout.version_evidence = summarize_gamemaker_versions(search_root)
     return layout
 
 

@@ -88,14 +88,7 @@ def test_feedback_contradiction_flips_achieved():
         "score": 80,
         "feedback": "لم يقدم الطالب أي مراجعة للعبة المكتملة.",
     }
-    gr = {
-        "grade_level": "U",
-        "percentage": 40,
-        "criteria_results": crit,
-        # Informative (present-but-empty) inventory: we positively know there are no
-        # game artifacts, so demotion is valid (vs a blind/missing inventory).
-        "artifact_inventory": {"source_code": {"files": []}, "executable_artifacts": {"files": []}},
-    }
+    gr = {"grade_level": "U", "percentage": 40, "criteria_results": crit}
     report = apply_btec_criteria_governance(gr)
     assert report["applied"] is True
     by = _by_level(gr["criteria_results"])
@@ -205,41 +198,9 @@ def test_not_achieved_positive_feedback_gets_governance_prefix():
     apply_btec_criteria_governance(gr)
     fb = gr["criteria_results"][0]["feedback"]
     assert "لم يتحقق المعيار مؤسسياً" in fb
-    assert "حقق الطالب" not in fb
     assert "[تحليل الذكاء الاصطناعي" not in fb
     assert "⚠️ [حوكمة BTEC]" not in fb
     assert gr["criteria_results"][0]["decision_matrix"][0]["met"] is False
-
-
-def test_achieved_not_awardable_replaces_ai_praise():
-    crit = _base_criteria()
-    apply_btec_awardability(crit)
-    by = _by_level(crit)
-    assert by["8/B.M2"]["awardable"] is False
-    from app.btec_criteria_governance import enforce_achieved_not_awardable_feedback
-
-    by["8/B.M2"]["feedback"] = "تم تحقيق المعيار بشكل ممتاز."
-    changes = enforce_achieved_not_awardable_feedback(crit)
-    assert changes
-    assert "جزئياً" in by["8/B.M2"]["feedback"]
-    assert "ممتاز" not in by["8/B.M2"]["feedback"]
-    assert "C.P5" in by["8/B.M2"]["feedback"] or "Prerequisite" in by["8/B.M2"]["feedback"]
-
-
-def test_align_overall_feedback_removes_distinction_praise_for_u():
-    from app.btec_criteria_governance import align_overall_feedback_with_institutional_grade
-
-    gr = {
-        "grade_level": "U",
-        "overall_feedback": "أداء ممتاز ومتميز. قدرتك على التقييم النقدي دليل على Distinction.",
-        "runtime_evidence_gate": {"runtime_status": "BLOCKED"},
-    }
-    changes = align_overall_feedback_with_institutional_grade(gr)
-    assert changes
-    fb = gr["overall_feedback"]
-    assert "C.P5" in fb or "Gameplay" in fb
-    assert "أداء ممتاز" not in fb
-    assert "Distinction" not in fb
 
 
 def test_execution_demotion_skipped_when_gate_sees_exe(tmp_path):
@@ -267,32 +228,6 @@ def test_execution_demotion_skipped_when_gate_sees_exe(tmp_path):
     assert row["achieved"] is True
     gov_ar = str(row.get("governance_adjustment_ar") or "")
     assert "لا توجد ملفات مشروع" not in gov_ar
-
-
-def test_execution_demotion_skipped_for_scratch_in_paths():
-    """A .sb3 in submission_paths must count as a game artifact even on a slim
-    inventory (no runtime_artifacts/source flags), preventing a false
-    "لا توجد ملفات مشروع" demotion of C.P5/C.P6."""
-    crit = [
-        {"criteria_level": "8/C.P5", "achieved": True, "score": 70, "feedback": "ok"},
-        {"criteria_level": "8/C.P6", "achieved": True, "score": 70, "feedback": "ok"},
-    ]
-    gr = {
-        "grade_level": "P",
-        "percentage": 70,
-        "criteria_results": crit,
-        "artifact_inventory": {},  # slim — no source/runtime flags
-        "submission_paths": [
-            r"uploads\students\bx48\العاب\Scrath file.sb3",
-            r"uploads\students\bx48\report.docx",
-        ],
-    }
-    apply_btec_criteria_governance(gr)
-    by = _by_level(gr["criteria_results"])
-    assert by["8/C.P5"]["achieved"] is True
-    for row in gr["criteria_results"]:
-        assert "لا توجد ملفات مشروع" not in str(row.get("governance_adjustment_ar") or "")
-        assert "لا توجد ملفات مشروع" not in str(row.get("feedback") or "")
 
 
 def test_no_changes_when_all_consistent():

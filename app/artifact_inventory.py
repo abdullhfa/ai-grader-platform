@@ -18,7 +18,7 @@ SOURCE_CODE_EXTENSIONS = frozenset(
     {
         ".py", ".java", ".cs", ".cpp", ".c", ".h", ".js", ".ts", ".html", ".css",
         ".jsx", ".tsx", ".rb", ".go", ".php", ".gml", ".gd", ".lua", ".sql",
-        ".yyp", ".yy",  # GameMaker project / resource metadata
+        ".yyp", ".yy", ".yyz",  # GameMaker project / resource metadata/archive
     }
 )
 
@@ -364,6 +364,22 @@ def _detect_gamemaker(files: List[Path]) -> Dict[str, Any]:
         confidence = "high"
     elif gml:
         confidence = "medium"
+    version_evidence: Dict[str, Any] = {}
+    gm_files = yyp + yyz + gml + data_win + runner_exe
+    if gm_files:
+        try:
+            import os
+
+            from app.runtime_engines.gamemaker.project_probe import (
+                summarize_gamemaker_versions,
+            )
+
+            common = Path(os.path.commonpath([str(p.resolve()) for p in gm_files]))
+            if common.is_file():
+                common = common.parent
+            version_evidence = summarize_gamemaker_versions(common)
+        except (OSError, ValueError):
+            version_evidence = {}
     return {
         "detected": detected,
         "project_present": project_present,
@@ -373,6 +389,7 @@ def _detect_gamemaker(files: List[Path]) -> Dict[str, Any]:
         "yyp_count": len(yyp),
         "gml_count": len(gml),
         "confidence": confidence,
+        "version_evidence": version_evidence,
     }
 
 
@@ -850,7 +867,11 @@ def build_artifact_inventory(
         (runtime_artifacts.get("unity_source_signals") or {}).get("source_present")
     )
     has_l4_sandbox_targets = (
-        has_executables or has_html5_build or has_godot_project or has_unity_targets
+        has_executables
+        or has_html5_build
+        or has_godot_project
+        or has_unity_targets
+        or bool(runtime_artifacts.get("gamemaker_detected"))
     )
     has_source = len(source_files) > 0
 

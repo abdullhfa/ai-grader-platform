@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block extra_head %}
 <style>
@@ -556,6 +556,35 @@
     #progressHintLine {
         display: inline;
     }
+
+    .gamemaker-pause-panel {
+        margin: 18px auto 4px;
+        max-width: 680px;
+        padding: 18px;
+        border: 1px solid rgba(250, 204, 21, 0.42);
+        border-radius: 14px;
+        background: rgba(120, 82, 12, 0.2);
+        color: #fef3c7;
+        text-align: right;
+    }
+
+    .gamemaker-pause-panel h4 { margin: 0 0 8px; color: #fde047; }
+    .gamemaker-pause-panel p { margin: 5px 0 12px; line-height: 1.75; }
+    .gamemaker-pause-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .gamemaker-pause-actions a,
+    .gamemaker-pause-actions button {
+        border-radius: 9px;
+        padding: 10px 15px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .gamemaker-download-btn { color: #fff; background: #7c3aed; border: 1px solid #a78bfa; }
+    .gamemaker-complete-btn { color: #052e16; background: #4ade80; border: 1px solid #86efac; }
+    .gamemaker-complete-btn:disabled { opacity: .55; cursor: wait; }
+    .gamemaker-cancel-btn { color: #fff; background: #b91c1c; border: 1px solid #fca5a5; }
+    .gamemaker-cancel-btn:hover { background: #dc2626; }
+    .gamemaker-cancel-btn:disabled { opacity: .55; cursor: wait; }
     #elapsedTimer {
         display: inline;
         font-variant-numeric: tabular-nums;
@@ -1373,6 +1402,25 @@
                     <h3 id="loadingText">جاري التصحيح...</h3>
                     <p id="gradingModeBadge" class="grading-mode-badge"></p>
                     <p id="estimatedTime"><span id="progressHintLine">الوقت المتبقي: جاري الحساب...</span><span id="elapsedTimer"></span></p>
+                    <div id="gameMakerPausePanel" class="gamemaker-pause-panel hidden" role="alert">
+                        <h4><i class="fa-solid fa-pause"></i> التصحيح متوقف مؤقتاً عند GameMaker</h4>
+                        <p id="gameMakerPauseMessage">
+                            لم يتم العثور على مشغل GameMaker الجاهز. ثبّت GameMaker، افتحه وسجّل الدخول،
+                            وثبّت Windows Runtime، ثم اضغط «إكمال» لاستكمال نفس التصحيح.
+                        </p>
+                        <div class="gamemaker-pause-actions">
+                            <a id="gameMakerDownloadLink" class="gamemaker-download-btn"
+                               href="https://gamemaker.io/en/download" target="_blank" rel="noopener">
+                                تنزيل GameMaker
+                            </a>
+                            <button type="button" id="gameMakerCompleteBtn" class="gamemaker-complete-btn">
+                                إكمال — اكتمل التثبيت
+                            </button>
+                            <button type="button" id="gameMakerCancelBtn" class="gamemaker-cancel-btn">
+                                إلغاء التصحيح
+                            </button>
+                        </div>
+                    </div>
                     <div class="molten-linear" role="progressbar" aria-label="تقدّم التصحيح" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                         <div id="progressBar"></div>
                     </div>
@@ -1997,6 +2045,7 @@
         saving: 'حفظ النتائج...',
         starting: 'بدء التصحيح...',
         queued: 'في قائمة انتظار التصحيح على الخادم...',
+        paused_gamemaker: 'تم إيقاف التصحيح مؤقتاً — يلزم تثبيت GameMaker ثم الضغط على Complete.',
     };
 
     let _lastHintPhase = '';
@@ -2014,6 +2063,7 @@
 
     function shouldUseSimpleStayOpenHint(info) {
         if (!info || info.finished) return false;
+        if (info.paused) return false;
         if (window._batchUploadInProgress) return false;
         const phase = info.current_phase || '';
         if (!phase || phase === 'queued') return false;
@@ -2056,6 +2106,10 @@
     function syncStayOpenHint(info, ctx) {
         ctx = ctx || {};
         if (!info || !info.found) return;
+        if (info.paused) {
+            setProgressHint(info.phase_label || BATCH_PHASE_LABELS.paused_gamemaker, { includeStayOpen: false });
+            return;
+        }
         if (ctx.etaText) {
             if (ctx.shownCompleted !== _lastEtaCompleted) {
                 _lastEtaCompleted = ctx.shownCompleted;
@@ -2224,6 +2278,11 @@
         const completed = Math.min(Number(info.completed) || 0, total);
         const phase = info.current_phase || '';
         const student = normalizeFileNameEntry(info.current_student || '');
+
+        if (info.paused || phase === 'paused_gamemaker') {
+            loadingText.textContent = '⏸️ التصحيح متوقف مؤقتاً عند GameMaker';
+            return;
+        }
 
         if (phase === 'grading' && student) {
             const isLast = completed >= Math.max(0, total - 1);
@@ -3037,6 +3096,8 @@
                     return;
                 }
 
+                syncGameMakerPause(info);
+
                 if (info.resuming || info.server_restarted) {
                     document.getElementById('loadingOverlay').classList.remove('hidden');
                     setGradingActionRowVisible(true);
@@ -3071,7 +3132,7 @@
                 );
                 const pollCompleted = Math.min(Number(info.completed) || 0, pollTotal);
                 const pollPct = resolveProgressPercent(info, uploadPercent, uploadInProgress);
-                if (!info.finished && batchWasQueued &&
+                if (!info.finished && !info.paused && batchWasQueued &&
                     (pollCompleted >= pollTotal - 1 || pollPct >= 97)) {
                     nearCompleteStallCount++;
                     if (nearCompleteStallCount >= 6) {
@@ -3564,9 +3625,111 @@
         return [];
     }
 
+    function syncGameMakerPause(info) {
+        const panel = document.getElementById('gameMakerPausePanel');
+        if (!panel) return;
+        const paused = !!(info && info.paused && info.pause_kind === 'gamemaker_dependency');
+        panel.classList.toggle('hidden', !paused);
+        if (!paused) return;
+
+        const dependency = info.required_dependency || {};
+        const toolchain = dependency.toolchain || {};
+        const message = document.getElementById('gameMakerPauseMessage');
+        if (message) {
+            message.textContent = toolchain.message_ar || dependency.message_ar ||
+                'ثبّت GameMaker، افتحه وسجّل الدخول، وثبّت Windows Runtime، ثم اضغط «إكمال».';
+        }
+        const link = document.getElementById('gameMakerDownloadLink');
+        if (link) {
+            link.href = info.download_url || dependency.download_url ||
+                toolchain.download_url || 'https://gamemaker.io/en/download';
+        }
+        setGradingActionRowVisible(false);
+        setProgressHint(
+            info.phase_label || BATCH_PHASE_LABELS.paused_gamemaker,
+            { includeStayOpen: false }
+        );
+    }
+
+    async function cancelGameMakerGrading() {
+        const btn = document.getElementById('gameMakerCancelBtn');
+        if (!btn || btn.disabled) return;
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'جاري الإلغاء...';
+        try {
+            const res = await fetch(`/api/batch-grade-cancel/${assignmentId}`, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                credentials: 'same-origin'
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || data.success === false) {
+                const detail = data.detail || data.message || 'تعذّر إلغاء التصحيح.';
+                throw new Error(typeof detail === 'string' ? detail : (detail.message || 'تعذّر إلغاء التصحيح.'));
+            }
+            clearBatchPageTimers();
+            window._batchGradingUiComplete = true;
+            window._gradingHandedOffToBackground = false;
+            document.getElementById('gameMakerPausePanel')?.classList.add('hidden');
+            document.getElementById('loadingText').textContent = 'تم إلغاء التصحيح — يمكنك بدء تصحيح جديد.';
+            setProgressHint('تم إلغاء العملية القديمة بنجاح.', { includeStayOpen: false });
+            showToast(data.message || 'تم إلغاء التصحيح', 'success');
+            setTimeout(() => { window.location.href = `/batch-grade/${assignmentId}`; }, 600);
+        } catch (err) {
+            showToast('تعذّر إلغاء التصحيح: ' + err.message, 'error');
+            btn.disabled = false;
+            btn.textContent = original;
+        }
+    }
+
+    async function completeGameMakerInstallation() {
+        const btn = document.getElementById('gameMakerCompleteBtn');
+        if (!btn || btn.disabled) return;
+        btn.disabled = true;
+        const original = btn.textContent;
+        btn.textContent = 'جاري التحقق...';
+        try {
+            const res = await fetch(`/api/batch-grade-complete-gamemaker/${assignmentId}`, {
+                method: 'POST',
+                credentials: 'same-origin',
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                const detail = data.detail || {};
+                const message = typeof detail === 'string'
+                    ? detail
+                    : (detail.message || 'لم يكتمل إعداد GameMaker بعد.');
+                showToast(message, 'warning');
+                const panelMessage = document.getElementById('gameMakerPauseMessage');
+                if (panelMessage) panelMessage.textContent = message;
+                return;
+            }
+            document.getElementById('gameMakerPausePanel')?.classList.add('hidden');
+            setGradingActionRowVisible(true);
+            setCancelGradingEnabled(true);
+            setBackgroundGradingEnabled(true);
+            document.getElementById('loadingText').textContent =
+                'تم العثور على GameMaker — جاري استكمال التصحيح...';
+            setProgressHint(data.message || 'تم استئناف التصحيح...', { includeStayOpen: false });
+            showToast(data.message || 'تم استئناف التصحيح', 'success');
+        } catch (err) {
+            showToast('تعذّر التحقق من GameMaker: ' + err.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = original;
+        }
+    }
+
+    document.getElementById('gameMakerCompleteBtn')?.addEventListener(
+        'click', completeGameMakerInstallation
+    );
+    document.getElementById('gameMakerCancelBtn')?.addEventListener('click', cancelGameMakerGrading);
+
     function syncProgressOverlayFromServer(info) {
         if (!info || !info.found) return;
         if (info.grading_mode_label) showGradingModeBadge(info.grading_mode_label);
+        syncGameMakerPause(info);
         updateLoadingPhase(info);
 
         const names = resolveProgressStudentNames(info);
@@ -3908,3 +4071,6 @@
     })();
 </script>
 {% endblock %}
+
+
+

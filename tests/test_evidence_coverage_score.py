@@ -37,7 +37,7 @@ def _rich_inventory():
 
 
 def test_coverage_v25_version():
-    assert COVERAGE_VERSION == "evidence_coverage_v2.6"
+    assert COVERAGE_VERSION == "evidence_coverage_v2.5"
 
 
 def test_coverage_cp6_high_with_test_and_bug():

@@ -30,7 +30,7 @@ from app.student_evidence_text import isolate_student_submission_text
 
 CoverageFlags = Dict[str, bool | int]
 
-COVERAGE_VERSION = "evidence_coverage_v2.6"
+COVERAGE_VERSION = "evidence_coverage_v2.5"
 _CP6_MERIT_BLOCK_PCT = int(os.getenv("PRO_CP6_COVERAGE_MERIT_MIN", "50"))
 _CP6_DEPENDENCY_THRESHOLD = int(os.getenv("PRO_CP6_DEPENDENCY_THRESHOLD", "40"))
 # Filename-only partial credit: 10% of total C.P6 when slot max is 35%.

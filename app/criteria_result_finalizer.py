@@ -197,7 +197,7 @@ def _deliverable_pass_for_row(
 
 
 _GOVERNANCE_DENIAL_LEAD = re.compile(
-    r"^[ \t]*⚠️\s*\[حوكمة BTEC\]\s*لم يتحقق المعيار مؤسسياً[^\n]*\n+",
+    r"^[ \t]*⚠️\s*\[حوكمة BTEC\]\s*لم\s+يتحقق\s+المعيار(?:\s+مؤسسياً)?[^\n]*\n+",
     re.MULTILINE,
 )
 _AI_SECTION = re.compile(
@@ -251,7 +251,7 @@ def _pearson_pro_blocks_promotion(
 ) -> bool:
     # Runtime gate hold is absolute and mode-independent: once a runtime-dependent
     # criterion is blocked for lack of runtime evidence, NO path may re-promote it.
-    if row.get("runtime_gate_block"):
+    if row.get("runtime_gate_block") or row.get("version_gate_block"):
         return True
     if not grading_result.get("pearson_btec_pro"):
         return False
@@ -405,6 +405,44 @@ def patch_evidence_gate_from_inventory(
     gate["has_gaps"] = missing_any
 
 
+def apply_gamemaker_version_gate(
+    grading_result: Dict[str, Any],
+    artifact_inventory: Optional[Dict[str, Any]],
+) -> List[str]:
+    """Require an identifiable updated GameMaker artifact when V1 is explicitly supplied."""
+    inv = artifact_inventory or grading_result.get("artifact_inventory") or {}
+    runtime = inv.get("runtime_artifacts") or {}
+    gm = runtime.get("gamemaker_signals") or {}
+    versions = gm.get("version_evidence") or {}
+    if not gm.get("detected") or not versions.get("v1_present") or versions.get("v2_present"):
+        return []
+
+    changes: List[str] = []
+    reason = (
+        "لم يُعثر على نسخة GameMaker محدثة V2 ضمن ملفات الطالب؛ "
+        "وجود V1 وحدها لا يثبت تحسين اللعبة بناءً على التغذية الراجعة."
+    )
+    for row in grading_result.get("criteria_results") or []:
+        if not isinstance(row, dict):
+            continue
+        short = _short_level(str(row.get("criteria_level") or ""))
+        if short not in {"M3", "D2"}:
+            continue
+        row["achieved"] = False
+        row["score"] = min(int(row.get("score") or 0), 35)
+        row["version_gate_block"] = True
+        row["version_gate_reason_ar"] = reason
+        missing = list(row.get("missing_points") or [])
+        if reason not in missing:
+            missing.append(reason)
+        row["missing_points"] = missing
+        feedback = str(row.get("feedback") or "").strip()
+        if reason not in feedback:
+            row["feedback"] = f"{feedback}\n\n{reason}".strip()
+        changes.append(f"{row.get('criteria_level')}:gamemaker_v2_required")
+    return changes
+
+
 def finalize_grading_criteria_results(
     grading_result: Dict[str, Any],
     *,
@@ -489,6 +527,19 @@ def finalize_grading_criteria_results(
         )
         if gate_report.get("changes"):
             changes.extend(gate_report["changes"])
+            changes.extend(
+                reconcile_authoritative_achieved(
+                    grading_result, artifact_inventory=artifact_inventory
+                )
+            )
+            criteria = grading_result.get("criteria_results") or []
+            grading_result["grade_level"] = determine_grade_level(criteria)
+            total = sum(int(r.get("score") or 0) for r in criteria if isinstance(r, dict))
+            n = len(criteria) or 1
+            pct = int(total / n)
+            grading_result["percentage"] = pct
+            grading_result["total_score"] = pct
+            grading_result["criteria_score_pct"] = pct
         if grading_result.get("pearson_btec_pro") and gate_report.get("changes"):
             try:
                 from app.btec_criteria_governance import apply_btec_awardability
@@ -501,6 +552,27 @@ def finalize_grading_criteria_results(
                 pass
     except Exception:
         pass
+
+    version_changes = apply_gamemaker_version_gate(grading_result, artifact_inventory)
+    if version_changes:
+        changes.extend(version_changes)
+        criteria = grading_result.get("criteria_results") or []
+        grading_result["grade_level"] = determine_grade_level(criteria)
+        total = sum(int(r.get("score") or 0) for r in criteria if isinstance(r, dict))
+        n = len(criteria) or 1
+        pct = int(total / n)
+        grading_result["percentage"] = pct
+        grading_result["total_score"] = pct
+        grading_result["criteria_score_pct"] = pct
+        if grading_result.get("pearson_btec_pro"):
+            try:
+                from app.btec_criteria_governance import apply_btec_awardability
+                from app.pro_btec_pearson import institutional_grade_from_awardable
+
+                apply_btec_awardability(criteria)
+                grading_result["grade_level"] = institutional_grade_from_awardable(criteria)
+            except Exception:
+                pass
 
     grading_result["criteria_finalizer"] = {
         "version": "criteria_finalizer_v3",

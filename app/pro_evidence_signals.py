@@ -21,7 +21,7 @@ TEST_PLAN_TEXT_RE = re.compile(
     r"test\s*plan|test\s*cases?|bug\s*log|user\s*test(?:ing)?|play\s*test|playtest"
     r"|خطة\s*اختبار|تقرير\s*اختبار|نتائج\s*اختبار|سجل\s*أخطاء|سجل\s*الأخطاء"
     r"|اختبار\s*المستخدم|تجربة\s*المستخدم|اختبار\s*اللعبة"
-    r"|functional\s*test|testing\s*phase|جدول\s*اختبار"
+    r"|functional\s*test|testing\s*phase|مرحلة\s*الاختبار|جدول\s*اختبار"
     r")",
     re.IGNORECASE,
 )
@@ -175,7 +175,21 @@ def _not_negated_match(text: str, pattern: Pattern[str]) -> bool:
 
 
 def _path_match(pattern: Pattern[str], path: str) -> bool:
-    return bool(pattern.search(normalize_arabic_text(path or "")))
+    raw = path or ""
+    normalized = normalize_arabic_text(raw)
+    if pattern.search(raw) or pattern.search(normalized):
+        return True
+    # The input is normalized (e.g. ة -> ه), so normalize Arabic literals in
+    # the compiled pattern as well; otherwise خطة_اختبار will never match
+    # a pattern containing the unnormalized spelling خطة.
+    try:
+        normalized_pattern = re.compile(
+            normalize_arabic_text(pattern.pattern),
+            pattern.flags,
+        )
+        return bool(normalized_pattern.search(normalized))
+    except re.error:
+        return False
 
 
 def text_has_test_plan_evidence(text: str) -> bool:

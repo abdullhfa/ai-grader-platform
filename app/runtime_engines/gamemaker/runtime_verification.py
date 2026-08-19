@@ -1,18 +1,21 @@
-"""
+﻿"""
 PRO GameMaker Runtime Verification — build pipeline, object inspection, gameplay replay.
 
 Pipeline:
   1. Extract .yyz → locate .yyp
-  2. Optional IDE compile (AI_GRADER_GAMEMAKER_IDE)
+  2. Discover the installed GameMaker runtime and build through Igor
   3. Object inspection (sprites/rooms/events/objects)
   4. Gameplay replay (EXE smoke or HTML5 headless) + screenshot comparison
 """
 from __future__ import annotations
 
 import logging
-import os
+import re
+import shutil
 import subprocess
+import zipfile
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Any, Dict, Optional
 
 from app.runtime_engines.base import RuntimeSession, SessionStatus
@@ -20,10 +23,119 @@ from app.runtime_engines.gamemaker.build_runner import analyze_gamemaker_artifac
 from app.runtime_engines.gamemaker.object_inspection import inspect_gamemaker_objects
 from app.runtime_engines.gamemaker.project_probe import GameMakerLayout, probe_gamemaker_layout
 from app.runtime_engines.gamemaker.runtime_runner import run_exe_smoke, run_html5_fallback
+from app.runtime_engines.gamemaker.toolchain import discover_gamemaker_toolchain
 from app.runtime_engines.gamemaker.yyz_parser import extract_yyz_archive, find_yyp_after_extract
 from app.runtime_engines.unity.screenshot import compare_runtime_screenshots
 
 logger = logging.getLogger("ai_grader.runtime.gamemaker.verification")
+
+
+def _version_rank_text(value: str) -> int:
+    path = PurePosixPath(value.replace("\\", "/"))
+    versions = []
+    for part in path.parent.parts:
+        match = re.fullmatch(r"v(\d+)", part, re.IGNORECASE)
+        if match:
+            versions.append(int(match.group(1)))
+    filename_match = re.search(
+        r"(?:^|[^a-z0-9])v(\d+)(?:[^0-9]|$)", path.name, re.IGNORECASE
+    )
+    if filename_match:
+        versions.append(int(filename_match.group(1)))
+    return max(versions, default=0)
+
+
+def _materialize_yyp_source_tree(yyp_path: Path, workspace: Path) -> Dict[str, Any]:
+    """Recover a complete YYP subtree from the staged ZIP before Igor builds it.
+
+    If the staged YYP already has source files beside it, keep that exact project.
+    Searching parent upload folders in that case can select a different student's
+    archive and silently replace the project that is being graded.
+    """
+    if yyp_path.is_file():
+        try:
+            if next(yyp_path.parent.rglob("*.gml"), None) is not None:
+                return {
+                    "materialized": False,
+                    "yyp_path": str(yyp_path),
+                    "reason": "source_tree_present",
+                }
+        except OSError:
+            pass
+
+    from app.runtime_engines.gamemaker.project_probe import _candidate_upload_archives
+
+    current_version = _version_rank_text(str(yyp_path))
+    anchors = {
+        part.lower()
+        for part in yyp_path.parts
+        if len(part) >= 3 and part.lower() not in {"uploads", "students", "v1", "v2"}
+    }
+    for archive in _candidate_upload_archives(yyp_path.parent):
+        if archive.suffix.lower() != ".zip" or not archive.is_file():
+            continue
+        try:
+            with zipfile.ZipFile(archive, "r") as zf:
+                yyp_members = [
+                    info for info in zf.infolist()
+                    if not info.is_dir() and PurePosixPath(info.filename).suffix.lower() == ".yyp"
+                ]
+                if not yyp_members:
+                    continue
+                matching_name = [
+                    info for info in yyp_members
+                    if PurePosixPath(info.filename).name.lower() == yyp_path.name.lower()
+                ]
+                candidates = matching_name or yyp_members
+
+                def score(info: zipfile.ZipInfo) -> tuple:
+                    low = info.filename.lower()
+                    anchor_hits = sum(1 for anchor in anchors if anchor in low)
+                    version = _version_rank_text(info.filename)
+                    version_match = int(bool(current_version and version == current_version))
+                    return version_match, version, anchor_hits, -len(info.filename)
+
+                chosen = max(candidates, key=score)
+                prefix = PurePosixPath(chosen.filename).parent
+                members = [
+                    info for info in zf.infolist()
+                    if not info.is_dir()
+                    and (
+                        prefix == PurePosixPath(".")
+                        or PurePosixPath(info.filename).parent == prefix
+                        or prefix in PurePosixPath(info.filename).parents
+                    )
+                ]
+                if not members or len(members) > 12000:
+                    continue
+                total_bytes = sum(max(0, int(info.file_size)) for info in members)
+                if total_bytes > 3 * 1024 * 1024 * 1024:
+                    continue
+
+                target_root = workspace / "source_archive_project"
+                for info in members:
+                    member = PurePosixPath(info.filename)
+                    relative = member.relative_to(prefix) if prefix != PurePosixPath(".") else member
+                    if any(part in {"", ".", ".."} for part in relative.parts):
+                        continue
+                    target = target_root.joinpath(*relative.parts)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    with zf.open(info, "r") as source, target.open("wb") as dest:
+                        shutil.copyfileobj(source, dest, length=1024 * 1024)
+                recovered_yyp = target_root / PurePosixPath(chosen.filename).name
+                if recovered_yyp.is_file():
+                    return {
+                        "materialized": True,
+                        "archive": str(archive),
+                        "member": chosen.filename,
+                        "project_root": str(target_root),
+                        "yyp_path": str(recovered_yyp),
+                        "file_count": len(members),
+                        "total_bytes": total_bytes,
+                    }
+        except (OSError, zipfile.BadZipFile, KeyError, ValueError):
+            continue
+    return {"materialized": False, "yyp_path": str(yyp_path)}
 
 
 def run_build_pipeline(
@@ -55,6 +167,12 @@ def run_build_pipeline(
                 pipeline["yyp_ready"] = True
 
     if layout.yyp_path and not (layout.executable or layout.html_entry):
+        source_tree = _materialize_yyp_source_tree(layout.yyp_path, workspace)
+        pipeline["source_tree_materialization"] = source_tree
+        if source_tree.get("materialized") and source_tree.get("yyp_path"):
+            layout.yyp_path = Path(str(source_tree["yyp_path"]))
+            layout.project_root = layout.yyp_path.parent
+            layout.gml_files = list(layout.project_root.rglob("*.gml"))[:200]
         ide_build = _try_ide_build(layout.yyp_path, workspace, timeout_seconds=timeout_seconds)
         pipeline["ide_build"] = ide_build
         pipeline["ide_build_attempted"] = bool(ide_build.get("attempted"))
@@ -77,51 +195,90 @@ def run_build_pipeline(
 
 
 def _try_ide_build(yyp_path: Path, workspace: Path, *, timeout_seconds: int) -> Dict[str, Any]:
-    # Never auto-launch GameMaker IDE from PATH during teacher batch grading — it opens GUI
-    # file dialogs and blocks the session. IDE builds are CI-only when explicitly enabled.
-    ide = os.environ.get("AI_GRADER_GAMEMAKER_IDE", "").strip()
-    if os.environ.get("AI_GRADER_GAMEMAKER_IDE_BUILD", "").strip().lower() not in (
-        "1",
-        "true",
-        "yes",
-        "on",
-    ):
-        return {"attempted": False, "reason": "gamemaker_ide_build_disabled"}
-    if not ide or not Path(ide).is_file():
-        return {"attempted": False, "reason": "gamemaker_ide_not_configured"}
-
+    """Build a Windows package with GameMaker's supported Igor command line."""
+    toolchain = discover_gamemaker_toolchain()
+    if not toolchain.ready:
+        return {
+            "attempted": False,
+            "reason": toolchain.reason,
+            "toolchain": toolchain.to_dict(),
+        }
     out_dir = workspace / "ide_build"
+    cache_dir = workspace / "igor_cache"
+    temp_dir = workspace / "igor_temp"
     out_dir.mkdir(parents=True, exist_ok=True)
-    # GameMaker 2024+ CI-style flags vary by license; try common batch patterns.
-    cmd_variants = [
-        [ide, f"/project={yyp_path}", "/compile", f"/output={out_dir}"],
-        [ide, str(yyp_path), "--compile", str(out_dir)],
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    target_zip = out_dir / "gamemaker_windows_build.zip"
+    cmd = [
+        str(toolchain.igor_path),
+        f"/uf={toolchain.user_folder}",
+        f"/rp={toolchain.runtime_root}",
+        f"/project={yyp_path.resolve()}",
+        f"/cache={cache_dir.resolve()}",
+        f"/temp={temp_dir.resolve()}",
+        f"/of={out_dir.resolve()}",
+        f"/tf={target_zip.name}",
+        "--",
+        "Windows",
+        "PackageZip",
     ]
-    last_err = ""
-    for cmd in cmd_variants:
-        try:
-            proc = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=min(timeout_seconds, 120),
-                cwd=str(yyp_path.parent),
-            )
-            if proc.returncode == 0:
-                exe = next(out_dir.rglob("*.exe"), None) or next(yyp_path.parent.rglob("*.exe"), None)
-                html = next(out_dir.rglob("index.html"), None) or next(yyp_path.parent.rglob("index.html"), None)
-                return {
-                    "attempted": True,
-                    "success": True,
-                    "command": cmd,
-                    "executable": str(exe) if exe else None,
-                    "html_entry": str(html) if html else None,
-                }
-            last_err = (proc.stderr or proc.stdout or "")[-400:]
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            last_err = str(exc)
+    try:
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            errors="replace",
+            timeout=min(max(timeout_seconds, 30), 300),
+            cwd=str(yyp_path.parent),
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {
+            "attempted": True,
+            "success": False,
+            "reason": "igor_build_failed",
+            "detail": str(exc),
+            "toolchain": toolchain.to_dict(),
+        }
 
-    return {"attempted": True, "success": False, "reason": "ide_build_failed", "detail": last_err}
+    archives = sorted(out_dir.rglob("*.zip"), key=lambda p: p.stat().st_mtime_ns, reverse=True)
+    if proc.returncode == 0 and archives:
+        extract_dir = out_dir / "windows_package"
+        extract_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            shutil.unpack_archive(str(archives[0]), str(extract_dir))
+        except (OSError, shutil.ReadError) as exc:
+            return {
+                "attempted": True,
+                "success": False,
+                "reason": "igor_package_extract_failed",
+                "detail": str(exc),
+                "returncode": proc.returncode,
+                "toolchain": toolchain.to_dict(),
+            }
+        exe = next(extract_dir.rglob("*.exe"), None)
+        html = next(extract_dir.rglob("index.html"), None)
+        if exe or html:
+            return {
+                "attempted": True,
+                "success": True,
+                "command": cmd,
+                "returncode": proc.returncode,
+                "package": str(archives[0]),
+                "executable": str(exe) if exe else None,
+                "html_entry": str(html) if html else None,
+                "toolchain": toolchain.to_dict(),
+            }
+
+    detail = (proc.stderr or proc.stdout or "")[-2000:]
+    return {
+        "attempted": True,
+        "success": False,
+        "reason": "igor_build_failed" if proc.returncode else "igor_build_missing_output",
+        "returncode": proc.returncode,
+        "detail": detail,
+        "toolchain": toolchain.to_dict(),
+    }
 
 
 def run_gameplay_replay(
@@ -177,7 +334,7 @@ def run_gamemaker_runtime_verification(
 
     build = run_build_pipeline(layout, workspace=workspace, timeout_seconds=timeout_seconds)
     inspection = inspect_gamemaker_objects(layout)
-    replay = run_gameplay_replay(session, layout, timeout_seconds=min(45, timeout_seconds))
+    replay = run_gameplay_replay(session, layout, timeout_seconds=min(90, timeout_seconds))
 
     artifact = analyze_gamemaker_artifacts(layout)
     signals = {
@@ -211,6 +368,7 @@ def run_gamemaker_runtime_verification(
             "version": "gamemaker_runtime_verification_v1",
             "yyp": str(layout.yyp_path) if layout.yyp_path else None,
             "yyz": str(layout.yyz_path) if layout.yyz_path else None,
+            "version_evidence": layout.version_evidence,
         },
     }
 
@@ -220,6 +378,7 @@ def run_gamemaker_runtime_verification(
     session.signals["gameplay_replay"] = replay
     session.signals["artifact_analysis"] = artifact
     session.signals["gamemaker_runtime_verification"] = result["gamemaker_runtime_verification"]
+    session.signals["gamemaker_version_evidence"] = layout.version_evidence
     session.signals["runtime_method"] = result["method"]
 
     if replay.get("gameplay_observed"):
@@ -237,3 +396,4 @@ def run_gamemaker_runtime_verification(
         gameplay=signals["gameplay_replay_ok"],
     )
     return result
+

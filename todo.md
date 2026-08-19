@@ -1,0 +1,36 @@
+﻿# Project TODO
+
+- [x] Make identical submission files produce deterministic grading scores and similarity percentages
+- [x] Detect GameMaker installations across registry, Program Files, AppData, LTS versions, and custom paths
+- [x] Preserve backward-compatible GameMakerToolchain properties used by existing callers and tests
+- [x] Accept GameMaker source-only projects containing `.yyp`/`.gml` as valid grading evidence
+- [x] Add Arabic pause messaging and a visible Cancel action for stuck batch grading tasks
+- [x] Verify the source-only grading worker invokes the Igor build pipeline after preflight
+- [x] Run focused GameMaker regression tests and full project tests
+- [x] Verify Arabic UI labels, cancel endpoint behavior, and EXE/source-only end-to-end flows
+- [x] Restart the server and record final verification status
+- [x] Prevent unrelated upload archives from replacing an existing source project during Igor preparation
+- [x] Honor explicit AI_GRADER_GAMEMAKER_IGOR and runtime-root overrides in toolchain discovery
+- [x] Translate the remaining GameMaker pause-panel completion label to Arabic
+- [x] Include submitted media evidence (WebM/images) when expanding deep ZIP submissions
+- [x] Route verified gameplay video evidence into C.P5/C.P6 without treating sprite frames as gameplay screenshots
+- [x] Remove contradictory final-summary wording when criterion rows are not achieved
+- [x] Propagate ZIP/RAR submission paths into BASIC keyframe extraction so WebM gameplay evidence is analyzed
+- [x] Report a detected GameMaker source project as present-but-unbuilt, not as a missing game file
+- [x] Recover matching runtime-session source/media paths when a persisted submission row points only to a DOCX
+- [x] Preserve static gameplay media fields when explainability refresh rebuilds artifact inventory
+- [x] Count recovered runtime WebM files in Arabic media verification and evidence status
+- [x] Initialize temporal gameplay-video signals before processing recovered WebM keyframes so media inference completes without NameError
+- [x] Persist refreshed WebM keyframe and gameplay-inference fields into artifact_inventory during explainability backfill
+- [x] Make source-only GameMaker evidence eligible for C.P5/C.P6 when recovered source and WebM gameplay evidence are present, while preserving deterministic scoring
+- [x] Prevent extraction coverage from scanning the filesystem root for fixture submissions
+- [x] Re-run the complete regression suite after isolating the Godot export-only stall
+- [x] Preserve evidence coverage version compatibility expected by the regression contract
+- [x] Restore Starlette-compatible template rendering for the login page
+- [x] Repair malformed LLM grading JSON with bracket-typo normalization
+- [x] Make database regression tests isolated from persistent local SQLite rows
+- [x] Restore Arabic preflight/path detection keys and exact missing-evidence labels
+- [x] Preserve BASIC rule-bundle provenance and legacy replay compatibility
+- [x] Restore resilient vision batch fallback behavior for test doubles and empty responses
+- [ ] Prepare a GitHub-safe commit for abdullhfa/ai-grader-platform
+- [ ] Push the verified project to the selected GitHub repository and verify the remote commit

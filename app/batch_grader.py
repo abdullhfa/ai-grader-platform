@@ -1,4 +1,4 @@
-"""
+﻿"""
 Batch grading system with parallel processing
 """
 import json
@@ -2126,9 +2126,28 @@ async def grade_batch_async(
                             merge_basic_vision_images,
                         )
 
+                        video_student_info = dict(student_info)
+
+                        video_student_info["submission_paths"] = list(submission_paths or [])
+
+                        if not video_student_info.get("source_archive_path"):
+
+                            for _video_submission_path in video_student_info["submission_paths"]:
+
+                                _video_submission_candidate = Path(str(_video_submission_path))
+
+                                if _video_submission_candidate.suffix.lower() in {".zip", ".rar"} and _video_submission_candidate.is_file():
+
+                                    video_student_info["source_archive_path"] = str(_video_submission_candidate)
+
+                                    break
+
                         video_keyframe_images, _video_kf_meta = extract_basic_video_keyframe_images(
-                            student_info,
+
+                            video_student_info,
+
                             max_frames_per_video=_video_kf_per,
+
                         )
                         if _video_kf_meta.get("frames_extracted"):
                             print(
@@ -3257,6 +3276,7 @@ async def grade_batch_async(
                         evidence_gate=_eg,
                         runtime_validation=_rv,
                         grading_mode=grading_mode,
+                        artifact_inventory=artifact_inventory,
                     )
                     try:
                         from app.visual_evidence_registry import apply_game_criteria_pro_gate
@@ -3934,3 +3954,5 @@ async def grade_batch_async(
             results.append(await _grade_one(idx, student))
 
     return results
+
+

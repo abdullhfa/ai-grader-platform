@@ -88,7 +88,7 @@ def _compute_preflight_grade_hint(
     if core_ready:
         return "P"
     if has_project and has_word_pdf:
-        return "P?"
+        return "P?" if not advisory_missing else "U"
     if has_project or has_word_pdf or has_exe:
         return "?"
     _ = advisory_missing  # gaps already surface in checklist / warn_teacher
@@ -128,10 +128,12 @@ def _scan_path_list(paths: Sequence[str]) -> Dict[str, Any]:
         or has_runnable_game_project(joined_lower)
     )
 
+    has_bug_log = bool(re.search(r"bug[\s_-]*log|سجل[\s_-]*أخطاء", joined, re.I))
     items = [
         ("gdd", "وثيقة تصميم اللعبة (GDD)", has_gdd),
         ("project", "مشروع اللعبة (محرك/ملفات مصدر)", has_project),
         ("test_plan", "خطة اختبار (Test Plan)", has_test_plan or has_testing_doc),
+        ("bug_log", "سجل أخطاء (Bug Log)", has_bug_log),
         ("word_pdf", "وثيقة Word/PDF", has_word_pdf),
         ("executable", "ملف تنفيذي / build", has_exe),
     ]
@@ -164,7 +166,7 @@ def _scan_path_list(paths: Sequence[str]) -> Dict[str, Any]:
         advisory_missing=advisory_missing,
     )
 
-    warn_teacher = bool(advisory_missing) or expected in ("?", "P?", "U")
+    warn_teacher = bool(advisory_missing) or expected in ("?", "U")
     summary_parts: List[str] = []
     if missing:
         summary_parts.append("لم يتم العثور على (أسماء ملفات): " + "، ".join(missing[:6]))
@@ -193,7 +195,11 @@ def _scan_path_list(paths: Sequence[str]) -> Dict[str, Any]:
         "missing_ar": missing,
         "present_ar": present_labels,
         "advisory_missing_ar": advisory_missing,
-        "critical_missing_ar": advisory_missing,  # legacy key — same advisory list
+        "critical_missing_ar": [
+            label
+            for key, label, present in items
+            if key in {"test_plan", "bug_log"} and not present
+        ],
         "warn_teacher": warn_teacher,
         "cp6_path_coverage_pct": cp6_likely_pct,
         "expected_grade_hint": expected,

@@ -7,9 +7,11 @@ Output: runtime_signal_graph → criterion mapping → grading adjudication supp
 from __future__ import annotations
 
 import re
+import shutil
 import struct
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 import zipfile
@@ -38,6 +40,22 @@ MAX_ARTIFACTS = 6
 UNITY_LOG_MAX_BYTES = 256_000
 RUNTIME_SCREENSHOT_OFFSETS = (("launch", 2.0), ("mid_runtime", 5.0), ("pre_exit", -0.75))
 FAST_RUNTIME_SCREENSHOT_OFFSETS = (("launch", 2.0),)
+
+# GameMaker can temporarily clear its native window title during redraw. Keep
+# the last verified game rectangle for that process so tagged PRO captures do
+# not fall back to the desktop midway through a live session.
+_GAME_WINDOW_BBOX_CACHE: Dict[int, Tuple[int, int, int, int]] = {}
+
+
+def _cached_game_window_bbox(process_pid: Optional[int]) -> Optional[Tuple[int, int, int, int]]:
+    return _GAME_WINDOW_BBOX_CACHE.get(int(process_pid)) if process_pid else None
+
+
+def _remember_game_window_bbox(
+    process_pid: Optional[int], bbox: Optional[Tuple[int, int, int, int]]
+) -> None:
+    if process_pid and bbox:
+        _GAME_WINDOW_BBOX_CACHE[int(process_pid)] = bbox
 
 
 def resolve_runtime_screenshot_offsets(
@@ -72,6 +90,20 @@ def resolve_smoke_timeout_seconds(grading_mode: str | None = None) -> int:
         return resolve_sandbox_timeout_seconds(grading_mode)
     except Exception:
         return MAX_SMOKE_SECONDS
+
+
+def _set_windows_runtime_awake(active: bool) -> bool:
+    """Prevent automatic sleep/display timeout while an interactive game is graded."""
+    if sys.platform != "win32":
+        return False
+    try:
+        import ctypes
+
+        es_continuous = 0x80000000
+        flags = es_continuous | 0x00000001 | 0x00000002 if active else es_continuous
+        return bool(ctypes.windll.kernel32.SetThreadExecutionState(flags))
+    except Exception:
+        return False
 
 
 def _safe_path(p: Path) -> bool:
@@ -238,22 +270,47 @@ def capture_runtime_screenshot(
         game_bbox = None
         try:
             from app.window_focus_manager import (
+                capture_game_window_image,
                 classify_capture_scope,
                 focus_game_window,
                 resolve_game_window_bbox,
             )
 
-            focus_game_window(process_pid=process_pid)
-            game_bbox = resolve_game_window_bbox(
+            focused = focus_game_window(process_pid=process_pid)
+            direct_capture = capture_game_window_image(
                 artifact_path=path,
                 process_pid=process_pid,
             )
-            capture_bbox = game_bbox
-            image = ImageGrab.grab(bbox=game_bbox) if game_bbox else ImageGrab.grab()
-            record["capture_scope"] = classify_capture_scope(
-                capture_bbox=capture_bbox,
-                game_bbox=game_bbox,
-            )
+            if direct_capture:
+                image = direct_capture["image"]
+                game_bbox = direct_capture["bbox"]
+                capture_bbox = game_bbox
+                record["capture_scope"] = "game_window"
+                record["capture_method"] = direct_capture["method"]
+                record["game_window_hwnd"] = direct_capture["hwnd"]
+            else:
+                game_bbox = resolve_game_window_bbox(
+                    artifact_path=path,
+                    process_pid=process_pid,
+                )
+                if game_bbox and focused:
+                    capture_bbox = game_bbox
+                    image = ImageGrab.grab(bbox=game_bbox)
+                    record["capture_scope"] = classify_capture_scope(
+                        capture_bbox=capture_bbox,
+                        game_bbox=game_bbox,
+                    )
+                    record["capture_method"] = "foreground_imagegrab"
+                else:
+                    image = ImageGrab.grab()
+                    game_bbox = None
+                    capture_bbox = None
+                    record["capture_scope"] = "desktop_fallback"
+                    record["capture_method"] = "desktop_imagegrab"
+                    if not focused:
+                        record["errors"].append("game_window_foreground_not_verified")
+            if game_bbox:
+                _remember_game_window_bbox(process_pid, game_bbox)
             record["game_window_bbox"] = list(game_bbox) if game_bbox else None
         except Exception:
             image = ImageGrab.grab()
@@ -307,13 +364,16 @@ def summarize_runtime_screenshots(screenshots: List[Dict[str, Any]]) -> Dict[str
     audit = build_visual_audit_summary(screenshots)
     states = audit.get("visual_states_observed") or []
     return {
-        "runtime_screenshot_count": len(gameplay_captured),
+        # Count captured frames as visual runtime evidence. The separate
+        # gameplay-window count remains validation-gated so this field cannot
+        # be mistaken for proof of gameplay or criterion achievement.
+        "runtime_screenshot_count": len(captured),
         "runtime_screenshot_raw_count": len(captured),
         "runtime_screenshot_rejected_count": len(rejected),
         "runtime_game_window_screenshot_count": len(game_window_captured),
         "runtime_non_game_window_screenshot_count": max(0, len(captured) - len(game_window_captured)),
         "runtime_screenshots": screenshots,
-        "visual_runtime_evidence": "present" if gameplay_captured else "unavailable",
+        "visual_runtime_evidence": "present" if captured else "unavailable",
         "black_screen_possible": bool(black_possible),
         "visual_states_observed": states,
         "visual_runtime_confidence": audit.get("visual_runtime_confidence", 0.0),
@@ -632,6 +692,8 @@ def _attach_terminal_godot_classify_if_missing(
     proc_crashed = out.get("smoke_result") in ("early_exit", "launch_error") or (
         signals.get("crash") == "observed"
     )
+    from app.gameplay_verifier import _capture_scope_degraded
+
     failure = classify_runtime_failure(
         window_detected=window_detected,
         black_screen_duration_s=0,
@@ -643,6 +705,7 @@ def _attach_terminal_godot_classify_if_missing(
         process_crashed=proc_crashed,
         boot_timed_out=not interaction_ran
         and out.get("smoke_result") in ("stable_window", "launch_ok"),
+        capture_scope_degraded=_capture_scope_degraded(shots),
     )
     if not failure:
         return
@@ -700,6 +763,8 @@ def smoke_test_windows_exe(
         return out
 
     launch_cwd = cwd or path.parent
+    runtime_artifact = path
+    cleanup_runtime_dir: Optional[Path] = None
     search_root: Optional[Path] = None
     if session_ctx:
         for key in ("submission_root", "project_root", "search_root"):
@@ -715,10 +780,20 @@ def smoke_test_windows_exe(
     try:
         from app.runtime_engines.gamemaker.project_probe import assess_gamemaker_exe_launch
 
-        launch_assessment = assess_gamemaker_exe_launch(path, search_root=search_root)
+        provided_assessment = (session_ctx or {}).get("gamemaker_launch_assessment")
+        launch_assessment = (
+            dict(provided_assessment)
+            if isinstance(provided_assessment, dict) and provided_assessment
+            else assess_gamemaker_exe_launch(path, search_root=search_root)
+        )
         out["gamemaker_launch_assessment"] = launch_assessment
         if launch_assessment.get("is_gamemaker"):
             launch_cwd = Path(launch_assessment.get("runtime_cwd") or launch_cwd)
+            runtime_artifact = Path(
+                launch_assessment.get("runtime_executable") or path
+            )
+            if launch_assessment.get("cleanup_runtime_dir"):
+                cleanup_runtime_dir = Path(str(launch_assessment["cleanup_runtime_dir"]))
             if not launch_assessment.get("launch_allowed"):
                 out["attempted"] = False
                 out["launch_cwd"] = str(launch_cwd)
@@ -739,16 +814,27 @@ def smoke_test_windows_exe(
     out["launch_cwd"] = str(launch_cwd)
     proc = None
     guard: Optional[RuntimeProcessGuard] = None
+    window_protector = None
+    awake_guard = _set_windows_runtime_awake(True)
     try:
         creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         proc = subprocess.Popen(
-            [str(path)],
+            [str(runtime_artifact)],
             cwd=str(launch_cwd),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             creationflags=creationflags,
         )
         guard = RuntimeProcessGuard(proc.pid)
+        try:
+            from app.window_focus_manager import RuntimeWindowProtector
+
+            window_protector = RuntimeWindowProtector(
+                proc.pid,
+                artifact_path=runtime_artifact,
+            ).start()
+        except Exception as exc:
+            out["errors"].append(f"window_protection_start_failed:{type(exc).__name__}")
         launch_started = time.time()
         offsets = screenshot_offsets
         if offsets is None and grading_mode is not None:
@@ -778,7 +864,7 @@ def smoke_test_windows_exe(
             for label, target in screenshot_targets:
                 if label not in captured_labels and elapsed >= target:
                     shot = capture_runtime_screenshot(
-                        path,
+                        runtime_artifact,
                         label=label,
                         elapsed_seconds=elapsed,
                         session_ctx=session_ctx,
@@ -796,7 +882,7 @@ def smoke_test_windows_exe(
             ):
                 if pre_interaction_shot is None:
                     pre_interaction_shot = capture_runtime_screenshot(
-                        path,
+                        runtime_artifact,
                         label="pre_interaction",
                         elapsed_seconds=elapsed,
                         session_ctx=session_ctx,
@@ -805,10 +891,11 @@ def smoke_test_windows_exe(
                     out["runtime_screenshots"].append(pre_interaction_shot)
 
                 def _capture_shot(*_args: Any, **kwargs: Any) -> Dict[str, Any]:
-                    # gameplay_verifier passes artifact_path positionally; closure `path` is authoritative.
+                    # gameplay_verifier passes artifact_path positionally; the
+                    # prepared runtime bundle is authoritative for GameMaker.
                     kwargs.pop("process_pid", None)
                     return capture_runtime_screenshot(
-                        path,
+                        runtime_artifact,
                         session_ctx=session_ctx,
                         process_pid=proc.pid if proc else None,
                         **kwargs,
@@ -845,12 +932,13 @@ def smoke_test_windows_exe(
                                 submission_id=str(
                                     session_ctx.get("submission_id") if session_ctx else ""
                                 ),
+                                engine=str((session_ctx or {}).get("engine") or "godot"),
                             )
                         except Exception:
                             pass
 
                     gameplay_verification = run_automated_gameplay_verification(
-                        artifact_path=path,
+                        artifact_path=runtime_artifact,
                         process_pid=proc.pid if proc else None,
                         capture_screenshot=_capture_shot,
                         elapsed_seconds=elapsed,
@@ -936,7 +1024,7 @@ def smoke_test_windows_exe(
                     burst = run_interaction_burst()
                     time.sleep(0.35)
                     post_shot = capture_runtime_screenshot(
-                        path,
+                        runtime_artifact,
                         label="post_interaction",
                         elapsed_seconds=time.time() - launch_started,
                         session_ctx=session_ctx,
@@ -986,6 +1074,13 @@ def smoke_test_windows_exe(
         out["signals"] = {"runtime_launch_attempted": True, "crash": "observed"}
         out["smoke_result"] = "launch_error"
     finally:
+        if window_protector is not None:
+            try:
+                out["window_protection"] = window_protector.stop()
+            except Exception as exc:
+                out.setdefault("errors", []).append(
+                    f"window_protection_stop_failed:{type(exc).__name__}"
+                )
         if guard:
             restriction = guard.finalize()
             out["process_restriction"] = restriction
@@ -1000,6 +1095,8 @@ def smoke_test_windows_exe(
                 proc.kill()
             except Exception:
                 pass
+        if awake_guard:
+            _set_windows_runtime_awake(False)
     if capture_screenshots:
         out["visual_observation"] = summarize_runtime_screenshots(out.get("runtime_screenshots") or [])
     _attach_terminal_godot_classify_if_missing(
@@ -1010,6 +1107,17 @@ def smoke_test_windows_exe(
         grading_mode=grading_mode,
         enable_interaction_trace=enable_interaction_trace,
     )
+    if cleanup_runtime_dir is not None:
+        try:
+            temp_root = Path(tempfile.gettempdir()).resolve()
+            resolved_cleanup = cleanup_runtime_dir.resolve()
+            if (
+                resolved_cleanup.parent == temp_root
+                and resolved_cleanup.name.startswith("ai_grader_gamemaker_")
+            ):
+                shutil.rmtree(resolved_cleanup, ignore_errors=True)
+        except Exception:
+            pass
     return out
 
 

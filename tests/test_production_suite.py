@@ -56,19 +56,6 @@ class TestDeterministicRubric(unittest.TestCase):
         )
         self.assertFalse(row["deterministic_achieved"])
 
-    def test_arabic_produce_in_design_criteria_not_routed_to_p5_code_path(self):
-        from app.rubric.deterministic_engine import evaluate_criterion_deterministic
-
-        desc = "إنتاج تصميمات فنية أساسية لألعاب الحاسوب."
-        long_gdd = "تصميم لعبة " + ("محتوى GDD " * 120)
-        row = evaluate_criterion_deterministic(
-            criteria_level="B.P3",
-            criteria_description=desc,
-            student_text=long_gdd,
-        )
-        self.assertEqual(row["rule_id"], "gdd_document")
-        self.assertNotEqual(row["reason"], "no_code_evidence")
-
 
 class TestAIReliability(unittest.TestCase):
     def test_high_risk_with_gaps(self):

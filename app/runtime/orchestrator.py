@@ -366,6 +366,10 @@ def run_runtime_observation(
             observation["gamemaker_gameplay_replay"] = session_signals["gameplay_replay"]
         if session_signals.get("build_pipeline"):
             observation["gamemaker_build_pipeline"] = session_signals["build_pipeline"]
+        if session_signals.get("gamemaker_version_evidence"):
+            observation["gamemaker_version_evidence"] = session_signals[
+                "gamemaker_version_evidence"
+            ]
 
         gm_obs = session_signals.get("gamemaker_observation")
         if isinstance(gm_obs, dict):
@@ -424,7 +428,10 @@ def run_runtime_observation(
             observation["runtime_method"] = session_signals["runtime_method"]
         launch_assessment = session_signals.get("gamemaker_launch_assessment") or {}
         launch_skipped = (
-            session_signals.get("runtime_method") == "gamemaker_static_only"
+            session_signals.get("runtime_method") in (
+                "gamemaker_static_only",
+                "gamemaker_runtime_unavailable",
+            )
             or (isinstance(gm_obs, dict) and gm_obs.get("status") == "skipped")
             or launch_assessment.get("launch_allowed") is False
         )

@@ -5,6 +5,7 @@ import os
 from sqlalchemy import create_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
+from sqlalchemy.engine import make_url  # type: ignore
 from dotenv import load_dotenv  # type: ignore
 
 load_dotenv()
@@ -26,7 +27,14 @@ if "mysql" in DATABASE_URL:
             print("  [WARN] MySQL driver (mysqlclient or pymysql) not found, using SQLite instead")
 
 # Create engine
+_SQLITE_RELATIVE_PATH = None
+_BOUND_SQLITE_PATH = None
+_database_url = make_url(DATABASE_URL)
 if DATABASE_URL.startswith("sqlite"):
+    _sqlite_database = _database_url.database
+    if _sqlite_database and _sqlite_database != ":memory:" and not os.path.isabs(_sqlite_database):
+        _SQLITE_RELATIVE_PATH = _sqlite_database
+        _BOUND_SQLITE_PATH = os.path.abspath(_sqlite_database)
     engine = create_engine(
         DATABASE_URL,
         connect_args={"check_same_thread": False, "timeout": 30},
@@ -42,6 +50,25 @@ else:
 
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def _ensure_relative_sqlite_database_for_cwd() -> None:
+    """Rebind relative SQLite URLs after tests or workers change the working directory."""
+    global engine, _BOUND_SQLITE_PATH
+    if not _SQLITE_RELATIVE_PATH:
+        return
+    target = os.path.abspath(os.path.join(os.getcwd(), _SQLITE_RELATIVE_PATH))
+    if _BOUND_SQLITE_PATH == target:
+        return
+    old_engine = engine
+    engine = create_engine(
+        f"sqlite:///{target.replace(os.sep, '/')}",
+        connect_args={"check_same_thread": False, "timeout": 30},
+        echo=os.getenv("DEBUG", "False").lower() == "true",
+    )
+    SessionLocal.configure(bind=engine)
+    _BOUND_SQLITE_PATH = target
+    old_engine.dispose()
 
 # Create base class for models
 Base = declarative_base()
@@ -62,6 +89,7 @@ def init_db():
     """
     Initialize database tables
     """
+    _ensure_relative_sqlite_database_for_cwd()
     from app.models import (  # type: ignore # noqa: F401
         User, Assignment, GradingCriteria, Submission, GradingResult,
         GradingSummary, GradingCache, Package, Subscription,

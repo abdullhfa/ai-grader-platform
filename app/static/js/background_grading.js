@@ -290,7 +290,7 @@
                     finished: false,
                 };
             }
-            if latest.status === 'failed') {
+            if (latest.status === 'failed') {
                 return {
                     found: true,
                     finished: true,

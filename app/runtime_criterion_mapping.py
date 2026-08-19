@@ -219,8 +219,16 @@ def evaluate_operational_support(
         and gameplay_sem.get("progression_detected")
         and gameplay_sem.get("fail_state_detected")
     )
+    human_verified_completed = bool(
+        human_playtest
+        and obs.get("status") == "completed"
+        and obs.get("runtime_verified")
+        and obs.get("interaction_visually_corroborated")
+        and smoke_ok
+    )
     cp5_suggested = bool(
-        (
+        human_verified_completed
+        or (
             cp5_verdict == "operational_support_strong"
             and (interaction_trace or human_playtest or gameplay_sem.get("interaction_detected"))
             and not smoke_only
@@ -230,7 +238,8 @@ def evaluate_operational_support(
         or l5_verified_support
     )
     cp6_suggested = bool(
-        (
+        human_verified_completed
+        or (
             cp6_verdict == "operational_support_strong"
             and (interaction_trace or human_playtest or gameplay_sem.get("interaction_detected"))
             and not smoke_only
@@ -327,14 +336,59 @@ def apply_runtime_criterion_adjudication(
     criteria = grading_result.get("criteria_results") or []
     changes: List[Dict[str, Any]] = []
 
+    criterion_pass: Dict[str, bool] = {}
+    try:
+        from app.gameplay_verifier import (
+            _test_document_present,
+            assess_automated_l4_gate,
+            count_test_document_entries,
+        )
+
+        gv = inv.get("gameplay_verification") or grading_result.get("gameplay_verification") or {}
+        smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
+            "functional_smoke"
+        ) or {}
+        inv_for_docs = {
+            **inv,
+            "intake_relative_paths": grading_result.get("intake_relative_paths")
+            or inv.get("intake_relative_paths")
+            or [],
+        }
+        l4 = assess_automated_l4_gate(
+            gv,
+            test_document_present=_test_document_present(inv_for_docs),
+            test_doc_entries=count_test_document_entries(inv_for_docs),
+            functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
+            grading_mode=grading_result.get("grading_mode") or inv.get("grading_mode"),
+        )
+        criterion_pass = l4.get("criterion_pass") or {}
+    except Exception:
+        criterion_pass = {}
+
     for cr in criteria:
         if not isinstance(cr, dict):
             continue
         level = str(cr.get("criteria_level") or "")
         if not is_execution_criterion(level):
             continue
+        short = _short_level(level)
+        if criterion_pass.get(short):
+            det = cr.get("deterministic_rubric") or {}
+            if not cr.get("achieved"):
+                cr["achieved"] = True
+                cr["score"] = max(int(cr.get("score") or 0), 75)
+            auth = str(det.get("authority") or cr.get("achievement_authority") or "")
+            if auth and auth not in ("HUMAN_REVIEW_REQUIRED", "RUNTIME_INSUFFICIENT"):
+                cr["achievement_authority"] = auth
+            else:
+                cr["achievement_authority"] = "RUNTIME_L4_GATE"
+            cr["verdict_status"] = "pass"
+            cr["awardable"] = True
+            cr.pop("pro_gameplay_governance_hold", None)
+            changes.append({"criteria_level": level, "action": "l4_gate_certified"})
+            continue
         key = level.upper() if level.upper() in support else (
-            "C.P5" if _short_level(level) == "P5" else "C.P6"
+            "C.P5" if short == "P5" else "C.P6"
         )
         sup = support.get(key) or {}
         verdict = sup.get("support_level", "insufficient")
@@ -344,6 +398,13 @@ def apply_runtime_criterion_adjudication(
         if verdict == "insufficient":
             det = cr.get("deterministic_rubric") or {}
             if bool(det.get("deterministic_achieved")) or str(cr.get("verdict_status") or "").lower() == "pass":
+                if not cr.get("achieved"):
+                    cr["achieved"] = True
+                    cr["score"] = max(int(cr.get("score") or 0), 75)
+                cr["achievement_authority"] = str(
+                    det.get("authority") or cr.get("achievement_authority") or "RUNTIME_VALIDATION"
+                )
+                cr["verdict_status"] = "pass"
                 cr["runtime_observation_note_ar"] = _build_runtime_note_ar(
                     level, sup, outcome="human_review"
                 )

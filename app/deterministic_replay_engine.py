@@ -71,7 +71,10 @@ def initial_replay_state() -> Dict[str, Any]:
         "total_score": None,
         "max_score": None,
         "percentage": None,
+        "decision_provenance": None,
+        "evidence_fingerprint": None,
         "criteria": {},
+
         "governance": {
             "active_authority": "AI_GRADING",
             "runtime_status": "unknown",
@@ -106,7 +109,10 @@ def _apply_initial_grading(state: Dict[str, Any], event: Dict[str, Any]) -> None
     state["total_score"] = payload.get("total_score")
     state["max_score"] = payload.get("max_score")
     state["percentage"] = payload.get("percentage")
+    state["decision_provenance"] = payload.get("decision_provenance")
+    state["evidence_fingerprint"] = payload.get("evidence_fingerprint")
     state["governance"]["active_authority"] = event.get("authority") or "AI_GRADING"
+
     for cr in payload.get("criteria_results") or []:
         if isinstance(cr, dict):
             _apply_criterion_decision(

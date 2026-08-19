@@ -10,7 +10,7 @@ from app.strict_grading_policy import (
 
 def test_strict_mode_enabled_by_default():
     assert strict_deterministic_enabled() is True
-    assert skip_grading_cache_default() is True
+    assert skip_grading_cache_default() is False
     assert use_deterministic_ai_detection_only() is False
 
 

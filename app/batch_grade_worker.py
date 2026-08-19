@@ -55,6 +55,7 @@ PHASE_LABELS_AR = {
     "extracting": "استخراج محتوى ملف الطالب...",
     "vision": "تحليل الصور واللقطات...",
     "runtime": "تشغيل اللعبة والتحقق التشغيلي (GameMaker/EXE)...",
+    "paused_gamemaker": "تم إيقاف التصحيح مؤقتاً — يلزم تثبيت GameMaker ثم الضغط على Complete.",
     "inventory": "فحص المشروع والأدلة التقنية...",
     "grading": "المقيم الذكي يصحّح المعايير...",
     "finalizing": "التحقق المؤسسي وحوكمة BTEC (Pearson)...",
@@ -62,6 +63,40 @@ PHASE_LABELS_AR = {
     "cancelling": "جاري إيقاف التصحيح...",
     "cancelled": "تم إيقاف التصحيح",
 }
+
+
+def advance_phase_timeline(info: dict, phase: str, *, now: float | None = None) -> None:
+    """Per-phase stopwatch on the batch progress blob (diagnosis for slow runs).
+
+    Appends/closes entries in info["phase_timeline"]:
+      {"phase", "label", "started_at", "ended_at", "duration_s"}
+    so the UI/ops can see exactly where grading time went (extract vs vision vs
+    LLM vs runtime vs saving) instead of guessing. Additive & side-effect free.
+    """
+    ts = time.time() if now is None else now
+    timeline = info.setdefault("phase_timeline", [])
+    last = timeline[-1] if timeline else None
+    if last is not None and last.get("phase") == phase:
+        return
+    if last is not None and "ended_at" not in last:
+        last["ended_at"] = ts
+        last["duration_s"] = round(ts - float(last.get("started_at") or ts), 1)
+    timeline.append(
+        {
+            "phase": phase,
+            "label": PHASE_LABELS_AR.get(phase, phase),
+            "started_at": ts,
+        }
+    )
+
+
+def close_phase_timeline(info: dict, *, now: float | None = None) -> None:
+    """Close the open phase entry (call when a student finishes)."""
+    ts = time.time() if now is None else now
+    timeline = info.get("phase_timeline") or []
+    if timeline and "ended_at" not in timeline[-1]:
+        timeline[-1]["ended_at"] = ts
+        timeline[-1]["duration_s"] = round(ts - float(timeline[-1].get("started_at") or ts), 1)
 
 
 def _clone_graded_submission(
@@ -698,6 +733,7 @@ async def run_batch_grading_job(
             info["current_student"] = student_name
             info["current_phase"] = phase
             info["phase_label"] = PHASE_LABELS_AR.get(phase, info.get("phase_label") or "")
+            advance_phase_timeline(info, phase)
             info["student_progress"] = max(0.0, min(0.99, student_progress))
             _sync_progress_percent(info)
             _commit_progress(batch_progress, assignment_id, info)
@@ -709,6 +745,7 @@ async def run_batch_grading_job(
             total = max(int(info.get("total") or 0), 1)
             if int(info.get("completed") or 0) < total:
                 info["completed"] = int(info.get("completed") or 0) + 1
+            close_phase_timeline(info)
             info.setdefault("student_times", []).append(
                 time.time() - info.get("start_time", time.time())
             )
@@ -755,6 +792,70 @@ async def run_batch_grading_job(
         )
 
         if student_files:
+            if normalize_grading_mode_choice(prog["grading_mode"]) == "deep":
+                from app.runtime_engines.gamemaker.toolchain import (
+                    preflight_gamemaker_runtime_dependency,
+                )
+
+                gm_preflight = await asyncio.to_thread(
+                    preflight_gamemaker_runtime_dependency,
+                    student_files,
+                )
+                prog["gamemaker_preflight"] = gm_preflight
+                if gm_preflight.get("pause_required"):
+                    from app.batch_checkpoint import (
+                        load_batch_checkpoint,
+                        save_batch_checkpoint,
+                    )
+
+                    checkpoint = load_batch_checkpoint(batch_id) or {
+                        "stage": "grading",
+                        "assignment_id": assignment_id,
+                        "batch_id": batch_id,
+                        "batch_name": batch_name,
+                        "user_id": user_id,
+                        "subject_bal_id": subject_bal_id,
+                        "sub_id": sub_id,
+                        "grading_mode": prog["grading_mode"],
+                        "selected_criteria_list": selected_criteria_list,
+                        "batch_intake_manifest": batch_intake_manifest,
+                        "skip_grading_cache": skip_grading_cache,
+                        "student_files": student_files,
+                        "cached_results": cached_results,
+                    }
+                    checkpoint.update(
+                        {
+                            "paused": True,
+                            "pause_kind": "gamemaker_dependency",
+                            "pause_started_at": time.time(),
+                            "gamemaker_preflight": gm_preflight,
+                        }
+                    )
+                    save_batch_checkpoint(batch_id, checkpoint)
+                    prog.update(
+                        {
+                            "paused": True,
+                            "pause_kind": "gamemaker_dependency",
+                            "current_phase": "paused_gamemaker",
+                            "phase_label": PHASE_LABELS_AR["paused_gamemaker"],
+                            "current_student": "",
+                            "student_progress": 0.0,
+                            "finished": False,
+                            "failed": False,
+                            "required_dependency": gm_preflight,
+                            "percent": max(8, int(prog.get("percent") or 0)),
+                        }
+                    )
+                    batch.status = BatchStatus.PENDING  # type: ignore[assignment]
+                    batch.failure_message = None  # type: ignore[assignment]
+                    db.commit()
+                    _commit_progress(batch_progress, assignment_id, prog)
+                    print(
+                        f"⏸️ [GAMEMAKER] batch={batch_id} paused: "
+                        f"{gm_preflight.get('pause_reason')}"
+                    )
+                    return
+
             from app.ai_provider import ensure_ollama_ready_for_grading
 
             if is_batch_cancel_requested(batch_progress, assignment_id) or _job_stale():
@@ -1291,7 +1392,7 @@ _STUCK_EXTRACT_SECONDS = 8 * 60
 
 def _progress_is_stuck(info: dict) -> bool:
     """True when persisted/in-memory progress looks abandoned (common after restart)."""
-    if not info or info.get("finished") or info.get("failed"):
+    if not info or info.get("finished") or info.get("failed") or info.get("paused"):
         return False
     phase = str(info.get("current_phase") or "")
     started = float(info.get("start_time") or 0)

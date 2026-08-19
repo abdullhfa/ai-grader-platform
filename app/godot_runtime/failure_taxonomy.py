@@ -76,8 +76,15 @@ def classify_runtime_failure(
     server_dialog_detected: bool,
     process_crashed: bool,
     boot_timed_out: bool,
+    capture_scope_degraded: bool = False,
 ) -> Optional[GodotRuntimeFailure]:
-    """Return one terminal failure code, or None when gameplay+mechanics succeeded."""
+    """Return one terminal failure code, or None when gameplay+mechanics succeeded.
+
+    ``capture_scope_degraded=True`` means the run has desktop_fallback captures and
+    no valid game_window capture — the agent went blind mid-run (window closed or
+    capture lost). In that state NO_VISUAL_RESPONSE_TO_INPUT would falsely blame
+    the student's game, so the failure is GAME_WINDOW_CAPTURE_FAILED instead.
+    """
     evidence: Dict[str, Any] = {
         "window_detected": window_detected,
         "black_screen_duration_s": black_screen_duration_s,
@@ -88,6 +95,7 @@ def classify_runtime_failure(
         "server_dialog_detected": server_dialog_detected,
         "process_crashed": process_crashed,
         "boot_timed_out": boot_timed_out,
+        "capture_scope_degraded": capture_scope_degraded,
     }
     if gameplay_entered and mechanics_verified_count >= 1:
         return None
@@ -105,6 +113,14 @@ def classify_runtime_failure(
         return _fail("BLACK_SCREEN_PERSISTENT", evidence)
     status = (menu_status or "").lower()
     if not gameplay_entered:
+        # Capture-pipeline failures (e.g. capture_preflight_failed, capture_failed)
+        # mean the agent was BLIND — it never observed the game, so the game's
+        # responsiveness is unknown. Classifying these as NO_VISUAL_RESPONSE_TO_INPUT
+        # falsely blames the student's game for an environment/capture problem.
+        if capture_scope_degraded:
+            return _fail("GAME_WINDOW_CAPTURE_FAILED", evidence)
+        if "capture" in status and ("fail" in status or "preflight" in status):
+            return _fail("GAME_WINDOW_CAPTURE_FAILED", evidence)
         if "menu" in status:
             return _fail("MENU_NOT_RESOLVED", evidence)
         if status in ("loading", "black_screen", "unknown") and black_screen_duration_s > 10:

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 _CONFIG_PATH = Path("uploads/config/submission_replay_cache_generation.json")
+_LEGACY_REPLAY_BASELINE: int | None = None
 
 
 def _load_config() -> dict[str, Any]:
@@ -59,4 +60,10 @@ def submission_replay_generation(submission: Any) -> int:
 
 def submission_replay_cache_valid(submission: Any) -> bool:
     """False after admin cleared grading cache since this submission was graded."""
-    return submission_replay_generation(submission) >= current_replay_cache_generation()
+    global _LEGACY_REPLAY_BASELINE
+    current = current_replay_cache_generation()
+    if getattr(submission, "grading_snapshot_json", None) is None:
+        if _LEGACY_REPLAY_BASELINE is None:
+            _LEGACY_REPLAY_BASELINE = current
+        return current == _LEGACY_REPLAY_BASELINE
+    return submission_replay_generation(submission) >= current

@@ -285,9 +285,7 @@ def generate_student_report_pdf(
 
     # Get AI and plagiarism scores for executive summary
     ai_info = grading_result.get('ai_detection_info', {})
-    ai_risk_cls = ai_info.get('risk_classification', {})
     ai_score = ai_info.get('score', grading_result.get('ai_likelihood', 0))
-    ai_icon = ai_risk_cls.get('icon', '❓')
 
     plag_info = grading_result.get("plagiarism_info", {})
     plag_max = plag_info.get("max_similarity", 0)
@@ -299,7 +297,7 @@ def generate_student_report_pdf(
         [f"{grade_level}", ": " + arabic_text("الدرجة الإجمالية")],
         [f"{percentage:.1f}%", ": " + arabic_text("النسبة المئوية")],
         [f"{total_score} / {max_score}", ": " + arabic_text("الدرجة الكلية")],
-        [f"{ai_icon} {ai_score}%", ": " + arabic_text("نسبة الذكاء الاصطناعي")],
+        [f"{ai_score}%", ": " + arabic_text("نسبة الذكاء الاصطناعي")],
         [f"{plag_max:.1f}%", ": " + arabic_text("نسبة الانتحال")],
     ]
 
@@ -329,25 +327,25 @@ def generate_student_report_pdf(
     # Plagiarism Section
     plag_info = grading_result.get("plagiarism_info")
     if plag_info:
-        elements.append(Paragraph(arabic_text("🔗 تحليل الانتحال (Plagiarism Analysis)"), heading_style))
+        elements.append(Paragraph(arabic_text("تحليل الانتحال (Plagiarism Analysis)"), heading_style))
 
         max_sim = plag_info.get("max_similarity", 0)
 
         # Use 5-tier classification per Section 4.3
         if max_sim <= 10:
-            plag_text = f"✅ مقبول: تشابه طبيعي ({max_sim:.1f}%)"
+            plag_text = f"مقبول: تشابه طبيعي ({max_sim:.1f}%)"
             plag_color = colors.green
         elif max_sim <= 25:
-            plag_text = f"🟡 تشابه ملحوظ - يحتاج مراقبة ({max_sim:.1f}%)"
+            plag_text = f"تشابه ملحوظ - يحتاج مراقبة ({max_sim:.1f}%)"
             plag_color = colors.HexColor('#eab308')
         elif max_sim <= 50:
-            plag_text = f"🟠 انتحال مشتبه به - يحتاج تحقيق ({max_sim:.1f}%)"
+            plag_text = f"انتحال مشتبه به - يحتاج تحقيق ({max_sim:.1f}%)"
             plag_color = colors.orange
         elif max_sim <= 75:
-            plag_text = f"🔴 انتحال واضح ({max_sim:.1f}%)"
+            plag_text = f"انتحال واضح ({max_sim:.1f}%)"
             plag_color = colors.red
         else:
-            plag_text = f"⛔ نسخ شبه كامل ({max_sim:.1f}%)"
+            plag_text = f"نسخ شبه كامل ({max_sim:.1f}%)"
             plag_color = colors.HexColor('#7f1d1d')
 
         elements.append(Paragraph(pdf_cell_text(plag_text, normalize_pipes=False), ParagraphStyle(
@@ -384,7 +382,6 @@ def generate_student_report_pdf(
 
         ai_score_val = ai_detection.get('score', grading_result.get('ai_likelihood', 0))
         ai_risk_cls_val = ai_detection.get('risk_classification', {})
-        ai_icon_val = ai_risk_cls_val.get('icon', '❓')
         ai_label_val = ai_risk_cls_val.get('label_ar', '-')
 
         # AI score display with color
@@ -400,7 +397,7 @@ def generate_student_report_pdf(
             ai_color = colors.HexColor('#7f1d1d')
 
         elements.append(Paragraph(
-            arabic_text(f"{ai_icon_val} النسبة: {ai_score_val}% — {ai_label_val}"),
+            arabic_text(f"النسبة: {ai_score_val}% — {ai_label_val}"),
             ParagraphStyle('AIStatus', parent=normal_style, textColor=ai_color, fontSize=12, spaceAfter=10)
         ))
 
@@ -465,17 +462,19 @@ def generate_student_report_pdf(
         if human_review:
             bg_color = colors.HexColor('#fef3c7')
             border_color = colors.HexColor('#f59e0b')
-            status_icon = "⏸"
-            status_text = "مراجعة بشرية مطلوبة (Human Review Required)"
+            status_icon = ""
+            # Keep the long bilingual label out of the fixed 3-inch status
+            # cell; the authority details remain in the criterion feedback.
+            status_text = "مراجعة بشرية مطلوبة"
         elif achieved:
             bg_color = colors.HexColor('#d1fae5')
             border_color = colors.HexColor('#10b981')
-            status_icon = "✅"
+            status_icon = ""
             status_text = "متحقق (Achieved)"
         else:
             bg_color = colors.HexColor('#fee2e2')
             border_color = colors.HexColor('#ef4444')
-            status_icon = "❌"
+            status_icon = ""
             status_text = "غير متحقق (Not Achieved)"
 
         # Criteria header with colored box (RTL: status on left, criterion on right)
@@ -549,7 +548,7 @@ def generate_student_report_pdf(
                 met = bool(item.get("met", False))
                 evidence = _truncate_for_pdf_cell(str(item.get("evidence", "")))
 
-                status_symbol = "✅" if met else "❌"
+                status_symbol = "نعم" if met else "لا"
                 status_str = "متحقق" if met else "غير متحقق"
 
                 ev_text = evidence if evidence and evidence != "Not found" else "-"
@@ -630,7 +629,7 @@ def generate_student_report_pdf(
     # Strengths — Section 8 format
     strengths = grading_result.get('strengths', [])
     if strengths:
-        elements.append(Paragraph(arabic_text("🟢 نقاط قوة الطالب"), heading_style))
+        elements.append(Paragraph(arabic_text("نقاط قوة الطالب"), heading_style))
         for i, strength in enumerate(strengths, 1):
             elements.append(Paragraph(pdf_cell_text(f"{i}. {strength}"), normal_style))
         elements.append(Spacer(1, 0.2 * inch))
@@ -638,7 +637,7 @@ def generate_student_report_pdf(
     # Improvements — categorized per Section 8 (Critical + Suggested)
     improvements = grading_result.get('improvements', [])
     if improvements:
-        elements.append(Paragraph(arabic_text("💡 التحسينات المطلوبة"), heading_style))
+        elements.append(Paragraph(arabic_text("التحسينات المطلوبة"), heading_style))
 
         # Split into critical (first half) and suggested (second half)
         mid = max(1, len(improvements) // 2)
@@ -646,13 +645,13 @@ def generate_student_report_pdf(
         suggested = improvements[mid:]
 
         if critical:
-            elements.append(Paragraph("<b>: </b>" + arabic_text("<b>تحسينات حرجة (يجب إكمالها)</b>") + " 🔴", bold_style))
+            elements.append(Paragraph("<b>: </b>" + arabic_text("<b>تحسينات حرجة (يجب إكمالها)</b>"), bold_style))
             for i, imp in enumerate(critical, 1):
                 elements.append(Paragraph(pdf_cell_text(f"{i}. {imp}"), list_style))
             elements.append(Spacer(1, 0.15 * inch))
 
         if suggested:
-            elements.append(Paragraph("<b>: </b>" + arabic_text("<b>تحسينات مقترحة (للحصول على درجة أعلى)</b>") + " 🟡", bold_style))
+            elements.append(Paragraph("<b>: </b>" + arabic_text("<b>تحسينات مقترحة (للحصول على درجة أعلى)</b>"), bold_style))
             for i, imp in enumerate(suggested, 1):
                 elements.append(Paragraph(pdf_cell_text(f"{i}. {imp}"), list_style))
 

@@ -47,7 +47,7 @@ def filter_vision_images(
     """Drop EMF/WMF and prefer raster formats for vision API submission."""
     supported: List[Tuple[bytes, str]] = []
     for image_bytes, mime_type in images:
-        if not image_bytes or len(image_bytes) < 2048:
+        if not image_bytes:
             continue
         mime = _normalize_vision_mime(mime_type)
         if not is_vision_supported_mime(mime):

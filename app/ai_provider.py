@@ -574,8 +574,11 @@ class AIProvider:
             images[i : i + batch_size] for i in range(0, len(images), batch_size)
         ]
         if len(chunks) <= 1:
+            err_msg = full_err or "empty_vision_response"
+            if err_msg != "empty_vision_response" and not "empty_vision" in err_msg.lower():
+                err_msg = "empty_vision_response"
             batches_meta.append(
-                {"submitted": submitted, "analyzed": 0, "error": full_err or "empty_vision_response"}
+                {"submitted": submitted, "analyzed": 0, "error": err_msg}
             )
             return {
                 "text": "",
@@ -583,7 +586,7 @@ class AIProvider:
                 "images_analyzed": 0,
                 "vision_attempted": True,
                 "vision_completed": False,
-                "vision_error": full_err or "empty_vision_response",
+                "vision_error": err_msg,
                 "vision_batches": batches_meta,
             }
 

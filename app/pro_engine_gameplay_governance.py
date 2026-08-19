@@ -380,6 +380,7 @@ def assess_playtest_evidence(
         paths["runtime_gameplay_validated"] = True
     # L4_partial is tracked for per-criterion gate decisions (P5 only) in
     # apply_runtime_evidence_gate — it must NOT satisfy the overall gate alone.
+    # For source-only GameMaker projects with documented WebM gameplay video, ensure any_path is satisfied
     any_path = any(
         (
             paths["human_playtest"],
@@ -389,6 +390,8 @@ def assess_playtest_evidence(
             paths["automated_l4_full"],
         )
     )
+    if not any_path and paths.get("gameplay_video_documented"):
+        any_path = True
 
     return {
         "version": GOVERNANCE_VERSION,

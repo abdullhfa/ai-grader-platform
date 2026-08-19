@@ -103,13 +103,34 @@ def format_runtime_section(runtime_block: str) -> str:
     return "\n".join(lines)
 
 
-def build_godot_runtime_outcome(
+def _runtime_engine_label_ar(engine_id: str) -> str:
+    return {
+        "gamemaker": "GameMaker",
+        "godot": "Godot",
+        "scratch": "Scratch",
+        "unity": "Unity",
+    }.get((engine_id or "").strip().lower(), "اللعبة")
+
+
+def ensure_runtime_outcome_engine(
+    outcome: Optional[Dict[str, Any]], *, engine_id: str = ""
+) -> Dict[str, Any]:
+    """Add engine identity to legacy persisted runtime outcomes when available."""
+    out = dict(outcome or {})
+    resolved = str(out.get("engine_id") or engine_id or "").strip().lower()
+    out["engine_id"] = resolved
+    out["engine_label_ar"] = out.get("engine_label_ar") or _runtime_engine_label_ar(resolved)
+    return out
+
+
+def build_runtime_outcome(
     gv: Optional[Dict[str, Any]] = None,
     gate: Optional[Dict[str, Any]] = None,
     *,
     agent_play_label_ar: Optional[str] = None,
+    engine_id: str = "",
 ) -> Dict[str, Any]:
-    """Structured Godot runtime outcome for Word/UI (no raw JSON)."""
+    """Structured runtime outcome for Word/UI (no raw JSON)."""
     gv = gv or {}
     gate = gate or {}
     criterion_pass = gate.get("criterion_pass") or {}
@@ -154,6 +175,8 @@ def build_godot_runtime_outcome(
     ]
 
     return {
+        "engine_id": (engine_id or "").strip().lower(),
+        "engine_label_ar": _runtime_engine_label_ar(engine_id),
         "agent_play_result_ar": agent_result_ar,
         "final_failure_reason_ar": failure_ar or ("—" if not failure_code else failure_code),
         "failure_reason_code": failure_code,
@@ -166,12 +189,17 @@ def build_godot_runtime_outcome(
     }
 
 
-def format_godot_runtime_outcome_ar(outcome: Optional[Dict[str, Any]] = None) -> str:
+# Compatibility aliases for persisted snapshots created before runtime outcomes
+# carried their engine identity.
+build_godot_runtime_outcome = build_runtime_outcome
+
+
+def format_runtime_outcome_ar(outcome: Optional[Dict[str, Any]] = None) -> str:
     """Arabic Word block: agent result, failure, evidence, C.P5/C.P6 impact."""
     if not outcome:
         return ""
     lines = [
-        "نتيجة Agent play (Godot):",
+        f"نتيجة Agent play ({outcome.get('engine_label_ar') or 'اللعبة'}):",
         f"• {outcome.get('agent_play_result_ar') or '—'}",
         "",
         "سبب الفشل النهائي:",
@@ -190,6 +218,9 @@ def format_godot_runtime_outcome_ar(outcome: Optional[Dict[str, Any]] = None) ->
         "• تنويه: أدلة الملفات (B.P3/B.P4) منفصلة عن أدلة التشغيل (C.P5/C.P6)."
     )
     return clean_report_text("\n".join(lines))
+
+
+format_godot_runtime_outcome_ar = format_runtime_outcome_ar
 
 
 def format_criterion_feedback_for_report(
@@ -252,10 +283,10 @@ def criterion_report_display(
     if human_review:
         return "⏸", "مراجعة بشرية مطلوبة (Human Review Required)", "FEF3C7", "F59E0B"
     if achieved and awardable:
-        return "✅", "متحقق (Achieved)", "D1FAE5", "10B981"
+        return "✅", "تحقق المعيار (Achieved)", "D1FAE5", "10B981"
     if achieved and not awardable:
-        return "⏸", "جزئي — محجوب (Partial — Blocked)", "FEF3C7", "F59E0B"
-    return "❌", "غير متحقق (Not Achieved)", "FEE2E2", "EF4444"
+        return "⏸", "تحقق المعيار — معايير سابقة ناقصة", "FEF3C7", "F59E0B"
+    return "❌", "لم يتحقق المعيار (Not Achieved)", "FEE2E2", "EF4444"
 
 
 def strip_embedded_json_blocks(text: str) -> str:

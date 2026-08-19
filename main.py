@@ -157,6 +157,53 @@ def _orm_float(value: object, default: float = 0.0) -> float:
         return default
 
 
+def _convert_docx_bytes_to_pdf(docx_bytes: bytes) -> bytes:
+    """Render the generated Word report with Microsoft Word for 1:1 PDF fidelity."""
+    import tempfile
+
+    import pythoncom  # type: ignore
+    import win32com.client  # type: ignore
+
+    with tempfile.TemporaryDirectory(prefix="ai_grader_word_pdf_") as temp_dir:
+        input_path = Path(temp_dir) / "report.docx"
+        output_path = Path(temp_dir) / "report.pdf"
+        input_path.write_bytes(docx_bytes)
+
+        pythoncom.CoInitialize()
+        word = None
+        document = None
+        try:
+            word = win32com.client.DispatchEx("Word.Application")
+            word.Visible = False
+            word.DisplayAlerts = 0
+            document = word.Documents.Open(str(input_path.resolve()), ReadOnly=True)
+            document.ExportAsFixedFormat(str(output_path.resolve()), 17)
+        finally:
+            if document is not None:
+                document.Close(False)
+            if word is not None:
+                word.Quit()
+            pythoncom.CoUninitialize()
+
+        if not output_path.is_file() or output_path.stat().st_size == 0:
+            raise RuntimeError("Microsoft Word did not produce a PDF file")
+        return output_path.read_bytes()
+
+
+def _merge_pdf_bytes(pdf_documents: List[bytes]) -> bytes:
+    """Combine Word-rendered student reports into one comprehensive batch PDF."""
+    import io
+
+    from PyPDF2 import PdfReader, PdfWriter  # type: ignore
+
+    writer = PdfWriter()
+    for pdf_document in pdf_documents:
+        writer.append(PdfReader(io.BytesIO(pdf_document)))
+    output = io.BytesIO()
+    writer.write(output)
+    return output.getvalue()
+
+
 def _orm_set(instance: object, name: str, value: object) -> None:
     """Assign ORM attribute without Column[...] type-checker false positives."""
     setattr(instance, name, value)
@@ -695,8 +742,9 @@ async def login_page(request: Request):
     err_key = err.split("_")[0] if err.startswith("locked_") else err
     token = issue_csrf_token()
     response = templates.TemplateResponse(
-        "login.html",
-        {"request": request, "error": messages.get(err_key, err), "csrf_token": token},
+        request=request,
+        name="login.html",
+        context={"error": messages.get(err_key, err), "csrf_token": token},
     )
     set_csrf_cookie(response, token)
     return response
@@ -833,8 +881,9 @@ async def services_page(request: Request, db: Session = Depends(get_db)):
     user_id = get_current_user_id(request)
     sub_info = get_subscription_info(db, user_id) if user_id else None
     return templates.TemplateResponse(
-        "services.html",
-        {"request": request, "user": user, "subscription": sub_info},
+        request=request,
+        name="services.html",
+        context={"user": user, "subscription": sub_info},
     )
 
 
@@ -845,8 +894,9 @@ async def contact_page(request: Request, db: Session = Depends(get_db)):
     user_id = get_current_user_id(request)
     sub_info = get_subscription_info(db, user_id) if user_id else None
     return templates.TemplateResponse(
-        "contact.html",
-        {"request": request, "user": user, "subscription": sub_info},
+        request=request,
+        name="contact.html",
+        context={"user": user, "subscription": sub_info},
     )
 
 
@@ -891,9 +941,9 @@ async def subscribe_page(request: Request, db: Session = Depends(get_db)):
             return RedirectResponse(url="/dashboard", status_code=302)
 
     return templates.TemplateResponse(
-        "subscription_request.html",
-        {
-            "request": request,
+        request=request,
+        name="subscription_request.html",
+        context={
             "user": user,
             "packages": packages,
             "selected_package_id": selected_package_id,
@@ -1099,9 +1149,9 @@ async def register_page(request: Request, db: Session = Depends(get_db)):
     }
     token = issue_csrf_token()
     response = templates.TemplateResponse(
-        "register.html",
-        {
-            "request": request,
+        request=request,
+        name="register.html",
+        context={
             "user": user,
             "app_title": os.getenv(
                 "APP_TITLE", "منظومة تصحيح الواجبات بالذكاء الاصطناعي"
@@ -1213,7 +1263,7 @@ async def logout_user(request: Request):
 )
 async def forgot_password_page(request: Request):
     """Forgot password page"""
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="login.html", context={})
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -2927,6 +2977,23 @@ async def batch_results_page(
         if submission.grading_snapshot_json:
             try:
                 snap = _json.loads(str(submission.grading_snapshot_json))
+                # Refresh additive source/media explainability from the real archive
+                # before rendering reports created from older snapshots.
+                try:
+                    from app.explainability_migration import backfill_submission_record
+                    _refresh_report = backfill_submission_record(
+                        submission,
+                        db=db,
+                        force=False,
+                        trigger="report_render_refresh",
+                        generated_by="system",
+                    )
+                    if _refresh_report.get("applied") and submission.grading_snapshot_json:
+                        snap = _json.loads(str(submission.grading_snapshot_json))
+                except Exception as _refresh_err:
+                    print(
+                        f"[EXPLAINABILITY-REFRESH] submission {submission.id}: {_refresh_err}"
+                    )
                 try:
                     from app.visual_evidence_registry import apply_game_criteria_pro_gate
 
@@ -3055,13 +3122,6 @@ async def batch_results_page(
 
     user_id = get_current_user_id(request)
     sub_info = get_subscription_info(db, user_id) if user_id else None
-
-    try:
-        from app.report_generator import regenerate_batch_summary_pdf
-
-        regenerate_batch_summary_pdf(db, batch_id)
-    except Exception as _pdf_err:
-        print(f"⚠️ [BATCH SUMMARY PDF] regenerate failed for batch {batch_id}: {_pdf_err}")
 
     return templates.TemplateResponse(
         "batch_results.html",
@@ -3373,6 +3433,22 @@ async def results_page(
     if getattr(submission, "grading_snapshot_json", None):
         try:
             _snap = json.loads(str(submission.grading_snapshot_json))
+            # Keep single-submission reports consistent with batch reports.
+            try:
+                from app.explainability_migration import backfill_submission_record
+                _refresh_report = backfill_submission_record(
+                    submission,
+                    db=db,
+                    force=False,
+                    trigger="single_report_render_refresh",
+                    generated_by="system",
+                )
+                if _refresh_report.get("applied") and submission.grading_snapshot_json:
+                    _snap = json.loads(str(submission.grading_snapshot_json))
+            except Exception as _refresh_err:
+                print(
+                    f"[EXPLAINABILITY-REFRESH] submission {submission.id}: {_refresh_err}"
+                )
             l5_playtest_status = (_snap.get("l5_human_playtest") or {}).get("status")
             runtime_db_sync = _snap.get("runtime_adjudication_db_sync")
             from app.explainability_migration import extract_explainability_for_ui
@@ -3392,7 +3468,16 @@ async def results_page(
                 or (_snap_ui.get("artifact_inventory") or {}).get("requirement_evidence_table")
             )
             _gp = _snap_ui.get("grading_profile") or {}
-            _outcome = _gp.get("godot_runtime_outcome")
+            _outcome = _gp.get("runtime_outcome") or _gp.get("godot_runtime_outcome")
+            if _outcome:
+                from app.report_feedback_formatter import ensure_runtime_outcome_engine
+
+                _inv_engine = _snap_ui.get("artifact_inventory") or {}
+                _rt_engine = _inv_engine.get("runtime_observation_report") or {}
+                _outcome = ensure_runtime_outcome_engine(
+                    _outcome,
+                    engine_id=str(_rt_engine.get("engine") or _inv_engine.get("engine") or ""),
+                )
             if not _outcome:
                 try:
                     from app.gameplay_verifier import build_gameplay_verification_summary
@@ -3404,7 +3489,7 @@ async def results_page(
                         inventory=_inv_ui,
                         grading_result=_snap_ui,
                     )
-                    _outcome = _gv_ui.get("godot_runtime_outcome")
+                    _outcome = _gv_ui.get("runtime_outcome") or _gv_ui.get("godot_runtime_outcome")
                 except Exception:
                     _outcome = None
             gameplay_profile_summary = {
@@ -3412,7 +3497,7 @@ async def results_page(
                 "agent_play_label_ar": _gp.get("agent_play_label_ar"),
                 "gameplay_agent_used": _gp.get("gameplay_agent_used"),
                 "automated_l4_gate": _gp.get("automated_l4_gate"),
-                "godot_runtime_outcome": _outcome,
+                "runtime_outcome": _outcome,
                 "failure_reason_code": _gp.get("failure_reason_code"),
             }
         except (json.JSONDecodeError, TypeError):
@@ -3490,7 +3575,6 @@ async def authority_replay_page(
     submission = db.query(Submission).filter(Submission.id == submission_id).first()
     if not submission:
         raise HTTPException(status_code=404, detail="Submission not found")
-
     grading_snapshot = None
     if getattr(submission, "grading_snapshot_json", None):
         try:
@@ -7673,7 +7757,7 @@ async def batch_grade(
         # Game/Multimedia project files (Unity, Unreal, GameMaker, etc.)
         _GAME_PROJECT_EXTENSIONS = (
             '.unity', '.prefab', '.scene', '.uasset', '.umap',
-            '.gms2', '.yyp', '.gmproj', '.fla', '.swf', '.gma',
+            '.gms2', '.yyp', '.yy', '.yyz', '.win', '.gmproj', '.fla', '.swf', '.gma',
             '.rbxl', '.rbxmx', '.sb3',
         )
         # Runnable build artifacts — extracted for inventory, NOT auto-executed
@@ -7804,6 +7888,7 @@ async def batch_grade(
             '.py', '.java', '.cs', '.cpp', '.c', '.js', '.ts',
             '.html', '.jsx', '.tsx', '.rb', '.go', '.php',
             '.gml', '.gd',  # GameMaker / Godot scripts
+            '.yyp', '.yy', '.yyz',  # GameMaker project/package metadata
             '.lua',         # Common in game curricula
         }
         _NESTED_ARCHIVE_EXTENSIONS = ('.zip', '.rar')
@@ -9306,23 +9391,37 @@ async def download_plagiarism_report(
 
 @app.get("/api/download-report/{submission_id}")
 async def download_report(submission_id: int, request: Request, db: Session = Depends(get_db)):
-    """Download individual student report as PDF"""
-    report = (
-        db.query(StudentReport)
-        .filter(StudentReport.submission_id == submission_id)
-        .first()
-    )
+    """Download the exact Word report rendered as PDF by Microsoft Word."""
+    import asyncio
+    from fastapi.responses import Response  # type: ignore
 
-    if not report or not os.path.exists(str(report.report_file_path)):  # type: ignore
-        raise HTTPException(status_code=404, detail="Report not found")
+    previous_suppression = getattr(request.state, "suppress_word_download_log", False)
+    request.state.suppress_word_download_log = True
+    try:
+        word_response = await download_report_word(submission_id, request, db)
+    finally:
+        request.state.suppress_word_download_log = previous_suppression
+
+    try:
+        pdf_bytes = await asyncio.to_thread(
+            _convert_docx_bytes_to_pdf, bytes(word_response.body)
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"تعذر تحويل تقرير Word إلى PDF: {exc}",
+        ) from exc
 
     uid = get_current_user_id(request)
     log_activity(db, "download_report_pdf", "export", f"تحميل تقرير PDF - طالب #{submission_id}", user_id=uid, user_name=_get_user_display(db, uid), user_email=_get_user_email(db, uid), ip_address=_get_client_ip(request), user_agent=_get_user_agent(request))
 
-    return FileResponse(
-        str(report.report_file_path),  # type: ignore
+    return Response(
+        content=pdf_bytes,
         media_type="application/pdf",
-        filename=f"report_{submission_id}.pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="report_{submission_id}.pdf"',
+            "Access-Control-Expose-Headers": "Content-Disposition",
+        },
     )
 
 
@@ -9330,7 +9429,8 @@ async def download_report(submission_id: int, request: Request, db: Session = De
 async def download_report_word(submission_id: int, request: Request, db: Session = Depends(get_db)):
     """Download individual student report as Word document"""
     uid = get_current_user_id(request)
-    log_activity(db, "download_report_word", "export", f"تحميل تقرير Word - طالب #{submission_id}", user_id=uid, user_name=_get_user_display(db, uid), user_email=_get_user_email(db, uid), ip_address=_get_client_ip(request), user_agent=_get_user_agent(request))
+    if not getattr(request.state, "suppress_word_download_log", False):
+        log_activity(db, "download_report_word", "export", f"تحميل تقرير Word - طالب #{submission_id}", user_id=uid, user_name=_get_user_display(db, uid), user_email=_get_user_email(db, uid), ip_address=_get_client_ip(request), user_agent=_get_user_agent(request))
     from fastapi.responses import Response  # type: ignore
     from docx import Document  # type: ignore
     from docx.shared import RGBColor, Cm, Pt, Inches  # type: ignore
@@ -9349,6 +9449,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
     submission = db.query(Submission).filter(Submission.id == submission_id).first()
     if not submission:
         raise HTTPException(status_code=404, detail="Submission not found")
+    report_datetime = (
+        getattr(submission, "updated_at", None)
+        or getattr(submission, "created_at", None)
+        or _dt.now()
+    )
 
     # Governance export gate (GOVERNANCE_RESPONSE_PROTOCOLS_v1)
     _gov_snapshot = None
@@ -9828,7 +9933,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         gs = grading_snapshot
         info_data_snap = [
             ("اسم الطالب:", submission.student_name or "—"),
-            ("تاريخ التصحيح:", _ltr_embed(_dt.now().strftime('%Y-%m-%d %H:%M'))),
+            ("تاريخ التصحيح:", _ltr_embed(report_datetime.strftime('%Y-%m-%d %H:%M'))),
         ]
         fp_snap = gs.get("content_fingerprint") or {}
         if fp_snap:
@@ -9948,8 +10053,17 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         doc.add_paragraph().paragraph_format.space_after = Pt(10)
         doc.add_paragraph().paragraph_format.space_after = Pt(12)
 
-        _godot_outcome = (_gp or {}).get("godot_runtime_outcome")
-        if not _godot_outcome:
+        _runtime_outcome = (_gp or {}).get("runtime_outcome") or (_gp or {}).get("godot_runtime_outcome")
+        if _runtime_outcome:
+            from app.report_feedback_formatter import ensure_runtime_outcome_engine
+
+            _inv_engine = gs.get("artifact_inventory") or {}
+            _rt_engine = _inv_engine.get("runtime_observation_report") or {}
+            _runtime_outcome = ensure_runtime_outcome_engine(
+                _runtime_outcome,
+                engine_id=str(_rt_engine.get("engine") or _inv_engine.get("engine") or ""),
+            )
+        if not _runtime_outcome:
             try:
                 from app.gameplay_verifier import build_gameplay_verification_summary
 
@@ -9960,20 +10074,21 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                     inventory=_inv_godot,
                     grading_result=gs,
                 )
-                _godot_outcome = _gv_sum_godot.get("godot_runtime_outcome")
+                _runtime_outcome = _gv_sum_godot.get("runtime_outcome") or _gv_sum_godot.get("godot_runtime_outcome")
             except Exception:
-                _godot_outcome = None
-        if _godot_outcome and (
-            _godot_outcome.get("failure_reason_code")
+                _runtime_outcome = None
+        if _runtime_outcome and (
+            _runtime_outcome.get("failure_reason_code")
             or _gp.get("gameplay_agent_used")
-            or _godot_outcome.get("gameplay_entered") is not None
+            or _runtime_outcome.get("gameplay_entered") is not None
         ):
-            from app.report_feedback_formatter import format_godot_runtime_outcome_ar
+            from app.report_feedback_formatter import format_runtime_outcome_ar
 
-            add_heading(" نتيجة تشغيل Godot (Agent play)", level=2, color=PURPLE)
+            _engine_label = _runtime_outcome.get("engine_label_ar") or "اللعبة"
+            add_heading(f" نتيجة تشغيل {_engine_label} (Agent play)", level=2, color=PURPLE)
             _go_p = doc.add_paragraph()
             set_rtl(_go_p)
-            _go_r = _go_p.add_run(format_godot_runtime_outcome_ar(_godot_outcome))
+            _go_r = _go_p.add_run(format_runtime_outcome_ar(_runtime_outcome))
             _go_r.font.size = Pt(11)
             _go_r.font.color.rgb = BODY_TEXT
             _go_r.font.name = 'Calibri'
@@ -10454,7 +10569,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
         info_data = [
             ("اسم الطالب:", submission.student_name or "—"),
-            ("تاريخ التصحيح:", _ltr_embed(_dt.now().strftime('%Y-%m-%d %H:%M'))),
+            ("تاريخ التصحيح:", _ltr_embed(report_datetime.strftime('%Y-%m-%d %H:%M'))),
         ]
 
         for ri, (label, value) in enumerate(info_data):
@@ -10966,6 +11081,63 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         content=file_stream.getvalue(),
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         headers=headers,
+    )
+
+
+@app.get("/api/download-batch-report-pdf/{batch_id}")
+async def download_batch_report_pdf(
+    batch_id: int, request: Request, db: Session = Depends(get_db)
+):
+    """Download all student Word reports as one Word-faithful comprehensive PDF."""
+    import asyncio
+    from fastapi.responses import Response  # type: ignore
+
+    batch = db.query(BatchGrading).filter(BatchGrading.id == batch_id).first()
+    if not batch:
+        raise HTTPException(status_code=404, detail="Batch not found")
+
+    submissions = (
+        db.query(Submission)
+        .filter(Submission.batch_id == batch_id)
+        .order_by(Submission.id.asc())
+        .all()
+    )
+    if not submissions:
+        raise HTTPException(status_code=404, detail="No student reports found")
+
+    previous_suppression = getattr(request.state, "suppress_word_download_log", False)
+    request.state.suppress_word_download_log = True
+    try:
+        word_documents = []
+        for submission in submissions:
+            word_response = await download_report_word(int(submission.id), request, db)
+            word_documents.append(bytes(word_response.body))
+    finally:
+        request.state.suppress_word_download_log = previous_suppression
+
+    try:
+        pdf_documents = []
+        for word_document in word_documents:
+            pdf_documents.append(
+                await asyncio.to_thread(_convert_docx_bytes_to_pdf, word_document)
+            )
+        pdf_bytes = await asyncio.to_thread(_merge_pdf_bytes, pdf_documents)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"تعذر تحويل تقارير Word إلى PDF: {exc}",
+        ) from exc
+
+    uid = get_current_user_id(request)
+    log_activity(db, "download_batch_report_pdf", "export", f"تحميل التقرير الشامل PDF - دفعة #{batch_id}", user_id=uid, user_name=_get_user_display(db, uid), user_email=_get_user_email(db, uid), ip_address=_get_client_ip(request), user_agent=_get_user_agent(request))
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="batch_summary_{batch_id}.pdf"',
+            "Access-Control-Expose-Headers": "Content-Disposition",
+        },
     )
 
 

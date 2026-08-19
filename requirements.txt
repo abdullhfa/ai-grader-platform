@@ -41,6 +41,7 @@ openpyxl>=3.1.0
 markdown==3.5.1
 reportlab==4.0.7
 Pillow>=10.0.0
+pywin32>=306; platform_system == "Windows"
 # RAR archive extraction (requires WinRAR UnRAR.exe on Windows)
 rarfile>=4.2
 # Video frame sampling (corroboration / runtime evidence); optional if only ffmpeg is used.

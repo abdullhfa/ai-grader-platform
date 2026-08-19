@@ -6,7 +6,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 logger = logging.getLogger("ai_grader.gameplay_verifier")
 
@@ -46,6 +46,16 @@ HUD_KEYWORDS = (
     "نقاط",
     "وقت",
     "حياة",
+)
+MENU_SCREEN_KEYWORDS = (
+    "easy",
+    "medium",
+    "hard",
+    "select",
+    "arrow keys",
+    "press enter",
+    "lv-1",
+    "lv-2",
 )
 
 
@@ -148,6 +158,27 @@ def _gameplay_verification_from_nested(obs: Dict[str, Any]) -> tuple[Dict[str, A
     return {}, None
 
 
+def _capture_scope_degraded(shots: Any) -> bool:
+    """True when the run recorded desktop_fallback captures with NO valid
+    game_window capture — the agent went blind (window closed / capture lost).
+
+    Conservative: fires only when desktop_fallback is explicitly recorded, so
+    runs whose screenshot records lack capture_scope are unaffected.
+    """
+    if not isinstance(shots, list) or not shots:
+        return False
+    saw_desktop = False
+    for s in shots:
+        if not isinstance(s, dict):
+            continue
+        scope = str(s.get("capture_scope") or "")
+        if scope == "game_window" and s.get("status") == "captured":
+            return False
+        if scope == "desktop_fallback":
+            saw_desktop = True
+    return saw_desktop
+
+
 def _ensure_failure_reason_code_on_negative_gameplay(
     gv: Dict[str, Any],
     obs: Dict[str, Any],
@@ -160,6 +191,27 @@ def _ensure_failure_reason_code_on_negative_gameplay(
     if gv.get("terminal_classify") == "capture_pipeline":
         return gv
     if gv.get("failure_reason_code"):
+        # Consistency upgrade: a stale NO_VISUAL_RESPONSE_TO_INPUT code must not
+        # survive when this run has desktop_fallback captures only — the agent
+        # was blind, so blaming the game is dishonest. Keep every other code.
+        if gv.get("failure_reason_code") == "NO_VISUAL_RESPONSE_TO_INPUT" and _capture_scope_degraded(
+            obs.get("runtime_screenshots")
+        ):
+            from app.godot_runtime.failure_taxonomy import classify_capture_failure
+
+            failure = classify_capture_failure(
+                window_detected=bool(obs.get("runtime_observed")),
+                process_alive=bool(obs.get("runtime_observed")),
+                capture_scope_last="desktop_fallback",
+                capture_retries_exhausted=True,
+                probe_phase="mid_run_window_lost",
+            )
+            upgraded = dict(gv)
+            upgraded["failure_reason_code"] = failure.code
+            upgraded["failure_reason_ar"] = failure.reason_ar
+            upgraded["failure_evidence"] = failure.evidence
+            upgraded["terminal_classify"] = "capture_pipeline"
+            return upgraded
         return gv
 
     trace = obs.get("interaction_trace") or obs.get("runtime_interaction_trace") or {}
@@ -217,6 +269,7 @@ def _ensure_failure_reason_code_on_negative_gameplay(
         process_crashed=proc_crashed,
         boot_timed_out=not interaction_ran
         and obs.get("smoke_result") in ("stable_window", "launch_ok"),
+        capture_scope_degraded=_capture_scope_degraded(shots),
     )
     if failure is None:
         return gv
@@ -240,14 +293,18 @@ def _gameplay_verification_blob(
     def _finalize(blob: Dict[str, Any]) -> Dict[str, Any]:
         return _ensure_failure_reason_code_on_negative_gameplay(blob, obs)
 
-    if _is_nonempty_mapping(obs.get("gameplay_verification")):
-        return _finalize(dict(obs["gameplay_verification"]))
-    if _is_nonempty_mapping(inv.get("gameplay_verification")):
-        return _finalize(dict(inv["gameplay_verification"]))
+    # Preference order (authoritative-first): result -> inventory -> observation.
+    # sync_authoritative_gv writes the resolved GV into result + inventory, so
+    # the synced inventory must win over a raw observation blob (which may be a
+    # stale weak L3 shell on pre-sync snapshots).
     if isinstance(grading_result, dict) and _is_nonempty_mapping(
         grading_result.get("gameplay_verification")
     ):
         return _finalize(dict(grading_result["gameplay_verification"]))
+    if _is_nonempty_mapping(inv.get("gameplay_verification")):
+        return _finalize(dict(inv["gameplay_verification"]))
+    if _is_nonempty_mapping(obs.get("gameplay_verification")):
+        return _finalize(dict(obs["gameplay_verification"]))
 
     nested_gv, source = _gameplay_verification_from_nested(obs)
     if nested_gv:
@@ -344,14 +401,29 @@ def resolve_authoritative_gameplay_verification(
     _add(rt.get("gameplay_verification"))
 
     def _walk(obj: Any, depth: int = 0) -> None:
-        if depth > 7:
+        if depth > 12:
             return
         if isinstance(obj, dict):
             _add(obj.get("gameplay_verification"))
-            for row in obj.get("artifact_analyses") or []:
-                if isinstance(row, dict):
-                    _add(row.get("gameplay_verification"))
-            for key in ("legacy_observation", "godot_observation", "signals"):
+            # Engine adapters do not all use the same nesting shape.  Godot
+            # writes under signals.godot_observation while GameMaker writes
+            # platform_analyses[*].signals.gamemaker_observation.analyses[*].
+            # Walk only known observation containers; deliberately never walk
+            # interaction_trace because it is derived, not authoritative GV.
+            for list_key in ("artifact_analyses", "analyses", "platform_analyses"):
+                for row in obj.get(list_key) or []:
+                    if isinstance(row, dict):
+                        _walk(row, depth + 1)
+            for key in (
+                "legacy_observation",
+                "godot_observation",
+                "gamemaker_observation",
+                "gamemaker_observation_summary",
+                "signals",
+                "normalized",
+                "evidence_bundle",
+                "runtime_observation_report",
+            ):
                 nested = obj.get(key)
                 if isinstance(nested, dict):
                     _walk(nested, depth + 1)
@@ -365,6 +437,31 @@ def resolve_authoritative_gameplay_verification(
         return {}
     best = max(candidates, key=_authoritative_gv_richness)
     return dict(best)
+
+
+def sync_authoritative_gv(
+    artifact_inventory: Optional[Dict[str, Any]] = None,
+    grading_result: Optional[Dict[str, Any]] = None,
+) -> bool:
+    """Write richest gameplay_verification from resolve_authoritative into result + inventory."""
+    inv = artifact_inventory if isinstance(artifact_inventory, dict) else {}
+    result = grading_result if isinstance(grading_result, dict) else {}
+    synced = resolve_authoritative_gameplay_verification(
+        artifact_inventory=inv,
+        grading_result=result,
+    )
+    if not _is_nonempty_mapping(synced):
+        return False
+    gv = dict(synced)
+    result["gameplay_verification"] = gv
+    inv["gameplay_verification"] = gv
+    rt = inv.get("runtime_observation_report")
+    if isinstance(rt, dict):
+        rt_out = dict(rt)
+        rt_out["gameplay_verification"] = gv
+        inv["runtime_observation_report"] = rt_out
+    result["artifact_inventory"] = inv
+    return True
 
 
 def _ocr_image_path(path: str) -> str:
@@ -390,7 +487,23 @@ def _hud_keywords_in_text(text: str) -> bool:
 
 
 def _center_band_shift(before_path: str, after_path: str) -> Tuple[float, float]:
-    """Return (horizontal_shift, vertical_shift) on center 40% band."""
+    """Return (horizontal_shift, vertical_shift) motion evidence on center 40% band.
+
+    FIXED 2026-07-06 (false-positive bug, submission 50 / Ahmad Bakr):
+    The previous implementation returned ``max`` mean-abs-diff across artificial
+    offsets. Any textured frame (HUD boxes, tiles) compared against ITSELF at a
+    nonzero offset produces a large diff, so the metric measured TEXTURE, not
+    MOTION — identical before/after frames scored h~7.4 / v~26.5 and always
+    crossed the 2.5/3.0 thresholds, falsely "verifying" movement and jump.
+
+    Correct semantics: motion evidence = frame difference at zero offset (d0)
+    MINUS how well a translation re-aligns them (best shifted diff).
+    - identical frames            -> d0 = 0                     -> 0 (no motion)
+    - HUD-only change (timer)     -> d0 small, no alignment gain -> ~0
+    - real translation (movement) -> d0 large, aligned offset recovers -> positive
+    Honest under-detection is acceptable (L5 video path exists); false
+    verification is never acceptable.
+    """
     if not before_path or not after_path:
         return 0.0, 0.0
     try:
@@ -411,31 +524,35 @@ def _center_band_shift(before_path: str, after_path: str) -> Tuple[float, float]
         a_band = after.crop((left, top, right, bottom)).resize((48, 48))
         b_px = list(b_band.getdata())
         a_px = list(a_band.getdata())
-        h_shifts: List[float] = []
-        for offset in range(-6, 7):
-            if offset == 0:
-                continue
-            score = 0.0
+
+        def _mean_abs_diff(dx: int, dy: int) -> float:
+            total = 0.0
+            count = 0
             for y in range(48):
+                ny = y + dy
+                if not (0 <= ny < 48):
+                    continue
                 for x in range(48):
-                    nx = x + offset
+                    nx = x + dx
                     if 0 <= nx < 48:
-                        score += abs(int(b_px[y * 48 + x]) - int(a_px[y * 48 + nx]))
-            h_shifts.append((abs(offset), score / (48 * 48)))
-        best_h = max((s for _, s in h_shifts), default=0.0)
-        v_shifts: List[float] = []
-        for offset in range(-6, 7):
-            if offset == 0:
-                continue
-            score = 0.0
-            for y in range(48):
-                for x in range(48):
-                    ny = y + offset
-                    if 0 <= ny < 48:
-                        score += abs(int(b_px[y * 48 + x]) - int(a_px[ny * 48 + x]))
-            v_shifts.append((abs(offset), score / (48 * 48)))
-        best_v = max((s for _, s in v_shifts), default=0.0)
-        return round(best_h, 3), round(best_v, 3)
+                        total += abs(int(b_px[y * 48 + x]) - int(a_px[ny * 48 + nx]))
+                        count += 1
+            return total / count if count else 0.0
+
+        d0 = _mean_abs_diff(0, 0)
+        if d0 <= 0.0:
+            return 0.0, 0.0
+        best_h_aligned = min(
+            (_mean_abs_diff(offset, 0) for offset in range(-6, 7) if offset != 0),
+            default=d0,
+        )
+        best_v_aligned = min(
+            (_mean_abs_diff(0, offset) for offset in range(-6, 7) if offset != 0),
+            default=d0,
+        )
+        h_score = max(0.0, d0 - best_h_aligned)
+        v_score = max(0.0, d0 - best_v_aligned)
+        return round(h_score, 3), round(v_score, 3)
     except OSError:
         return 0.0, 0.0
 
@@ -480,6 +597,22 @@ def _send_key_win(vk: int, *, hold_ms: int = 80) -> bool:
         return False
 
 
+def _send_key_win_legacy(vk: int, *, hold_ms: int = 80) -> bool:
+    """GameMaker-compatible Windows key event path."""
+    if sys.platform != "win32":
+        return False
+    try:
+        import ctypes
+
+        KEYEVENTF_KEYUP = 0x0002
+        ctypes.windll.user32.keybd_event(vk, 0, 0, 0)
+        time.sleep(max(hold_ms, 20) / 1000.0)
+        ctypes.windll.user32.keybd_event(vk, 0, KEYEVENTF_KEYUP, 0)
+        return True
+    except Exception:
+        return False
+
+
 def _key_hold(label: str, seconds: float) -> bool:
     vk_map = {"W": 0x57, "A": 0x41, "S": 0x53, "D": 0x44, "SPACE": 0x20, "ENTER": 0x0D}
     vk = vk_map.get(label.upper())
@@ -518,6 +651,23 @@ def _key_hold(label: str, seconds: float) -> bool:
             return False
         time.sleep(max(seconds, 0.1))
         return bool(ctypes.windll.user32.SendInput(1, ctypes.byref(up), ctypes.sizeof(INPUT)))
+    except Exception:
+        return False
+
+
+def _key_hold_legacy(label: str, seconds: float) -> bool:
+    vk_map = {"W": 0x57, "A": 0x41, "S": 0x53, "D": 0x44, "SPACE": 0x20, "ENTER": 0x0D}
+    vk = vk_map.get(label.upper())
+    if vk is None or sys.platform != "win32":
+        return False
+    try:
+        import ctypes
+
+        KEYEVENTF_KEYUP = 0x0002
+        ctypes.windll.user32.keybd_event(vk, 0, 0, 0)
+        time.sleep(max(seconds, 0.1))
+        ctypes.windll.user32.keybd_event(vk, 0, KEYEVENTF_KEYUP, 0)
+        return True
     except Exception:
         return False
 
@@ -660,6 +810,11 @@ class MenuNavigator:
     def __init__(self, *, max_attempts: int = MAX_ATTEMPTS) -> None:
         self.max_attempts = max(1, min(max_attempts, self.MAX_ATTEMPTS))
 
+    @staticmethod
+    def _is_gamemaker_export(artifact_path: Path) -> bool:
+        """GameMaker runners have their data.win beside the executable."""
+        return (artifact_path.parent / "data.win").is_file()
+
     def _is_black_screen(self, shot: Dict[str, Any]) -> bool:
         """True when the capture is mostly black (Godot splash / still loading)."""
         state = str(shot.get("visual_state") or "").lower()
@@ -689,6 +844,32 @@ class MenuNavigator:
         except Exception:
             return False
 
+    @staticmethod
+    def _is_strict_game_window_capture(shot: Dict[str, Any]) -> bool:
+        """True only for a capture cropped from the launched game window."""
+        if not isinstance(shot, dict) or shot.get("status") != "captured":
+            return False
+        if str(shot.get("capture_scope") or "").lower() != "game_window":
+            return False
+        return bool(shot.get("game_window_detected") or shot.get("game_window_bbox"))
+
+    @classmethod
+    def _same_game_window_capture(
+        cls,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+    ) -> bool:
+        """Reject desktop-to-window transitions as gameplay scene changes."""
+        if not cls._is_strict_game_window_capture(before):
+            return False
+        if not cls._is_strict_game_window_capture(after):
+            return False
+        before_pid = before.get("process_pid")
+        after_pid = after.get("process_pid")
+        if before_pid is not None and after_pid is not None and before_pid != after_pid:
+            return False
+        return True
+
     def _wait_for_boot_screen_clear(
         self,
         *,
@@ -700,10 +881,14 @@ class MenuNavigator:
         from app.window_focus_manager import focus_game_window
 
         last_shot: Dict[str, Any] = {}
+        is_gamemaker = self._is_gamemaker_export(artifact_path)
         for boot_attempt in range(self.BOOT_POLL_MAX):
             focus_game_window(process_pid=process_pid)
             if boot_attempt == 0:
-                time.sleep(self.GODOT_BOOT_WAIT)
+                # GameMaker exports are already windowed shortly after launch.
+                # Waiting the Godot boot interval here delayed input until the
+                # game window had been lost in short smoke sessions.
+                time.sleep(1.0 if self._is_gamemaker_export(artifact_path) else self.GODOT_BOOT_WAIT)
             else:
                 time.sleep(self.BOOT_POLL_INTERVAL)
             shot = capture_screenshot(
@@ -713,6 +898,10 @@ class MenuNavigator:
                 process_pid=process_pid,
             )
             last_shot = shot if isinstance(shot, dict) else {}
+            # A desktop fallback can be the grading page behind a game that has
+            # not created its window yet.  It is not a GameMaker boot/menu frame.
+            if is_gamemaker and not self._is_strict_game_window_capture(last_shot):
+                continue
             if not self._is_black_screen(last_shot):
                 return last_shot
         return last_shot
@@ -725,13 +914,23 @@ class MenuNavigator:
         ocr = _shot_ocr_text(shot)
         if state in LOADING_VISUAL_STATES:
             return "loading"
-        if state == "gameplay_candidate":
-            return "gameplay"
         has_hud = _hud_keywords_in_text(ocr)
         has_menu = _menu_keywords_in_text(ocr)
+        has_menu_screen = any(keyword in ocr for keyword in MENU_SCREEN_KEYWORDS)
+        # The screenshot heuristic calls visually rich frames "gameplay_candidate".
+        # A GameMaker title screen with colourful level buttons is rich too, so do
+        # not treat that hint as proof of gameplay unless the HUD is visible.
+        if state == "gameplay_candidate":
+            if has_hud:
+                return "gameplay"
+            if _looks_like_gamemaker_hud(shot):
+                return "gameplay"
+            if has_menu or has_menu_screen:
+                return "menu"
+            return "unknown"
         if has_hud and not has_menu:
             return "gameplay"
-        if state in MENU_VISUAL_STATES or has_menu:
+        if state in MENU_VISUAL_STATES or has_menu or has_menu_screen:
             return "menu"
         return "unknown"
 
@@ -743,6 +942,14 @@ class MenuNavigator:
         artifact_path: Path,
         process_pid: Optional[int],
     ) -> str:
+        if self._is_gamemaker_export(artifact_path):
+            # GameMaker level menus are commonly keyboard-driven. Trigger one
+            # explicit selection event before Enter; some runners ignore Enter
+            # while the initial menu selection has not emitted a key event yet.
+            _send_key_win_legacy(0x28)  # Down arrow
+            time.sleep(0.30)
+            _send_key_win_legacy(0x0D)  # Enter
+            return "gamemaker_arrow_select_enter"
         play_pos = _find_play_button_ocr(shot)
         if play_pos and _click_at_image_position(
             shot=shot,
@@ -770,6 +977,7 @@ class MenuNavigator:
 
         log: List[Dict[str, Any]] = []
         last_shot: Optional[Dict[str, Any]] = None
+        action_baseline: Optional[Dict[str, Any]] = None
         last_state = "unknown"
 
         boot_shot = self._wait_for_boot_screen_clear(
@@ -793,7 +1001,8 @@ class MenuNavigator:
                 )
             last_state = boot_state
 
-        for attempt in range(self.max_attempts):
+        attempt_limit = min(self.max_attempts, 3) if self._is_gamemaker_export(artifact_path) else self.max_attempts
+        for attempt in range(attempt_limit):
             focus_game_window(process_pid=process_pid)
             time.sleep(0.35)
             shot = capture_screenshot(
@@ -805,6 +1014,49 @@ class MenuNavigator:
             last_shot = shot
             visual_state = self.classify_visual_state(shot)
             last_state = visual_state
+
+            if self._is_gamemaker_export(artifact_path) and not self._is_strict_game_window_capture(shot):
+                log.append(
+                    {
+                        "attempt": attempt,
+                        "action": "wait_game_window",
+                        "visual_state": visual_state,
+                        "capture_scope": shot.get("capture_scope"),
+                    }
+                )
+                action_baseline = None
+                time.sleep(1.0)
+                continue
+
+            if (
+                action_baseline is not None
+                and self._is_gamemaker_export(artifact_path)
+                and self._same_game_window_capture(action_baseline, shot)
+            ):
+                changed, delta, detail = RequirementVerifier().verify_scene_change(
+                    action_baseline,
+                    shot,
+                    self.SCENE_CHANGE_THRESHOLD,
+                )
+                if changed:
+                    log.append(
+                        {
+                            "attempt": attempt,
+                            "action": "scene_change_confirmed",
+                            "visual_state": visual_state,
+                            "detail": detail,
+                            "confidence": delta,
+                        }
+                    )
+                    return MenuNavigationResult(
+                        status="gameplay_entered",
+                        attempts=attempt + 1,
+                        log=log,
+                        screenshot=shot,
+                        entry_screenshot=shot,
+                        visual_state="gameplay",
+                        gameplay_entered=True,
+                    )
 
             if visual_state == "gameplay":
                 return MenuNavigationResult(
@@ -829,7 +1081,8 @@ class MenuNavigator:
                 process_pid=process_pid,
             )
             log.append({"attempt": attempt, "action": action, "visual_state": visual_state})
-            time.sleep(2.0)
+            action_baseline = shot
+            time.sleep(3.2 if self._is_gamemaker_export(artifact_path) else 2.0)
 
         status = "stuck_in_menu" if last_state == "menu" else "unknown"
         if last_state == "loading" or (
@@ -838,7 +1091,7 @@ class MenuNavigator:
             status = "black_screen"
         return MenuNavigationResult(
             status=status,
-            attempts=self.max_attempts,
+            attempts=attempt_limit,
             log=log,
             screenshot=last_shot,
             visual_state=last_state,
@@ -952,7 +1205,15 @@ class EvidencePackage:
         return None
 
     def verified_mechanic_ids(self) -> List[str]:
-        mechanics = ("player_movement", "player_jump", "score_system", "win_lose_condition")
+        mechanics = (
+            "player_movement",
+            "player_jump",
+            "score_system",
+            "collect_items",
+            "lives_system",
+            "enemy_interaction",
+            "win_lose_condition",
+        )
         return [m for m in mechanics if (r := self.get_result(m)) and r.verified]
 
     def to_dict(self) -> Dict[str, Any]:
@@ -972,7 +1233,7 @@ class EvidencePackage:
         movement_ok = bool(self.gameplay_entered and movement and movement.verified)
         jump_ok = bool(self.gameplay_entered and jump and jump.verified)
         score_ok = bool(self.gameplay_entered and score and score.verified)
-        mechanics = int(movement_ok) + int(jump_ok) + int(score_ok)
+        mechanics = len(self.verified_mechanic_ids())
         l4_level = calculate_l4_level(
             gameplay_entered=self.gameplay_entered,
             mechanics_verified_count=mechanics,
@@ -1030,12 +1291,21 @@ def _execute_input_action(
         key = (action.key or "Return").upper()
         vk_map = {"RETURN": 0x0D, "ENTER": 0x0D, "SPACE": 0x20}
         vk = vk_map.get(key, 0x0D)
-        _send_key_win(vk)
+        if (artifact_path.parent / "data.win").is_file():
+            _send_key_win_legacy(vk)
+        else:
+            _send_key_win(vk)
         return f"key:{key}"
     if action.action == "key_hold":
         label = (action.key or "D").upper()
-        _key_hold(label, max(action.duration, 0.1))
+        if (artifact_path.parent / "data.win").is_file():
+            _key_hold_legacy(label, max(action.duration, 0.1))
+        else:
+            _key_hold(label, max(action.duration, 0.1))
         return f"key_hold:{label}"
+    if action.action == "wait":
+        time.sleep(max(action.duration, 0.1))
+        return f"wait:{max(action.duration, 0.1):.1f}s"
     return "unknown"
 
 
@@ -1066,6 +1336,95 @@ def _extract_numbers(text: str) -> Tuple[int, ...]:
 
     nums = re.findall(r"\d+", text or "")
     return tuple(int(n) for n in nums)
+
+
+def _image_region_delta(
+    before: Dict[str, Any],
+    after: Dict[str, Any],
+    box: Tuple[float, float, float, float],
+) -> float:
+    """Mean normalized pixel delta inside a fractional screenshot region."""
+    try:
+        from PIL import Image, ImageChops, ImageStat  # type: ignore
+
+        b = Image.open(str(before.get("path") or "")).convert("RGB")
+        a = Image.open(str(after.get("path") or "")).convert("RGB")
+        if b.size != a.size:
+            a = a.resize(b.size)
+        width, height = b.size
+        px_box = (
+            int(width * box[0]),
+            int(height * box[1]),
+            max(1, int(width * box[2])),
+            max(1, int(height * box[3])),
+        )
+        diff = ImageChops.difference(b.crop(px_box), a.crop(px_box))
+        means = ImageStat.Stat(diff).mean
+        return sum(float(value) for value in means) / (len(means) * 255.0)
+    except Exception:
+        return 0.0
+
+
+def _image_region_changed_ratio(
+    before: Dict[str, Any],
+    after: Dict[str, Any],
+    box: Tuple[float, float, float, float],
+    *,
+    noise_floor: int = 8,
+) -> float:
+    """Fraction of region pixels with a material luma change."""
+    try:
+        from PIL import Image, ImageChops  # type: ignore
+
+        b = Image.open(str(before.get("path") or "")).convert("L")
+        a = Image.open(str(after.get("path") or "")).convert("L")
+        if b.size != a.size:
+            a = a.resize(b.size)
+        width, height = b.size
+        px_box = (
+            int(width * box[0]),
+            int(height * box[1]),
+            max(1, int(width * box[2])),
+            max(1, int(height * box[3])),
+        )
+        histogram = ImageChops.difference(b.crop(px_box), a.crop(px_box)).histogram()
+        pixel_count = max(1, sum(histogram))
+        return sum(histogram[max(0, noise_floor + 1) :]) / pixel_count
+    except Exception:
+        return 0.0
+
+
+def _looks_like_gamemaker_hud(shot: Dict[str, Any]) -> bool:
+    """Detect a coloured top HUD when GameMaker's bitmap font defeats OCR."""
+    path = str(shot.get("path") or "")
+    if not path or not Path(path).is_file():
+        return False
+    try:
+        from PIL import Image  # type: ignore
+
+        image = Image.open(path).convert("RGB")
+        width, height = image.size
+        # PrintWindow includes the native title bar.  Exclude that chrome: its
+        # white controls plus a yellow game title below it made menu screens
+        # look like a red/yellow/white HUD.  The real GameMaker HUD starts just
+        # below the chrome and remains inside the next ~14% of the frame.
+        hud_top = max(0, int(height * 0.07))
+        hud_bottom = max(hud_top + 1, int(height * 0.20))
+        hud = image.crop((0, hud_top, width, hud_bottom))
+        red = yellow = bright = 0
+        for r, g, b in hud.getdata():
+            if r >= 170 and g <= 105 and b <= 105:
+                red += 1
+            if r >= 145 and g >= 105 and b <= 105:
+                yellow += 1
+            if r >= 175 and g >= 175 and b >= 175:
+                bright += 1
+        area = max(1, hud.width * hud.height)
+        coloured_hud = red >= max(18, int(area * 0.0002)) and yellow >= max(18, int(area * 0.0002))
+        text_heavy_hud = yellow >= max(80, int(area * 0.001)) and bright >= max(35, int(area * 0.0004))
+        return coloured_hud or text_heavy_hud
+    except Exception:
+        return False
 
 
 class RequirementVerifier:
@@ -1107,6 +1466,43 @@ class RequirementVerifier:
         conf = min(shift / max(threshold, 1e-6), 1.0)
         return shift > threshold, conf, f"v_shift={shift:.3f}"
 
+    def verify_visual_player_movement(
+        self,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        threshold: float,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        """Verify top-down input response where the world itself stays static.
+
+        The scrolling-world centroid metric is inappropriate for GameMaker
+        top-down rooms: the player sprite moves locally while the tiled maze
+        remains fixed.  Measure material pixel changes in the playfield and
+        exclude native chrome/HUD, after a single directional input.
+        """
+        if not gameplay_entered:
+            return False, 0.0, "gameplay_not_entered"
+        h_shift = self._horizontal_centroid_shift(before, after)
+        changed = _image_region_changed_ratio(
+            before,
+            after,
+            (0.02, 0.14, 0.98, 0.96),
+        )
+        verified = h_shift > MOVEMENT_SHIFT_THRESHOLD or changed >= threshold
+        confidence = min(
+            max(
+                h_shift / max(MOVEMENT_SHIFT_THRESHOLD, 1e-6),
+                changed / max(threshold, 1e-6),
+            ),
+            1.0,
+        )
+        return (
+            verified,
+            confidence,
+            f"h_shift={h_shift:.3f};playfield_changed_ratio={changed:.3f}",
+        )
+
     def verify_ocr_hud_change(
         self,
         before: Dict[str, Any],
@@ -1123,6 +1519,51 @@ class RequirementVerifier:
         conf = threshold if changed else 0.0
         return changed, conf, f"hud={nums_b}→{nums_a}"
 
+    def _verify_hud_region(
+        self,
+        before: Dict[str, Any],
+        after: Dict[str, Any],
+        box: Tuple[float, float, float, float],
+        label: str,
+        *,
+        gameplay_entered: bool = True,
+    ) -> Tuple[bool, float, str]:
+        if not gameplay_entered:
+            return False, 0.0, "gameplay_not_entered"
+        delta = _image_region_delta(before, after, box)
+        verified = delta >= 0.002
+        return verified, min(delta / 0.015, 1.0), f"{label}_region_delta={delta:.4f}"
+
+    def verify_score_region_change(
+        self, before: Dict[str, Any], after: Dict[str, Any], threshold: float, *, gameplay_entered: bool = True
+    ) -> Tuple[bool, float, str]:
+        _ = threshold
+        return self._verify_hud_region(before, after, (0.15, 0.0, 0.39, 0.16), "score", gameplay_entered=gameplay_entered)
+
+    def verify_collect_region_change(
+        self, before: Dict[str, Any], after: Dict[str, Any], threshold: float, *, gameplay_entered: bool = True
+    ) -> Tuple[bool, float, str]:
+        _ = threshold
+        return self._verify_hud_region(before, after, (0.36, 0.0, 0.61, 0.16), "collect", gameplay_entered=gameplay_entered)
+
+    def verify_lives_region_change(
+        self, before: Dict[str, Any], after: Dict[str, Any], threshold: float, *, gameplay_entered: bool = True
+    ) -> Tuple[bool, float, str]:
+        _ = threshold
+        return self._verify_hud_region(before, after, (0.0, 0.0, 0.16, 0.16), "lives", gameplay_entered=gameplay_entered)
+
+    def verify_timer_region_change(
+        self, before: Dict[str, Any], after: Dict[str, Any], threshold: float, *, gameplay_entered: bool = True
+    ) -> Tuple[bool, float, str]:
+        _ = threshold
+        return self._verify_hud_region(before, after, (0.80, 0.0, 1.0, 0.16), "timer", gameplay_entered=gameplay_entered)
+
+    def verify_level_region_change(
+        self, before: Dict[str, Any], after: Dict[str, Any], threshold: float, *, gameplay_entered: bool = True
+    ) -> Tuple[bool, float, str]:
+        _ = threshold
+        return self._verify_hud_region(before, after, (0.60, 0.0, 0.80, 0.16), "level", gameplay_entered=gameplay_entered)
+
     def verify_ocr_endgame_screen(
         self,
         before: Dict[str, Any],
@@ -1136,8 +1577,12 @@ class RequirementVerifier:
         text = _shot_ocr_text(after)
         markers = ("win", "victory", "game over", "lose", "فوز", "خسارة", "حاول")
         found = any(m in text for m in markers)
-        conf = threshold if found else 0.0
-        return found, conf, f"endgame_text={found}"
+        if found:
+            return True, threshold, "endgame_text=True"
+        changed, delta, detail = self.verify_scene_change(
+            before, after, max(0.08, threshold / 4), gameplay_entered=gameplay_entered
+        )
+        return changed, delta, f"endgame_text=False;{detail}"
 
     def verify_scene_change(
         self,
@@ -1163,10 +1608,28 @@ class RequirementVerifier:
             delta = 1.0 - float(score)
             return delta > threshold, delta, f"ssim_delta={delta:.3f}"
         except Exception:
-            h = self._horizontal_centroid_shift(before, after)
-            v = self._vertical_centroid_shift(before, after)
-            delta = max(h, v) / 100.0
-            return delta > threshold, delta, f"fallback_delta={delta:.3f}"
+            # ``scikit-image`` is optional in the production environment.  The
+            # former fallback measured only centroid movement in the middle of
+            # the frame, so a genuine GameMaker menu -> maze transition could
+            # still report an exact zero.  Use a dependency-free changed-pixel
+            # ratio instead.  Ignoring tiny (<= 8/255) luma differences keeps
+            # cursor animation and capture noise from becoming scene changes.
+            try:
+                from PIL import Image, ImageChops  # type: ignore
+
+                b_img = Image.open(str(before.get("path") or "")).convert("L")
+                a_img = Image.open(str(after.get("path") or "")).convert("L")
+                if b_img.size != a_img.size:
+                    a_img = a_img.resize(b_img.size)
+                histogram = ImageChops.difference(b_img, a_img).histogram()
+                pixel_count = max(1, sum(histogram))
+                delta = sum(histogram[9:]) / pixel_count
+                return delta > threshold, delta, f"pillow_changed_ratio={delta:.3f}"
+            except Exception:
+                h = self._horizontal_centroid_shift(before, after)
+                v = self._vertical_centroid_shift(before, after)
+                delta = max(h, v) / 100.0
+                return delta > threshold, delta, f"centroid_fallback_delta={delta:.3f}"
 
     def verify(
         self,
@@ -1180,7 +1643,13 @@ class RequirementVerifier:
         dispatch = {
             "pixel_shift_horizontal": self.verify_pixel_shift_horizontal,
             "pixel_shift_vertical": self.verify_pixel_shift_vertical,
+            "visual_player_movement": self.verify_visual_player_movement,
             "ocr_hud_change": self.verify_ocr_hud_change,
+            "visual_score_change": self.verify_score_region_change,
+            "visual_collect_change": self.verify_collect_region_change,
+            "visual_lives_change": self.verify_lives_region_change,
+            "visual_timer_change": self.verify_timer_region_change,
+            "visual_level_change": self.verify_level_region_change,
             "ocr_endgame_screen": self.verify_ocr_endgame_screen,
             "scene_change": self.verify_scene_change,
         }
@@ -1524,6 +1993,12 @@ def run_automated_gameplay_verification(
             elapsed_seconds=elapsed_seconds + 2.0,
             gameplay_entered=gameplay_entered,
         )
+        # MenuNavigator is only the first attempt. The requirement-driven
+        # orchestrator can successfully enter gameplay on its menu_navigation
+        # probe (for example after a slow GameMaker countdown). Preserve that
+        # authoritative transition instead of keeping the navigator's stale
+        # False and zeroing all verified mechanics below.
+        gameplay_entered = bool(gameplay_entered or package.gameplay_entered)
         movement = package.to_movement_verification_dict()
         if not gameplay_entered:
             movement["player_movement_verified"] = False
@@ -1586,24 +2061,26 @@ def run_automated_gameplay_verification(
             report["failure_reason_code"] = outcome.failure.code
             report["failure_reason_ar"] = outcome.failure.reason_ar
             report["failure_evidence"] = outcome.failure.evidence
-        elif not gameplay_entered:
-            from app.godot_runtime.failure_taxonomy import classify_runtime_failure
+    # GameMaker does not use the Godot retry outcome, but an unsuccessful
+    # input attempt still needs an explicit diagnostic in the report.
+    if not report.get("failure_reason_code") and not gameplay_entered:
+        from app.godot_runtime.failure_taxonomy import classify_runtime_failure
 
-            terminal = classify_runtime_failure(
-                window_detected=process_pid is not None,
-                black_screen_duration_s=0,
-                gameplay_entered=False,
-                mechanics_verified_count=0,
-                menu_status=str(nav_result.status or nav_result.visual_state or ""),
-                visual_response=False,
-                server_dialog_detected=False,
-                process_crashed=process_crashed,
-                boot_timed_out=False,
-            )
-            if terminal is not None:
-                report["failure_reason_code"] = terminal.code
-                report["failure_reason_ar"] = terminal.reason_ar
-                report["failure_evidence"] = terminal.evidence
+        terminal = classify_runtime_failure(
+            window_detected=process_pid is not None,
+            black_screen_duration_s=0,
+            gameplay_entered=False,
+            mechanics_verified_count=0,
+            menu_status=str(nav_result.status or nav_result.visual_state or ""),
+            visual_response=False,
+            server_dialog_detected=False,
+            process_crashed=process_crashed,
+            boot_timed_out=False,
+        )
+        if terminal is not None:
+            report["failure_reason_code"] = terminal.code
+            report["failure_reason_ar"] = terminal.reason_ar
+            report["failure_evidence"] = terminal.evidence
     try:
         from app.runtime_evidence_gate import BTECCriterionMapper
 
@@ -1702,6 +2179,8 @@ def assess_automated_l4_gate(
     functional_smoke_pass: bool = False,
     teacher_confirmed: Optional[Dict[str, bool]] = None,
     grading_mode: str | None = None,
+    criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
+    engine_id: str | None = None,
 ) -> Dict[str, Any]:
     """Criterion-level automated L4 gate decisions (Option C policy)."""
     from app.runtime_evidence_gate import BTECCriterionMapper
@@ -1715,6 +2194,8 @@ def assess_automated_l4_gate(
         test_doc_entries=test_doc_entries,
         teacher_confirmed=teacher_confirmed,
         functional_smoke_pass=functional_smoke_pass,
+        criteria_results=criteria_results,
+        engine_id=engine_id,
     )
 
 
@@ -1825,6 +2306,11 @@ def format_agent_play_summary_ar(level: str, verification: Optional[Dict[str, An
         return "نعم — L4 كامل (حركة + قفز/نقاط — Gate مفتوح)"
     if gv.get("gameplay_entered") is True and l4 == "L4_partial":
         return "نعم — L4 جزئي (ميكانيكا أساسية — Gate مفتوح لـ C.P5)"
+    if (level == "L3" or l4 == "L3") and gv.get("gameplay_entered") is not True:
+        return (
+            "تم تشغيل ملف اللعبة (L3)، لكن لم يتم إثبات اللعب الفعلي (gameplay) في هذا التقرير. "
+            "يمكن اعتماد فيديو تشغيل أو مراجعة بشرية (L5) لإثبات C.P5/C.P6."
+        )
     labels = {
         "L5": "نعم — L5 (Gameplay مؤكد / playtest بشري)",
         "L4": "نعم — L4 (تغيير بصري بعد إدخال اللاعب)",
@@ -1862,9 +2348,16 @@ def build_gameplay_verification_summary(
         grading_mode=grading_mode,
     )
     agent_label = format_agent_play_summary_ar(level, gv)
-    from app.report_feedback_formatter import build_godot_runtime_outcome
+    engine_id = str(obs.get("engine") or "").strip().lower()
+    if not engine_id:
+        signals = obs.get("signals") if isinstance(obs.get("signals"), dict) else {}
+        if signals.get("gamemaker_runtime_verification") or signals.get("gamemaker_observation"):
+            engine_id = "gamemaker"
+    from app.report_feedback_formatter import build_runtime_outcome
 
-    godot_outcome = build_godot_runtime_outcome(gv, gate, agent_play_label_ar=agent_label)
+    runtime_outcome = build_runtime_outcome(
+        gv, gate, agent_play_label_ar=agent_label, engine_id=engine_id
+    )
     return {
         "evidence_level": level,
         "l4_level": gv.get("l4_level") or gate.get("l4_level"),
@@ -1877,5 +2370,7 @@ def build_gameplay_verification_summary(
         "gameplay_entered": gv.get("gameplay_entered"),
         "failure_reason_code": gv.get("failure_reason_code"),
         "failure_reason_ar": gv.get("failure_reason_ar"),
-        "godot_runtime_outcome": godot_outcome,
+        "runtime_outcome": runtime_outcome,
+        # Kept for existing snapshots and callers; its contents are now engine-aware.
+        "godot_runtime_outcome": runtime_outcome,
     }

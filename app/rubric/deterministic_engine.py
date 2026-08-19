@@ -159,6 +159,13 @@ def _normalize_level(level: str) -> str:
     return s.split(".")[-1] if "." in s else s
 
 
+def _band_prefix(level: str) -> str:
+
+    s = (level or "").strip().upper()
+
+    return s.split(".")[0] if "." in s else ""
+
+
 
 
 
@@ -330,6 +337,8 @@ def evaluate_criterion_deterministic(
 
     execution_mode: str = "PRO",
 
+    artifact_inventory: Optional[Dict[str, Any]] = None,
+
 ) -> Dict[str, Any]:
 
     short = _normalize_level(criteria_level)
@@ -343,6 +352,30 @@ def evaluate_criterion_deterministic(
     is_basic = execution_mode.upper() == "BASIC"
 
     smoke_ok, runtime_skipped = _smoke_state(runtime_validation)
+
+    from app.design_evidence_assessor import is_b_band_criterion, try_evaluate_design_criterion
+
+    level_upper = criteria_level.upper()
+    peer_review_p4 = short == "P4" and ("B.P4" in level_upper or "C.P4" in level_upper) and (
+        "peer" in desc
+        or "review" in desc
+        or "استبيان" in text
+        or "استطلاع" in text
+        or "survey" in text
+        or "C.P4" in criteria_level.upper()
+        or "B.P4" in criteria_level.upper()
+    )
+    if is_b_band_criterion(criteria_level, short, "P3") or (
+        is_b_band_criterion(criteria_level, short, "P4") and not peer_review_p4
+    ):
+        design_row = try_evaluate_design_criterion(
+            criteria_level=criteria_level,
+            corpus=text,
+            artifact_inventory=artifact_inventory,
+            execution_mode=execution_mode,
+        )
+        if design_row is not None:
+            return design_row
 
 
 
@@ -544,13 +577,22 @@ def evaluate_criterion_deterministic(
 
 
 
-    if short in ("P6", "C.P6") or "test" in desc or "اختبار" in desc:
+    if short in ("P6", "C.P6") or ("test" in desc and short == "P6"):
 
+        from app.gameplay_verifier import count_test_document_entries
         from app.pro_evidence_signals import text_has_test_plan_evidence
+        from app.runtime_evidence_gate import get_cp6_min_test_entries
 
-        has_test_doc = text_has_test_plan_evidence(text)
+        inv = artifact_inventory or {}
+        min_test = get_cp6_min_test_entries(
+            "pro" if execution_mode.upper() == "PRO" else "standard"
+        )
+        test_entries = count_test_document_entries(inv)
+        has_test_doc = text_has_test_plan_evidence(text) or test_entries >= min_test
+        gv = inv.get("gameplay_verification") or {}
+        gameplay_ok = bool(gv.get("gameplay_entered")) or smoke_ok is True
 
-        if smoke_ok is True and has_test_doc:
+        if gameplay_ok and has_test_doc:
 
             return _wrap_row(
 
@@ -578,7 +620,7 @@ def evaluate_criterion_deterministic(
 
             )
 
-        if smoke_ok is True:
+        if gameplay_ok:
 
             return _wrap_row(
 
@@ -718,11 +760,11 @@ def evaluate_criterion_deterministic(
 
 
 
-    if short in ("P4", "B.P4", "C.P4") or "peer" in desc or "review" in desc:
+    if short == "P4" and ("B.P4" in level_upper or "C.P4" in level_upper) and peer_review_p4:
 
         from app.pro_evidence_signals import text_has_design_peer_evidence
 
-        ok = text_has_design_peer_evidence(text)
+        ok = bool(_PEER_REVIEW_PATTERN.search(text)) or text_has_design_peer_evidence(text)
 
         return _wrap_row(
 
@@ -912,7 +954,9 @@ def evaluate_criterion_deterministic(
 
 
 
-    if short in ("P3", "B.P3") or "gdd" in desc or "design document" in desc:
+    if short == "P3" and _band_prefix(criteria_level) != "B" and (
+        "gdd" in desc or "design document" in desc
+    ):
 
         ok = bool(_DOC_PATTERN.search(text)) and len(text) > 400
 
@@ -1134,6 +1178,8 @@ def run_deterministic_rubric(
 
     grading_mode: Optional[str] = None,
 
+    artifact_inventory: Optional[Dict[str, Any]] = None,
+
 ) -> Dict[str, Any]:
 
     mode = resolve_execution_mode(grading_mode or grading_result.get("grading_mode"))
@@ -1154,6 +1200,8 @@ def run_deterministic_rubric(
 
     rows = []
 
+    inv = artifact_inventory or grading_result.get("artifact_inventory") or {}
+
     for crit in grading_criteria:
 
         level = str(crit.get("criteria_level") or "")
@@ -1173,6 +1221,8 @@ def run_deterministic_rubric(
                 runtime_validation=runtime_validation,
 
                 execution_mode=mode,
+
+                artifact_inventory=inv,
 
             )
 

@@ -89,8 +89,8 @@ _RUNTIME_ONLY_AUTHORITIES = frozenset(
 _EXECUTION_SHORT = frozenset({"P5", "P6", "P7", "M3"})
 
 _PREREQUISITE_GATE_AR = {
-    "missing_pass_criteria": "محجوب — C.P5/C.P6 لم يُتحققا (Prerequisite)",
-    "missing_merit_criteria": "محجوب — معايير Merit ناقصة (Prerequisite)",
+    "missing_pass_criteria": "يتطلب إتمام C.P5 و C.P6 أولاً",
+    "missing_merit_criteria": "يتطلب إتمام معايير Merit أولاً",
 }
 
 
@@ -990,11 +990,7 @@ def build_criteria_breakdown_for_ui(
         awardable = bool(awardable)
         gate_blocked = bool(cr.get("runtime_gate_block"))
         block_ar = _compact_gate_reason(cr, gate_summary=gate_summary)
-        if achieved and not awardable and str(cr.get("award_block_reason") or "") == "missing_pass_criteria":
-            achieved_display_ar = "جزئي — محجوب (Prerequisite)"
-        elif achieved and not awardable:
-            achieved_display_ar = "جزئي — محجوب"
-        elif achieved:
+        if achieved:
             achieved_display_ar = "نعم"
         else:
             achieved_display_ar = "لا"

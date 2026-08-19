@@ -30,6 +30,16 @@ _PRAISE_WHEN_LOW_GRADE = re.compile(
 )
 
 # Strong «not achieved» signals in Arabic/English feedback (achieved=True is invalid).
+_SEALED_DETERMINISTIC_AUTHORITIES = frozenset(
+    {
+        "DESIGN_EVIDENCE_RULE_V1",
+        "VISUAL_DESIGN_RULE_V1",
+        "RUNTIME_VALIDATION",
+        "RUNTIME_L4_GATE",
+    }
+)
+
+
 _FEEDBACK_DENIES_ACHIEVEMENT = re.compile(
     r"(?:"
     r"لم\s+يقدم\s+الطالب|"
@@ -66,13 +76,17 @@ _FEEDBACK_CLAIMS_ACHIEVEMENT = re.compile(
 # Explicit denial — must not trigger governance re-wrap (e.g. «لم يتم تحقيق المعيار»).
 _FEEDBACK_DENIES_ACHIEVEMENT = re.compile(
     r"(?:"
+    r"لم\s+يقدم\s+الطالب|"
+    r"لم\s+يقدم\s+أي|"
+    r"لم\s+يُقدم|"
+    r"لم\s+يتم\s+|"
     r"لم\s+(?:يتم\s+)?تحقيق|"
     r"لم\s+يتحقق|"
     r"لم\s+تُلبَّ?ى|"
     r"لم\s+تستوفِ|"
     r"لم\s+يُحقق|"
     r"غياب\s+أي\s+دليل|"
-    r"did\s+not\s+(?:meet|achieve)|"
+    r"did\s+not\s+(?:meet|achieve|provide)|"
     r"not\s+achieved|"
     r"criterion\s+was\s+not\s+met"
     r")",
@@ -105,15 +119,20 @@ _BTEC_GOV_FEEDBACK_PREFIX = re.compile(
     re.MULTILINE,
 )
 
+_PARTIAL_AWARD_FEEDBACK_PREFIX = re.compile(
+    r"^تحقق\s+أكاديمياً\s+جزئياً\s*—\s*لا\s+يُمنح\s+رسمياً\.?\s*",
+    re.MULTILINE,
+)
+
 _AI_DISCLAIMER_TAG = re.compile(
     r"\[تحليل الذكاء الاصطناعي[^\]]*\]\s*",
     re.IGNORECASE,
 )
 
 AWARD_BLOCK_REASONS_AR = {
-    "criterion_not_met": "المعيار لم يتحقق أكاديمياً",
-    "missing_pass_criteria": "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Pass ناقصة)",
-    "missing_merit_criteria": "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Merit ناقصة)",
+    "criterion_not_met": "لم يتحقق المعيار",
+    "missing_pass_criteria": "يتطلب إتمام جميع معايير Pass أولاً",
+    "missing_merit_criteria": "يتطلب إتمام جميع معايير Merit أولاً",
 }
 
 
@@ -141,6 +160,7 @@ def strip_btec_governance_feedback(text: str) -> str:
     for _ in range(12):
         prev = cleaned
         cleaned = _BTEC_GOV_FEEDBACK_PREFIX.sub("", cleaned)
+        cleaned = _PARTIAL_AWARD_FEEDBACK_PREFIX.sub("", cleaned)
         cleaned = _AI_DISCLAIMER_TAG.sub("", cleaned)
         cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
         if cleaned == prev:
@@ -358,14 +378,40 @@ def _prerequisite_block_reason_ar(level: str, achieved_map: Dict[str, bool]) -> 
     missing = [p for p in prereqs if not achieved_map.get(p)]
     if missing:
         joined = " و".join(missing)
-        return f"محجوب — {joined} لم يُتحققا (Prerequisite)"
+        return f"يتطلب إتمام {joined} أولاً."
     return AWARD_BLOCK_REASONS_AR.get("missing_pass_criteria", "")
+
+
+def _teacher_block_reason_ar(reason: str) -> str:
+    """Normalize internal award-block codes into plain teacher-facing Arabic."""
+    r = str(reason or "").strip()
+    if not r:
+        return ""
+    r = re.sub(r"^محجوب\s*—\s*", "", r)
+    r = re.sub(r"\s*\(Prerequisite\)\s*$", "", r, flags=re.IGNORECASE)
+    for old, new in (
+        (
+            "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Pass ناقصة)",
+            AWARD_BLOCK_REASONS_AR["missing_pass_criteria"],
+        ),
+        (
+            "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Merit ناقصة)",
+            AWARD_BLOCK_REASONS_AR["missing_merit_criteria"],
+        ),
+        ("المعيار لم يتحقق أكاديمياً", AWARD_BLOCK_REASONS_AR["criterion_not_met"]),
+    ):
+        r = r.replace(old, new)
+    if re.search(r"لم\s+ي[ُu]?تحقق", r, flags=re.IGNORECASE):
+        codes = re.sub(r"\s+لم\s+ي[ُu]?تحقق.*$", "", r, flags=re.IGNORECASE).strip()
+        if codes:
+            return f"يتطلب إتمام {codes} أولاً."
+    return r.rstrip(".")
 
 
 def enforce_achieved_not_awardable_feedback(
     criteria_results: List[Dict[str, Any]],
 ) -> List[str]:
-    """Replace AI praise when achieved=True but awardable=False (Merit blocked by Pass)."""
+    """Clarify teacher feedback when achieved=True but awardable=False."""
     changes: List[str] = []
     achieved_map = _achieved_short_levels(criteria_results)
     for row in criteria_results:
@@ -374,14 +420,25 @@ def enforce_achieved_not_awardable_feedback(
         if row.get("awardable", True):
             continue
         level = str(row.get("criteria_level") or "")
-        reason = str(row.get("award_block_reason_ar") or "").strip()
+        reason = _teacher_block_reason_ar(str(row.get("award_block_reason_ar") or "").strip())
         if not reason:
             reason = _prerequisite_block_reason_ar(level, achieved_map)
         if not reason:
-            reason = str(
+            reason = _teacher_block_reason_ar(
                 AWARD_BLOCK_REASONS_AR.get(str(row.get("award_block_reason") or ""), "")
             )
-        row["feedback"] = f"تحقق أكاديمياً جزئياً — لا يُمنح رسمياً. {reason}"
+        raw = strip_btec_governance_feedback(_feedback_text(row))
+        praise_only = (
+            not raw
+            or (len(raw) < 100 and _PRAISE_WHEN_LOW_GRADE.search(raw))
+            or (len(raw) < 80 and _FEEDBACK_CLAIMS_ACHIEVEMENT.search(raw))
+        )
+        if praise_only:
+            row["feedback"] = f"تحقق المعيار. {reason}".strip() if reason else "تحقق المعيار."
+        elif reason and reason not in raw:
+            row["feedback"] = f"{raw}\n\n{reason}"
+        else:
+            row["feedback"] = raw
         row["report_display_status"] = "partial_blocked"
         changes.append(f"{level}:achieved_not_awardable_feedback")
     return changes
@@ -435,6 +492,10 @@ def enforce_feedback_achieved_consistency(
     changes: List[str] = []
     for row in criteria_results:
         if not isinstance(row, dict) or not row.get("achieved"):
+            continue
+        auth = str(row.get("achievement_authority") or "")
+        det = row.get("deterministic_rubric") or {}
+        if auth in _SEALED_DETERMINISTIC_AUTHORITIES and det.get("deterministic_achieved"):
             continue
         fb = _feedback_text(row)
         if not fb:
@@ -584,7 +645,7 @@ def apply_btec_awardability(criteria_results: List[Dict[str, Any]]) -> Dict[str,
     missing_pass_label = " و".join(missing_pass_short) if missing_pass_short else ""
 
     if missing_pass_label:
-        block_ar = f"محجوب — {missing_pass_label} لم يُتحققا (Prerequisite)"
+        block_ar = f"يتطلب إتمام {missing_pass_label} أولاً."
         for row in criteria_results:
             if not isinstance(row, dict):
                 continue

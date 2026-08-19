@@ -1071,7 +1071,7 @@ _ARCHIVE_DISPLAY_PATH_CAP = 2500
 _DOC_PRIORITY = {".docx": 0, ".pdf": 1, ".doc": 2, ".odt": 3, ".txt": 4, ".md": 5}
 _GAMEMAKER_RUNTIME_FILENAMES = frozenset({"data.win", "options.ini"})
 # Self-contained runnable game projects/builds worth extracting from any archive.
-_RUNNABLE_GAME_EXTENSIONS = frozenset({".sb3", ".sb2"})
+_RUNNABLE_GAME_EXTENSIONS = frozenset({".sb3", ".sb2", ".yyz"})
 _RUNNABLE_GAME_BASENAMES = frozenset({"data.win"})
 _NESTED_ARCHIVE_EXTENSIONS_INNER = frozenset({".zip", ".rar", ".7z"})
 # Name hints that a nested archive holds a playable build (e.g. «(.exe)بعد التعديل.zip»).

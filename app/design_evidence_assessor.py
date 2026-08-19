@@ -37,9 +37,14 @@ _UI_VISUAL = re.compile(
     re.I,
 )
 _SOURCE_SCENE = re.compile(r"\.(tscn|gd|gml|unity|cs)\b", re.I)
+_GENERIC_SURVEY_RE = re.compile(
+    r"(?:questionnaire|survey|استبيان|استطلاع|ملاحظات\s*مستلمة)",
+    re.IGNORECASE,
+)
 
 
 @dataclass
+
 class DesignEvidenceBundle:
     corpus: str = ""
     design_doc_present: bool = False
@@ -122,7 +127,9 @@ def build_design_evidence_bundle(
     survey_present = (
         str(testing.get("status") or "").lower() in ("partial", "present", "complete", "detected")
         or text_has_user_testing_evidence(text)
+        or bool(_GENERIC_SURVEY_RE.search(text))
     )
+
     test_section_present = text_has_test_plan_evidence(text) or text_has_design_decisions(text)
 
     paths_blob = "\n".join(

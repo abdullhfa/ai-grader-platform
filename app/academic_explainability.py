@@ -57,81 +57,16 @@ def _submission_has_video(inventory: Dict[str, Any]) -> bool:
     if media.get("files"):
         return True
     gvi = inventory.get("gameplay_video_inference") or {}
+    basic_video = inventory.get("basic_video_keyframes_meta") or {}
     if int(gvi.get("videos_analyzed") or 0) > 0:
         return True
-    for raw in inventory.get("submission_paths") or []:
-        if Path(str(raw)).suffix.lower() in _VIDEO_EXTENSIONS:
-            return True
+    if int(gvi.get("frames_sampled") or 0) > 0:
+        return True
+    if int(basic_video.get("frames_extracted") or 0) > 0:
+        return True
+    if bool(gvi.get("skipped_runtime_verified")):
+        return True
     return False
-
-
-def _basic_video_keyframe_stats(inventory: Dict[str, Any]) -> tuple[int, int, int]:
-    """Return (videos_found, frames_extracted, frames_per_video) from snapshot inventory."""
-    meta = inventory.get("basic_video_keyframes_meta") or {}
-    ves = inventory.get("visual_evidence_summary") or {}
-    videos = int(ves.get("video_keyframes_found") or meta.get("videos_found") or 0)
-    frames = int(ves.get("video_keyframes_analyzed") or meta.get("frames_extracted") or 0)
-    per = int(meta.get("frames_per_video") or 5)
-    return videos, frames, per
-
-
-def _media_verification_present(
-    inventory: Dict[str, Any],
-    *,
-    has_screenshots: bool,
-    grading_mode: str | None = None,
-) -> tuple[bool, str]:
-    """Full image/video verification (PRO); BASIC uses Word vision + FFmpeg keyframes."""
-    emb = inventory.get("embedded_screenshots") or {}
-    has_image_assets = (emb.get("count") or 0) > 0 or has_screenshots
-    has_video = _submission_has_video(inventory)
-
-    if not has_image_assets and not has_video:
-        return True, "—"
-
-    if inventory_is_basic_mode(inventory, grading_mode):
-        ves = inventory.get("visual_evidence_summary") or {}
-        img_analyzed = int(ves.get("images_analyzed") or 0)
-        vk_videos, vk_frames, vk_per = _basic_video_keyframe_stats(inventory)
-        images_ok = (not has_image_assets) or bool(inventory.get("vision_analysis_used")) or img_analyzed > 0
-        if has_video:
-            if vk_frames > 0:
-                video_ok = True
-                video_label = f"{vk_per} إطار/فيديو × {vk_videos} ({vk_frames} → تحليل بصري)"
-            else:
-                video_ok = False
-                video_label = "فيديو وُجد — لم تُستخرج إطارات FFmpeg"
-        else:
-            video_ok = True
-            video_label = ""
-
-        if images_ok and video_ok:
-            if has_video:
-                return True, f"عدد الفيديوهات : {vk_videos}"
-            return True, f"أساسي: {img_analyzed} صورة (Word/PDF)"
-
-        parts: List[str] = []
-        if has_image_assets and not images_ok:
-            parts.append("صور لم تُحلَّل")
-        if has_video and not video_ok:
-            parts.append(video_label or "فيديو لم يُحلَّل")
-        return False, " · ".join(parts) if parts else "غير منفّذ"
-
-    gvi = inventory.get("gameplay_video_inference") or {}
-    images_ok = (not has_image_assets) or bool(inventory.get("vision_analysis_used"))
-    video_ok = (not has_video) or (
-        int(gvi.get("videos_analyzed") or 0) > 0
-        or int(gvi.get("frames_sampled") or 0) > 0
-        or bool(gvi.get("skipped_runtime_verified"))
-    )
-    verified = images_ok and video_ok
-    if verified:
-        if has_image_assets and has_video:
-            return True, "تم (صور + فيديو)"
-        if has_video:
-            return True, "تم (فيديو)"
-        return True, "تم (صور)"
-    return False, "غير منفّذ"
 
 
 def inventory_is_basic_mode(
@@ -140,6 +75,9 @@ def inventory_is_basic_mode(
 ) -> bool:
     from app.grading_mode_policy import is_fast_grading_mode
 
+    note = str(inventory.get("grading_mode_note_ar") or "")
+    if "PRO" in note.upper() or "وضع PRO" in note:
+        return False
     if is_fast_grading_mode(grading_mode):
         return True
     note = str(inventory.get("grading_mode_note_ar") or "")
@@ -180,6 +118,9 @@ def sanitize_missing_evidence_diagnostics_for_ui(
         if req in _REMOVED_DIAGNOSTIC_REQUIREMENTS_AR:
             continue
         r = dict(row)
+        status_ar = str(r.get("status_ar") or "")
+        if status_ar.startswith("أساسي: "):
+            r["status_ar"] = status_ar[len("أساسي: "):]
         if req == _WORD_REPORT_LEGACY_AR:
             r["requirement_ar"] = _WORD_REPORT_REQUIREMENT_AR
         rows.append(r)
@@ -233,8 +174,12 @@ def _submission_tree_roots(submission_paths: Optional[List[str]]) -> set[Path]:
     for fp in _existing_paths(submission_paths):
         roots.add(fp.parent)
         for parent in fp.parents:
-            if parent.name.lower() in ("assets", "scripts", "script", "src") or parent.parent == parent:
+            if parent.name.lower() in ("assets", "scripts", "script", "src"):
                 roots.add(parent)
+                break
+            # Do not add the filesystem/drive root: a submission fixture without
+            # an Assets/Scripts/src marker must remain bounded to its file parent.
+            if parent.parent == parent:
                 break
     if not roots and submission_paths:
         try:
@@ -506,6 +451,50 @@ def build_governance_intent_explanation(inventory: Dict[str, Any]) -> Dict[str, 
     }
 
 
+def _media_verification_present(
+    inventory: Dict[str, Any],
+    *,
+    has_screenshots: bool = False,
+    grading_mode: str | None = None,
+) -> Tuple[bool, str]:
+    """Return Arabic media-evidence status without confusing advisory video evidence with runtime authority."""
+    has_video = _submission_has_video(inventory)
+    gvi = inventory.get("gameplay_video_inference") or {}
+    basic_video = inventory.get("basic_video_keyframes_meta") or {}
+    video_ok = (
+        not has_video
+        or int(gvi.get("videos_analyzed") or 0) > 0
+        or int(gvi.get("frames_sampled") or 0) > 0
+        or int(basic_video.get("frames_extracted") or 0) > 0
+        or bool(gvi.get("skipped_runtime_verified"))
+    )
+    vision_used = bool(inventory.get("vision_analysis_used"))
+    if has_video:
+        # Keep the Arabic report deterministic and compatible with the legacy
+        # explainability contract: report the number of videos, not a generic
+        # "video present" label. Older snapshots may only carry keyframe
+        # counts, so use those as a conservative fallback when the extractor's
+        # explicit videos_found field is absent.
+        visual = inventory.get("visual_evidence_summary") or {}
+        video_count = int(basic_video.get("videos_found") or 0)
+        if video_count <= 0:
+            video_count = int(gvi.get("videos_analyzed") or 0)
+        if video_count <= 0:
+            video_count = int(visual.get("video_keyframes_found") or 0)
+        if video_count <= 0:
+            video_count = 1
+        status = f"عدد الفيديوهات : {video_count}"
+        if video_ok:
+            return True, status
+        return False, f"{status} — فيديو لم يُحلّل"
+
+    if has_screenshots:
+        if vision_used:
+            return True, "تم (صور)"
+        return False, "صور لم تُحلّل"
+    return True, "لا توجد وسائط مطلوبة"
+
+
 def build_missing_evidence_diagnostics(
     inventory: Dict[str, Any],
     *,
@@ -522,6 +511,23 @@ def build_missing_evidence_diagnostics(
     coverage = inventory.get("extraction_coverage") or {}
     obs = inventory.get("runtime_observation_report") or {}
     l5 = inventory.get("l5_human_playtest") or {}
+    try:
+        from app.gameplay_verifier import resolve_authoritative_gameplay_verification
+
+        gameplay_verification = resolve_authoritative_gameplay_verification(
+            artifact_inventory=inventory
+        ) or {}
+    except Exception:
+        gameplay_verification = {}
+    l4_level = str(
+        gameplay_verification.get("l4_level")
+        or gameplay_verification.get("automated_l4_level")
+        or ""
+    )
+    l4_gameplay_verified = bool(
+        gameplay_verification.get("gameplay_entered") is True
+        and l4_level in ("L4_full", "L4_partial")
+    )
 
     has_exe = bool(exe.get("files") or rt.get("executables_detected") or inventory.get("has_executable_artifacts"))
     has_scratch = bool(
@@ -558,17 +564,33 @@ def build_missing_evidence_diagnostics(
         or rt.get("screenshot_folder_detected")
         or (rt.get("runtime_screenshot_count") or 0) > 0
     )
+    # A GameMaker submission is valid even when the student did not export an EXE.
+    # The source project is built through the detected GameMaker/Igor toolchain by
+    # the runtime verifier; the academic table must not classify source as missing.
     has_gamemaker = str(obs.get("engine") or "").lower() == "gamemaker" or bool(
         obs.get("gamemaker_runtime_verification")
         or obs.get("gamemaker_artifact_analysis")
         or obs.get("gamemaker_gameplay_replay")
     )
-    if not has_gamemaker:
+    gm_signals = inventory.get("gamemaker_signals") or {}
+    source_exts = {".yyp", ".yyz", ".gml", ".yy", ".yymps"}
+    has_gamemaker_source = bool(
+        gm_signals.get("source_present")
+        or gm_signals.get("project_present")
+        or gm_signals.get("source_files")
+        or gm_signals.get("yyp_files")
+        or gm_signals.get("gml_files")
+        or gm_signals.get("yy_files")
+    )
+    if not has_gamemaker_source:
         for f in (src.get("files") or []):
             ext = str((f or {}).get("ext") or "").lower()
-            if ext in (".yyp", ".gml", ".yy"):
-                has_gamemaker = True
+            name = str((f or {}).get("name") or (f or {}).get("path") or "")
+            if ext in source_exts or any(name.lower().endswith(item) for item in source_exts):
+                has_gamemaker_source = True
                 break
+    if has_gamemaker_source:
+        has_gamemaker = True
     ves = inventory.get("visual_evidence_summary") or {}
     img_found = int(ves.get("images_found") or emb.get("count") or 0)
     img_submitted = int(ves.get("images_submitted") or emb.get("vision_submitted_count") or 0)
@@ -647,6 +669,7 @@ def build_missing_evidence_diagnostics(
 
     runtime_verified = bool(
         l5.get("pass")
+        or l4_gameplay_verified
         or (
             smoke_pass
             and smoke.get("reason") not in (
@@ -686,6 +709,8 @@ def build_missing_evidence_diagnostics(
         has_screenshots=has_screenshots,
         grading_mode=grading_mode,
     )
+    if inventory_is_basic_mode(inventory, grading_mode) and media_verify_present:
+        media_verify_status = f"أساسي: {media_verify_status}"
 
     _exe_not_run_ar = (
         "⚠ ملف GameMaker (.exe) موجود — لم يُشغَّل smoke test على الخادم"
@@ -707,25 +732,41 @@ def build_missing_evidence_diagnostics(
     )
     rows = [
         {
-            "requirement_ar": "ملف اللعبة (exe/build)",
+            "requirement_ar": (
+                "ملف المشروع/البناء (GameMaker source أو exe/build)"
+                if has_gamemaker_source
+                else "ملف اللعبة (exe/build)"
+            ),
             "status_ar": (
                 _exe_not_run_ar
                 if has_exe and structure_only
                 else (
-                    "⚠ الملف موجود — لم يُثبت تشغيل اللعبة"
-                    if has_exe and not runtime_verified
-                    else _neg(
-                        "ملف اللعبة (exe/build)",
-                        PRESENT_STATUS_AR if has_exe else "مفقود",
-                        has_exe,
+                    "المشروع المصدرّي موجود — بانتظار بناء/تشغيل GameMaker"
+                    if has_gamemaker_source and not has_exe and not runtime_verified
+                    else (
+                        "⚠ الملف موجود — لم يُثبت تشغيل اللعبة"
+                        if has_exe and not runtime_verified
+                        else _neg(
+                            "ملف المشروع/البناء (GameMaker source أو exe/build)"
+                            if has_gamemaker_source
+                            else "ملف اللعبة (exe/build)",
+                            PRESENT_STATUS_AR if (has_exe or (has_gamemaker_source and runtime_verified)) else "مفقود",
+                            bool(has_exe or has_gamemaker_source),
+                        )
                     )
                 )
             ),
-            "present": has_exe and runtime_verified,
+            # Source-only projects are accepted here; the runtime verifier is
+            # responsible for building the YYP/YYZ through GameMaker/Igor.
+            "present": bool(has_exe or has_gamemaker_source),
             "blocks_achievement_ar": (
                 _exe_block_ar
                 if has_exe and structure_only
-                else ("" if has_exe else "C.P5 — لا build")
+                else (
+                    "C.P5 — مشروع GameMaker المصدرّي يحتاج إكمال البناء/التشغيل عبر GameMaker"
+                    if has_gamemaker_source and not runtime_verified
+                    else ("" if (has_exe or has_gamemaker_source) else "C.P5 — لا build")
+                )
             ),
         },
         {
@@ -745,6 +786,7 @@ def build_missing_evidence_diagnostics(
                     "أدلة اختبار موجودة — لم يُمنح C.P6 (Gate/Governance)"
                     if has_testing
                     and not cp6_achieved
+                    and (grading_mode or "").strip().lower() not in ("fast", "basic", "standard")
                     else (
                         BASIC_PRO_UPGRADE_STATUS_AR
                         if has_testing
@@ -752,7 +794,9 @@ def build_missing_evidence_diagnostics(
                     )
                 )
             ),
-            "present": has_testing and cp6_achieved,
+            # This diagnostic answers whether testing evidence/authority exists;
+            # criterion achievement is reported separately by Governance.
+            "present": has_testing,
             "blocks_achievement_ar": (
                 ""
                 if has_testing
@@ -886,7 +930,9 @@ def build_missing_evidence_diagnostics(
         },
     ]
 
-    # Text Suppression: avoid positive phrasing if evidence has not reached L5.
+    # Suppress positive gameplay wording only when neither automated L4 nor human L5
+    # actually entered gameplay.  L4 is not human verification, but it is valid
+    # automated gameplay evidence and must not be relabelled as launch-only L3.
     runtime_row = next(
         (r for r in rows if r.get("requirement_ar") == "التحقق من التشغيل (runtime)"),
         None,
@@ -899,15 +945,22 @@ def build_missing_evidence_diagnostics(
     l5_human = bool(l5.get("pass"))
     mechanics_level = str(mechanics.get("mechanics_level") or "").upper()
     reached_l5 = l5_human or mechanics_level == "L5"
+    reached_gameplay = reached_l5 or l4_gameplay_verified
     fast_mode = (grading_mode or "").strip().lower() in ("fast", "basic", "standard")
-    if runtime_row and not reached_l5 and not fast_mode:
-        runtime_row["status_ar"] = "ملاحظة تشغيل L4/L3 فقط — لا تحقق gameplay نهائي بدون L5"
+    if runtime_row and l4_gameplay_verified and not reached_l5:
+        runtime_row["status_ar"] = (
+            f"{PRESENT_STATUS_AR} — تحقق gameplay آلي ({l4_level}) داخل نافذة اللعبة"
+        )
+        runtime_row["present"] = True
+        runtime_row["blocks_achievement_ar"] = ""
+    elif runtime_row and not reached_gameplay and not fast_mode:
+        runtime_row["status_ar"] = "لم تُشغَّل — ملاحظة تشغيل L4/L3 فقط — لا تحقق gameplay"
         runtime_row["present"] = False
         runtime_row["blocks_achievement_ar"] = (
             "C.P5/C.P6/C.M3/C.D3 — يلزم إثبات ميكانيك اللعب (Jump/Score/Win-Lose) عبر L5."
         )
     runtime_signal_present = bool(obs.get("runtime_observed") or obs.get("runtime_verified"))
-    if media_row and not reached_l5 and media_row.get("present") and runtime_signal_present and not fast_mode:
+    if media_row and not reached_gameplay and media_row.get("present") and runtime_signal_present and not fast_mode:
         media_row["status_ar"] = "تحليل بصري استشاري — لا يثبت صحة الميكانيك بدون L5"
         media_row["blocks_achievement_ar"] = (
             "الصور/الفيديو وحدها غير كافية لاعتماد الإنجاز دون تحقق ميكانيكي L5."
@@ -942,6 +995,75 @@ def build_missing_evidence_diagnostics(
     }
 
 
+_REQ_LABELS_AR: Dict[str, str] = {
+    "menu_navigation": "دخول اللعبة من القائمة",
+    "player_movement": "حركة اللاعب",
+    "player_jump": "القفز",
+    "score_system": "نظام النقاط",
+    "win_lose_condition": "شرط الفوز أو الخسارة",
+}
+
+
+def build_requirement_evidence_table(
+    grading_result: Optional[Dict[str, Any]] = None,
+    *,
+    inventory: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Requirement → input → screenshot → result → BTEC criterion (Word/UI table)."""
+    gr = grading_result or {}
+    inv = inventory or gr.get("artifact_inventory") or {}
+    gv = (
+        gr.get("gameplay_verification")
+        or inv.get("gameplay_verification")
+        or (inv.get("runtime_observation_report") or {}).get("gameplay_verification")
+        or {}
+    )
+    pkg = gv.get("evidence_package") or gr.get("evidence_package") or {}
+    l4_level = str(gv.get("l4_level") or gv.get("automated_l4_level") or "L3")
+    rows: List[Dict[str, Any]] = []
+
+    for result in pkg.get("results") or []:
+        if not isinstance(result, dict):
+            continue
+        req_id = str(result.get("req_id") or "")
+        before = result.get("before_screenshot") or {}
+        after = result.get("after_screenshot") or {}
+        verified = bool(result.get("verified"))
+        rows.append(
+            {
+                "requirement_id": req_id,
+                "requirement_ar": _REQ_LABELS_AR.get(req_id, req_id),
+                "input_summary": result.get("detail") or "—",
+                "before_path": str(before.get("path") or ""),
+                "after_path": str(after.get("path") or ""),
+                "before_label": str(before.get("label") or ""),
+                "after_label": str(after.get("label") or ""),
+                "capture_scope": str(before.get("capture_scope") or after.get("capture_scope") or ""),
+                "verified": verified,
+                "result_ar": "مُتحقق" if verified else "لم يُتحقق",
+                "btec_criteria": result.get("btec_criteria") or [],
+                "confidence": float(result.get("confidence") or 0),
+                "reason": str(result.get("reason") or ""),
+            }
+        )
+
+    gate = gv.get("gate_decisions") or {}
+    return {
+        "version": "requirement_evidence_table_v1",
+        "l4_level": l4_level,
+        "gameplay_entered": bool(gv.get("gameplay_entered")),
+        "agent_play_label_ar": str(gv.get("authority_note_ar") or ""),
+        "rows": rows,
+        "gate_decisions": gate.get("decisions") or [],
+        "criterion_pass": gate.get("criterion_pass") or {},
+        "summary_ar": (
+            f"جدول أدلة المتطلبات — {len(rows)} اختبار، مستوى L4: {l4_level}"
+            if rows
+            else "لا توجد أدلة متطلبات مسجّلة بعد"
+        ),
+    }
+
+
 def attach_academic_explainability(
     inventory: Dict[str, Any],
     *,
@@ -961,6 +1083,12 @@ def attach_academic_explainability(
         project_profile=project_profile,
         grading_mode=grading_mode,
     )
+    try:
+        inventory["requirement_evidence_table"] = build_requirement_evidence_table(
+            inventory=inventory,
+        )
+    except Exception:
+        pass
     return inventory
 
 
@@ -1002,5 +1130,4 @@ def format_explainability_for_grading(inventory: Dict[str, Any]) -> str:
             lines.append(f"• Summary: {diag['summary_ar']}")
     lines.append("───────────────────────────────────────────────────────────\n")
     return "\n".join(lines) + "\n"
-
 

@@ -202,6 +202,8 @@ def list_resumable_checkpoints() -> List[Dict[str, Any]]:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             bid = int(data.get("batch_id") or 0) if isinstance(data, dict) else 0
+            if isinstance(data, dict) and data.get("paused"):
+                continue
             if bid and bid not in seen:
                 seen.add(bid)
                 out.append(data)
@@ -315,7 +317,8 @@ async def _extract_staged_zip_or_rar(
     _ALL_EXTENSIONS = (
         ".docx", ".pdf", ".doc", ".pptx", ".pptx", ".xlsx", ".xls",
         ".py", ".java", ".cs", ".cpp", ".c", ".js", ".ts", ".html",
-        ".gd", ".gml", ".lua", ".exe", ".pck", ".x86_64", ".apk",
+        ".gd", ".gml", ".yyp", ".yy", ".yyz", ".win", ".lua",
+        ".exe", ".pck", ".x86_64", ".apk",
         ".mp4", ".avi", ".mov", ".mkv", ".wmv", ".webm",
         ".png", ".jpg", ".jpeg", ".gif", ".webp",
         ".zip", ".rar",
@@ -403,6 +406,8 @@ async def resume_batch_from_checkpoint(
     checkpoint: Dict[str, Any],
     batch_progress: dict,
 ) -> bool:
+    if checkpoint.get("paused"):
+        return False
     from app.database import SessionLocal
     from app.models import Assignment, BatchGrading, BatchStatus, GradingCriteria
 

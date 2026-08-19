@@ -15,13 +15,10 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
         exe = executable.resolve()
         search_root = session.root if session.root else None
         if search_root is not None:
-            for anc in [search_root, *list(search_root.parents)[:6]]:
-                if any(anc.rglob("*.yyp")) or any(anc.rglob("*.gml")):
-                    if any(anc.rglob("*.exe")):
-                        search_root = anc
-                        break
+            search_root = search_root.parent if search_root.is_file() else search_root
         launch_assessment = assess_gamemaker_exe_launch(exe, search_root=search_root)
         runtime_cwd = Path(launch_assessment.get("runtime_cwd") or exe.parent)
+        runtime_executable = Path(launch_assessment.get("runtime_executable") or exe)
         session.signals["gamemaker_runtime_cwd"] = str(runtime_cwd)
         session.signals["gamemaker_launch_assessment"] = launch_assessment
 
@@ -38,24 +35,29 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
                 "errors": ["gamemaker_missing_data_win"],
             }
             session.signals["gamemaker_observation"] = observation
-            session.signals["runtime_method"] = "gamemaker_static_only"
-            session.status = SessionStatus.COMPLETED
+            session.signals["runtime_method"] = "gamemaker_runtime_unavailable"
+            session.status = SessionStatus.FAILED
             return {
-                "success": True,
+                "success": False,
                 "observation": observation,
                 "skipped": True,
                 "reason": observation["skip_reason"],
             }
 
         smoke = smoke_test_windows_exe(
-            exe,
-            timeout=resolve_smoke_timeout_seconds("deep"),
+            runtime_executable,
+            timeout=max(
+                resolve_smoke_timeout_seconds("deep"),
+                min(int(timeout_seconds), 90),
+            ),
             capture_screenshots=True,
             enable_interaction_trace=True,
             session_ctx={
                 "student_name": session.submission_key,
                 "submission_root": str(search_root) if search_root else None,
                 "project_root": str(search_root) if search_root else None,
+                "engine": "gamemaker",
+                "gamemaker_launch_assessment": launch_assessment,
             },
             cwd=runtime_cwd,
         )

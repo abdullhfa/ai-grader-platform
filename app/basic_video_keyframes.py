@@ -1,4 +1,4 @@
-"""
+﻿"""
 BASIC-only: temp video → 5 percentile keyframes (FFmpeg) → Vision budget (no .mp4 on disk).
 """
 from __future__ import annotations
@@ -197,6 +197,8 @@ def _rel_belongs_to_student_intake(rel: str, workspace: Path) -> bool:
     rel_l = _norm_rel(rel).lower()
     ws = workspace.name.lower()
     parts = rel_l.split("/")
+    if "runtime_sessions" in parts and ws in parts:
+        return True
     if len(parts) > 1:
         return parts[0] == ws
     return True
@@ -317,6 +319,12 @@ def extract_basic_video_keyframe_images(
     submission_paths = [str(p) for p in (student_info.get("submission_paths") or [])]
     intake_rels = _video_rels_from_intake(list(student_info.get("intake_relative_paths") or []))
     source_archive = student_info.get("source_archive_path")
+    if not source_archive:
+        for candidate in submission_paths:
+            candidate_path = Path(candidate)
+            if candidate_path.suffix.lower() in {".zip", ".rar"} and candidate_path.is_file():
+                source_archive = str(candidate_path)
+                break
     workspace = _resolve_submission_workspace(
         primary,
         submission_paths,
@@ -328,10 +336,20 @@ def extract_basic_video_keyframe_images(
     video_sources: List[Tuple[str, Optional[Path]]] = []
     seen_names: set[str] = set()
 
+    workspace_key = workspace.name.strip().casefold()
+    student_name_key = str(student_info.get("name") or "").strip().casefold()
+
+    def _runtime_path_belongs_to_student(path: Path) -> bool:
+        if "runtime_sessions" not in {part.strip().casefold() for part in path.parts}:
+            return False
+        path_parts = {part.strip().casefold() for part in path.parts}
+        return bool((workspace_key and workspace_key in path_parts) or (student_name_key and student_name_key in path_parts))
+
     def _register(label: str, disk: Optional[Path]) -> None:
         if disk is not None and not _path_under_workspace(disk, workspace):
-            rejected_cross_student.append(label)
-            return
+            if not _runtime_path_belongs_to_student(disk):
+                rejected_cross_student.append(label)
+                return
         base = Path(label).name.lower()
         if base in seen_names:
             return
@@ -342,10 +360,7 @@ def extract_basic_video_keyframe_images(
         _register(str(vp.relative_to(workspace)).replace("\\", "/"), vp)
 
     for vp in list_submission_video_files([Path(p) for p in submission_paths]):
-        if _path_under_workspace(vp, workspace):
-            _register(vp.name, vp)
-        else:
-            rejected_cross_student.append(str(vp))
+        _register(vp.name, vp)
 
     archive_videos: List[str] = []
     if source_archive:
@@ -442,3 +457,5 @@ def merge_basic_vision_images(
         "total_vision": word_take + video_take,
     }
     return merged, stats
+
+

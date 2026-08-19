@@ -7,6 +7,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -63,6 +64,48 @@ class TestGameMakerEngine(unittest.TestCase):
             self.assertIn(result.get("status"), ("completed", "failed", "skipped"))
             norm = result.get("normalized") or {}
             self.assertEqual(norm.get("runtime_observation", {}).get("engine_id"), "gamemaker")
+
+    def test_source_only_execute_hands_off_to_runtime_verifier(self):
+        from app.runtime_engines.base import RuntimeSession
+        from app.runtime_engines.gamemaker.engine import GameMakerRuntimeEngine
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "Game.yyp").write_text(
+                '{"resourceType":"GMProject","resources":[]}', encoding="utf-8"
+            )
+            (root / "objects" / "obj_player").mkdir(parents=True)
+            (root / "objects" / "obj_player" / "Step_0.gml").write_text(
+                "keyboard_check(vk_left);", encoding="utf-8"
+            )
+            session = RuntimeSession.create(
+                engine="gamemaker", submission_key="source-only", root=root
+            )
+            engine = GameMakerRuntimeEngine()
+            engine.prepare(session)
+            expected = {
+                "success": True,
+                "signals": {"gameplay_replay_ok": True},
+            }
+            with patch(
+                "app.runtime_engines.gamemaker.engine.run_gamemaker_runtime_verification",
+                return_value=expected,
+            ) as verifier:
+                engine.execute(session, timeout_seconds=5)
+
+            verifier.assert_called_once()
+            self.assertEqual(
+                session.signals["gamemaker_runtime_verification_result"], expected
+            )
+            self.assertTrue(
+                session.signals["source_only_runtime_verification_requested"]
+            )
+            self.assertTrue(
+                any(
+                    event.get("type") == "gamemaker_runtime_verification_start"
+                    for event in session.events.to_dicts()
+                )
+            )
 
     def test_gamemaker_exe_beats_legacy_when_yyp_present(self):
         from app.runtime_engines.registry import resolve_engine

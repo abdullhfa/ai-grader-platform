@@ -19,8 +19,9 @@ def strict_deterministic_enabled() -> bool:
 
 
 def skip_grading_cache_default() -> bool:
-    """Grading cache bypass — same files must yield fresh rule+AI merge every run."""
-    return strict_deterministic_enabled()
+    """Reuse the stored result for identical submissions unless regrade is explicit."""
+    value = os.environ.get("AI_GRADER_FORCE_REGRADE", os.environ.get("AI_GRADER_SKIP_GRADING_CACHE", "0")).strip().lower()
+    return value in ("1", "true", "yes", "on")
 
 
 def use_deterministic_ai_detection_only() -> bool:
@@ -32,12 +33,12 @@ def use_deterministic_ai_detection_only() -> bool:
 
 
 def persist_grading_cache() -> bool:
-    return not strict_deterministic_enabled()
+    return True
 
 
 def persist_ai_detection_cache() -> bool:
-    return not strict_deterministic_enabled()
+    return True
 
 
 def reuse_plagiarism_db_scores() -> bool:
-    return not strict_deterministic_enabled()
+    return True

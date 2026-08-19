@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 from app.pro_engine_gameplay_governance import detect_primary_game_engine
 from app.runtime_replay_viewer import path_to_upload_url
 
-PACKAGE_VERSION = "runtime_evidence_package_v1"
+PACKAGE_VERSION = "runtime_evidence_package_v2"
 
 _SCREENSHOT_SLOTS = (
     ("startup", ("launch", "startup", "pre_interaction")),
@@ -32,6 +32,13 @@ _REQ_EVENT_MAP: Dict[str, Tuple[str, ...]] = {
     "restart": ("restart_flow_observed",),
     "menu_ui": ("menu_detected", "launch_success"),
     "level_design": ("scene_transition",),
+}
+
+_REQ_RESULT_ALIASES: Dict[str, str] = {
+    "jump": "player_jump",
+    "menu_ui": "menu_navigation",
+    "win_condition": "win_lose_condition",
+    "lose_condition": "win_lose_condition",
 }
 
 
@@ -367,21 +374,59 @@ def _confidence_source_for_level(evidence_level: str, runtime_gameplay_verified:
     return "file_analysis", "ثقة تحليل ملفات"
 
 
+def _authoritative_gameplay_verification(inv: Dict[str, Any]) -> Dict[str, Any]:
+    """Return the richest real verifier result, including nested GameMaker output."""
+    try:
+        from app.gameplay_verifier import resolve_authoritative_gameplay_verification
+
+        return resolve_authoritative_gameplay_verification(artifact_inventory=inv) or {}
+    except Exception:
+        return {}
+
+
+def _requirement_results_by_id(
+    gameplay_verification: Dict[str, Any],
+) -> Dict[str, Dict[str, Any]]:
+    package = gameplay_verification.get("evidence_package") or {}
+    raw_results = package.get("results") or gameplay_verification.get("requirement_results") or []
+    results: Dict[str, Dict[str, Any]] = {}
+    for item in raw_results:
+        if not isinstance(item, dict):
+            continue
+        req_id = str(item.get("req_id") or item.get("requirement_id") or "").strip()
+        if req_id:
+            results[req_id] = item
+    return results
+
+
 def _requirement_confidence(
     mapping: Sequence[Dict[str, Any]],
     events: Sequence[Dict[str, Any]],
     *,
     runtime_gameplay_verified: bool,
     evidence_level: str = "L1",
+    gameplay_verification: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
     by_event = {e["event"]: float(e.get("confidence") or 0) for e in events}
+    direct_results = _requirement_results_by_id(gameplay_verification or {})
     source, source_ar = _confidence_source_for_level(evidence_level, runtime_gameplay_verified)
     rows: List[Dict[str, Any]] = []
     for row in mapping:
         req = str(row.get("requirement") or "")
-        evs = row.get("evidence") or []
-        scores = [by_event[e] for e in evs if e in by_event]
-        pct = round(100 * (sum(scores) / len(scores))) if scores else 0
+        result_id = _REQ_RESULT_ALIASES.get(req, req)
+        direct = direct_results.get(result_id)
+        verified: Optional[bool] = None
+        if direct is not None:
+            try:
+                score = max(0.0, min(1.0, float(direct.get("confidence") or 0)))
+            except (TypeError, ValueError):
+                score = 0.0
+            pct = round(100 * score)
+            verified = direct.get("verified") is True
+        else:
+            evs = row.get("evidence") or []
+            scores = [by_event[e] for e in evs if e in by_event]
+            pct = round(100 * (sum(scores) / len(scores))) if scores else 0
         if source == "file_analysis" and pct > 0:
             pct = min(pct, 79)
         rows.append(
@@ -391,6 +436,16 @@ def _requirement_confidence(
                 "confidence_pct": pct,
                 "confidence_source": source,
                 "confidence_source_ar": source_ar,
+                "verified": verified,
+                "verification_status_ar": (
+                    "متحقق"
+                    if verified is True
+                    else (
+                        "غير متحقق"
+                        if verified is False
+                        else ("لم يُختبر مباشرة" if source.startswith("runtime_") else "استدلال")
+                    )
+                ),
             }
         )
     return rows
@@ -427,6 +482,7 @@ def build_runtime_evidence_package(
     boot = _boot_gate(obs, inv)
     semantics = _semantics(obs, inv)
     events = _extract_events(obs, inv, boot, semantics)
+    gameplay_verification = _authoritative_gameplay_verification(inv)
     screenshots = _normalize_screenshots(obs, inv)
     try:
         from app.runtime_screenshot_validation import filter_gameplay_screenshots
@@ -449,12 +505,27 @@ def build_runtime_evidence_package(
         evidence_level = resolve_gameplay_evidence_level(obs, inventory=inv)
     except Exception:
         pass
+    l4_level = str(
+        gameplay_verification.get("l4_level")
+        or gameplay_verification.get("automated_l4_level")
+        or ""
+    )
+    gameplay_entered = gameplay_verification.get("gameplay_entered") is True
+    authoritative_l4_gameplay = gameplay_entered and l4_level in ("L4_full", "L4_partial")
+    if authoritative_l4_gameplay:
+        evidence_level = "L4"
+    runtime_gameplay_verified = bool(
+        runtime_gameplay_verified
+        or authoritative_l4_gameplay
+        or (gameplay_entered and evidence_level == "L5")
+    )
     requirement_mapping = _map_requirements(checklist, events, screenshots)
     req_confidence = _requirement_confidence(
         requirement_mapping,
         events,
         runtime_gameplay_verified=runtime_gameplay_verified,
         evidence_level=evidence_level,
+        gameplay_verification=gameplay_verification,
     )
     strength = _strength_label(boot, events)
 
@@ -474,12 +545,16 @@ def build_runtime_evidence_package(
         "input_detected": boot["input_detected"],
         "scene_changed": boot["scene_changed"],
         "runtime_duration_s": boot["runtime_duration_s"],
+        "runtime_gameplay_verified": runtime_gameplay_verified,
+        "gameplay_entered": gameplay_entered,
+        "l4_level": l4_level or None,
+        "gameplay_evidence_level": evidence_level,
         "screenshots": screenshots,
         "events": events,
         "requirement_mapping": requirement_mapping,
         "requirement_confidence": req_confidence,
         "confidence_model_ar": (
-            "أرقام الثقة من تشغيل حقيقي (نافذة اللعبة)"
+            "نتائج الثقة من اختبارات المتطلبات داخل نافذة اللعبة"
             if runtime_gameplay_verified
             else "أرقام الثقة من تحليل ملفات/استدلال — ليست gameplay فعلي"
         ),

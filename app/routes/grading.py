@@ -31,7 +31,7 @@ def _maybe_schedule_checkpoint_resume(request: Request, batch_id: int) -> None:
     if batch_id in triggered:
         return
     ck = load_batch_checkpoint(batch_id)
-    if not ck:
+    if not ck or ck.get("paused"):
         return
     triggered.add(batch_id)
     batch_progress = get_batch_progress_dict(request)
@@ -71,7 +71,9 @@ async def get_batch_progress(
 
         if finalize_cancelled_batch_if_stuck(batch_progress, assignment_id):
             info = batch_progress.get(assignment_id)
-        if info and info.get("resuming") and info.get("batch_id"):
+        if info and info.get("paused"):
+            pass
+        elif info and info.get("resuming") and info.get("batch_id"):
             _maybe_schedule_checkpoint_resume(request, int(info["batch_id"]))
         elif (
             info
@@ -124,8 +126,51 @@ async def get_batch_progress(
                         return {"found": False}
 
                 if batch_is_resumable_after_restart(int(batch.id)):
-                    _maybe_schedule_checkpoint_resume(request, int(batch.id))
                     ck = load_batch_checkpoint(int(batch.id)) or {}
+                    if ck.get("paused"):
+                        preflight = dict(ck.get("gamemaker_preflight") or {})
+                        toolchain = dict(preflight.get("toolchain") or {})
+                        return {
+                            "found": True,
+                            "completed": int(batch.processed_students or 0),
+                            "total": max(
+                                int(batch.total_students or 0),
+                                len(ck.get("student_files") or []),
+                                1,
+                            ),
+                            "current_student": "",
+                            "current_phase": "paused_gamemaker",
+                            "phase_label": (
+                                "تم إيقاف التصحيح مؤقتاً — ثبّت GameMaker وافتحه "
+                                "وسجّل الدخول، ثم اضغط Complete."
+                            ),
+                            "student_progress": 0.0,
+                            "percent": 8,
+                            "start_time": float(ck.get("pause_started_at") or 0),
+                            "student_times": [],
+                            "completed_students": [],
+                            "all_student_names": [
+                                s.get("name", "")
+                                for s in (ck.get("student_files") or [])
+                                if isinstance(s, dict)
+                            ],
+                            "archive_all_files": ck.get("accumulated_archive_files") or [],
+                            "archive_student_map": ck.get("accumulated_archive_map") or {},
+                            "upload_intake": ck.get("batch_intake_manifest"),
+                            "finished": False,
+                            "failed": False,
+                            "paused": True,
+                            "pause_kind": "gamemaker_dependency",
+                            "required_dependency": preflight,
+                            "download_url": (
+                                preflight.get("download_url")
+                                or toolchain.get("download_url")
+                            ),
+                            "error": None,
+                            "batch_id": batch.id,
+                            "final_response": None,
+                        }
+                    _maybe_schedule_checkpoint_resume(request, int(batch.id))
                     _ck_archive = bool(ck.get("accumulated_archive_files"))
                     _resume_pct = max(46 if _ck_archive else 8, int(batch.processed_students or 0) * 10)
                     return {
@@ -262,7 +307,7 @@ async def get_batch_progress(
         "total": info["total"],
         "current_student": info.get("current_student", ""),
         "current_phase": phase,
-        "phase_label": PHASE_LABELS_AR.get(phase, ""),
+        "phase_label": info.get("phase_label") or PHASE_LABELS_AR.get(phase, ""),
         "student_progress": info.get("student_progress", 0),
         "percent": info.get("percent", 0),
         "start_time": info["start_time"],
@@ -284,6 +329,120 @@ async def get_batch_progress(
         "cancelled": bool(info.get("cancelled")),
         "server_restarted": bool(info.get("server_restarted")),
         "resuming": bool(info.get("resuming")),
+        "paused": bool(info.get("paused")),
+        "pause_kind": info.get("pause_kind"),
+        "required_dependency": info.get("required_dependency"),
+        "download_url": (
+            info.get("download_url")
+            or ((info.get("required_dependency") or {}).get("download_url")
+                if isinstance(info.get("required_dependency"), dict) else None)
+        ),
+    }
+
+
+@router.post("/api/batch-grade-complete-gamemaker/{assignment_id}")
+async def complete_gamemaker_installation(
+    assignment_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Recheck GameMaker/Igor, then resume the exact paused checkpoint."""
+    from app.batch_checkpoint import (
+        load_batch_checkpoint,
+        resume_batch_from_checkpoint,
+        save_batch_checkpoint,
+    )
+    from app.batch_progress_store import load_assignment_progress, persist_assignment_progress
+    from app.runtime_engines.gamemaker.toolchain import (
+        preflight_gamemaker_runtime_dependency,
+    )
+
+    batch_progress = get_batch_progress_dict(request)
+    info = batch_progress.get(assignment_id) or load_assignment_progress(assignment_id) or {}
+    batch_id = int(info.get("batch_id") or 0)
+    if not batch_id:
+        latest = (
+            db.query(BatchGrading)
+            .filter(BatchGrading.assignment_id == assignment_id)
+            .order_by(BatchGrading.id.desc())
+            .first()
+        )
+        batch_id = int(latest.id) if latest else 0
+    checkpoint = load_batch_checkpoint(batch_id) if batch_id else None
+    if not checkpoint or not checkpoint.get("paused"):
+        raise HTTPException(status_code=404, detail="لا يوجد تصحيح GameMaker متوقف للاستكمال.")
+
+    preflight = await asyncio.to_thread(
+        preflight_gamemaker_runtime_dependency,
+        list(checkpoint.get("student_files") or []),
+    )
+    if preflight.get("pause_required"):
+        checkpoint["gamemaker_preflight"] = preflight
+        save_batch_checkpoint(batch_id, checkpoint)
+        info.update(
+            {
+                "found": True,
+                "batch_id": batch_id,
+                "paused": True,
+                "pause_kind": "gamemaker_dependency",
+                "current_phase": "paused_gamemaker",
+                "required_dependency": preflight,
+                "phase_label": (
+                    "لم يكتمل إعداد GameMaker بعد. افتح GameMaker وسجّل الدخول "
+                    "وتأكد من تثبيت Windows Runtime، ثم اضغط Complete مرة أخرى."
+                ),
+                "finished": False,
+                "failed": False,
+            }
+        )
+        batch_progress[assignment_id] = info
+        persist_assignment_progress(assignment_id, info)
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "message": info["phase_label"],
+                "preflight": preflight,
+                "download_url": preflight.get("download_url"),
+            },
+        )
+
+    for key in ("paused", "pause_kind", "pause_started_at"):
+        checkpoint.pop(key, None)
+    checkpoint["gamemaker_preflight"] = preflight
+    save_batch_checkpoint(batch_id, checkpoint)
+
+    batch = db.query(BatchGrading).filter(BatchGrading.id == batch_id).first()
+    if batch:
+        batch.status = BatchStatus.PROCESSING  # type: ignore[assignment]
+        batch.failure_message = None  # type: ignore[assignment]
+        db.commit()
+
+    for key in ("paused", "pause_kind", "required_dependency"):
+        info.pop(key, None)
+    info.update(
+        {
+            "batch_id": batch_id,
+            "current_phase": "queued",
+            "phase_label": "تم العثور على GameMaker — جاري استكمال التصحيح...",
+            "resuming": True,
+            "finished": False,
+            "failed": False,
+        }
+    )
+    batch_progress[assignment_id] = info
+    persist_assignment_progress(assignment_id, info)
+    triggered = getattr(request.app.state, "_resume_triggered_batch_ids", None)
+    if isinstance(triggered, set):
+        triggered.discard(batch_id)
+    resumed = await resume_batch_from_checkpoint(checkpoint, batch_progress)
+    if not resumed:
+        raise HTTPException(status_code=500, detail="تعذّر استئناف نقطة التصحيح المحفوظة.")
+    return {
+        "success": True,
+        "resumed": True,
+        "batch_id": batch_id,
+        "message": "تم العثور على GameMaker واستؤنف التصحيح.",
+        "preflight": preflight,
     }
 
 

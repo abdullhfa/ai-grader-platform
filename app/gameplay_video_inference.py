@@ -1,4 +1,4 @@
-"""
+﻿"""
 L3 — Governed gameplay video observation hints (advisory only).
 
 Not «video understanding AI» — deterministic frame sampling + temporal signals +
@@ -101,6 +101,7 @@ def _analyze_sampled_frames(
     prev_gray = None
     prev_hist = None
     prev_top_hist = None
+    temporal: Dict[str, Any] = {}
 
     for ts, fp in paths:
         gray = _load_frame_gray(fp)

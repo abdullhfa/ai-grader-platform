@@ -165,10 +165,11 @@ def run_stress_scenario(
         fixture = _fixtures_root() / FIXTURE_MAP[scenario_id]
         if not fixture.exists():
             return {"scenario_id": scenario_id, "error": "fixture_missing", "path": str(fixture)}
-        if scenario_id == "crash_on_launch":
-            observation = run_sandbox_observation([str(fixture)], enable_smoke_test=False)
-            root_pid = None
-        elif scenario_id in ("infinite_loop", "hung_process"):
+        if scenario_id in ("crash_on_launch", "infinite_loop", "hung_process"):
+            # These fixtures are intentionally executable Python failure modes.
+            # Run the file itself so syntax/runtime failures are surfaced as a
+            # deterministic non-zero exit instead of being flattened by root
+            # directory engine detection into an unsupported-engine result.
             observation = _run_python_subprocess(fixture, effective_timeout)
             root_pid = observation.get("root_pid")
         else:

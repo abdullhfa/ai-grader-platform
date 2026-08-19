@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from app.academic_explainability import attach_academic_explainability
 
-EXPLAINABILITY_LAYER_VERSION = "v2"
+EXPLAINABILITY_LAYER_VERSION = "v3_source_media_refresh"
 EXPLAINABILITY_SCHEMA = "2.0"
 REVISION_TYPE_BACKFILL = "explainability_backfill"
 
@@ -199,7 +199,7 @@ def protected_digest_includes_metadata(snapshot: Dict[str, Any]) -> str:
     return _protected_digest_legacy_full(snapshot)
 
 
-def _submission_paths_from_snapshot(snapshot: Dict[str, Any], submission_file_path: str = "") -> List[str]:
+def _submission_paths_from_snapshot(snapshot: Dict[str, Any], submission_file_path: str = "", student_name: str = "") -> List[str]:
     paths: List[str] = []
     seen: set[str] = set()
 
@@ -218,6 +218,35 @@ def _submission_paths_from_snapshot(snapshot: Dict[str, Any], submission_file_pa
             parent = Path(submission_file_path).parent
             if parent.is_dir():
                 _add(str(parent))
+        except OSError:
+            pass
+
+    # A legacy submission row may retain only the DOCX path while the original
+    # source archive and media live in the matching runtime_sessions folder.
+    # Recover that folder by the stable student name before rebuilding evidence.
+    lookup_names: List[str] = []
+    for candidate in (student_name, snapshot.get("student_name")):
+        candidate_name = str(candidate or "").strip()
+        if candidate_name and candidate_name not in lookup_names:
+            lookup_names.append(candidate_name)
+    if submission_file_path and lookup_names:
+        try:
+            submission_path = Path(submission_file_path)
+            upload_root: Optional[Path] = None
+            for ancestor in [submission_path, *submission_path.parents]:
+                if ancestor.name.lower() == "uploads":
+                    upload_root = ancestor
+                    break
+            if upload_root is not None:
+                runtime_root = upload_root / "runtime_sessions"
+                for candidate_name in lookup_names:
+                    runtime_session = runtime_root / candidate_name
+                    if runtime_session.is_dir():
+                        _add(str(runtime_session))
+                        for child in runtime_session.rglob("*"):
+                            if child.is_dir() or child.is_file():
+                                _add(str(child))
+                        break
         except OSError:
             pass
     inv = snapshot.get("artifact_inventory") or {}
@@ -404,7 +433,10 @@ def compute_explainability_layer(
                 _augment_godot_export_source_files,
                 _existing_files,
                 _resolve_inventory_paths,
+                build_runtime_artifacts_summary,
             )
+            from app.basic_video_keyframes import extract_basic_video_keyframe_images
+            from app.gameplay_video_inference import analyze_gameplay_video_hints
 
             primary = next(
                 (p for p in paths if p.lower().endswith((".docx", ".doc", ".pdf", ".odt"))),
@@ -416,6 +448,75 @@ def compute_explainability_layer(
                 student_name=student_name,
             )
             files = _existing_files(expanded)
+            # Rebuild static runtime evidence from the recovered file tree, but
+            # preserve runtime execution/verification fields produced above.
+            static_runtime = build_runtime_artifacts_summary(files, profile)
+            video_extensions = {".mp4", ".avi", ".mov", ".mkv", ".wmv", ".webm", ".m4v", ".flv"}
+            video_files = [fp for fp in files if fp.suffix.lower() in video_extensions]
+            recovered_video_files: List[Path] = []
+            for raw_path in [*(expanded or []), *((submission_paths or []))]:
+                candidate = Path(raw_path)
+                if candidate.is_file() and candidate.suffix.lower() in video_extensions:
+                    recovered_video_files.append(candidate)
+                elif candidate.is_dir():
+                    try:
+                        recovered_video_files.extend(
+                            child for child in candidate.rglob("*")
+                            if child.is_file() and child.suffix.lower() in video_extensions
+                        )
+                    except OSError:
+                        pass
+            video_files = list(dict.fromkeys([*video_files, *recovered_video_files]))
+            if video_files:
+                keyframe_paths = list(dict.fromkeys([
+                    *(expanded or []),
+                    *((submission_paths or [])),
+                    *(str(p) for p in video_files),
+                ]))
+                student_info = {
+                    "name": student_name,
+                    "submission_paths": keyframe_paths,
+                    "submission_file_path": primary,
+                    "source_archive": primary,
+                }
+                try:
+                    _video_images, video_meta = extract_basic_video_keyframe_images(
+                        student_info,
+                        max_frames_per_video=5,
+                        max_videos=3,
+                    )
+                    if int(video_meta.get("videos_found") or 0) > 0:
+                        inv["basic_video_keyframes_meta"] = video_meta
+                except Exception as exc:
+                    inv["basic_video_keyframes_error"] = str(exc)
+                try:
+                    gameplay_video = analyze_gameplay_video_hints(
+                        video_files,
+                        existing_video_evidence=inv.get("gameplay_video_inference"),
+                    )
+                    if int(gameplay_video.get("videos_analyzed") or 0) > 0 or int(gameplay_video.get("frames_sampled") or 0) > 0:
+                        inv["gameplay_video_inference"] = gameplay_video
+                except Exception as exc:
+                    inv["gameplay_video_inference_error"] = str(exc)
+            runtime_inventory = inv.get("runtime_artifacts")
+            if not isinstance(runtime_inventory, dict):
+                runtime_inventory = {}
+            for runtime_key in (
+                "executables_detected",
+                "executable_files",
+                "scratch_project_detected",
+                "html5_build_detected",
+                "gameplay_video_detected",
+                "screenshot_folder_detected",
+                "gameplay_videos",
+                "screenshot_candidates",
+                "unity_signals",
+                "unity_source_signals",
+                "unity_source_build_alignment",
+            ):
+                if runtime_key in static_runtime:
+                    runtime_inventory[runtime_key] = static_runtime[runtime_key]
+            inv["runtime_artifacts"] = runtime_inventory
             src_files: List[Dict[str, Any]] = []
             for fp in files:
                 ext = fp.suffix.lower()
@@ -517,6 +618,18 @@ def apply_explainability_backfill(
             "executable_artifacts",
             "runtime_artifacts",
             "source_code",
+            "source_code_artifacts",
+            "media_artifacts",
+            "visual_evidence_summary",
+            "basic_video_keyframes_meta",
+            "basic_video_keyframes_error",
+            "gameplay_video_inference",
+            "gameplay_video_inference_error",
+            "requirement_evidence_table",
+            "evidence_coverage_by_criterion",
+            "runtime_evidence_package",
+            "visual_verification",
+            "testing_evidence",
         ):
             if key in refreshed_inv:
                 inv[key] = refreshed_inv[key]
@@ -763,7 +876,17 @@ def _rebuild_diagnostics_for_ui(snapshot: Dict[str, Any]) -> Dict[str, Any]:
     gm = snapshot.get("grading_mode")
     gm_s = gm if isinstance(gm, str) else None
     diag = build_missing_evidence_diagnostics(inv, grading_mode=gm_s)
-    return apply_basic_pro_upgrade_display(diag, inv, grading_mode=gm_s) or diag
+    out = apply_basic_pro_upgrade_display(diag, inv, grading_mode=gm_s) or diag
+    video_meta = inv.get("basic_video_keyframes_meta") or {}
+    video_summary = inv.get("visual_evidence_summary") or {}
+    video_count = int(video_meta.get("videos_found") or video_summary.get("video_keyframes_found") or 0)
+    if video_count > 0:
+        for row in out.get("rows") or []:
+            if row.get("requirement_ar") == "التحقق من الصور والفيديو":
+                row["status_ar"] = f"عدد الفيديوهات : {video_count}"
+                row["present"] = True
+                break
+    return out
 
 
 def _diagnostics_contradict_fingerprint(snapshot: Dict[str, Any], diag: Any) -> bool:
@@ -849,7 +972,15 @@ def extract_explainability_for_ui(snapshot: Optional[Dict[str, Any]]) -> Optiona
     miss_report = snapshot.get("missing_evidence_report") or inv.get("missing_evidence_report")
     req_checklist = snapshot.get("requirement_checklist") or inv.get("requirement_checklist")
     rt_pkg = snapshot.get("runtime_evidence_package") or inv.get("runtime_evidence_package")
-    if not rt_pkg and inv.get("runtime_observation_report"):
+    try:
+        from app.runtime_evidence_package import PACKAGE_VERSION as RUNTIME_PACKAGE_VERSION
+    except Exception:
+        RUNTIME_PACKAGE_VERSION = ""
+    runtime_package_stale = not isinstance(rt_pkg, dict) or (
+        bool(RUNTIME_PACKAGE_VERSION)
+        and str(rt_pkg.get("version") or "") != RUNTIME_PACKAGE_VERSION
+    )
+    if runtime_package_stale and inv.get("runtime_observation_report"):
         try:
             from app.runtime_evidence_package import attach_runtime_evidence_package
 
@@ -906,8 +1037,37 @@ def extract_explainability_for_ui(snapshot: Optional[Dict[str, Any]]) -> Optiona
             or inv.get("criterion_authority")
         ),
     }
+    try:
+        gp = snapshot.get("grading_profile") if isinstance(snapshot.get("grading_profile"), dict) else {}
+        outcome = gp.get("runtime_outcome") or gp.get("godot_runtime_outcome")
+        if not outcome:
+            from app.gameplay_verifier import build_gameplay_verification_summary
+
+            rt = inv.get("runtime_observation_report") or {}
+            gv_sum = build_gameplay_verification_summary(
+                rt if isinstance(rt, dict) else None,
+                inventory=inv,
+                grading_result=snapshot,
+            )
+            outcome = gv_sum.get("runtime_outcome") or gv_sum.get("godot_runtime_outcome")
+        if outcome:
+            from app.report_feedback_formatter import ensure_runtime_outcome_engine
+
+            rt_engine = inv.get("runtime_observation_report") or {}
+            out["runtime_outcome"] = ensure_runtime_outcome_engine(
+                outcome,
+                engine_id=str(rt_engine.get("engine") or inv.get("engine") or ""),
+            )
+    except Exception:
+        pass
     if isinstance(history, list) and history:
         out["explainability_revision_history"] = history
+    try:
+        from app.academic_explainability import build_requirement_evidence_table
+
+        out["requirement_evidence_table"] = build_requirement_evidence_table(snapshot, inventory=inv)
+    except Exception:
+        pass
     return out
 
 
@@ -965,7 +1125,9 @@ def preview_submission_backfill(
         return base
 
     paths = _submission_paths_from_snapshot(
-        snap, str(getattr(submission, "submission_file_path", "") or "")
+        snap,
+        str(getattr(submission, "submission_file_path", "") or ""),
+        str(getattr(submission, "student_name", "") or snap.get("student_name") or ""),
     )
     dry_error: Optional[str] = None
     try:
@@ -1053,7 +1215,9 @@ def backfill_submission_record(
         return {"submission_id": getattr(submission, "id", None), "skipped": True, "reason": "invalid_json"}
 
     paths = _submission_paths_from_snapshot(
-        snap, str(getattr(submission, "submission_file_path", "") or "")
+        snap,
+        str(getattr(submission, "submission_file_path", "") or ""),
+        str(getattr(submission, "student_name", "") or snap.get("student_name") or ""),
     )
     profile = dict(snap.get("project_profile") or {})
     if rerun_runtime:
@@ -1148,3 +1312,6 @@ def backfill_batch_submissions(
         "dry_run": dry_run,
         "results": results,
     }
+
+
+

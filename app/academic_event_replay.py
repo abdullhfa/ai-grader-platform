@@ -266,7 +266,16 @@ def reconstruct_events_from_snapshot(
         prev_hash = ev["event_hash"]
 
     grade = snapshot.get("grade_level", "—")
+    # The persisted digest contract synthesizes these two canonical inputs even
+    # when older snapshots did not store them at top level. Embed the resolved
+    # values in the synthetic initial event so replay hashes the same decision.
+    from app.evidence_fingerprint import fingerprint_from_payload
+    from app.rule_bundle import provenance_from_payload
+
+    decision_provenance = provenance_from_payload(snapshot)
+    evidence_fingerprint = fingerprint_from_payload(snapshot)
     crit_rows = []
+
     for cr in snapshot.get("criteria_results") or []:
         if not isinstance(cr, dict):
             continue
@@ -292,6 +301,7 @@ def reconstruct_events_from_snapshot(
         if sk in summary_by_key:
             sm = summary_by_key[sk]
             row["status"] = sm.get("status")
+
     _add(
         "initial_grading",
         "AI_GRADING",
@@ -302,12 +312,43 @@ def reconstruct_events_from_snapshot(
             "percentage": snapshot.get("percentage"),
             "criteria_count": len(crit_rows),
             "criteria_results": crit_rows,
+            "decision_provenance": decision_provenance,
+            "evidence_fingerprint": evidence_fingerprint,
         },
         title_ar="تصحيح أولي",
         detail_ar=f"الدرجة الأولية: {grade} — قرار AI grading مع criteria_results.",
     )
 
+    # Reconstruct one criterion_decision event per persisted criterion result.
+    # This keeps the append-only academic timeline replayable even when the
+    # original event log was not persisted with the snapshot.
+    for row in crit_rows:
+        criteria_level = str(row.get("criteria_level") or "").strip()
+        if not criteria_level:
+            continue
+        achieved = bool(row.get("achieved"))
+        status = str(
+            row.get("status") or ("ACHIEVED" if achieved else "NOT_ACHIEVED")
+        ).upper()
+        _add(
+            "criterion_decision",
+            str(row.get("achievement_authority") or "AI_GRADING"),
+            payload={
+                "criteria_level": criteria_level,
+                "status": status,
+                "achieved": achieved,
+                "score": row.get("score"),
+                "achievement_authority": row.get("achievement_authority"),
+            },
+            title_ar=f"قرار المعيار {criteria_level}",
+            detail_ar=(
+                f"حالة المعيار: {status} — الدرجة: "
+                f"{row.get('score') if row.get('score') is not None else 'غير محددة'}."
+            ),
+        )
+
     obs = inv.get("runtime_observation_report") or {}
+
     if obs.get("status") == "gated":
         _add(
             "runtime_gated",
