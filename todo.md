@@ -32,5 +32,5 @@
 - [x] Restore Arabic preflight/path detection keys and exact missing-evidence labels
 - [x] Preserve BASIC rule-bundle provenance and legacy replay compatibility
 - [x] Restore resilient vision batch fallback behavior for test doubles and empty responses
-- [ ] Prepare a GitHub-safe commit for abdullhfa/ai-grader-platform
-- [ ] Push the verified project to the selected GitHub repository and verify the remote commit
+- [x] Prepare a GitHub-safe commit for abdullhfa/ai-grader-platform
+- [x] Push the verified project to the selected GitHub repository and verify the remote commit
