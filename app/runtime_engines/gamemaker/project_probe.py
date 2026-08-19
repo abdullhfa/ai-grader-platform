@@ -37,6 +37,22 @@ class GameMakerLayout:
         }
 
 
+def _inside(root: Path, candidate: Path) -> bool:
+    """Contain discovery inside one extracted submission, including Arabic paths."""
+    try:
+        candidate.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def _version_rank(path: Path) -> tuple[int, str]:
+    """Deterministic policy: an explicit V<n> folder wins, never rglob/mtime order."""
+    import re
+    versions = [int(m.group(1)) for part in path.parts for m in [re.fullmatch(r"v(\d+)", part, re.I)] if m]
+    return (max(versions, default=-1), str(path).casefold())
+
+
 def resolve_gamemaker_runtime_cwd(executable: Path) -> Path:
     """
     Return the working directory GameMaker exports expect (folder with data.win).
@@ -61,15 +77,19 @@ def _find_gamemaker_data_win_directory(
 ) -> Optional[Path]:
     """Locate the folder containing ``data.win`` near a GameMaker export."""
     exe = executable.resolve()
-    allowed_root = (
-        search_root.resolve()
-        if search_root is not None
-        else (exe.parent.parent if max_parent_levels else exe.parent)
-    )
+    boundary = search_root.resolve() if search_root is not None else None
+    if boundary is not None:
+        if boundary.is_file():
+            boundary = boundary.parent
+        if not _inside(boundary, exe):
+            return None
+    allowed_root = boundary or (exe.parent.parent if max_parent_levels else exe.parent)
     if allowed_root.is_file():
         allowed_root = allowed_root.parent
     bases = [exe.parent]
     for parent in list(exe.parents)[: max_parent_levels + 1]:
+        if boundary is not None and not _inside(boundary, parent):
+            break
         try:
             parent.relative_to(allowed_root)
         except ValueError:
@@ -88,7 +108,7 @@ def _find_gamemaker_data_win_directory(
     for root in roots:
         try:
             for candidate in root.rglob("data.win"):
-                if candidate.is_file():
+                if candidate.is_file() and _inside(root, candidate):
                     return candidate.parent
         except OSError:
             continue
@@ -287,10 +307,11 @@ def _candidate_upload_archives(search_root: Optional[Path]) -> List[Path]:
     if search_root is not None:
         sr = search_root.resolve()
         roots.append(sr if sr.is_dir() else sr.parent)
-        roots.extend(list(sr.parents)[:8])
-    students_uploads = Path("uploads") / "students"
-    if students_uploads.is_dir():
-        roots.append(students_uploads)
+        # The immediately adjacent upload staging folder is allowed only after
+        # the archive/member anchor check below; never recurse through parents.
+        parent = sr.parent
+        if parent.is_dir():
+            roots.extend(sorted(parent.glob("batch_*_upload"), key=lambda p: str(p).casefold()))
     for base in roots:
         if not base.is_dir():
             continue
@@ -306,7 +327,7 @@ def _candidate_upload_archives(search_root: Optional[Path]) -> List[Path]:
                 continue
             seen.add(key)
             archives.append(archive)
-    archives.sort(key=lambda p: p.stat().st_mtime if p.is_file() else 0, reverse=True)
+    archives.sort(key=lambda p: str(p).casefold())
     return archives
 
 
@@ -512,7 +533,7 @@ def _is_gamemaker_exe(path: Path, *, project_root: Optional[Path] = None) -> boo
         return True
     # Exports often live in V1/ or bin/ while .yyp sits elsewhere in the tree.
     roots: List[Path] = [parent]
-    if project_root and project_root not in roots:
+    if project_root and project_root not in roots and _inside(project_root, path):
         roots.append(project_root)
     for base in roots:
         if any(base.rglob("*.yyp")) or any(base.rglob("*.gml")):
@@ -564,6 +585,7 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
         elif root.suffix.lower() == ".exe" and _is_gamemaker_exe(root, project_root=search_root):
             layout.executable = root
 
+<<<<<<< HEAD
     yyp_candidates = list(search_root.rglob("*.yyp"))
     if yyp_candidates:
         layout.yyp_path = max(yyp_candidates, key=_artifact_rank)
@@ -575,6 +597,18 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
             layout.yyz_path = max(yyz_candidates, key=_artifact_rank)
             if not layout.yyp_path:
                 layout.project_root = layout.yyz_path.parent
+=======
+    yyp_candidates = sorted(search_root.rglob("*.yyp"), key=lambda p: str(p).casefold())
+    if yyp_candidates:
+        layout.yyp_path = yyp_candidates[0]
+        layout.project_root = layout.yyp_path.parent
+
+    if not layout.yyz_path:
+        for fp in sorted(search_root.rglob("*.yyz"), key=lambda p: str(p).casefold()):
+            layout.yyz_path = fp
+            layout.project_root = fp.parent
+            break
+>>>>>>> origin/main
 
     layout.gml_files = _collect_gml_files(layout.project_root or search_root)
     layout.has_objects_tree = any(
@@ -584,6 +618,7 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
     )
 
     if not layout.executable:
+<<<<<<< HEAD
         # Search only this submission tree. Walking parent folders can mix students.
         search_bases: List[Path] = [search_root]
         if layout.project_root and layout.project_root not in search_bases:
@@ -597,6 +632,19 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
                 break
         if candidates:
             layout.executable = max(candidates, key=_artifact_rank)
+=======
+        # Never ascend above ``search_root``: batch siblings are unrelated evidence.
+        candidates = [
+            fp for fp in search_root.rglob("*.exe")
+            if _inside(search_root, fp) and _is_gamemaker_exe(fp, project_root=search_root)
+        ]
+        if candidates:
+            named: List[Path] = []
+            if layout.yyp_path:
+                yyp_stem = layout.yyp_path.stem.lower()
+                named = [fp for fp in candidates if fp.stem.lower() == yyp_stem]
+            layout.executable = max(named or candidates, key=_version_rank)
+>>>>>>> origin/main
 
     layout.html_entry = _find_html_export(search_root)
     layout.version_evidence = summarize_gamemaker_versions(search_root)

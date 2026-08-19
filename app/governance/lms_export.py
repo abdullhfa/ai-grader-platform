@@ -28,6 +28,16 @@ def build_lms_export_rows(
     """Normalize grading records for LMS CSV/JSON export."""
     rows = []
     for rec in records:
+        # LMS is a final-award consumer.  Do not silently export a calculated
+        # band from a draft/pending decision.
+        decision = rec.get("governance_decision") or rec.get("governance_snapshot")
+        if decision is not None:
+            from app.governance_decision import require_final_award
+
+            final_decision = require_final_award(decision)
+            final_grade = final_decision.official_grade
+        else:
+            final_grade = None
         key = str(rec.get("submission_key") or rec.get("student_name") or "")
         session_id = str(rec.get("session_id") or "")
         signoff = _load_signoff(key, session_id) if session_id else None
@@ -36,7 +46,7 @@ def build_lms_export_rows(
             "student_name": rec.get("student_name") or key,
             "submission_key": key,
             "session_id": session_id,
-            "grade_level": (signoff or {}).get("final_grade") or rec.get("grade_level") or "",
+            "grade_level": final_grade or (signoff or {}).get("final_grade") or rec.get("grade_level") or "",
             "percentage": rec.get("percentage") or "",
             "replay_hash": rec.get("replay_hash") or (signoff or {}).get("replay_hash") or "",
             "signed_evaluation_hash": (signoff or {}).get("signed_evaluation_hash") or "",
