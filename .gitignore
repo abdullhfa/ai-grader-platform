@@ -74,6 +74,12 @@ uploads/assignments/
 uploads/reports/
 uploads/debug/
 uploads/textbooks/
+uploads/audit/
+uploads/config/
+uploads/replay_snapshots/
+uploads/runtime/
+uploads/runtime_sessions/
+reports/
 
 # The templates folder itself stays in version control; only its cache is ignored
 uploads/specification/cache/
