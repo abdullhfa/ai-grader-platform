@@ -1040,6 +1040,7 @@ def smoke_test_windows_exe(
                 out["interaction_trace"] = trace
                 apply_interaction_signals(out.setdefault("signals", {}), trace)
                 interaction_done = True
+                break
             time.sleep(0.4)
         still_running = proc.poll() is None
         if still_running:

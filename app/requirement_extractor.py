@@ -275,7 +275,7 @@ DEFAULT_GAMEMAKER_EXE_PLAN = RequirementPlan(
             req_id="win_lose_condition",
             description=_REQ_LABELS_AR["win_lose_condition"],
             btec_criteria=["C.P5", "C.P6"],
-            input_sequence=[InputAction("wait", duration=35.0)],
+            input_sequence=[InputAction("wait", duration=3.0)],
             verification_method="ocr_endgame_screen",
             success_threshold=0.7,
             required_for_gate=False,
@@ -332,6 +332,11 @@ class RequirementExtractor:
             extra_texts=extra_texts,
         )
         mentioned = set(checklist.get("requirement_ids") or [])
+        not_applicable = {
+            str(row.get("id") or "")
+            for row in (checklist.get("requirements") or [])
+            if isinstance(row, dict) and row.get("applicability") == "not_applicable"
+        }
         has_source_text = bool((student_text or "").strip()) or bool(document_paths)
 
         if not has_source_text:
@@ -343,7 +348,11 @@ class RequirementExtractor:
                 extraction_confidence=1.0,
             )
 
-        base = _default_requirements_for_engine(engine)
+        base = [
+            req
+            for req in _default_requirements_for_engine(engine)
+            if not (req.req_id == "player_jump" and "jump" in not_applicable)
+        ]
         existing_ids = {req.req_id for req in base}
         optional_ids = ("collect_items", "enemy_interaction")
         for opt_id in optional_ids:

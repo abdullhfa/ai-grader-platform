@@ -4,6 +4,7 @@ from app.academic_explainability import build_missing_evidence_diagnostics
 from app.explainability_migration import extract_explainability_for_ui
 from app.requirement_checklist import build_requirement_checklist
 from app.runtime_evidence_package import attach_runtime_evidence_package, build_runtime_evidence_package
+from app.artifact_inventory import build_evidence_coverage_matrix
 
 
 def _sample_observation():
@@ -46,6 +47,75 @@ def test_build_package_pass_with_events():
     assert "launch_success" in events
     assert "movement_observed" in events
     assert pkg["does_not_imply_grade"] is True
+
+
+def test_movement_does_not_create_a_jump_event_or_confidence():
+    inv = {
+        "runtime_observation_report": _sample_observation(),
+        "executable_artifacts": {"files": [{"name": "game.exe"}]},
+    }
+    checklist = build_requirement_checklist(
+        student_text="لا يمكن القفز، وحققت اللعبة قفزة نوعية في الأداء."
+    )
+
+    pkg = build_runtime_evidence_package(
+        artifact_inventory=inv,
+        requirement_checklist=checklist,
+        submission_paths=["game.exe"],
+    )
+
+    assert "jump_observed" not in {row["event"] for row in pkg["events"]}
+    jump = next(row for row in pkg["requirement_confidence"] if row["requirement"] == "jump")
+    assert jump["applicability"] == "not_applicable"
+    assert jump["confidence_pct"] is None
+    assert jump["verification_status_ar"] == "غير مطلوب لهذه اللعبة"
+
+
+def test_documented_level_does_not_borrow_unrelated_runtime_event():
+    observation = _sample_observation()
+    observation["runtime_signal_graph"]["signals"].pop("scene_loaded", None)
+    inv = {
+        "runtime_observation_report": observation,
+        "executable_artifacts": {"files": [{"name": "game.exe"}]},
+    }
+    checklist = build_requirement_checklist(student_text="تتضمن اللعبة تصميم مستويين.")
+
+    pkg = build_runtime_evidence_package(
+        artifact_inventory=inv,
+        requirement_checklist=checklist,
+        submission_paths=["game.exe"],
+    )
+
+    level = next(row for row in pkg["requirement_confidence"] if row["requirement"] == "level_design")
+    assert level["verified"] is None
+    assert level["confidence_pct"] is None
+    assert level["confidence_source"] == "documented_only"
+
+
+def test_cross_modal_source_does_not_leak_to_following_rows():
+    inv = _gamemaker_l4_inventory()
+    inv["runtime_observation_report"]["runtime_signal_graph"]["signals"].pop(
+        "scene_loaded", None
+    )
+    inv["gameplay_verification"]["evidence_package"]["results"][2][
+        "verification_basis"
+    ] = "source_runtime_corroboration"
+    checklist = {
+        "requirements": [
+            {"id": "score_system", "label_ar": "نظام النقاط", "mentioned_in_sources": True},
+            {"id": "level_design", "label_ar": "تصميم المستويات", "mentioned_in_sources": True},
+        ]
+    }
+
+    pkg = build_runtime_evidence_package(
+        artifact_inventory=inv,
+        requirement_checklist=checklist,
+        submission_paths=["CheeseChase.exe"],
+    )
+    rows = {row["requirement"]: row for row in pkg["requirement_confidence"]}
+
+    assert rows["score_system"]["confidence_source"] == "cross_modal_l4"
+    assert rows["level_design"]["confidence_source"] == "documented_only"
 
 
 def test_screenshots_from_gamemaker_gameplay_replay():
@@ -194,7 +264,41 @@ def test_ui_rebuilds_stale_runtime_package_for_existing_results():
     ui = extract_explainability_for_ui(snapshot)
     assert ui is not None
     package = ui["runtime_evidence_package"]
-    assert package["version"] == "runtime_evidence_package_v2"
+    assert package["version"] == "runtime_evidence_package_v3"
     rows = {row["requirement"]: row for row in package["requirement_confidence"]}
     assert rows["player_movement"]["confidence_pct"] == 100
     assert rows["score_system"]["verified"] is True
+
+
+def test_coverage_matrix_reports_authoritative_l4_gameplay():
+    inv = _gamemaker_l4_inventory()
+
+    rows = {row["type_ar"]: row for row in build_evidence_coverage_matrix(inv)}
+
+    assert rows["تشغيل اللعب (gameplay execution)"]["coverage_ar"] == "L4_full"
+    assert rows["التحقق من التشغيل"]["coverage_ar"] == "متحقق — L4_full"
+    assert rows["مستوى أدلة التشغيل"]["authority_ar"] == "automated_l4"
+
+
+def test_coverage_notice_does_not_claim_verified_executable_was_not_run(tmp_path):
+    from app.batch_grader import build_grading_coverage_notice
+
+    executable = tmp_path / "game.exe"
+    executable.write_bytes(b"MZ")
+    inv = _gamemaker_l4_inventory()
+
+    notice = build_grading_coverage_notice(
+        image_count=0,
+        vision_extracted_count=0,
+        image_analysis_text="",
+        vision_error=None,
+        is_document_only=False,
+        has_code_files=True,
+        submission_paths=[str(executable)],
+        project_profile={"engines_detected": ["gamemaker"]},
+        artifact_inventory=inv,
+    )
+
+    assert "دون تشغيل" not in notice["text_ar"]
+    assert "لم تُشغَّل" not in notice["text_ar"]
+    assert "L4_full" in notice["text_ar"]

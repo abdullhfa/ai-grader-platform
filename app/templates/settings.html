@@ -437,11 +437,41 @@
                 <input type="hidden" name="grading_mode" value="single">
 
                 <div id="single-provider-select" class="st-provider-section">
-                    <label class="st-label">المزود الأساسي (Gemini أولاً؛ عند الفشل يُستخدم Ollama تلقائياً إن كان مضبوطاً)</label>
+                    <label class="st-label">المزود الأساسي</label>
                     <select name="primary_provider" class="st-select">
                         <option value="gemini">Google Gemini (افتراضي — مع تراجع تلقائي إلى Ollama)</option>
+                        <option value="deepseek">DeepSeek V4 Flash Vision (سحابي ومتعدد الوسائط)</option>
                         <option value="ollama">Ollama محلي فقط (بدون Gemini)</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- DeepSeek -->
+            <div class="st-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                    <div class="st-card-header" style="margin-bottom: 0;">
+                        <div class="st-card-icon st-icon-openai"><i class="fa-solid fa-brain"></i></div>
+                        <div class="st-card-title">DeepSeek <small>نموذج سحابي للنص والصور</small></div>
+                    </div>
+                    <button type="button" onclick="testProvider('deepseek')" class="st-btn-test">
+                        <i class="fa-solid fa-plug-circle-check" style="margin-left: 5px;"></i> اختبار
+                    </button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <input type="password" name="deepseek_api_key" id="deepseek_api_key" class="st-input" placeholder="sk-..." autocomplete="new-password">
+                    <label class="st-label">عنوان API</label>
+                    <input type="url" name="deepseek_base_url" id="deepseek_base_url" class="st-input" value="https://api.deepseek.com">
+                    <label class="st-label">اسم النموذج</label>
+                    <input type="text" name="deepseek_model" id="deepseek_model" class="st-input" value="deepseek-v4-flash-vision-exp">
+                    <label class="st-label">المراجعة الثانوية المستقلة</label>
+                    <select name="secondary_review_enabled" id="secondary_review_enabled" class="st-select">
+                        <option value="true">مفعلة — Gemini أساسي وDeepSeek مراجع</option>
+                        <option value="false">متوقفة</option>
+                    </select>
+                    <label class="st-label">نموذج DeepSeek للمراجعة</label>
+                    <input type="text" name="deepseek_review_model" id="deepseek_review_model" class="st-input" value="deepseek-v4-flash-vision-exp">
+                    <small style="color:#94a3b8">تراجع معايير M وD والحالات الحساسة فقط. عند الاختلاف تصبح النتيجة HOLD للمراجعة البشرية.</small>
+                    <div id="deepseek-status" class="hidden"></div>
                 </div>
             </div>
 
@@ -507,12 +537,12 @@
     async function testProvider(provider) {
         const statusDiv = document.getElementById(`${provider}-status`);
         let apiKey = '';
-        if (provider === 'gemini') {
-            const inp = document.getElementById('gemini_api_key');
+        if (provider === 'gemini' || provider === 'deepseek') {
+            const inp = document.getElementById(`${provider}_api_key`);
             apiKey = inp ? inp.value.trim() : '';
             if (!apiKey) {
                 statusDiv.className = 'st-status st-status-warn';
-                statusDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> أدخل مفتاح Gemini أولاً';
+                statusDiv.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> أدخل مفتاح ${provider} أولاً`;
                 statusDiv.classList.remove('hidden');
                 return;
             }
@@ -545,6 +575,7 @@
 
     async function testAllProviders() {
         await testProvider('gemini');
+        await testProvider('deepseek');
         await testProvider('ollama');
     }
 
@@ -571,6 +602,11 @@
             const response = await fetch('/api/get-settings');
             const settings = await response.json();
             if (settings.gemini_api_key) document.getElementById('gemini_api_key').value = settings.gemini_api_key;
+            if (settings.deepseek_api_key) document.getElementById('deepseek_api_key').value = settings.deepseek_api_key;
+            if (settings.deepseek_base_url) document.getElementById('deepseek_base_url').value = settings.deepseek_base_url;
+            if (settings.deepseek_model) document.getElementById('deepseek_model').value = settings.deepseek_model;
+            if (settings.deepseek_review_model) document.getElementById('deepseek_review_model').value = settings.deepseek_review_model;
+            if (settings.secondary_review_enabled) document.getElementById('secondary_review_enabled').value = settings.secondary_review_enabled;
             if (settings.ollama_base_url) document.getElementById('ollama_base_url').value = settings.ollama_base_url;
             if (settings.ollama_model) document.getElementById('ollama_model').value = settings.ollama_model;
 

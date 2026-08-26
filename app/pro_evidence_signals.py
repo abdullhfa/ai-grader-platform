@@ -31,6 +31,7 @@ DESIGN_PEER_TEXT_RE = re.compile(
     r"peer\s*review|design\s*review|feedback\s*on\s*design"
     r"|مراجعة\s*التصميم|مراجعين|مراجع|ملاحظات\s*المراجع"
     r"|gdd\s*v\s*2|نسخة\s*محسنة|تحسين\s*التصميم|وثيقة\s*تصميم"
+    r"|خيارات\s*التطوير|جمهور\s*مستهدف|قصة\s*مصورة"
     r"|استبيان.*تصميم|تصميم.*استبيان|مراجعة\s*الوثيق"
     r")",
     re.IGNORECASE,
@@ -120,6 +121,7 @@ IMPROVEMENT_FROM_TEST_RE = re.compile(
     r"(?:"
     r"بناءً\s+على.*اختبار|after\s+testing|تحسين.*بعد.*اختبار"
     r"|based\s+on.*(?:test|feedback)|نتائج\s*الاختبار.*تحسين"
+    r"|محور\s*التحسين|التحسينات?\s*(?:بعد|بناء)|بعد\s*(?:الاختبار|الاستبيان)"
     r")",
     re.IGNORECASE,
 )
@@ -145,8 +147,41 @@ PROJECT_LOG_RE = re.compile(
 )
 
 DESIGN_DECISION_RE = re.compile(
-    r"(?:قرار\s*تصميم|design\s*decision|سبب\s*اختيار|سبب\s*عدم\s*اختيار)",
+    r"(?:"
+    r"قرار\s*تصميم|design\s*decision|سبب\s*اختيار|سبب\s*عدم\s*اختيار"
+    r"|تبرير|بررت|قمت\s*باختيار|اخترت|بناءً?\s+على\s+(?:استبيان|الملاحظات|المتطلبات)"
+    r")",
     re.IGNORECASE,
+)
+
+CLIENT_PURPOSE_RE = _ar_pat(
+    r"(?:متطلبات\s*(?:العميل|المستخدم)|الغرض\s*(?:من|الاساسي|الأساسي)|"
+    r"client\s*requirements?|user\s*requirements?|design\s*purpose)",
+)
+
+EVALUATIVE_JUDGEMENT_RE = _ar_pat(
+    r"(?:تقييم|تحليل|استنتج|استنتاج|فعالي|فاعلي|نقاط\s*القوة|نقاط\s*الضعف|"
+    r"evaluat\w*|conclusion|effective(?:ness)?|recommend\w*)",
+)
+
+TIME_MANAGEMENT_RE = _ar_pat(
+    r"(?:الجدول\s*الزمني|خطة\s*العمل|ادارة\s*الوقت|إدارة\s*الوقت|"
+    r"مراحل\s*متسلسلة|تاريخ\s*(?:البدء|الانتهاء)|time\s*management|schedule|milestone)",
+)
+
+INDIVIDUAL_RESPONSIBILITY_RE = _ar_pat(
+    r"(?:المسؤولية\s*الفردية|مسؤوليتي|التزامي\s*ب(?:ال)?احتراف|توليت\s*بنفسي|"
+    r"قمت\s*بنفسي|accountability|individual\s*responsibility)",
+)
+
+PROFESSIONAL_COMMUNICATION_RE = _ar_pat(
+    r"(?:اجتماع\s*(?:رسمي|مباشر)|وجها\s*لوجه|التواصل\s*مع\s*العميل|"
+    r"عرض\w*[^\n]{0,80}العميل|استبيان|استطلاع|client\s*meeting|professional\s*conduct)",
+)
+
+JUSTIFIED_RECOMMENDATION_RE = _ar_pat(
+    r"(?:توصي\w*|مقترح\w*|قرار\w*[^\n]{0,100}(?:لان|لأن|بناء|سبب|يحقق)|"
+    r"recommend\w*|justified\s*decision)",
 )
 
 REFLECTION_RE = re.compile(
@@ -230,6 +265,42 @@ def text_has_design_decisions(text: str) -> bool:
     return bool(DESIGN_DECISION_RE.search(normalize_arabic_text(text or "")))
 
 
+def text_has_bm2_design_justification(text: str) -> bool:
+    """B.M2: justified design decisions tied to purpose/client requirements."""
+    t = normalize_arabic_text(text or "")
+    return (
+        len(t) > 500
+        and bool(DESIGN_DECISION_RE.search(t))
+        and bool(CLIENT_PURPOSE_RE.search(t))
+    )
+
+
+def text_has_d2_evaluation(text: str) -> bool:
+    """BC.D2: evidence-led evaluation across design, testing, and improvement."""
+    t = normalize_arabic_text(text or "")
+    checks = (
+        bool(CLIENT_PURPOSE_RE.search(t)),
+        text_has_user_testing_evidence(t),
+        text_has_improvement_from_testing(t),
+        bool(COMPARISON_EVAL_RE.search(t)),
+        bool(EVALUATIVE_JUDGEMENT_RE.search(t)),
+    )
+    return len(t) > 1_500 and all(checks)
+
+
+def text_has_d3_self_management_evidence(text: str) -> bool:
+    """BC.D3: traceable planning, responsibility, feedback, communication, decisions."""
+    t = normalize_arabic_text(text or "")
+    checks = (
+        bool(TIME_MANAGEMENT_RE.search(t)),
+        bool(INDIVIDUAL_RESPONSIBILITY_RE.search(t)),
+        text_has_improvement_from_testing(t) or bool(DESIGN_PEER_TEXT_RE.search(t)),
+        bool(PROFESSIONAL_COMMUNICATION_RE.search(t)),
+        bool(JUSTIFIED_RECOMMENDATION_RE.search(t)),
+    )
+    return len(t) > 1_500 and all(checks)
+
+
 def text_has_reflection(text: str) -> bool:
     return bool(REFLECTION_RE.search(normalize_arabic_text(text or "")))
 
@@ -244,6 +315,16 @@ def text_has_design_peer_evidence(text: str, *, min_len: int = 250) -> bool:
     if not _GENERIC_SURVEY_RE.search(nt):
         return False
     has_design = bool(re.search(r"gdd|تصميم|design|مراجع", nt, re.IGNORECASE))
+    design_review_corpus = bool(
+        re.search(
+            r"خيارات\s*التطوير|جمهور\s*مستهدف|قصة\s*مصورة|storyboard|"
+            r"وثيق\w*\s*تصميم|متطلبات\s*(?:التصميم|المشروع)|تحسين(?:ات)?\s*التصميم",
+            nt,
+            re.IGNORECASE,
+        )
+    )
+    if has_design and design_review_corpus:
+        return True
     final_test_only = bool(_FINAL_GAME_TEST_RE.search(nt)) and not bool(
         re.search(r"مراجعة\s*التصميم|design\s*review|gdd\s*v", nt, re.IGNORECASE)
     )

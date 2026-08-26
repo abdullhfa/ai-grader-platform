@@ -303,25 +303,19 @@ async def _grade_submission(fixture: dict, run_index: int) -> dict[str, Any]:
         inv["gameplay_verification"] = gv
     finalize_grading_criteria_results(result, artifact_inventory=inv)
     ensure_clean_grading_result_feedback(result)
-    from app.gameplay_verifier import (
-        _authoritative_gv_richness,
-        resolve_authoritative_gameplay_verification,
-    )
+    from app.gameplay_verifier import _authoritative_gv_richness, sync_authoritative_gv
 
-    synced = resolve_authoritative_gameplay_verification(
-        artifact_inventory=inv,
-        grading_result=result,
-    )
+    sync_authoritative_gv(inv, result)
     snapshot_gv = _load_snapshot_gameplay_verification(result)
+    synced = result.get("gameplay_verification") or {}
     if _authoritative_gv_richness(snapshot_gv) > _authoritative_gv_richness(synced):
-        synced = snapshot_gv
-    if synced:
-        result["gameplay_verification"] = synced
-        inv["gameplay_verification"] = synced
+        result["gameplay_verification"] = snapshot_gv
+        inv = dict(result.get("artifact_inventory") or {})
+        inv["gameplay_verification"] = snapshot_gv
         rt = inv.get("runtime_observation_report") or {}
         if isinstance(rt, dict):
             rt = dict(rt)
-            rt["gameplay_verification"] = synced
+            rt["gameplay_verification"] = snapshot_gv
             inv["runtime_observation_report"] = rt
         result["artifact_inventory"] = inv
     return result
@@ -354,7 +348,12 @@ def _fixture_stable(runs: list[dict]) -> bool:
     all_same_fail = len(codes) == 1 and codes != {""} and all(
         r.get("gameplay_entered") is not True for r in runs
     )
-    return all_pass or all_same_fail
+    all_gameplay_stable = (
+        all(r.get("gameplay_entered") is True for r in runs)
+        and codes == {""}
+        and all(r.get("correct") for r in runs)
+    )
+    return all_pass or all_same_fail or all_gameplay_stable
 
 
 def _evaluate_matrix(

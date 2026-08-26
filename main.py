@@ -742,9 +742,12 @@ async def login_page(request: Request):
     err_key = err.split("_")[0] if err.startswith("locked_") else err
     token = issue_csrf_token()
     response = templates.TemplateResponse(
-        request=request,
-        name="login.html",
-        context={"error": messages.get(err_key, err), "csrf_token": token},
+        "login.html",
+        {
+            "request": request,
+            "error": messages.get(err_key, err),
+            "csrf_token": token,
+        },
     )
     set_csrf_cookie(response, token)
     return response
@@ -881,9 +884,8 @@ async def services_page(request: Request, db: Session = Depends(get_db)):
     user_id = get_current_user_id(request)
     sub_info = get_subscription_info(db, user_id) if user_id else None
     return templates.TemplateResponse(
-        request=request,
-        name="services.html",
-        context={"user": user, "subscription": sub_info},
+        "services.html",
+        {"request": request, "user": user, "subscription": sub_info},
     )
 
 
@@ -894,9 +896,8 @@ async def contact_page(request: Request, db: Session = Depends(get_db)):
     user_id = get_current_user_id(request)
     sub_info = get_subscription_info(db, user_id) if user_id else None
     return templates.TemplateResponse(
-        request=request,
-        name="contact.html",
-        context={"user": user, "subscription": sub_info},
+        "contact.html",
+        {"request": request, "user": user, "subscription": sub_info},
     )
 
 
@@ -941,9 +942,9 @@ async def subscribe_page(request: Request, db: Session = Depends(get_db)):
             return RedirectResponse(url="/dashboard", status_code=302)
 
     return templates.TemplateResponse(
-        request=request,
-        name="subscription_request.html",
-        context={
+        "subscription_request.html",
+        {
+            "request": request,
             "user": user,
             "packages": packages,
             "selected_package_id": selected_package_id,
@@ -1149,9 +1150,9 @@ async def register_page(request: Request, db: Session = Depends(get_db)):
     }
     token = issue_csrf_token()
     response = templates.TemplateResponse(
-        request=request,
-        name="register.html",
-        context={
+        "register.html",
+        {
+            "request": request,
             "user": user,
             "app_title": os.getenv(
                 "APP_TITLE", "منظومة تصحيح الواجبات بالذكاء الاصطناعي"
@@ -1263,7 +1264,7 @@ async def logout_user(request: Request):
 )
 async def forgot_password_page(request: Request):
     """Forgot password page"""
-    return templates.TemplateResponse(request=request, name="login.html", context={})
+    return templates.TemplateResponse("login.html", {"request": request})
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -2974,6 +2975,8 @@ async def batch_results_page(
         official_grade = None
         evidence_summary = None
         is_u_high_coverage = False
+        secondary_ai_review = None
+        grade_decision_status = None
         if submission.grading_snapshot_json:
             try:
                 snap = _json.loads(str(submission.grading_snapshot_json))
@@ -3037,6 +3040,8 @@ async def batch_results_page(
                     evidence_summary = None
                     is_u_high_coverage = False
                 explainability = extract_explainability_for_ui(snap)
+                secondary_ai_review = snap.get("secondary_ai_review")
+                grade_decision_status = snap.get("grade_decision_status")
                 pearson_criteria_rows = None
                 pearson_engine_summary = None
                 try:
@@ -3104,6 +3109,8 @@ async def batch_results_page(
                 else None,
                 "evidence_summary": evidence_summary,
                 "is_u_high_coverage": is_u_high_coverage,
+                "secondary_ai_review": secondary_ai_review,
+                "grade_decision_status": grade_decision_status,
             }
         )
 
@@ -9566,6 +9573,45 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         for existing in pPr.findall(qn('w:jc')):
             pPr.remove(existing)
 
+    def align_rtl_start(paragraph):
+        """Align to the Arabic reading edge without Word's full justification gaps."""
+        pPr = paragraph._p.get_or_add_pPr()
+        for existing in pPr.findall(qn('w:jc')):
+            pPr.remove(existing)
+        jc = OxmlElement('w:jc')
+        jc.set(qn('w:val'), 'start')
+        pPr.append(jc)
+
+    def add_rtl_text_block(text, *, size=12, color=BODY_TEXT, skip_labels=()):
+        """Render newline-rich Arabic as separate paragraphs and bullet lines."""
+        cleaned = _report_text(text).replace("\r\n", "\n").replace("\r", "\n")
+        added = []
+        for raw_line in cleaned.split("\n"):
+            line = raw_line.strip()
+            if not line or line in skip_labels:
+                continue
+            is_bullet = line.startswith(("•", "- ", "– ", "— "))
+            if is_bullet:
+                line = line.lstrip("•-–— ").strip()
+            p = doc.add_paragraph()
+            set_rtl(p)
+            align_rtl_start(p)
+            p.paragraph_format.space_after = Pt(4 if is_bullet else 6)
+            if is_bullet:
+                p.paragraph_format.right_indent = Cm(0.45)
+                p.paragraph_format.first_line_indent = Cm(-0.35)
+                display = f"•  {line}"
+            else:
+                display = line
+            r = p.add_run(display)
+            r.font.size = Pt(size)
+            r.font.color.rgb = color
+            r.font.name = 'Calibri'
+            r.bold = bool(not is_bullet and line.endswith(":") and len(line) <= 90)
+            _set_run_cs(r)
+            added.append(p)
+        return added
+
     def set_cell_shading(cell, hex_color):
         shading = OxmlElement("w:shd")
         shading.set(qn("w:val"), "clear")
@@ -9678,9 +9724,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
     def add_bullet(text):
         p = doc.add_paragraph()
         set_rtl(p)
-        p.paragraph_format.left_indent = Cm(0.5)
+        align_rtl_start(p)
+        p.paragraph_format.right_indent = Cm(0.45)
+        p.paragraph_format.first_line_indent = Cm(-0.35)
         p.paragraph_format.space_after = Pt(4)
-        r = p.add_run(f"• {text}")
+        r = p.add_run(f"•  {text}")
         r.font.size = Pt(11)
         r.font.name = 'Calibri'
         r.font.color.rgb = BODY_TEXT
@@ -9979,6 +10027,12 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             ("التقدير المعتمد:", _ltr_embed(grade_level_s)),
             ("وضع التصحيح:", _ltr_embed(_mode_label_s)),
         ]
+        _secondary_review_s = gs.get("secondary_ai_review") or {}
+        if _secondary_review_s.get("enabled"):
+            _secondary_status_s = _secondary_review_s.get("status") or "—"
+            summary_data_s.append(
+                ("حالة المراجعة الثانية:", _ltr_embed(str(_secondary_status_s)))
+            )
         if _gp:
             summary_data_s.append(
                 ("عمق التحقق:", _ltr_embed(str(_gp.get("runtime_depth") or "—")))
@@ -10053,6 +10107,37 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         doc.add_paragraph().paragraph_format.space_after = Pt(10)
         doc.add_paragraph().paragraph_format.space_after = Pt(12)
 
+        if _secondary_review_s.get("enabled"):
+            add_heading(" المراجعة المزدوجة بالذكاء الاصطناعي", level=2, color=PURPLE)
+            _srp = doc.add_paragraph()
+            set_rtl(_srp)
+            _sr_status = str(_secondary_review_s.get("status") or "—")
+            _sr_reviewed = int(_secondary_review_s.get("reviewed_count") or 0)
+            _sr_disagreements = _secondary_review_s.get("disagreements") or []
+            _sr_text = (
+                f"الحالة: {_sr_status}. راجع DeepSeek {_sr_reviewed} معياراً حساساً "
+                f"بشكل مستقل؛ عدد الاختلافات: {len(_sr_disagreements)}."
+            )
+            if _sr_disagreements:
+                _sr_text += " النتيجة HOLD ولا تُعتمد قبل المراجعة البشرية."
+            _srr = _srp.add_run(_sr_text)
+            _srr.font.size = Pt(11)
+            _srr.font.color.rgb = BODY_TEXT
+            _srr.font.name = 'Calibri'
+            _set_run_cs(_srr)
+            for _diff in _sr_disagreements:
+                _dp = doc.add_paragraph(style="List Bullet")
+                set_rtl(_dp)
+                _decision = "متحقق" if _diff.get("reviewer_achieved") else "غير متحقق"
+                _dr = _dp.add_run(
+                    f"{_diff.get('criterion') or '—'} — قرار DeepSeek: {_decision}. "
+                    f"{_diff.get('reasoning') or ''}"
+                )
+                _dr.font.size = Pt(10)
+                _dr.font.name = 'Calibri'
+                _set_run_cs(_dr)
+            doc.add_paragraph().paragraph_format.space_after = Pt(10)
+
         _runtime_outcome = (_gp or {}).get("runtime_outcome") or (_gp or {}).get("godot_runtime_outcome")
         if _runtime_outcome:
             from app.report_feedback_formatter import ensure_runtime_outcome_engine
@@ -10082,18 +10167,58 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             or _gp.get("gameplay_agent_used")
             or _runtime_outcome.get("gameplay_entered") is not None
         ):
-            from app.report_feedback_formatter import format_runtime_outcome_ar
-
             _engine_label = _runtime_outcome.get("engine_label_ar") or "اللعبة"
-            add_heading(f" نتيجة تشغيل {_engine_label} (Agent play)", level=2, color=PURPLE)
-            _go_p = doc.add_paragraph()
-            set_rtl(_go_p)
-            _go_r = _go_p.add_run(format_runtime_outcome_ar(_runtime_outcome))
-            _go_r.font.size = Pt(11)
-            _go_r.font.color.rgb = BODY_TEXT
-            _go_r.font.name = 'Calibri'
-            _set_run_cs(_go_r)
-            _go_p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            add_heading(" نتيجة اختبار تشغيل اللعبة", level=2, color=PURPLE)
+
+            _runtime_rows = [
+                ("محرك اللعبة:", _engine_label),
+                ("نوع الاختبار:", "Agent play"),
+                ("نتيجة Agent play:", _runtime_outcome.get("agent_play_result_ar") or "—"),
+                ("سبب الفشل النهائي:", _runtime_outcome.get("final_failure_reason_ar") or "—"),
+            ]
+            _runtime_evidence_items = _runtime_outcome.get("evidence_summary_ar") or []
+            for _item in _runtime_evidence_items:
+                _runtime_rows.append(("دليل التشغيل:", str(_item)))
+            if not _runtime_evidence_items:
+                _runtime_rows.append(("دليل التشغيل:", "—"))
+
+            _go_tbl = doc.add_table(rows=len(_runtime_rows), cols=2)
+            _go_tbl.alignment = WD_TABLE_ALIGNMENT.RIGHT
+            _go_tbl.autofit = False
+            _go_tbl.columns[0].width = Cm(11.0)
+            _go_tbl.columns[1].width = Cm(4.0)
+            for _ri, (_label, _value) in enumerate(_runtime_rows):
+                _value_cell = _go_tbl.cell(_ri, 0)
+                _label_cell = _go_tbl.cell(_ri, 1)
+                for _cell, _fill in ((_value_cell, "FFFFFF"), (_label_cell, "F3F4F6")):
+                    set_cell_shading(_cell, _fill)
+                    set_cell_borders(_cell, color="D1D5DB", sz="6")
+                    set_cell_margin(_cell, top=80, bottom=80, start=100, end=100)
+                    set_cell_vertical_alignment(_cell, "center")
+                _lp = _label_cell.paragraphs[0]
+                set_rtl(_lp)
+                align_rtl_start(_lp)
+                _lr = _lp.add_run(_label)
+                _lr.bold = True
+                _lr.font.size = Pt(10)
+                _lr.font.name = 'Calibri'
+                _set_run_cs(_lr)
+                _vp = _value_cell.paragraphs[0]
+                set_rtl(_vp)
+                align_rtl_start(_vp)
+                _vr = _vp.add_run(str(_value))
+                _vr.font.size = Pt(10)
+                _vr.font.name = 'Calibri'
+                _set_run_cs(_vr)
+
+            _impact = _runtime_outcome.get("impact_cp5_cp6_ar") or []
+            if _impact:
+                add_rtl_text_block("الأثر على معياري C.P5 و C.P6:", size=11)
+                for _item in _impact:
+                    add_bullet(str(_item))
+            add_bullet(
+                "تنويه: أدلة الملفات (B.P3/B.P4) منفصلة عن أدلة التشغيل (C.P5/C.P6)."
+            )
             doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
         try:
@@ -10102,47 +10227,91 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             _req_tbl = build_requirement_evidence_table(gs)
             _req_rows = _req_tbl.get("rows") or []
             if _req_rows:
-                add_heading(" جدول أدلة اختبار المتطلبات (PRO)", level=2, color=PURPLE)
-                _l4p = doc.add_paragraph()
-                set_rtl(_l4p)
-                _l4r = _l4p.add_run(
-                    f"مستوى L4: {_ltr_embed(str(_req_tbl.get('l4_level') or '—'))} — "
-                    f"gameplay_entered={_req_tbl.get('gameplay_entered')}"
+                add_heading(" جدول أدلة اختبار المتطلبات", level=2, color=PURPLE)
+                _entered_ar = "نعم" if _req_tbl.get("gameplay_entered") else "لا"
+                add_rtl_text_block(
+                    f"مستوى التحقق التشغيلي: {_req_tbl.get('l4_level') or '—'}\n"
+                    f"الدخول إلى حلقة اللعب: {_entered_ar}",
+                    size=11,
+                    color=SLATE,
                 )
-                _l4r.font.size = Pt(11)
-                _l4r.font.color.rgb = SLATE
-                _l4r.font.name = 'Calibri'
-                _set_run_cs(_l4r)
-                _rtbl = doc.add_table(rows=1, cols=5)
-                _rtbl.alignment = WD_TABLE_ALIGNMENT.RIGHT
-                set_table_bidi(_rtbl)
-                _hdrs = ("المتطلب", "الإدخال", "قبل/بعد", "النتيجة", "معيار BTEC")
-                for _ci, _ht in enumerate(_hdrs):
-                    _hc = _rtbl.rows[0].cells[_ci]
-                    _hp = _hc.paragraphs[0]
-                    set_rtl(_hp)
-                    _hr = _hp.add_run(_ht)
-                    _hr.bold = True
-                    _hr.font.size = Pt(10)
-                    _hr.font.name = 'Calibri'
-                    _set_run_cs(_hr)
-                    set_cell_shading(_hc, "EDE9FE")
-                for _row in _req_rows[:12]:
-                    _cells = _rtbl.add_row().cells
-                    _vals = (
-                        str(_row.get("requirement_ar") or _row.get("requirement_id") or "—"),
-                        str(_row.get("input_summary") or "—")[:40],
-                        f"{_row.get('before_label') or ''} → {_row.get('after_label') or ''}".strip(" →"),
-                        str(_row.get("result_ar") or "—"),
-                        ", ".join(_row.get("btec_criteria") or []) or "—",
+                _academic_req_rows = [
+                    _row for _row in _req_rows[:12] if _row.get("btec_criteria")
+                ]
+                _extra_req_rows = [
+                    _row for _row in _req_rows[:12] if not _row.get("btec_criteria")
+                ]
+                for _req_index, _row in enumerate(_academic_req_rows):
+                    if _req_index and _req_index % 3 == 0:
+                        doc.add_page_break()
+                        add_heading(
+                            " متابعة جدول أدلة اختبار المتطلبات",
+                            level=2,
+                            color=PURPLE,
+                        )
+                    _requirement = str(
+                        _row.get("requirement_ar") or _row.get("requirement_id") or "—"
                     )
-                    for _ci, _val in enumerate(_vals):
-                        _cp = _cells[_ci].paragraphs[0]
-                        set_rtl(_cp)
-                        _cr = _cp.add_run(_val)
-                        _cr.font.size = Pt(9)
-                        _cr.font.name = 'Calibri'
-                        _set_run_cs(_cr)
+                    _details = (
+                        ("النتيجة", str(_row.get("result_ar") or "—")),
+                        ("المعيار الأكاديمي", ", ".join(_row.get("btec_criteria") or []) or "—"),
+                        ("الإدخال", str(_row.get("input_summary") or "—").replace(";", "; ")),
+                        ("قبل / بعد", f"{_row.get('before_label') or ''} → {_row.get('after_label') or ''}".strip(" →") or "—"),
+                    )
+                    _req_p = doc.add_paragraph()
+                    set_rtl(_req_p)
+                    align_rtl_start(_req_p)
+                    _req_p.paragraph_format.keep_with_next = True
+                    _req_p.paragraph_format.space_before = Pt(8)
+                    _req_p.paragraph_format.space_after = Pt(4)
+                    _req_pr = _req_p._p.get_or_add_pPr()
+                    _req_shd = OxmlElement("w:shd")
+                    _req_shd.set(qn("w:val"), "clear")
+                    _req_shd.set(qn("w:fill"), "F5F3FF")
+                    _req_pr.append(_req_shd)
+                    _req_border = OxmlElement("w:pBdr")
+                    for _side in ("top", "left", "bottom", "right"):
+                        _edge = OxmlElement(f"w:{_side}")
+                        _edge.set(qn("w:val"), "single")
+                        _edge.set(qn("w:sz"), "6")
+                        _edge.set(qn("w:color"), "C4B5FD")
+                        _req_border.append(_edge)
+                    _req_pr.append(_req_border)
+                    _req_run = _req_p.add_run(f"المتطلب: {_requirement}")
+                    _req_run.bold = True
+                    _req_run.font.size = Pt(10)
+                    _req_run.font.name = 'Calibri'
+                    _set_run_cs(_req_run)
+                    for _detail_label, _detail_value in _details:
+                        add_rtl_text_block(
+                            f"• {_detail_label}: {_detail_value}",
+                            size=10,
+                        )
+                    _after_req = doc.add_paragraph()
+                    _after_req.paragraph_format.space_after = Pt(2)
+                if _extra_req_rows:
+                    add_heading(" اختبارات تشغيل إضافية", level=2, color=PURPLE)
+                    _extra_labels = {
+                        "win_condition": "شرط الفوز",
+                        "lose_condition": "شرط الخسارة",
+                        "restart": "إعادة التشغيل",
+                    }
+                    for _row in _extra_req_rows:
+                        _req_id = str(_row.get("requirement_id") or "")
+                        _req_name = str(
+                            _row.get("requirement_ar")
+                            or _extra_labels.get(_req_id)
+                            or _req_id
+                            or "—"
+                        )
+                        if _req_name in _extra_labels:
+                            _req_name = _extra_labels[_req_name]
+                        _result = str(_row.get("result_ar") or "—")
+                        _input = str(_row.get("input_summary") or "—").replace(";", "; ")
+                        add_rtl_text_block(
+                            f"• {_req_name}: {_result} — دليل التشغيل: {_input}",
+                            size=10,
+                        )
                 doc.add_paragraph().paragraph_format.space_after = Pt(10)
         except Exception:
             pass
@@ -10152,14 +10321,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             from app.runtime_evidence_gate import RUNTIME_L4_TEACHER_NOTE_AR
 
             add_heading(" ملاحظة معايير التشغيل (C.P5–C.D3)", level=2, color=PURPLE)
-            _rt_p = doc.add_paragraph()
-            set_rtl(_rt_p)
-            _rt_r = _rt_p.add_run(RUNTIME_L4_TEACHER_NOTE_AR)
-            _rt_r.font.size = Pt(12)
-            _rt_r.font.color.rgb = BODY_TEXT
-            _rt_r.font.name = 'Calibri'
-            _set_run_cs(_rt_r)
-            _rt_p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            add_rtl_text_block(RUNTIME_L4_TEACHER_NOTE_AR, size=12)
             doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
         add_heading("🔗 تحليل الانتحال (Plagiarism Analysis)", level=2, color=PURPLE)
@@ -10349,14 +10511,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 ex_l.font.color.rgb = BLUE
                 ex_l.font.name = 'Calibri'
                 _set_run_cs(ex_l)
-                ex_b = doc.add_paragraph()
-                set_rtl(ex_b)
-                ex_r = ex_b.add_run(_report_text(expl))
-                ex_r.font.size = Pt(12)
-                ex_r.font.color.rgb = BODY_TEXT
-                ex_r.font.name = 'Calibri'
-                _set_run_cs(ex_r)
-                ex_b.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                add_rtl_text_block(expl, size=12)
                 doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
             fb_raw = str(criteria.get("feedback", "") or "")
@@ -10376,14 +10531,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 fb_l.font.color.rgb = BLUE
                 fb_l.font.name = 'Calibri'
                 _set_run_cs(fb_l)
-                fb_b = doc.add_paragraph()
-                set_rtl(fb_b)
-                fb_ru = fb_b.add_run(fb)
-                fb_ru.font.size = Pt(12)
-                fb_ru.font.color.rgb = BODY_TEXT
-                fb_ru.font.name = 'Calibri'
-                _set_run_cs(fb_ru)
-                fb_b.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                add_rtl_text_block(
+                    fb,
+                    size=12,
+                    skip_labels=("تعليق المقيّم:", "تعليق المقيم:"),
+                )
                 doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
             dm = criteria.get("decision_matrix") or []
@@ -10547,14 +10699,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         ofb = gs.get("overall_feedback", "")
         if ofb:
             add_heading("التقييم العام", level=2, color=PURPLE)
-            fb_o = doc.add_paragraph()
-            set_rtl(fb_o)
-            fb_or = fb_o.add_run(_report_text(ofb))
-            fb_or.font.size = Pt(12)
-            fb_or.font.color.rgb = BODY_TEXT
-            fb_or.font.name = 'Calibri'
-            _set_run_cs(fb_or)
-            fb_o.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            add_rtl_text_block(ofb, size=12)
 
     else:
         # ════════════════════════════════════════════════════════════
@@ -10871,14 +11016,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 fb_label.font.name = 'Calibri'
                 _set_run_cs(fb_label)
             
-                fb_text = doc.add_paragraph()
-                set_rtl(fb_text)
-                fb_text_run = fb_text.add_run(fb_formatted)
-                fb_text_run.font.size = Pt(12)
-                fb_text_run.font.color.rgb = BODY_TEXT
-                fb_text_run.font.name = 'Calibri'
-                _set_run_cs(fb_text_run)
-                fb_text.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                add_rtl_text_block(
+                    fb_formatted,
+                    size=12,
+                    skip_labels=("تعليق المقيّم:", "تعليق المقيم:"),
+                )
                 doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
             # Decision Matrix Reconstruction
@@ -11053,14 +11195,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             # Overall Feedback
             if summary.overall_feedback:
                 add_heading("التقييم العام", level=2, color=PURPLE)
-                fb_text = doc.add_paragraph()
-                set_rtl(fb_text)
-                fb_run = fb_text.add_run(_report_text(summary.overall_feedback))
-                fb_run.font.size = Pt(12)
-                fb_run.font.color.rgb = BODY_TEXT
-                fb_run.font.name = 'Calibri'
-                _set_run_cs(fb_run)
-                fb_text.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                add_rtl_text_block(summary.overall_feedback, size=12)
 
     # Save to memory
     file_stream = io.BytesIO()
@@ -11146,27 +11281,27 @@ async def download_batch_report_pdf(
 
 @app.post("/api/test-provider")
 async def test_provider_endpoint(request: Request):
-    """Test Gemini or Ollama only."""
+    """Test a configured Gemini, DeepSeek, or Ollama provider."""
     try:
         data = await request.json()
         provider_name = (data.get("provider") or "").strip().lower()
         api_key = (data.get("api_key") or "").strip()
 
-        if provider_name not in ("gemini", "ollama"):
+        if provider_name not in ("gemini", "deepseek", "ollama"):
             return JSONResponse(
                 {
                     "status": "failed",
-                    "message": " المدعوم فقط: gemini أو ollama",
+                    "message": " المدعوم فقط: gemini أو deepseek أو ollama",
                 }
             )
-        if provider_name == "gemini" and not api_key:
+        if provider_name in ("gemini", "deepseek") and not api_key:
             return JSONResponse(
-                {"status": "failed", "message": " أدخل مفتاح Gemini (GEMINI_API_KEY)"}
+                {"status": "failed", "message": f" أدخل مفتاح {provider_name} أولاً"}
             )
 
         env_key = f"{provider_name.upper()}_API_KEY"
         old_value = os.getenv(env_key)
-        if provider_name == "gemini":
+        if provider_name in ("gemini", "deepseek"):
             os.environ[env_key] = api_key
 
         try:
@@ -11193,7 +11328,7 @@ async def test_provider_endpoint(request: Request):
                 }
             )
         finally:
-            if provider_name == "gemini":
+            if provider_name in ("gemini", "deepseek"):
                 if old_value:
                     os.environ[env_key] = old_value
                 elif env_key in os.environ:
@@ -11223,6 +11358,11 @@ async def save_settings_endpoint(request: Request):
             "primary_provider": "AI_PROVIDER",
             "gemini_api_key": "GEMINI_API_KEY",
             "gemini_model": "GEMINI_MODEL",
+            "deepseek_api_key": "DEEPSEEK_API_KEY",
+            "deepseek_base_url": "DEEPSEEK_BASE_URL",
+            "deepseek_model": "DEEPSEEK_MODEL",
+            "deepseek_review_model": "DEEPSEEK_REVIEW_MODEL",
+            "secondary_review_enabled": "SECONDARY_REVIEW_ENABLED",
             "ollama_base_url": "OLLAMA_BASE_URL",
             "ollama_model": "OLLAMA_MODEL",
             "ollama_vision_model": "OLLAMA_VISION_MODEL",
@@ -11269,6 +11409,11 @@ async def get_settings_endpoint():
             "primary_provider": os.getenv("AI_PROVIDER", "gemini"),
             "gemini_api_key": os.getenv("GEMINI_API_KEY", ""),
             "gemini_model": os.getenv("GEMINI_MODEL", "gemini-2.5-pro"),
+            "deepseek_api_key": os.getenv("DEEPSEEK_API_KEY", ""),
+            "deepseek_base_url": os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+            "deepseek_model": os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash-vision-exp"),
+            "deepseek_review_model": os.getenv("DEEPSEEK_REVIEW_MODEL", "deepseek-v4-flash-vision-exp"),
+            "secondary_review_enabled": os.getenv("SECONDARY_REVIEW_ENABLED", "false"),
             "ollama_base_url": os.getenv(
                 "OLLAMA_BASE_URL", "http://localhost:11434/v1"
             ),

@@ -461,7 +461,7 @@ def _humanize_batch_error_ar(message: str, *, student: str = "") -> str:
             "ثم نفّذ: ollama run "
             + (os.getenv("OLLAMA_MODEL") or "qwen3:8b")
         )
-    if "فشل الاتصال بمزود ai" in low or "openai" in low or "gemini" in low or "anthropic" in low:
+    if "فشل الاتصال بمزود ai" in low or "openai" in low or "gemini" in low or "deepseek" in low or "anthropic" in low:
         return prefix + (message or "فشل الاتصال بمزود الذكاء الاصطناعي.")
     if "لم يُصحَّح أي طالب" in (message or ""):
         return (

@@ -6,6 +6,7 @@ and reviewer-facing outcomes so submissions are not shown as bare "U" when evide
 """
 from __future__ import annotations
 
+import os
 import re
 from typing import Any, Dict, List, Optional
 
@@ -26,6 +27,15 @@ _EVIDENCE_TIER_AR = {
     "C": "C — static inference — مراجعة examiner",
     "D": "D — incomplete/corrupted — تقييم يدوي معزّز",
 }
+
+
+def _autonomous_grading_enabled() -> bool:
+    return str(os.getenv("AUTONOMOUS_GRADING", "false")).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
 
 def build_runtime_resolution_summary(
@@ -376,7 +386,9 @@ def resolve_institutional_classification(
         "criteria_total": total,
         "runtime_resolution": runtime_res,
         "referral_reasons": referral_reasons,
-        "examiner_signoff_required": bool(
+        "examiner_signoff_required": False
+        if _autonomous_grading_enabled()
+        else bool(
             tier.get("examiner_signoff_required")
             or outcome_band in ("Referral", "Partial", "Unclassified")
             or (weak_src and not has_pck_src)

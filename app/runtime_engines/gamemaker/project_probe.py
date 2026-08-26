@@ -10,6 +10,12 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, List, Optional
 
+GENERATED_RUNTIME_DIRNAME = "_ai_grader_gm_runtime"
+
+
+def is_generated_gamemaker_runtime_path(path: Path) -> bool:
+    return GENERATED_RUNTIME_DIRNAME in Path(path).parts
+
 
 @dataclass
 class GameMakerLayout:
@@ -585,7 +591,6 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
         elif root.suffix.lower() == ".exe" and _is_gamemaker_exe(root, project_root=search_root):
             layout.executable = root
 
-<<<<<<< HEAD
     yyp_candidates = list(search_root.rglob("*.yyp"))
     if yyp_candidates:
         layout.yyp_path = max(yyp_candidates, key=_artifact_rank)
@@ -597,18 +602,6 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
             layout.yyz_path = max(yyz_candidates, key=_artifact_rank)
             if not layout.yyp_path:
                 layout.project_root = layout.yyz_path.parent
-=======
-    yyp_candidates = sorted(search_root.rglob("*.yyp"), key=lambda p: str(p).casefold())
-    if yyp_candidates:
-        layout.yyp_path = yyp_candidates[0]
-        layout.project_root = layout.yyp_path.parent
-
-    if not layout.yyz_path:
-        for fp in sorted(search_root.rglob("*.yyz"), key=lambda p: str(p).casefold()):
-            layout.yyz_path = fp
-            layout.project_root = fp.parent
-            break
->>>>>>> origin/main
 
     layout.gml_files = _collect_gml_files(layout.project_root or search_root)
     layout.has_objects_tree = any(
@@ -618,7 +611,6 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
     )
 
     if not layout.executable:
-<<<<<<< HEAD
         # Search only this submission tree. Walking parent folders can mix students.
         search_bases: List[Path] = [search_root]
         if layout.project_root and layout.project_root not in search_bases:
@@ -626,25 +618,14 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
         candidates: List[Path] = []
         for pr in search_bases[:6]:
             for fp in pr.rglob("*.exe"):
+                if is_generated_gamemaker_runtime_path(fp):
+                    continue
                 if _is_gamemaker_exe(fp, project_root=layout.project_root or pr):
                     candidates.append(fp)
             if candidates:
                 break
         if candidates:
             layout.executable = max(candidates, key=_artifact_rank)
-=======
-        # Never ascend above ``search_root``: batch siblings are unrelated evidence.
-        candidates = [
-            fp for fp in search_root.rglob("*.exe")
-            if _inside(search_root, fp) and _is_gamemaker_exe(fp, project_root=search_root)
-        ]
-        if candidates:
-            named: List[Path] = []
-            if layout.yyp_path:
-                yyp_stem = layout.yyp_path.stem.lower()
-                named = [fp for fp in candidates if fp.stem.lower() == yyp_stem]
-            layout.executable = max(named or candidates, key=_version_rank)
->>>>>>> origin/main
 
     layout.html_entry = _find_html_export(search_root)
     layout.version_evidence = summarize_gamemaker_versions(search_root)

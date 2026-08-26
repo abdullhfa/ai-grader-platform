@@ -68,6 +68,33 @@ def _signal_true(signals: Dict[str, Any], key: str) -> bool:
     return signals.get(key) in ("detected", "yes", "observed", True)
 
 
+def _verified_playtest_requirements(
+    observation: Dict[str, Any],
+    inventory: Dict[str, Any],
+) -> set[str]:
+    """Return verified requirement IDs from the authoritative playtest result.
+
+    The semantic layer historically read only the coarse runtime signal graph.  A
+    stateful playtest can hold much stronger per-requirement evidence, including
+    source/runtime corroboration, so ignoring it produced false "loop incomplete"
+    summaries after the verifier had already proved the mechanic.
+    """
+    try:
+        from app.gameplay_verifier import resolve_authoritative_gameplay_verification
+
+        gv = resolve_authoritative_gameplay_verification(artifact_inventory=inventory)
+    except Exception:
+        gv = {}
+    if not gv and isinstance(observation.get("gameplay_verification"), dict):
+        gv = observation["gameplay_verification"]
+    rows = gv.get("requirement_results") or (gv.get("evidence_package") or {}).get("results") or []
+    return {
+        str(row.get("req_id") or "").strip().lower()
+        for row in rows
+        if isinstance(row, dict) and row.get("verified") is True
+    }
+
+
 def assess_gameplay_semantics(
     observation: Optional[Dict[str, Any]],
     *,
@@ -76,6 +103,7 @@ def assess_gameplay_semantics(
     """Classify gameplay behavior completeness using runtime heuristics."""
     obs = observation or {}
     inv = inventory or {}
+    verified_requirements = _verified_playtest_requirements(obs, inv)
     graph = obs.get("runtime_signal_graph") or {}
     signals = graph.get("signals") or {}
 
@@ -89,12 +117,20 @@ def assess_gameplay_semantics(
         if str(s.get("visual_state") or "").lower() == "gameplay_candidate"
     )
 
-    moved = signals.get("player_moved") in ("detected", "yes", "observed")
-    score_changed = _signal_true(signals, "score_changed")
-    timer_progressed = _signal_true(signals, "timer_progressed")
+    moved = signals.get("player_moved") in ("detected", "yes", "observed") or (
+        "player_movement" in verified_requirements
+    )
+    score_changed = _signal_true(signals, "score_changed") or (
+        "score_system" in verified_requirements
+    )
+    timer_progressed = _signal_true(signals, "timer_progressed") or (
+        "timer" in verified_requirements
+    )
     checkpoint = _signal_true(signals, "progression_checkpoint")
     level_transition = _signal_true(signals, "level_transition")
-    collision = _signal_true(signals, "collision_events")
+    collision = _signal_true(signals, "collision_events") or (
+        "enemy_interaction" in verified_requirements
+    )
     interaction_detected = bool(
         moved or score_changed or collision or gameplay_candidate_frames >= 1
     )
@@ -105,28 +141,41 @@ def assess_gameplay_semantics(
     menu_navigation_detected = any(t in _MENU_MARKERS for t in visual_tokens) or _signal_true(
         signals, "menu_navigation"
     )
-    restart_flow_detected = any(t in _RESTART_MARKERS for t in visual_tokens) or _signal_true(
-        signals, "restart_flow"
+    restart_flow_detected = (
+        any(t in _RESTART_MARKERS for t in visual_tokens)
+        or _signal_true(signals, "restart_flow")
+        or "restart" in verified_requirements
+        or "restart_flow" in verified_requirements
     )
     has_lives_system = any(t in _LIVES_MARKERS for t in visual_tokens) or (
-        _signal_true(signals, "lives_changed")
+        "lives_system" in verified_requirements
+        or _signal_true(signals, "lives_changed")
         or _signal_true(signals, "health_changed")
     )
     health_or_lives_detected = has_lives_system
 
     # Progression can be explicit transition, score growth, or structured checkpoint signal.
     score_progression_detected = score_changed or timer_progressed
-    progression_detected = level_transition or score_progression_detected or checkpoint
+    progression_detected = (
+        level_transition
+        or score_progression_detected
+        or checkpoint
+        or "collect_items" in verified_requirements
+        or "difficulty_levels" in verified_requirements
+    )
     fail_state_detected = (
         has_fail_state
         or _signal_true(signals, "fail_state")
         or _signal_true(signals, "game_over")
+        or "win_lose_condition" in verified_requirements
     )
+    has_win_state = has_win_state or "win_lose_condition" in verified_requirements
 
     gameplay_started = bool(
         obs.get("runtime_observed")
         or (inv.get("executable_artifacts") or {}).get("runtime_observed")
         or gameplay_candidate_frames > 0
+        or bool(verified_requirements)
     )
     gameplay_loop_complete = (
         gameplay_started
@@ -175,6 +224,7 @@ def assess_gameplay_semantics(
 
     return {
         "version": 1,
+        "verified_playtest_requirements": sorted(verified_requirements),
         "gameplay_started": gameplay_started,
         "interaction_detected": interaction_detected,
         "progression_detected": progression_detected,

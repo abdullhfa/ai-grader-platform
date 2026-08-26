@@ -134,7 +134,7 @@ _PEER_REVIEW_PATTERN = re.compile(
 
 _ANALYSIS_PATTERN = re.compile(
 
-    r"\b(analys|analyze|compare|impact|تحليل|مقارنة|تأثير|سبب|نتيجة)\b",
+    r"(?:\\b(?:analys|analyze|compare|impact)\\b|تحليل|مقارنة|تأثير|سبب|نتيجة|تبرير)",
 
     re.IGNORECASE,
 
@@ -365,8 +365,8 @@ def evaluate_criterion_deterministic(
         or "C.P4" in criteria_level.upper()
         or "B.P4" in criteria_level.upper()
     )
-    if is_b_band_criterion(criteria_level, short, "P3") or (
-        is_b_band_criterion(criteria_level, short, "P4") and not peer_review_p4
+    if is_b_band_criterion(criteria_level, short, "P3") or is_b_band_criterion(
+        criteria_level, short, "P4"
     ):
         design_row = try_evaluate_design_criterion(
             criteria_level=criteria_level,
@@ -374,7 +374,9 @@ def evaluate_criterion_deterministic(
             artifact_inventory=artifact_inventory,
             execution_mode=execution_mode,
         )
-        if design_row is not None:
+        if design_row is not None and (
+            bool(design_row.get("deterministic_achieved")) or not peer_review_p4
+        ):
             return design_row
 
 
@@ -890,9 +892,64 @@ def evaluate_criterion_deterministic(
 
 
 
+    if short == "M2" and (level_upper == "B.M2" or level_upper.endswith("/B.M2")):
+
+        from app.pro_evidence_signals import text_has_bm2_design_justification
+
+        ok = text_has_bm2_design_justification(text)
+
+        return _wrap_row(
+
+            criteria_level=criteria_level,
+
+            rule_id="bm2_design_justification",
+
+            execution_mode=execution_mode,
+
+            runtime=runtime,
+
+            achieved=ok,
+
+            score=85 if ok else 35,
+
+            reason=(
+                "bm2_justification_and_client_purpose_present"
+                if ok
+                else "bm2_justification_or_client_purpose_missing"
+            ),
+
+            authority="ACADEMIC_TEXT_RULE_V1",
+
+            verdict_status="pass" if ok else "fail",
+
+            text=text,
+
+            evidence_rules=(),
+
+            extra_found=(
+                [{"rule_key": "bm2_design_justification", "match": "verified", "snippet": "student_document_corpus"}]
+                if ok
+                else None
+            ),
+
+        )
+
+
+
     if short.startswith("M") or short in ("M2", "B.M2", "C.M3", "M3"):
 
-        ok = bool(_ANALYSIS_PATTERN.search(text)) and len(text) > 350
+        from app.pro_evidence_signals import (
+            text_has_design_decisions,
+            text_has_improvement_from_testing,
+        )
+
+        ok = (
+            bool(_ANALYSIS_PATTERN.search(text)) or text_has_design_decisions(text)
+        ) and len(text) > 350
+        if short in ("M3",) or "M3" in level_upper:
+            ok = ok or (
+                text_has_improvement_from_testing(text) and len(text) > 350
+            )
 
         return _wrap_row(
 
@@ -917,6 +974,90 @@ def evaluate_criterion_deterministic(
             text=text,
 
             evidence_rules=(("analysis", _ANALYSIS_PATTERN),),
+
+        )
+
+
+
+    if short == "D2" and (level_upper == "BC.D2" or level_upper.endswith("/BC.D2")):
+
+        from app.pro_evidence_signals import text_has_d2_evaluation
+
+        ok = text_has_d2_evaluation(text)
+
+        return _wrap_row(
+
+            criteria_level=criteria_level,
+
+            rule_id="bc_d2_evaluation",
+
+            execution_mode=execution_mode,
+
+            runtime=runtime,
+
+            achieved=ok,
+
+            score=95 if ok else 35,
+
+            reason="bc_d2_full_evaluation_present" if ok else "bc_d2_evaluation_incomplete",
+
+            authority="ACADEMIC_TEXT_RULE_V1",
+
+            verdict_status="pass" if ok else "fail",
+
+            text=text,
+
+            evidence_rules=(),
+
+            extra_found=(
+                [{"rule_key": "bc_d2_evaluation", "match": "verified", "snippet": "student_document_corpus"}]
+                if ok
+                else None
+            ),
+
+        )
+
+
+
+    if short == "D3" and (level_upper == "BC.D3" or level_upper.endswith("/BC.D3")):
+
+        from app.pro_evidence_signals import text_has_d3_self_management_evidence
+
+        ok = text_has_d3_self_management_evidence(text)
+
+        return _wrap_row(
+
+            criteria_level=criteria_level,
+
+            rule_id="bc_d3_self_management",
+
+            execution_mode=execution_mode,
+
+            runtime=runtime,
+
+            achieved=ok,
+
+            score=95 if ok else 35,
+
+            reason=(
+                "bc_d3_responsibility_and_self_management_present"
+                if ok
+                else "bc_d3_self_management_evidence_incomplete"
+            ),
+
+            authority="ACADEMIC_TEXT_RULE_V1",
+
+            verdict_status="pass" if ok else "fail",
+
+            text=text,
+
+            evidence_rules=(),
+
+            extra_found=(
+                [{"rule_key": "bc_d3_self_management", "match": "verified", "snippet": "student_document_corpus"}]
+                if ok
+                else None
+            ),
 
         )
 
@@ -1235,5 +1376,4 @@ def run_deterministic_rubric(
 
 
     return attach_evidence_registry_and_metrics(grading_result, grading_mode=grading_mode)
-
 

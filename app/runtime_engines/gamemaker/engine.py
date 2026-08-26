@@ -124,6 +124,22 @@ class GameMakerRuntimeEngine(RuntimeEngine):
                 except Exception:
                     pass
 
+    def cleanup(self, session: RuntimeSession) -> None:
+        from app.runtime_engines.gamemaker.project_probe import GENERATED_RUNTIME_DIRNAME
+        from app.runtime_engines.gamemaker.runtime_verification import (
+            cleanup_generated_gamemaker_runtime,
+        )
+
+        generated = session.signals.get("generated_runtime_dir")
+        if not generated:
+            build = session.signals.get("build_pipeline") or {}
+            generated = (build.get("student_runtime") or {}).get("generated_runtime_dir")
+        if generated:
+            cleanup_generated_gamemaker_runtime(Path(str(generated)), student_root=session.root)
+        leftover = session.root / GENERATED_RUNTIME_DIRNAME
+        if leftover.is_dir():
+            cleanup_generated_gamemaker_runtime(leftover, student_root=session.root)
+
 
 __all__ = ["GameMakerRuntimeEngine"]
 
