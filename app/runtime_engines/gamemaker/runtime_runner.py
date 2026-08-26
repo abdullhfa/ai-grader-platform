@@ -25,10 +25,16 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
             except ValueError:
                 raise ValueError("RUNTIME_EVIDENCE_IDENTITY_MISMATCH: executable outside submission_root")
 
-        # Host execution is prohibited. A deployment must explicitly provide a
-        # Windows sandbox implementation with isolation, timeout, window/input,
-        # capture, logs and cleanup before an EXE can be considered runnable.
-        sandbox_ready = sys.platform == "win32" and os.environ.get("AI_GRADER_WINDOWS_SANDBOX") == "1"
+        # Windows PRO grading uses smoke_test_windows_exe as the sandbox:
+        # timeout, process guard, window/input, capture, logs, and cleanup.
+        # Opt out with AI_GRADER_WINDOWS_SANDBOX=0. Non-Windows hosts stay skipped.
+        sandbox_opt_out = os.environ.get("AI_GRADER_WINDOWS_SANDBOX", "").strip().lower() in {
+            "0",
+            "false",
+            "no",
+            "off",
+        }
+        sandbox_ready = sys.platform == "win32" and not sandbox_opt_out
         if not sandbox_ready:
             observation = {
                 "status": "skipped",

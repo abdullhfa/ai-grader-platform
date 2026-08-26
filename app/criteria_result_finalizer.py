@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional, Sequence
 
 from app.btec_criteria_governance import (
     _FEEDBACK_CLAIMS_ACHIEVEMENT,
+    _FEEDBACK_DENIES_ACHIEVEMENT,
     _institutional_not_achieved_reason_ar,
     enforce_not_achieved_feedback_consistency,
 )
@@ -42,7 +43,11 @@ _ARTIFACT_EXT_IN_TEXT = re.compile(
 )
 
 _EXEC_SHORT = frozenset({"P5", "P6", "P7"})
-_PRO_PLAYTEST_GATED = frozenset({"P6", "M3", "D2", "D3"})
+_PRO_PLAYTEST_GATED = frozenset({"P6", "M3"})
+_ACADEMIC_DETERMINISTIC_RULES = {
+    "M2": frozenset({"bm2_design_justification"}),
+    "D2": frozenset({"bc_d2_evaluation"}),
+}
 
 
 def _short_level(level: str) -> str:
@@ -231,19 +236,27 @@ def _promote_row(row: Dict[str, Any], *, reason_ar: str, authority: str) -> None
     row["governance_adjustment_ar"] = ""
     row["deliverable_pass_ar"] = reason_ar
     clean_fb = _teacher_facing_feedback(row)
-    if clean_fb:
+    if clean_fb and not _FEEDBACK_DENIES_ACHIEVEMENT.search(clean_fb):
         row["feedback"] = clean_fb
+    else:
+        row["feedback"] = reason_ar
+    row["missing_points"] = []
     row["awardable"] = True
     row.pop("award_block_reason", None)
     row.pop("award_block_reason_ar", None)
     if isinstance(row.get("decision_matrix"), list) and row["decision_matrix"]:
         if isinstance(row["decision_matrix"][0], dict):
-            row["decision_matrix"][0]["met"] = True
+            decision = row["decision_matrix"][0]
+            decision["met"] = True
+            if _FEEDBACK_DENIES_ACHIEVEMENT.search(str(decision.get("reasoning") or "")):
+                decision["reasoning"] = reason_ar
+            if not str(decision.get("evidence") or "").strip():
+                decision["evidence"] = reason_ar
     det = row.get("deterministic_rubric")
     if isinstance(det, dict):
         det["deterministic_achieved"] = True
         det["verdict_status"] = "pass"
-        det["reason"] = "deliverable_game_artifacts_and_report"
+        det.setdefault("reason", reason_ar)
 
 
 def _pearson_pro_blocks_promotion(
@@ -275,7 +288,7 @@ def reconcile_authoritative_achieved(
         if not isinstance(row, dict):
             continue
         short = _short_level(str(row.get("criteria_level") or ""))
-        if short not in ("P5", "P6", "P7", "M3"):
+        if short not in ("P5", "P6", "P7", "M2", "M3", "D2"):
             continue
         if _pearson_pro_blocks_promotion(grading_result, short, row):
             continue
@@ -283,21 +296,52 @@ def reconcile_authoritative_achieved(
         det_ok = bool(det.get("deterministic_achieved"))
         verdict = str(row.get("verdict_status") or det.get("verdict_status") or "").lower()
         score = int(row.get("score") or 0)
-        should_pass = (
-            det_ok
-            or verdict == "pass"
-            or (score >= 75 and _ai_supports_pass(row))
-            or _deliverable_pass_for_row(row, student_text=text, assets=assets)
-        )
+        academic_rules = _ACADEMIC_DETERMINISTIC_RULES.get(short)
+        if academic_rules is not None:
+            should_pass = (
+                det_ok
+                and str(det.get("verdict_status") or verdict).lower() == "pass"
+                and str(det.get("rule_id") or row.get("rule_id") or "") in academic_rules
+            )
+        else:
+            should_pass = (
+                det_ok
+                or verdict == "pass"
+                or (score >= 75 and _ai_supports_pass(row))
+                or _deliverable_pass_for_row(row, student_text=text, assets=assets)
+            )
         if not should_pass:
             continue
         if row.get("achieved"):
+            if academic_rules is not None and (
+                row.get("missing_points")
+                or _FEEDBACK_DENIES_ACHIEVEMENT.search(_feedback_text(row))
+            ):
+                academic_reason = (
+                    "تبرير قرارات التصميم وربطها بالغرض ومتطلبات العميل: "
+                    "تحققت الأدلة الأكاديمية الحتمية في مستندات الطالب."
+                    if short == "M2"
+                    else "تقييم التصميم والنسخة المحسنة مقابل المتطلبات والبدائل: "
+                    "تحققت الأدلة الأكاديمية الحتمية في مستندات الطالب."
+                )
+                _promote_row(
+                    row,
+                    reason_ar=academic_reason,
+                    authority=str(det.get("authority") or "ACADEMIC_TEXT_RULE_V1"),
+                )
+                changes.append(f"{row.get('criteria_level')}:academic_feedback_reconciled")
+                continue
             clean = _teacher_facing_feedback(row)
             if clean and clean != row.get("feedback"):
                 row["feedback"] = clean
                 changes.append(f"{row.get('criteria_level')}:feedback_cleaned")
             continue
-        label = "إنتاج/اختبار اللعبة" if short in ("P5", "P6") else "معيار التنفيذ"
+        if short == "M2":
+            label = "تبرير قرارات التصميم وربطها بالغرض ومتطلبات العميل"
+        elif short == "D2":
+            label = "تقييم التصميم والنسخة المحسنة مقابل المتطلبات والبدائل"
+        else:
+            label = "إنتاج/اختبار اللعبة" if short in ("P5", "P6") else "معيار التنفيذ"
         _promote_row(
             row,
             reason_ar=f"{label}: الأدلة والتحليل يثبتان تحقق المعيار (تسوية مؤسسية نهائية).",

@@ -423,10 +423,26 @@ def _submission_file_size(path: str) -> int:
 def _dedupe_code_scored(
     code_scored: list[tuple[tuple[int, int], str]],
 ) -> list[tuple[tuple[int, int], str]]:
-    """Keep one path per source basename (Godot before/after folders duplicate .gd)."""
+    """Deduplicate version copies without collapsing distinct GameMaker events.
+
+    GameMaker intentionally repeats names such as ``Step_0.gml`` and
+    ``Create_0.gml`` under every object.  A basename-only key deleted most of a
+    submitted project (obj_mouse, obj_cheese, controller, ...).  Preserve the
+    resource-relative owner path while still choosing one design/development
+    version of the same logical event.
+    """
     by_name: dict[str, tuple[tuple[int, int], str]] = {}
     for score, path in code_scored:
-        key = PurePosixPath(path.replace("\\", "/")).name.lower()
+        normalized = path.replace("\\", "/")
+        pure = PurePosixPath(normalized)
+        parts = [part.lower() for part in pure.parts]
+        key = pure.name.lower()
+        if pure.suffix.lower() == ".gml":
+            for anchor in ("objects", "scripts", "rooms", "sequences", "shaders"):
+                if anchor in parts:
+                    idx = parts.index(anchor)
+                    key = "gamemaker:" + "/".join(parts[idx:])
+                    break
         prev = by_name.get(key)
         if prev is None or score < prev[0]:
             by_name[key] = (score, path)
@@ -446,6 +462,13 @@ def _source_code_pick_score(path: str) -> tuple[int, int]:
             rank = -1
     elif ps.endswith((".py", ".java", ".cpp", ".c", ".js", ".gd", ".gml", ".lua")):
         rank = 2
+        # When both the design prototype and the developed/final project are
+        # submitted, inspect the developed version for grading evidence.
+        if any(
+            token in parts
+            for token in ("التطوير", "development", "developed", "final", "v2")
+        ):
+            rank = 1
     elif ps.endswith(".ini"):
         rank = 50
     if is_junk_primary_candidate(path):
@@ -1070,6 +1093,8 @@ _ARCHIVE_DISPLAY_PATH_CAP = 2500
 
 _DOC_PRIORITY = {".docx": 0, ".pdf": 1, ".doc": 2, ".odt": 3, ".txt": 4, ".md": 5}
 _GAMEMAKER_RUNTIME_FILENAMES = frozenset({"data.win", "options.ini"})
+_MAX_DOCUMENTS_PER_STUDENT_GROUP = 8
+_MAX_GAME_BUILDS_PER_STUDENT_GROUP = 4
 # Self-contained runnable game projects/builds worth extracting from any archive.
 _RUNNABLE_GAME_EXTENSIONS = frozenset({".sb3", ".sb2", ".yyz"})
 _RUNNABLE_GAME_BASENAMES = frozenset({"data.win"})
@@ -1145,6 +1170,41 @@ def _pick_best_doc_path(paths: list[str]) -> str:
     if not docs:
         return paths[0]
     return min(docs, key=lambda p: (_DOC_PRIORITY.get(PurePosixPath(p).suffix.lower(), 9), p))
+
+
+def _select_document_paths(paths: list[str]) -> list[str]:
+    """Keep every assignment document (within a small safety cap).
+
+    BTEC submissions commonly split Aim B and Aim C into separate Word files.
+    Selecting only the largest document silently drops an entire assessment aim.
+    """
+    docs = [p for p in paths if PurePosixPath(p).suffix.lower() in _DOC_PRIORITY]
+    return sorted(
+        dict.fromkeys(docs),
+        key=lambda p: (
+            _DOC_PRIORITY.get(PurePosixPath(p).suffix.lower(), 9),
+            len(PurePosixPath(p).parts),
+            p.casefold(),
+        ),
+    )[:_MAX_DOCUMENTS_PER_STUDENT_GROUP]
+
+
+def _select_primary_executable_paths(
+    group_paths: list[str], candidates: list[str]
+) -> list[str]:
+    """Keep V1/V2 GameMaker builds, while retaining the one-exe fallback elsewhere."""
+    unique = list(dict.fromkeys(candidates))
+    gamemaker_builds = [
+        exe for exe in unique if gamemaker_runtime_siblings_for_exe(group_paths, exe)
+    ]
+    if gamemaker_builds:
+        return sorted(
+            gamemaker_builds,
+            key=lambda p: (len(PurePosixPath(p).parts), p.casefold()),
+        )[:_MAX_GAME_BUILDS_PER_STUDENT_GROUP]
+    if not unique:
+        return []
+    return [min(unique, key=lambda p: (len(PurePosixPath(p).parts), p.casefold()))]
 
 
 def selective_extract_rar(
@@ -1257,38 +1317,38 @@ def selective_extract_rar(
                 if ext not in _SKIP_EXTRACT_EXT:
                     code_scored.append((_source_code_pick_score(decoded), decoded))
         if docs:
-            if group_key == "__root__" and len(docs) > 1:
-                to_extract.update(docs)
-            else:
-                to_extract.add(_pick_best_doc_path(docs))
+            to_extract.update(_select_document_paths(docs))
         if exe_candidates:
-            chosen_exe = min(
-                exe_candidates, key=lambda p: (len(PurePosixPath(p).parts), p.lower())
-            )
-            try:
-                from app.grading_mode_policy import pro_should_skip_game_exe_disk_extract
+            for chosen_exe in _select_primary_executable_paths(paths, exe_candidates):
+                try:
+                    from app.grading_mode_policy import pro_should_skip_game_exe_disk_extract
 
-                if pro_should_skip_game_exe_disk_extract(
-                    chosen_exe,
-                    group_paths=paths,
-                    grading_mode=grading_mode,
-                ):
-                    print(
-                        f"📦 [RAR-SEL] PRO skip exe disk extract (Godot bundle indexed): "
-                        f"{Path(chosen_exe).name}"
-                    )
-                else:
+                    if pro_should_skip_game_exe_disk_extract(
+                        chosen_exe,
+                        group_paths=paths,
+                        grading_mode=grading_mode,
+                    ):
+                        print(
+                            f"📦 [RAR-SEL] PRO skip exe disk extract (Godot bundle indexed): "
+                            f"{Path(chosen_exe).name}"
+                        )
+                    else:
+                        to_extract.add(chosen_exe)
+                        to_extract.update(
+                            gamemaker_runtime_siblings_for_exe(paths, chosen_exe)
+                        )
+                except ImportError:
                     to_extract.add(chosen_exe)
                     to_extract.update(
                         gamemaker_runtime_siblings_for_exe(paths, chosen_exe)
                     )
-            except ImportError:
-                to_extract.add(chosen_exe)
-                to_extract.update(
-                    gamemaker_runtime_siblings_for_exe(paths, chosen_exe)
-                )
         code_scored = _dedupe_code_scored(code_scored)
         _code_cap = max_archive_code_files_per_group(grading_mode, archive_bytes)
+        if any(PurePosixPath(path).suffix.lower() == ".gml" for _score, path in code_scored):
+            # GameMaker projects distribute behavior across many tiny event
+            # files.  Applying the large-archive cap (6/8 files) removes whole
+            # mechanics even though the code itself is small.
+            _code_cap = max(_code_cap, min(len(code_scored), 80))
         to_extract.update(decoded for _, decoded in code_scored[:_code_cap])
 
     gradable_names = sorted(to_extract, key=_archive_extract_sort_key)
@@ -1506,18 +1566,24 @@ def selective_extract_zip(
                     if ext not in _SKIP_EXTRACT_EXT:
                         code_scored.append((_source_code_pick_score(decoded), decoded))
             if docs:
-                if group_key == "__root__" and len(docs) > 1:
-                    to_extract.update(decoded for _, decoded in docs)
-                else:
-                    to_extract.add(max(docs, key=lambda x: x[0])[1])
-            if exe_candidates:
-                chosen_exe = max(exe_candidates, key=lambda x: x[0])[1]
-                to_extract.add(chosen_exe)
                 to_extract.update(
-                    gamemaker_runtime_siblings_for_exe(paths, chosen_exe)
+                    _select_document_paths([decoded for _, decoded in docs])
                 )
+            if exe_candidates:
+                for chosen_exe in _select_primary_executable_paths(
+                    paths, [decoded for _, decoded in exe_candidates]
+                ):
+                    to_extract.add(chosen_exe)
+                    to_extract.update(
+                        gamemaker_runtime_siblings_for_exe(paths, chosen_exe)
+                    )
             code_scored = _dedupe_code_scored(code_scored)
             _code_cap = max_archive_code_files_per_group(grading_mode, archive_bytes)
+            if any(
+                PurePosixPath(path).suffix.lower() == ".gml"
+                for _score, path in code_scored
+            ):
+                _code_cap = max(_code_cap, min(len(code_scored), 80))
             to_extract.update(decoded for _, decoded in code_scored[:_code_cap])
 
         gradable_names = sorted(to_extract, key=_archive_extract_sort_key)
@@ -1918,6 +1984,8 @@ def resolve_active_grading_model_version() -> str:
     provider = (os.getenv("AI_PROVIDER", "gemini") or "gemini").strip().lower()
     if provider in ("gemini", "google"):
         model = os.getenv("GEMINI_MODEL", "gemini-2.5-pro")
+    elif provider == "deepseek":
+        model = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash-vision-exp")
     elif provider == "openrouter":
         model = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-pro")
     elif provider == "ollama":

@@ -974,13 +974,19 @@ def extract_explainability_for_ui(snapshot: Optional[Dict[str, Any]]) -> Optiona
     rt_pkg = snapshot.get("runtime_evidence_package") or inv.get("runtime_evidence_package")
     try:
         from app.runtime_evidence_package import PACKAGE_VERSION as RUNTIME_PACKAGE_VERSION
+        from app.requirement_checklist import CHECKLIST_VERSION as REQUIREMENT_CHECKLIST_VERSION
     except Exception:
         RUNTIME_PACKAGE_VERSION = ""
+        REQUIREMENT_CHECKLIST_VERSION = ""
+    checklist_stale = not isinstance(req_checklist, dict) or (
+        bool(REQUIREMENT_CHECKLIST_VERSION)
+        and str(req_checklist.get("version") or "") != REQUIREMENT_CHECKLIST_VERSION
+    )
     runtime_package_stale = not isinstance(rt_pkg, dict) or (
         bool(RUNTIME_PACKAGE_VERSION)
         and str(rt_pkg.get("version") or "") != RUNTIME_PACKAGE_VERSION
     )
-    if runtime_package_stale and inv.get("runtime_observation_report"):
+    if (runtime_package_stale or checklist_stale) and inv.get("runtime_observation_report"):
         try:
             from app.runtime_evidence_package import attach_runtime_evidence_package
 
@@ -988,9 +994,11 @@ def extract_explainability_for_ui(snapshot: Optional[Dict[str, Any]]) -> Optiona
             attach_runtime_evidence_package(
                 _tmp_rt,
                 artifact_inventory=inv,
-                requirement_checklist=req_checklist,
+                requirement_checklist=None if checklist_stale else req_checklist,
                 submission_paths=_submission_paths_from_snapshot(snapshot),
-                student_text=str(snapshot.get("student_text") or "")[:50000],
+                student_text=str(
+                    snapshot.get("student_text") or snapshot.get("plagiarism_text") or ""
+                )[:120000],
             )
             rt_pkg = _tmp_rt.get("runtime_evidence_package")
             req_checklist = _tmp_rt.get("requirement_checklist") or req_checklist

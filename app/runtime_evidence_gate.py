@@ -2,7 +2,7 @@
 Runtime Evidence Gate — Pearson-grade single authority for runtime-dependent criteria.
 
 Golden rule (PRO governance):
-    A runtime-dependent criterion (C.P5 / C.P6 / C.M3 / C.D3) may NOT be awarded
+    A runtime-dependent criterion (C.P5 / C.P6 / C.M3) may NOT be awarded
     unless the game was *actually* shown to run / be played. Documents, slides,
     images, AI description, static analysis (incl. Scratch static graph), and the
     mere *presence* of a project/.sb3/.exe are NOT sufficient on their own.
@@ -25,6 +25,7 @@ UI, the Word report, the PDF report, the API and the dashboard.
 """
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence
 
@@ -39,6 +40,88 @@ GATE_VERSION = "runtime_evidence_gate_v1"
 BTEC_MAPPER_VERSION = "btec_criterion_mapper_v1"
 
 _L4_RANK = {"L3": 0, "L4_partial": 1, "L4_full": 2}
+
+# Binary gameplay requirements that can be proved either by a direct playtest
+# or by the verifier's source+runtime corroboration.  Documentation-only
+# requirements (for example level design) are assessed by their own rubric and
+# must not make the runtime gate impossible to satisfy.
+_RUNTIME_CRITICAL_REQUIREMENTS = frozenset(
+    {
+        "player_movement",
+        "jump",
+        "collect_items",
+        "score_system",
+        "enemy_interaction",
+        "win_condition",
+        "lose_condition",
+        "restart",
+        "menu_ui",
+    }
+)
+
+
+def _required_feature_verification(verification: Dict[str, Any]) -> Dict[str, Any]:
+    """Summarise required feature proof for the criterion gate.
+
+    Runtime rows already encode the evidence authority: direct playtest rows
+    use ``runtime_l4/runtime_l5`` while complete source implementation that is
+    corroborated by a real run uses ``cross_modal_l4``.  A source mention or a
+    confidence percentage by itself is deliberately not accepted.
+
+    Older snapshots may not contain the checklist/package.  In that case the
+    legacy aggregate gate remains available rather than silently changing old
+    results during read-time migration.
+    """
+    checklist = verification.get("requirement_checklist") or {}
+    package = verification.get("runtime_evidence_package") or {}
+    checklist_rows = checklist.get("requirements") or []
+    confidence_rows = package.get("requirement_confidence") or []
+    if not isinstance(checklist_rows, list) or not isinstance(confidence_rows, list):
+        return {"available": False, "required": [], "verified": [], "missing": []}
+
+    required = []
+    for row in checklist_rows:
+        if not isinstance(row, dict):
+            continue
+        req_id = str(row.get("id") or "").strip()
+        applicability = str(row.get("applicability") or "not_mentioned")
+        if req_id in _RUNTIME_CRITICAL_REQUIREMENTS and applicability == "required":
+            required.append(req_id)
+
+    by_id = {
+        str(row.get("requirement") or "").strip(): row
+        for row in confidence_rows
+        if isinstance(row, dict) and row.get("requirement")
+    }
+    if not required or not all(req_id in by_id for req_id in required):
+        return {"available": False, "required": required, "verified": [], "missing": required}
+
+    verified: List[str] = []
+    missing: List[str] = []
+    proof: Dict[str, str] = {}
+    for req_id in required:
+        row = by_id[req_id]
+        source = str(row.get("confidence_source") or "")
+        # ``verified`` is authoritative.  It may originate from direct runtime
+        # or source+runtime reconciliation, never from documentation alone.
+        if row.get("verified") is True and source in {
+            "runtime_l4",
+            "runtime_l5",
+            "cross_modal_l4",
+        }:
+            verified.append(req_id)
+            proof[req_id] = source
+        else:
+            missing.append(req_id)
+
+    return {
+        "available": True,
+        "required": required,
+        "verified": verified,
+        "missing": missing,
+        "proof": proof,
+        "all_verified": not missing,
+    }
 
 
 @dataclass(frozen=True)
@@ -161,7 +244,7 @@ _HIGHER_BAND_AI_MARKERS: Dict[str, tuple[str, ...]] = {
 
 
 def _assess_ai_academic_evidence(
-    row: Optional[Dict[str, Any]], criterion: str
+    row: Optional[Dict[str, Any]], criterion: str, *, student_text: str = ""
 ) -> Dict[str, Any]:
     """Verify higher-band academic evidence without relying on a human flag.
 
@@ -200,6 +283,32 @@ def _assess_ai_academic_evidence(
         {marker for marker in _HIGHER_BAND_AI_MARKERS.get(criterion, ()) if marker in academic_text}
     )
     semantic_match = len(marker_hits) >= 2
+
+    # BC.D3 is documentary rather than a mechanic by itself.  A specialised
+    # deterministic rule may verify the complete planning/responsibility trail
+    # from Aim B + Aim C even when the initial AI narrative incorrectly asks for
+    # a human/project-log review.  Runtime still has to pass separately below.
+    documentary_verified = False
+    if (
+        criterion == "D3"
+        and deterministic.get("rule_id") == "bc_d3_self_management"
+        and deterministic_pass
+    ):
+        from app.pro_evidence_signals import text_has_d3_self_management_evidence
+
+        documentary_verified = text_has_d3_self_management_evidence(student_text)
+
+    if documentary_verified:
+        return {
+            "verified": True,
+            "confidence": 1.0,
+            "checks": {
+                "deterministic_pass": True,
+                "documentary_self_management": True,
+                "complete_student_corpus": True,
+            },
+            "marker_hits": marker_hits,
+        }
 
     checks = {
         "deterministic_pass": deterministic_pass,
@@ -251,6 +360,7 @@ class BTECCriterionMapper:
         functional_smoke_pass: bool = False,
         criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
         engine_id: Optional[str] = None,
+        student_text: str = "",
     ) -> Dict[str, Any]:
         from app.gameplay_verifier import calculate_l4_level
 
@@ -270,6 +380,12 @@ class BTECCriterionMapper:
         teacher_confirmed = teacher_confirmed or {}
         evidence_pkg = gv.get("evidence_package") or {}
         req_results = evidence_pkg.get("results") or []
+        required_features = _required_feature_verification(gv)
+        required_features_ok = (
+            bool(required_features.get("all_verified"))
+            if required_features.get("available")
+            else True
+        )
         engine = str(engine_id or gv.get("engine_id") or "").strip().lower()
         criteria_by_short = {
             _short_level(str(row.get("criteria_level") or "")): row
@@ -290,9 +406,22 @@ class BTECCriterionMapper:
             for row in req_results:
                 if isinstance(row, dict) and row.get("verified"):
                     chain.append(f"req:{row.get('req_id')}=verified")
+            if required_features.get("available"):
+                chain.append(
+                    "required_features="
+                    + ("verified" if required_features_ok else "missing")
+                )
+                for req_id in required_features.get("verified") or []:
+                    proof = (required_features.get("proof") or {}).get(req_id) or "verified"
+                    chain.append(f"required:{req_id}={proof}")
+                for req_id in required_features.get("missing") or []:
+                    chain.append(f"required:{req_id}=unverified")
 
             confirmed = bool(teacher_confirmed.get(rule.criterion))
-            l4_ok = self._l4_satisfies(l4, rule.min_l4_level)
+            required_l4 = rule.min_l4_level
+            if engine.startswith("gamemaker") and rule.criterion == "M3":
+                required_l4 = "L4_partial"
+            l4_ok = self._l4_satisfies(l4, required_l4)
             test_ok = test_doc_entries >= rule.min_test_doc_entries
             runtime_ok = functional_smoke_pass or gameplay_entered or movement
             gamemaker_ai_higher_band = engine.startswith("gamemaker") and rule.criterion in {
@@ -301,7 +430,9 @@ class BTECCriterionMapper:
             }
             academic = (
                 _assess_ai_academic_evidence(
-                    criteria_by_short.get(rule.criterion), rule.criterion
+                    criteria_by_short.get(rule.criterion),
+                    rule.criterion,
+                    student_text=student_text,
                 )
                 if gamemaker_ai_higher_band
                 else {"verified": False, "confidence": 0.0, "checks": {}, "marker_hits": []}
@@ -315,14 +446,38 @@ class BTECCriterionMapper:
                 # GameMaker higher bands are decided by a composite automated proof:
                 # full runtime/gameplay, a test record, and the AI academic evidence.
                 test_ok = test_doc_entries >= max(1, rule.min_test_doc_entries)
-                prerequisite_ok = (
-                    criterion_pass.get("M3") is True if rule.criterion == "D3" else True
-                )
+                if required_features.get("available"):
+                    prerequisite_ok = bool(
+                        criterion_pass.get("P5") is True
+                        and criterion_pass.get("P6") is True
+                        and (
+                            criterion_pass.get("M3") is True
+                            if rule.criterion == "D3"
+                            else True
+                        )
+                    )
+                else:
+                    # Compatibility for snapshots created before per-feature
+                    # requirement evidence existed.  New grading runs always
+                    # carry the checklist/package and use the strict chain.
+                    prerequisite_ok = (
+                        criterion_pass.get("M3") is True
+                        if rule.criterion == "D3"
+                        else True
+                    )
+                documented_m3 = False
+                if rule.criterion == "M3":
+                    from app.pro_evidence_signals import text_has_improvement_from_testing
+
+                    documented_m3 = text_has_improvement_from_testing(
+                        student_text or ""
+                    ) and len(student_text or "") > 350
+                academic_ok = bool(academic.get("verified")) or documented_m3
                 open_gate = bool(
                     l4_ok
                     and runtime_ok
                     and test_ok
-                    and academic.get("verified")
+                    and academic_ok
                     and prerequisite_ok
                 )
                 chain.extend(
@@ -362,7 +517,9 @@ class BTECCriterionMapper:
             else:
                 open_gate = l4_ok and runtime_ok and test_ok
                 if rule.criterion == "P5":
-                    open_gate = open_gate and (movement or mechanics >= 1)
+                    open_gate = open_gate and (movement or mechanics >= 1) and required_features_ok
+                elif rule.criterion == "P6":
+                    open_gate = open_gate and required_features_ok
                 reason = "automatic_l4" if open_gate else "evidence_insufficient"
                 reason_ar = (
                     f"بوابة تلقائية — L4 {l4}"
@@ -373,6 +530,13 @@ class BTECCriterionMapper:
                     reason_ar = (
                         f"يتطلب ≥{rule.min_test_doc_entries} مدخلات وثائق اختبار "
                         f"(موجود: {test_doc_entries})"
+                    )
+                elif not required_features_ok:
+                    missing_labels = ", ".join(required_features.get("missing") or [])
+                    reason = "required_gameplay_features_unverified"
+                    reason_ar = (
+                        "لم تثبت كل ميزات اللعبة المطلوبة بالتشغيل أو بتحقق الكود "
+                        f"المقترن بالتشغيل: {missing_labels}"
                     )
 
             if shots >= 1:
@@ -405,6 +569,7 @@ class BTECCriterionMapper:
             "decisions": [d.to_dict() for d in decisions],
             "engine_id": engine or None,
             "higher_band_verification": "automated_ai" if engine.startswith("gamemaker") else "policy_default",
+            "required_feature_verification": required_features,
             "summary_ar": (
                 f"L4 آلي ({l4}) — ميكانيكا={mechanics} لقطات={shots}"
                 if l4_partial or l4_full
@@ -413,9 +578,9 @@ class BTECCriterionMapper:
         }
 
 
-# Runtime-dependent criteria (per Pearson policy): prototype, testing, refinement
-# merit, and the corresponding distinction band. Matches user spec C.P5/C.P6/C.M3/C.D3.
-RUNTIME_GATED_SHORT = frozenset({"P5", "P6", "M3", "D3"})
+# Runtime-dependent criteria: prototype production, testing, and refinement.
+# BC.D3 assesses responsibility/creativity/self-management, not a mechanic.
+RUNTIME_GATED_SHORT = frozenset({"P5", "P6", "M3"})
 
 _RUNTIME_GATE_AUTHORITY = "RUNTIME_GATE_BLOCKED"
 
@@ -452,7 +617,7 @@ def _gate_reason_for(gv: Dict[str, Any]) -> str:
 # Teacher-facing copy — L4 automated run ≠ in-game gameplay evidence (Unit 9 calibration).
 RUNTIME_L4_TEACHER_NOTE_AR = (
     "التشغيل الآلي على الخادم وفحص الملفات لا يُعتبر دليلاً كاملاً على اللعب الفعلي "
-    "(Gameplay). لتحقيق C.P5/C.P6/C.M3/C.D3 يجب تقديم أدلة تشغيل واضحة من داخل "
+    "(Gameplay). لتحقيق C.P5/C.P6/C.M3 يجب تقديم أدلة تشغيل واضحة من داخل "
     "اللعبة: فيديو لعب يظهر حركة اللاعب ونظام النقاط وتفاعل العدو، أو اختبار بشري "
     "موثّق (L5 Playtest)."
 )
@@ -486,6 +651,45 @@ def _promote_l4_gate_row(
             row["achievement_authority"] = auth
         else:
             row["achievement_authority"] = "RUNTIME_L4_GATE"
+    if (
+        short in RUNTIME_GATED_SHORT
+        and isinstance(det, dict)
+        and det
+        and (
+            det.get("deterministic_achieved") is not True
+            or str(det.get("reason") or "") == "no_code_evidence"
+            or str((det.get("evidence_registry") or {}).get("result") or "").lower()
+            == "fail"
+        )
+    ):
+        # Preserve the pre-runtime rule for audit, but never leave a failed
+        # nested verdict beside a terminal L4 pass at the same criterion.
+        row.setdefault("pre_runtime_deterministic_rubric", copy.deepcopy(det))
+        aligned = copy.deepcopy(det)
+        aligned.update(
+            {
+                "deterministic_achieved": True,
+                "deterministic_score": max(
+                    int(aligned.get("deterministic_score") or 0), minimum_score
+                ),
+                "verdict_status": "pass",
+                "reason": "runtime_l4_verified_override",
+                "authority": "RUNTIME_VALIDATION",
+            }
+        )
+        registry = aligned.get("evidence_registry")
+        if isinstance(registry, dict):
+            registry.update(
+                {
+                    "result": "pass",
+                    "reason": "runtime_l4_verified_override",
+                    "runtime": "L4_verified",
+                    "authority": "RUNTIME_VALIDATION",
+                }
+            )
+        row["deterministic_rubric"] = aligned
+        if short in {"P5", "P6"}:
+            row["achievement_authority"] = "RUNTIME_VALIDATION"
     if short in {"M3", "D3"}:
         row["achievement_authority"] = "AI_RUNTIME_COMPOSITE"
         row["ai_verification"] = {
@@ -725,8 +929,22 @@ def apply_runtime_evidence_gate(
         l5 = inv.get("l5_human_playtest") or grading_result.get("l5_human_playtest") or {}
         if l5.get("status") in ("complete_visual", "confirmed"):
             teacher_confirmed = {"M3": True, "D3": True}
+        # The gameplay verifier owns direct and source+runtime proof; the
+        # checklist owns applicability.  Pass both to the final criterion gate
+        # so it evaluates every required feature instead of a mechanic count.
+        gv_for_gate = dict(gv)
+        gv_for_gate["requirement_checklist"] = (
+            grading_result.get("requirement_checklist")
+            or inv.get("requirement_checklist")
+            or {}
+        )
+        gv_for_gate["runtime_evidence_package"] = (
+            grading_result.get("runtime_evidence_package")
+            or inv.get("runtime_evidence_package")
+            or {}
+        )
         automated_gate = assess_automated_l4_gate(
-            gv,
+            gv_for_gate,
             test_document_present=_test_document_present(inv_for_docs),
             test_doc_entries=count_test_document_entries(inv_for_docs),
             functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
@@ -734,6 +952,7 @@ def apply_runtime_evidence_gate(
             grading_mode=grading_result.get("grading_mode") or inv.get("grading_mode"),
             criteria_results=criteria,
             engine_id=verdict.get("engine_id"),
+            student_text=str(grading_result.get("student_text") or ""),
         )
     except Exception:
         automated_gate = {}
@@ -788,22 +1007,25 @@ def apply_runtime_evidence_gate(
                 _promote_l4_gate_row(row, decision=decisions_by_short.get(short))
                 row["awardable"] = True
                 changes.append(f"{row.get('criteria_level')}:runtime_satisfied_l4_open")
-            elif short in ("M3", "D3") and short in RUNTIME_GATED_SHORT:
+            elif short in RUNTIME_GATED_SHORT:
                 decision = decisions_by_short.get(short) or {}
-                row["awardable"] = False
-                row["achievement_authority"] = "HUMAN_REVIEW_REQUIRED"
-                row["award_block_reason"] = "teacher_confirmation_required"
-                row["award_block_reason_ar"] = str(
+                was_awarding = bool(row.get("achieved") or row.get("awardable"))
+                reason_ar = str(
                     decision.get("reason_ar")
-                    or "يتطلب تأكيد المعلم — لا يُفتح تلقائياً في PRO"
+                    or "لم تثبت كل ميزات اللعبة المطلوبة بالتشغيل أو بتحقق الكود المقترن بالتشغيل"
                 )
-                row["feedback"] = (
-                    "لم يتحقق المعيار تلقائياً. تم التحقق من تشغيل اللعبة والـ gameplay "
-                    "بمستوى L4، لكن هذا المعيار الأعلى يتطلب تأكيد المعلم ومراجعة "
-                    "الأدلة التحليلية/التقييمية الخاصة به."
+                row["runtime_gate_block"] = True
+                _demote_row(row, reason_ar)
+                row["awardable"] = False
+                row["achievement_authority"] = _RUNTIME_GATE_AUTHORITY
+                row["award_block_reason"] = str(
+                    decision.get("reason") or "required_gameplay_features_unverified"
                 )
+                row["award_block_reason_ar"] = reason_ar
                 row.pop("pro_gameplay_governance_hold", None)
                 row.pop("engine_governance_engine", None)
+                if was_awarding:
+                    changes.append(f"{row.get('criteria_level')}:required_feature_gate_block")
 
     if changes:
         _recompute_grade(grading_result)

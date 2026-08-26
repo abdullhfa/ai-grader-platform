@@ -14,8 +14,10 @@ from app.btec_criteria_governance import _demote_row, _short_level
 
 GOVERNANCE_VERSION = "pro_engine_gameplay_v1"
 
-# Criteria that require playtest / gameplay / L5 (not exe/pck/screenshots alone).
-_PLAYTEST_GATED_SHORT = frozenset({"P6", "M3", "D2", "D3"})
+# Only implementation/testing criteria require gameplay proof. BC.D2 is critical
+# evaluation and BC.D3 is individual responsibility/self-management; neither is
+# a gameplay mechanic and tying them to L5 was a category error.
+_PLAYTEST_GATED_SHORT = frozenset({"P6", "M3"})
 
 _ENGINE_DETECT_ORDER = ("godot", "unity", "gamemaker", "unreal")
 
@@ -51,7 +53,7 @@ _ENGINE_POLICIES: Dict[str, Dict[str, Any]] = {
         "gameplay_validation_required": True,
         "unity_runtime_validation": False,
         "playtest_required": False,
-        "human_review_required": True,
+        "human_review_required": False,
         "min_core_mechanics_for_cp6": 1,
         "require_game_launch_for_cp6": True,
         "launch_commands_ar": ["Game.exe"],
@@ -456,7 +458,7 @@ def apply_pro_engine_gameplay_governance(
     gameplay_checks: Optional[Dict[str, Any]] = None,
 ) -> Tuple[List[str], Dict[str, Any]]:
     """
-    Demote C.P6 / C.M3 / BC.D2 / BC.D3 when no Pearson playtest path is satisfied.
+    Demote C.P6 / C.M3 when no Pearson playtest path is satisfied.
     Marks rows with ``pro_gameplay_governance_hold`` so finalizer cannot re-promote.
     """
     assessment = assess_playtest_evidence(

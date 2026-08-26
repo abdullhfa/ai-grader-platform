@@ -52,6 +52,9 @@ def test_gamemaker_default_plan_tests_top_down_mechanics_not_jump():
     movement = next(req for req in plan.requirements if req.req_id == "player_movement")
     assert movement.verification_method == "visual_player_movement"
     assert [(a.key, a.duration) for a in movement.input_sequence] == [("d", 1.5)]
+    win_lose = next(req for req in plan.requirements if req.req_id == "win_lose_condition")
+    wait_seconds = sum(a.duration for a in win_lose.input_sequence if a.action == "wait")
+    assert wait_seconds <= 5.0, "GameMaker win/lose must not idle ~35s after gameplay is already visible"
 
 
 def test_gamemaker_top_down_movement_uses_playfield_pixel_change(tmp_path: Path):
@@ -669,10 +672,194 @@ def test_terminal_runtime_gate_promotes_gamemaker_higher_bands_with_ai(monkeypat
     report = apply_runtime_evidence_gate(grading, artifact_inventory=inventory)
 
     by_level = {item["criteria_level"]: item for item in grading["criteria_results"]}
-    for level in ("C.M3", "C.D3"):
-        assert by_level[level]["achieved"] is True
-        assert by_level[level]["achievement_authority"] == "AI_RUNTIME_COMPOSITE"
-        assert by_level[level]["ai_verification"]["human_review_required"] is False
-        assert "مراجعة بشرية" not in by_level[level]["feedback"]
+    assert by_level["C.M3"]["achieved"] is True
+    assert by_level["C.M3"]["achievement_authority"] == "AI_RUNTIME_COMPOSITE"
+    assert by_level["C.M3"]["ai_verification"]["human_review_required"] is False
+    # D3 is an academic/professional judgement criterion, not a gameplay
+    # mechanic. Runtime evidence must neither promote nor demote its AI verdict.
+    assert by_level["C.D3"]["achieved"] is False
     assert report["automated_l4_gate"]["criterion_pass"]["M3"] is True
-    assert report["automated_l4_gate"]["criterion_pass"]["D3"] is True
+
+
+def test_probe_ignores_stale_generated_runtime_as_student_exe(tmp_path: Path):
+    from app.runtime_engines.gamemaker.project_probe import GENERATED_RUNTIME_DIRNAME
+
+    student = tmp_path / "student"
+    generated = student / GENERATED_RUNTIME_DIRNAME
+    generated.mkdir(parents=True)
+    (student / "Game.yyp").write_text('{"resourceType":"GMProject","resources":[]}', encoding="utf-8")
+    (generated / "Game.exe").write_bytes(b"MZ")
+    (generated / "data.win").write_bytes(b"win")
+
+    layout = probe_gamemaker_layout(student)
+
+    assert layout.executable is None
+    assert layout.yyp_path == student / "Game.yyp"
+
+
+def test_windows_exe_smoke_runs_without_sandbox_env_flag(tmp_path: Path, monkeypatch):
+    from app.runtime_engines.base import RuntimeSession
+    from app.runtime_engines.gamemaker.runtime_runner import run_exe_smoke
+
+    exe = tmp_path / "CheeseChase.exe"
+    exe.write_bytes(b"MZ")
+    (tmp_path / "data.win").write_bytes(b"win")
+    (tmp_path / "options.ini").write_text("[Windows]\n", encoding="utf-8")
+    (tmp_path / "Game.yyp").write_text('{"resourceType":"GMProject"}', encoding="utf-8")
+    called = {}
+
+    def fake_smoke(*_args, **kwargs):
+        called["kwargs"] = kwargs
+        return {
+            "attempted": True,
+            "smoke_result": "stable_window",
+            "runtime_screenshots": [{"path": str(tmp_path / "shot.png")}],
+            "signals": {"crash": "none"},
+            "visual_observation": {"freeze_possible": False},
+        }
+
+    monkeypatch.delenv("AI_GRADER_WINDOWS_SANDBOX", raising=False)
+    monkeypatch.setattr("app.runtime_engines.gamemaker.runtime_runner.sys.platform", "win32")
+    monkeypatch.setattr(
+        "app.runtime_observation_sandbox.smoke_test_windows_exe",
+        fake_smoke,
+    )
+    (tmp_path / "shot.png").write_bytes(b"png")
+    session = RuntimeSession.create("gamemaker", "jana-exe", tmp_path)
+    out = run_exe_smoke(session, exe, timeout_seconds=8)
+
+    assert out.get("skipped") is not True
+    assert called, "existing student exe must reach smoke_test_windows_exe on Windows"
+    assert session.signals.get("runtime_method") == "gamemaker_exe_smoke"
+
+
+def test_existing_student_exe_is_launched_and_never_deleted(tmp_path: Path, monkeypatch):
+    from app.runtime_engines.base import RuntimeSession
+    from app.runtime_engines.gamemaker.runtime_verification import (
+        run_gamemaker_runtime_verification,
+    )
+
+    student = tmp_path / "student"
+    student.mkdir()
+    exe = student / "CheeseChase.exe"
+    exe.write_bytes(b"MZ")
+    (student / "data.win").write_bytes(b"win")
+    (student / "options.ini").write_text("[Windows]\n", encoding="utf-8")
+    (student / "Game.yyp").write_text(
+        '{"resourceType":"GMProject","resources":[{"id":{"name":"obj_player"},"resourceType":"GMObject"}]}',
+        encoding="utf-8",
+    )
+    (student / "objects" / "obj_player").mkdir(parents=True)
+    (student / "objects" / "obj_player" / "Step_0.gml").write_text(
+        "keyboard_check(vk_right);", encoding="utf-8"
+    )
+    launched: list[Path] = []
+
+    def fake_smoke(session, executable, **_kwargs):
+        launched.append(Path(executable))
+        session.screenshot_paths.append(tmp_path / "shot.png")
+        (tmp_path / "shot.png").write_bytes(b"png")
+        session.signals["runtime_method"] = "gamemaker_exe_smoke"
+        return {"success": True, "observation": {"status": "completed"}}
+
+    monkeypatch.setattr(
+        "app.runtime_engines.gamemaker.runtime_verification.run_exe_smoke",
+        fake_smoke,
+    )
+    monkeypatch.setattr(
+        "app.runtime_engines.gamemaker.runtime_verification._try_ide_build",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("must not build when exe exists")),
+    )
+    monkeypatch.setattr(
+        "app.runtime_engines.gamemaker.runtime_verification.compare_runtime_screenshots",
+        lambda shots: {
+            "comparison_available": True,
+            "freeze_detected": False,
+            "frame_delta_score": 0.4,
+        },
+    )
+
+    session = RuntimeSession.create("gamemaker", "has-exe", student, workspace=tmp_path / "ws")
+    layout = probe_gamemaker_layout(student)
+    result = run_gamemaker_runtime_verification(session, layout, timeout_seconds=5)
+
+    assert [path.resolve() for path in launched] == [exe.resolve()]
+    assert exe.is_file()
+    assert (student / "data.win").is_file()
+    assert not (student / "_ai_grader_gm_runtime").exists()
+    assert result["build_pipeline"]["ide_build_attempted"] is False
+    assert result["build_pipeline"].get("student_runtime", {}).get("generated") is not True
+    assert result["gameplay_replay"]["method"] == "exe_smoke"
+    assert result["signals"]["functional_smoke_pass"] is True
+
+
+def test_missing_exe_is_built_into_student_folder_then_removed(tmp_path: Path, monkeypatch):
+    from app.runtime_engines.base import RuntimeSession
+    from app.runtime_engines.gamemaker.runtime_verification import (
+        run_gamemaker_runtime_verification,
+    )
+
+    student = tmp_path / "student"
+    student.mkdir()
+    yyp = student / "Game.yyp"
+    yyp.write_text('{"resourceType":"GMProject","resources":[]}', encoding="utf-8")
+    (student / "player.gml").write_text("keyboard_check(vk_right);", encoding="utf-8")
+    seen: dict = {}
+
+    def fake_run(cmd, **_kwargs):
+        out_dir = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("/of=")))
+        target = next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("/tf="))
+        with zipfile.ZipFile(out_dir / target, "w") as zf:
+            zf.writestr("CheeseChase.exe", b"MZ")
+            zf.writestr("data.win", b"built-win")
+            zf.writestr("options.ini", b"[Windows]\n")
+        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+    def fake_smoke(session, executable, **_kwargs):
+        exe = Path(executable)
+        seen["exe"] = exe
+        seen["exists_during_run"] = exe.is_file()
+        seen["inside_student"] = student.resolve() in exe.resolve().parents
+        seen["data_win"] = (exe.parent / "data.win").is_file()
+        session.screenshot_paths.append(tmp_path / "shot.png")
+        (tmp_path / "shot.png").write_bytes(b"png")
+        session.signals["runtime_method"] = "gamemaker_exe_smoke"
+        return {"success": True, "observation": {"status": "completed"}}
+
+    monkeypatch.setenv("AI_GRADER_GAMEMAKER_IGOR", str(tmp_path / "Igor.exe"))
+    monkeypatch.setenv("AI_GRADER_GAMEMAKER_RUNTIME_ROOT", str(tmp_path / "runtime"))
+    monkeypatch.setenv("AI_GRADER_GAMEMAKER_USER_FOLDER", str(tmp_path / "user"))
+    (tmp_path / "Igor.exe").write_bytes(b"MZ")
+    (tmp_path / "runtime").mkdir()
+    (tmp_path / "user").mkdir()
+    (tmp_path / "user" / "licence.plist").write_text("ready", encoding="utf-8")
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    monkeypatch.setattr(
+        "app.runtime_engines.gamemaker.runtime_verification.run_exe_smoke",
+        fake_smoke,
+    )
+    monkeypatch.setattr(
+        "app.runtime_engines.gamemaker.runtime_verification.compare_runtime_screenshots",
+        lambda shots: {
+            "comparison_available": True,
+            "freeze_detected": False,
+            "frame_delta_score": 0.4,
+        },
+    )
+
+    session = RuntimeSession.create("gamemaker", "no-exe", student, workspace=tmp_path / "ws")
+    layout = probe_gamemaker_layout(student)
+    assert layout.executable is None
+    result = run_gamemaker_runtime_verification(session, layout, timeout_seconds=5)
+
+    assert seen["exists_during_run"] is True
+    assert seen["inside_student"] is True
+    assert seen["data_win"] is True
+    assert seen["exe"].name.endswith(".exe")
+    assert not (student / "_ai_grader_gm_runtime").exists()
+    assert list(student.rglob("*.exe")) == []
+    assert result["build_pipeline"]["ide_build_attempted"] is True
+    assert result["build_pipeline"]["student_runtime"]["generated"] is True
+    assert result["signals"]["generated_runtime_cleanup"]["cleaned"] is True
+    assert result["gameplay_replay"]["method"] == "exe_smoke"
+    assert result["signals"]["functional_smoke_pass"] is True

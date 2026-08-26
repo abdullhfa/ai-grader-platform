@@ -21,7 +21,12 @@ from typing import Any, Dict, Optional
 from app.runtime_engines.base import RuntimeSession, SessionStatus
 from app.runtime_engines.gamemaker.build_runner import analyze_gamemaker_artifacts
 from app.runtime_engines.gamemaker.object_inspection import inspect_gamemaker_objects
-from app.runtime_engines.gamemaker.project_probe import GameMakerLayout, probe_gamemaker_layout
+from app.runtime_engines.gamemaker.project_probe import (
+    GENERATED_RUNTIME_DIRNAME,
+    GameMakerLayout,
+    is_generated_gamemaker_runtime_path,
+    probe_gamemaker_layout,
+)
 from app.runtime_engines.gamemaker.runtime_runner import run_exe_smoke, run_html5_fallback
 from app.runtime_engines.gamemaker.toolchain import discover_gamemaker_toolchain
 from app.runtime_engines.gamemaker.yyz_parser import extract_yyz_archive, find_yyp_after_extract
@@ -138,11 +143,62 @@ def _materialize_yyp_source_tree(yyp_path: Path, workspace: Path) -> Dict[str, A
     return {"materialized": False, "yyp_path": str(yyp_path)}
 
 
+def publish_built_runtime_to_student(package_dir: Path, student_root: Path) -> Dict[str, Any]:
+    """Copy a built GameMaker package into the student folder for launch."""
+    dest = student_root.resolve() / GENERATED_RUNTIME_DIRNAME
+    if dest.exists():
+        shutil.rmtree(dest, ignore_errors=True)
+    dest.mkdir(parents=True, exist_ok=True)
+    copied = 0
+    for item in package_dir.rglob("*"):
+        if not item.is_file():
+            continue
+        relative = item.relative_to(package_dir)
+        if any(part in {"", ".", ".."} for part in relative.parts):
+            continue
+        target = dest.joinpath(*relative.parts)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(item, target)
+        copied += 1
+    exe = next(dest.rglob("*.exe"), None)
+    html = next(dest.rglob("index.html"), None)
+    return {
+        "generated": True,
+        "generated_runtime_dir": str(dest),
+        "package_dir": str(package_dir),
+        "executable": str(exe.resolve()) if exe else None,
+        "html_entry": str(html.resolve()) if html else None,
+        "copied_files": copied,
+    }
+
+
+def cleanup_generated_gamemaker_runtime(
+    generated_dir: Optional[Path],
+    *,
+    student_root: Path,
+) -> Dict[str, Any]:
+    """Delete only the grader-built runtime folder inside the student tree."""
+    if not generated_dir:
+        return {"cleaned": False, "reason": "none"}
+    dest = Path(generated_dir).resolve()
+    root = student_root.resolve()
+    if dest.name != GENERATED_RUNTIME_DIRNAME or not is_generated_gamemaker_runtime_path(dest):
+        return {"cleaned": False, "reason": "unsafe_name", "path": str(dest)}
+    try:
+        dest.relative_to(root)
+    except ValueError:
+        return {"cleaned": False, "reason": "outside_student_root", "path": str(dest)}
+    if dest.exists():
+        shutil.rmtree(dest, ignore_errors=True)
+    return {"cleaned": not dest.exists(), "path": str(dest)}
+
+
 def run_build_pipeline(
     layout: GameMakerLayout,
     *,
     workspace: Path,
     timeout_seconds: int = 90,
+    student_root: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """Extract YYZ/YYP and optionally invoke GameMaker IDE CLI build."""
     pipeline: Dict[str, Any] = {
@@ -151,7 +207,9 @@ def run_build_pipeline(
         "yyp_ready": bool(layout.yyp_path),
         "ide_build_attempted": False,
         "runnable_after_pipeline": bool(layout.executable or layout.html_entry),
+        "student_runtime": {"generated": False},
     }
+    publish_root = student_root or layout.project_root
 
     if layout.yyz_path and not layout.yyp_path:
         extract_dir = workspace / "yyz_extract"
@@ -176,9 +234,19 @@ def run_build_pipeline(
         ide_build = _try_ide_build(layout.yyp_path, workspace, timeout_seconds=timeout_seconds)
         pipeline["ide_build"] = ide_build
         pipeline["ide_build_attempted"] = bool(ide_build.get("attempted"))
-        if ide_build.get("executable"):
-            layout.executable = Path(str(ide_build["executable"]))
-        if ide_build.get("html_entry"):
+        package_exe = Path(str(ide_build["executable"])) if ide_build.get("executable") else None
+        if package_exe and publish_root:
+            published = publish_built_runtime_to_student(package_exe.parent, Path(publish_root))
+            pipeline["student_runtime"] = published
+            if published.get("executable"):
+                layout.executable = Path(str(published["executable"]))
+                ide_build["executable"] = published["executable"]
+            if published.get("html_entry"):
+                layout.html_entry = Path(str(published["html_entry"]))
+                ide_build["html_entry"] = published["html_entry"]
+        elif package_exe:
+            layout.executable = package_exe
+        if ide_build.get("html_entry") and not layout.html_entry:
             layout.html_entry = Path(str(ide_build["html_entry"]))
 
     refreshed = probe_gamemaker_layout(layout.yyp_path or layout.yyz_path or layout.project_root or workspace)
@@ -188,6 +256,12 @@ def run_build_pipeline(
         layout.html_entry = refreshed.html_entry
     if refreshed.gml_files:
         layout.gml_files = refreshed.gml_files
+
+    published_runtime = pipeline.get("student_runtime") or {}
+    if published_runtime.get("executable"):
+        layout.executable = Path(str(published_runtime["executable"]))
+    if published_runtime.get("html_entry"):
+        layout.html_entry = Path(str(published_runtime["html_entry"]))
 
     pipeline["runnable_after_pipeline"] = bool(layout.executable or layout.html_entry)
     pipeline["layout"] = layout.to_dict()
@@ -296,12 +370,17 @@ def run_gameplay_replay(
     }
 
     if layout.executable:
-        run_exe_smoke(session, layout.executable, timeout_seconds=timeout_seconds)
-        if session.signals.get("runtime_method") == "gamemaker_static_only":
+        smoke = run_exe_smoke(session, layout.executable, timeout_seconds=timeout_seconds)
+        runtime_method = str(session.signals.get("runtime_method") or "")
+        if runtime_method in {
+            "gamemaker_static_only",
+            "gamemaker_runtime_unavailable",
+        } or smoke.get("skipped"):
             replay["method"] = "static_only"
             replay["skipped"] = True
             replay["reason"] = (
-                (session.signals.get("gamemaker_launch_assessment") or {}).get("skip_reason")
+                smoke.get("reason")
+                or (session.signals.get("gamemaker_launch_assessment") or {}).get("skip_reason")
                 or "missing_data_win"
             )
         else:
@@ -331,69 +410,90 @@ def run_gamemaker_runtime_verification(
 ) -> Dict[str, Any]:
     """Full PRO verification pipeline."""
     workspace = session.workspace
+    generated_dir: Optional[Path] = None
+    build: Dict[str, Any] = {}
+    result: Optional[Dict[str, Any]] = None
+    try:
+        stale = session.root / GENERATED_RUNTIME_DIRNAME
+        if stale.is_dir():
+            cleanup_generated_gamemaker_runtime(stale, student_root=session.root)
 
-    build = run_build_pipeline(layout, workspace=workspace, timeout_seconds=timeout_seconds)
-    inspection = inspect_gamemaker_objects(layout)
-    replay = run_gameplay_replay(session, layout, timeout_seconds=min(90, timeout_seconds))
+        build = run_build_pipeline(
+            layout,
+            workspace=workspace,
+            timeout_seconds=timeout_seconds,
+            student_root=session.root,
+        )
+        generated = (build.get("student_runtime") or {}).get("generated_runtime_dir")
+        if generated:
+            generated_dir = Path(str(generated))
+            session.signals["generated_runtime_dir"] = str(generated_dir)
+        inspection = inspect_gamemaker_objects(layout)
+        replay = run_gameplay_replay(session, layout, timeout_seconds=min(90, timeout_seconds))
 
-    artifact = analyze_gamemaker_artifacts(layout)
-    signals = {
-        "gamemaker_build_pipeline_ok": build.get("runnable_after_pipeline"),
-        "object_inspection_ok": inspection.get("inspection_ok"),
-        "object_count": (inspection.get("summary") or {}).get("objects", 0),
-        "sprite_count": (inspection.get("summary") or {}).get("sprites", 0),
-        "room_count": (inspection.get("summary") or {}).get("rooms", 0),
-        "event_count": (inspection.get("summary") or {}).get("events", 0),
-        "gameplay_replay_ok": replay.get("gameplay_observed"),
-        "screenshot_count": len(replay.get("screenshots") or []),
-        "frame_delta_score": replay.get("frame_delta_score", 0.0),
-        "freeze_detected": replay.get("freeze_detected", False),
-        "functional_smoke_pass": bool(
-            build.get("runnable_after_pipeline")
-            and inspection.get("inspection_ok")
-            and replay.get("gameplay_observed")
-            and replay.get("method") in ("exe_smoke", "html5_headless")
-        ),
-    }
+        artifact = analyze_gamemaker_artifacts(layout)
+        signals = {
+            "gamemaker_build_pipeline_ok": build.get("runnable_after_pipeline"),
+            "object_inspection_ok": inspection.get("inspection_ok"),
+            "object_count": (inspection.get("summary") or {}).get("objects", 0),
+            "sprite_count": (inspection.get("summary") or {}).get("sprites", 0),
+            "room_count": (inspection.get("summary") or {}).get("rooms", 0),
+            "event_count": (inspection.get("summary") or {}).get("events", 0),
+            "gameplay_replay_ok": replay.get("gameplay_observed"),
+            "screenshot_count": len(replay.get("screenshots") or []),
+            "frame_delta_score": replay.get("frame_delta_score", 0.0),
+            "freeze_detected": replay.get("freeze_detected", False),
+            "functional_smoke_pass": bool(
+                build.get("runnable_after_pipeline")
+                and inspection.get("inspection_ok")
+                and replay.get("gameplay_observed")
+                and replay.get("method") in ("exe_smoke", "html5_headless")
+            ),
+        }
 
-    result = {
-        "success": signals["functional_smoke_pass"] or signals["object_inspection_ok"],
-        "method": "gamemaker_pro_runtime_verification",
-        "build_pipeline": build,
-        "object_inspection": inspection,
-        "gameplay_replay": replay,
-        "artifact_analysis": artifact,
-        "signals": signals,
-        "gamemaker_runtime_verification": {
-            "version": "gamemaker_runtime_verification_v1",
-            "yyp": str(layout.yyp_path) if layout.yyp_path else None,
-            "yyz": str(layout.yyz_path) if layout.yyz_path else None,
-            "version_evidence": layout.version_evidence,
-        },
-    }
+        result = {
+            "success": signals["functional_smoke_pass"] or signals["object_inspection_ok"],
+            "method": "gamemaker_pro_runtime_verification",
+            "build_pipeline": build,
+            "object_inspection": inspection,
+            "gameplay_replay": replay,
+            "artifact_analysis": artifact,
+            "signals": signals,
+            "gamemaker_runtime_verification": {
+                "version": "gamemaker_runtime_verification_v1",
+                "yyp": str(layout.yyp_path) if layout.yyp_path else None,
+                "yyz": str(layout.yyz_path) if layout.yyz_path else None,
+                "version_evidence": layout.version_evidence,
+            },
+        }
 
-    session.signals.update(signals)
-    session.signals["build_pipeline"] = build
-    session.signals["object_inspection"] = inspection
-    session.signals["gameplay_replay"] = replay
-    session.signals["artifact_analysis"] = artifact
-    session.signals["gamemaker_runtime_verification"] = result["gamemaker_runtime_verification"]
-    session.signals["gamemaker_version_evidence"] = layout.version_evidence
-    session.signals["runtime_method"] = result["method"]
+        session.signals.update(signals)
+        session.signals["build_pipeline"] = build
+        session.signals["object_inspection"] = inspection
+        session.signals["gameplay_replay"] = replay
+        session.signals["artifact_analysis"] = artifact
+        session.signals["gamemaker_runtime_verification"] = result["gamemaker_runtime_verification"]
+        session.signals["gamemaker_version_evidence"] = layout.version_evidence
+        session.signals["runtime_method"] = result["method"]
 
-    if replay.get("gameplay_observed"):
-        session.status = SessionStatus.COMPLETED
-    elif inspection.get("inspection_ok") and build.get("yyp_ready"):
-        session.status = SessionStatus.COMPLETED
-        session.signals["runtime_partial"] = True
-    else:
-        session.status = SessionStatus.FAILED if not build.get("yyp_ready") else SessionStatus.COMPLETED
+        if replay.get("gameplay_observed"):
+            session.status = SessionStatus.COMPLETED
+        elif inspection.get("inspection_ok") and build.get("yyp_ready"):
+            session.status = SessionStatus.COMPLETED
+            session.signals["runtime_partial"] = True
+        else:
+            session.status = SessionStatus.FAILED if not build.get("yyp_ready") else SessionStatus.COMPLETED
 
-    session.events.record(
-        "gamemaker_pro_runtime_verification",
-        objects=signals["object_count"],
-        rooms=signals["room_count"],
-        gameplay=signals["gameplay_replay_ok"],
-    )
-    return result
+        session.events.record(
+            "gamemaker_pro_runtime_verification",
+            objects=signals["object_count"],
+            rooms=signals["room_count"],
+            gameplay=signals["gameplay_replay_ok"],
+        )
+        return result
+    finally:
+        cleanup = cleanup_generated_gamemaker_runtime(generated_dir, student_root=session.root)
+        session.signals["generated_runtime_cleanup"] = cleanup
+        if result is not None:
+            result["signals"]["generated_runtime_cleanup"] = cleanup
 

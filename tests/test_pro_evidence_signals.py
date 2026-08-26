@@ -28,6 +28,25 @@ def test_design_peer_not_final_game_test():
     assert not text_has_design_peer_evidence(final_test_only)
 
 
+def test_design_survey_corpus_counts_even_with_test_plan_language():
+    from app.pro_evidence_signals import (
+        text_has_design_decisions,
+        text_has_improvement_from_testing,
+    )
+
+    jana_like = (
+        "وثيقة تصميم لعبة CheeseChase. الجمهور المستهدف من 8 إلى 12 سنة. "
+        "خيارات التطوير: قمت باختيار التحكم بالفأرة بناء على استبيان الأطفال. "
+        "تبرير قرار التصميم للواجهة والنقاط والأرواح بعد ملاحظات ليلى وسارة. "
+        "محور التحسين بعد الاختبار: سرعة القطة وأقنعة التصادم ومزامنة الجبن. "
+        "خطة اختبار ونتائج اختبار اللعبة للنسخة النهائية مع جدول الحالات. "
+        + ("تفاصيل التصميم " * 40)
+    )
+    assert text_has_design_peer_evidence(jana_like)
+    assert text_has_design_decisions(jana_like)
+    assert text_has_improvement_from_testing(jana_like)
+
+
 def test_path_name_detection():
     assert path_looks_like_testing_doc(r"uploads\student\Bug_Log.docx")
     assert path_looks_like_testing_doc("خطة_اختبار.pdf")

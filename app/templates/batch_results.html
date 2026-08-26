@@ -1101,7 +1101,9 @@
                                 {% if btec_short not in ['D', 'M', 'P', 'U'] %}{% set btec_short = 'U' %}{% endif %}
                                 <div class="grade-stack"{% if btec_short == 'U' and has_gate %} title="U — لم تتحقق C.P5/C.P6 بسبب عدم وجود أدلة Gameplay (Runtime PASS / فيديو لعب / L5 Playtest)."{% elif btec_short == 'U' and is_hcu %} title="U — تغطية أدلة عالية من الملفات لكن المعايير التنفيذية لم تُمنح."{% endif %}>
                                     {{ render_grade_badge(btec_short) }}
-                                    {% if btec_short == 'U' and has_gate %}
+                                    {% if result.grade_decision_status == 'HOLD' %}
+                                    <div class="grade-u-reason" title="اختلف Gemini وDeepSeek على معيار حساس؛ لا تُعتمد النتيجة قبل المراجعة البشرية.">HOLD — مراجعة بشرية</div>
+                                    {% elif btec_short == 'U' and has_gate %}
                                     <div class="grade-u-reason">U بسبب Gate على C.P5/C.P6</div>
                                     {% elif btec_short == 'U' and is_hcu %}
                                     <div class="grade-u-reason">U — تغطية عالية دون تحقق</div>
@@ -1216,6 +1218,24 @@
                     <div class="student-diag-panel" id="diag-{{ result.submission.id }}" hidden>
                         <div class="student-diag-inner">
                             <div class="student-diag-title">تشخيص أكاديمي — لماذا هذه الدرجة؟</div>
+                            {% if result.secondary_ai_review and result.secondary_ai_review.enabled %}
+                            <div class="student-diag-title student-diag-title--spaced-sm">مراجعة Gemini + DeepSeek</div>
+                            <p class="diag-coverage-note">
+                                الحالة: <strong>{{ result.secondary_ai_review.status }}</strong> —
+                                تمت مراجعة {{ result.secondary_ai_review.reviewed_count or 0 }} معيار،
+                                والاختلافات {{ (result.secondary_ai_review.disagreements or [])|length }}.
+                            </p>
+                            {% if result.secondary_ai_review.disagreements %}
+                            <table class="diag-table">
+                                <thead><tr><th>المعيار</th><th>قرار DeepSeek وسبب الاختلاف</th></tr></thead>
+                                <tbody>
+                                {% for item in result.secondary_ai_review.disagreements %}
+                                    <tr><td class="diag-req">{{ item.criterion }}</td><td class="diag-status-bad">{{ 'متحقق' if item.reviewer_achieved else 'غير متحقق' }} — {{ item.reasoning }}</td></tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                            {% endif %}
                             {% set diag = result.explainability.missing_evidence_diagnostics or {} %}
                             {% if diag.rows %}
                             <table class="diag-table">
@@ -1258,17 +1278,25 @@
                                         <td class="diag-status">
                                             {% if rc.confidence_source == 'runtime_l5' %}
                                             <span class="diag-confidence--l5">{{ rc.confidence_source_ar or 'ثقة playtest L5' }}</span>
+                                            {% elif rc.confidence_source == 'cross_modal_l4' %}
+                                            <span class="diag-confidence--l4">{{ rc.confidence_source_ar or 'تحقق L4 متعدد الأدلة' }}</span>
                                             {% elif rc.confidence_source == 'runtime_l4' or rc.confidence_source == 'runtime' %}
                                             <span class="diag-confidence--l4">{{ rc.confidence_source_ar or 'ثقة تشغيل L4' }}</span>
                                             {% elif rc.confidence_source == 'runtime_l3' %}
                                             <span class="diag-confidence--l3">{{ rc.confidence_source_ar or 'ثقة تشغيل L3' }}</span>
+                                            {% elif rc.confidence_source == 'not_applicable' %}
+                                            <span class="diag-confidence--file">غير مطلوب</span>
+                                            {% elif rc.confidence_source == 'documented_only' %}
+                                            <span class="diag-confidence--file">موثق نصيًا فقط</span>
                                             {% else %}
                                             <span class="diag-confidence--file">{{ rc.confidence_source_ar or 'ثقة تحليل ملفات' }}</span>
                                             {% endif %}
                                         </td>
                                         <td class="diag-confidence {% if rc.verified is sameas true or rc.confidence_source == 'runtime_l5' %}diag-confidence--l5{% elif rc.verified is sameas false %}diag-confidence--file{% elif rc.confidence_source == 'runtime_l4' or rc.confidence_source == 'runtime' %}diag-confidence--l4{% elif rc.confidence_source == 'runtime_l3' %}diag-confidence--l3{% else %}diag-confidence--file{% endif %}">
-                                            {% if rc.verified is sameas true %}✓ متحقق — {{ rc.confidence_pct }}%
+                                            {% if rc.applicability == 'not_applicable' %}غير مطلوب لهذه اللعبة
+                                            {% elif rc.verified is sameas true %}✓ متحقق — {{ rc.confidence_pct }}%
                                             {% elif rc.verified is sameas false %}غير متحقق — {{ rc.confidence_pct }}%
+                                            {% elif rc.confidence_pct is none %}{{ rc.verification_status_ar or 'لم يُختبر مباشرة' }}
                                             {% else %}{{ rc.verification_status_ar or 'استدلال' }} — {{ rc.confidence_pct }}%{% endif %}
                                         </td>
                                     </tr>
@@ -1294,7 +1322,7 @@
                             {% else %}
                             <p class="diag-coverage-note diag-runtime-note">
                                 التشغيل الآلي على الخادم وفحص الملفات <strong class="diag-coverage-strong">لا يُعتبر دليلاً كاملاً على اللعب الفعلي (Gameplay)</strong>.
-                                لتحقيق C.P5/C.P6/C.M3/C.D3 يُطلب فيديو لعب من داخل اللعبة (حركة اللاعب، النقاط، تفاعل العدو) أو اختبار بشري موثّق (L5).
+                                لتحقيق C.P5/C.P6/C.M3 تُستخدم أدلة اللعب داخل اللعبة (حركة اللاعب، النقاط، تفاعل العدو) والتحقق الآلي متعدد الأدلة.
                             </p>
                             <div class="student-diag-title student-diag-title--spaced-sm">لقطات التشغيل (مرصودة — لا تثبت gameplay)</div>
                             {% endif %}

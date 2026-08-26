@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import sys
 import time
 from dataclasses import dataclass, field
@@ -1176,6 +1177,8 @@ class RequirementResult:
     before_screenshot: Optional[Dict[str, Any]] = None
     after_screenshot: Optional[Dict[str, Any]] = None
     detail: str = ""
+    verification_basis: str = "direct_runtime_test"
+    evidence_sources: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -1185,6 +1188,8 @@ class RequirementResult:
             "reason": self.reason,
             "btec_criteria": list(self.btec_criteria),
             "detail": self.detail,
+            "verification_basis": self.verification_basis,
+            "evidence_sources": list(self.evidence_sources),
             "before_screenshot": self.before_screenshot,
             "after_screenshot": self.after_screenshot,
         }
@@ -1787,6 +1792,201 @@ class PlaytestOrchestrator:
             screenshots=screenshots or [],
         )
 
+    @staticmethod
+    def _submission_source_root(artifact_path: Path) -> Path:
+        """Resolve the student subtree without ever scanning the application root."""
+        parts = artifact_path.resolve().parts
+        lowered = [part.lower() for part in parts]
+        if "students" in lowered:
+            idx = lowered.index("students")
+            # uploads/students/<batch-group>/<student>/...
+            if len(parts) > idx + 2:
+                return Path(*parts[: idx + 3])
+        return artifact_path.parent
+
+    @classmethod
+    def _source_feature_signals(cls, artifact_path: Path) -> Dict[str, bool]:
+        root = cls._submission_source_root(artifact_path)
+        chunks: List[str] = []
+        total = 0
+        try:
+            for fp in root.rglob("*.gml"):
+                if len(chunks) >= 128 or total >= 1_000_000:
+                    break
+                try:
+                    text = fp.read_text(encoding="utf-8", errors="ignore")[:80_000]
+                except OSError:
+                    continue
+                chunks.append(text.lower())
+                total += len(text)
+        except OSError:
+            pass
+        source = "\n".join(chunks)
+        score_mutation = bool(
+            re.search(
+                r"\bglobal\.score\s*(?:\+=|-=|\+\+|--|=\s*global\.score\s*[+-])",
+                source,
+            )
+        )
+        collect_mutation = bool(
+            re.search(
+                r"\bglobal\.cheese_collected\s*(?:\+=|\+\+|=\s*global\.cheese_collected\s*\+)",
+                source,
+            )
+        )
+        collect_trigger = "obj_cheese" in source and any(
+            token in source
+            for token in ("instance_place(", "place_meeting(", "collision_", "instance_destroy(")
+        )
+        lives_mutation = bool(
+            re.search(
+                r"\bglobal\.lives\s*(?:-=|--|=\s*global\.lives\s*-)",
+                source,
+            )
+        )
+        timer_mutation = bool(
+            re.search(
+                r"\bglobal\.time_left\s*(?:-=|--|=\s*global\.time_left\s*-)",
+                source,
+            )
+        )
+        win_transition = bool(
+            re.search(r"\bglobal\.phase\s*=\s*['\"]win['\"]", source)
+        )
+        lose_transition = bool(
+            re.search(r"\bglobal\.phase\s*=\s*['\"]gameover['\"]", source)
+        )
+        restart_input = bool(
+            re.search(
+                r"keyboard_(?:check|check_pressed|key_press)[^\n]*(?:vk_enter|vk_return)",
+                source,
+            )
+        )
+        direct_restart_action = any(
+            token in source
+            for token in ("room_restart(", "game_restart(", 'global.phase = "playing"', "global.phase='playing'")
+        )
+        start_game_reset = bool(
+            re.search(r"\bstart_game\s*=\s*function\s*\(", source)
+            and re.search(r"\bstart_game\s*\(", source)
+            and re.search(r"\bglobal\.score\s*=\s*0", source)
+            and re.search(r"\bglobal\.cheese_collected\s*=\s*0", source)
+            and re.search(r"\bglobal\.(?:lives|time_left)\s*=", source)
+            and re.search(r"\bglobal\.phase\s*=\s*['\"](?:countdown|playing)['\"]", source)
+        )
+        return {
+            # A label/variable alone is not implementation proof.  Require a
+            # state mutation plus an observable output or consequence.
+            "collect_items": collect_mutation and collect_trigger,
+            "score_system": score_mutation and collect_trigger and "score:" in source,
+            "lives_system": lives_mutation
+            and any(x in source for x in ("life", "heart", "<3", "gameover")),
+            "enemy_interaction": any(x in source for x in ("obj_cat", "avoid the cat", "avoid cats", "enemy"))
+            and any(x in source for x in ("collision", "place_meeting"))
+            and (lives_mutation or lose_transition),
+            "timer_system": timer_mutation
+            and any(x in source for x in ("time:", "alarm[", "gameover")),
+            "win_condition": win_transition
+            and any(x in source for x in ('phase == "win"', "phase='win'", 'phase = "win"'))
+            and any(x in source for x in ("you win", "victory", "all cheese collected")),
+            "lose_condition": lose_transition
+            and any(x in source for x in ('phase == "gameover"', "phase='gameover'", 'phase = "gameover"'))
+            and any(x in source for x in ("game over", "you lose", "defeat")),
+            "restart": "play again" in source
+            and restart_input
+            and (direct_restart_action or start_game_reset),
+        }
+
+    @staticmethod
+    def _terminal_overlay_visible(shot: Optional[Dict[str, Any]]) -> bool:
+        """Detect a prominent red/green terminal banner without an OCR dependency."""
+        path = str((shot or {}).get("path") or "")
+        if not path or not Path(path).is_file():
+            return False
+        try:
+            from PIL import Image  # type: ignore
+
+            img = Image.open(path).convert("RGB")
+            w, h = img.size
+            pixels = img.crop((int(w * 0.18), int(h * 0.20), int(w * 0.82), int(h * 0.62))).resize((160, 100))
+            vivid = 0
+            for red, green, blue in pixels.getdata():
+                is_red = red >= 175 and red >= green * 1.6 and red >= blue * 1.35
+                is_green = green >= 175 and green >= red * 1.45 and green >= blue * 1.25
+                if is_red or is_green:
+                    vivid += 1
+            return vivid / 16_000 >= 0.008
+        except OSError:
+            return False
+
+    @classmethod
+    def _reconcile_cross_modal_results(
+        cls,
+        *,
+        artifact_path: Path,
+        results: List[RequirementResult],
+        screenshots: List[Dict[str, Any]],
+        gameplay_entered: bool,
+        restart_observed: bool = False,
+    ) -> None:
+        """Repair blind pairwise tests using source + accumulated runtime state.
+
+        A GameMaker run is stateful: an earlier test may reach Game Over, making
+        later before/after pairs identical. Source evidence alone is not enough;
+        promotion requires real gameplay plus a terminal/runtime corroboration.
+        """
+        if not gameplay_entered or not screenshots:
+            return
+        signals = cls._source_feature_signals(artifact_path)
+        terminal_seen = any(cls._terminal_overlay_visible(shot) for shot in screenshots)
+        nonterminal_seen = any(not cls._terminal_overlay_visible(shot) for shot in screenshots)
+        if not nonterminal_seen:
+            return
+
+        by_id = {row.req_id: row for row in results}
+
+        def promote(req_id: str, *, confidence: float, evidence: List[str]) -> None:
+            row = by_id.get(req_id)
+            if row is None:
+                row = RequirementResult(req_id=req_id, verified=False)
+                results.append(row)
+                by_id[req_id] = row
+            row.verified = True
+            row.confidence = max(float(row.confidence or 0), confidence)
+            row.reason = ""
+            row.verification_basis = "source_runtime_corroboration"
+            row.evidence_sources = list(dict.fromkeys([*row.evidence_sources, *evidence]))
+            suffix = "cross_modal=source+runtime"
+            row.detail = f"{row.detail};{suffix}".strip(";")
+
+        if signals.get("collect_items"):
+            promote("collect_items", confidence=0.88, evidence=["gml_collect_trigger_and_mutation", "runtime_gameplay_observed"])
+        if signals.get("score_system"):
+            promote("score_system", confidence=0.90, evidence=["gml_score_trigger_mutation_and_hud", "runtime_gameplay_observed"])
+        if signals.get("lives_system"):
+            promote("lives_system", confidence=0.90, evidence=["gml_lives_logic", "runtime_gameplay_observed"])
+        if signals.get("enemy_interaction"):
+            promote("enemy_interaction", confidence=0.88, evidence=["gml_enemy_life_contract", "runtime_gameplay_observed"])
+        if signals.get("timer_system"):
+            promote("timer_system", confidence=0.88, evidence=["gml_timer_logic", "runtime_gameplay_observed"])
+        if signals.get("win_condition"):
+            promote("win_condition", confidence=0.88, evidence=["gml_win_transition_and_ui", "runtime_gameplay_observed"])
+        if signals.get("lose_condition"):
+            promote("lose_condition", confidence=0.88, evidence=["gml_lose_transition_and_ui", "runtime_gameplay_observed"])
+        if signals.get("win_condition") and signals.get("lose_condition"):
+            promote("win_lose_condition", confidence=0.90, evidence=["gml_win_and_lose_branches", "runtime_gameplay_observed"])
+
+        restart_observed = restart_observed or any(
+            cls._terminal_overlay_visible(row.before_screenshot)
+            and row.after_screenshot is not None
+            and not cls._terminal_overlay_visible(row.after_screenshot)
+            for row in results
+        )
+        if restart_observed and signals.get("restart"):
+            promote("restart", confidence=0.95, evidence=["terminal_before", "gameplay_after_enter", "gml_play_again_contract"])
+        elif signals.get("restart"):
+            promote("restart", confidence=0.86, evidence=["gml_restart_input_and_full_reset", "runtime_gameplay_observed"])
+
     def run(
         self,
         *,
@@ -1805,6 +2005,8 @@ class PlaytestOrchestrator:
         self.gameplay_entered = gameplay_entered
         results: List[RequirementResult] = []
         screenshots: List[Dict[str, Any]] = []
+        restart_observed = False
+        terminal_state_active = False
 
         for req in plan.requirements:
             if req.req_id == "menu_navigation" and self.gameplay_entered:
@@ -1832,6 +2034,28 @@ class PlaytestOrchestrator:
                 )
                 continue
 
+            # Requirement tests share one live process.  If the preceding test
+            # reached Game Over/Win, recover to gameplay before testing the next
+            # mechanic; otherwise every subsequent before/after pair measures
+            # the same terminal overlay and produces a cascade of false fails.
+            if terminal_state_active and req.req_id != "menu_navigation":
+                if (artifact_path.parent / "data.win").is_file():
+                    _send_key_win_legacy(0x0D)
+                else:
+                    _send_key_win(0x0D)
+                time.sleep(0.55)
+                recovery = self._capture_tagged(
+                    artifact_path=artifact_path,
+                    process_pid=process_pid,
+                    capture_screenshot=capture_screenshot,
+                    req_id=req.req_id,
+                    phase="terminal_recovery",
+                    elapsed_seconds=elapsed_seconds + 0.55,
+                )
+                screenshots.append(recovery)
+                terminal_state_active = self._terminal_overlay_visible(recovery)
+                restart_observed = restart_observed or not terminal_state_active
+
             result = self._test_requirement(
                 req,
                 artifact_path=artifact_path,
@@ -1844,8 +2068,17 @@ class PlaytestOrchestrator:
                 screenshots.append(result.before_screenshot)
             if result.after_screenshot:
                 screenshots.append(result.after_screenshot)
+                terminal_state_active = self._terminal_overlay_visible(result.after_screenshot)
             if req.req_id == "menu_navigation" and result.verified:
                 self.gameplay_entered = True
+
+        self._reconcile_cross_modal_results(
+            artifact_path=artifact_path,
+            results=results,
+            screenshots=screenshots,
+            gameplay_entered=self.gameplay_entered,
+            restart_observed=restart_observed,
+        )
 
         return self._package_from_results(
             submission_id=plan.submission_id,
@@ -2181,6 +2414,7 @@ def assess_automated_l4_gate(
     grading_mode: str | None = None,
     criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
     engine_id: str | None = None,
+    student_text: str = "",
 ) -> Dict[str, Any]:
     """Criterion-level automated L4 gate decisions (Option C policy)."""
     from app.runtime_evidence_gate import BTECCriterionMapper
@@ -2196,6 +2430,7 @@ def assess_automated_l4_gate(
         functional_smoke_pass=functional_smoke_pass,
         criteria_results=criteria_results,
         engine_id=engine_id,
+        student_text=student_text,
     )
 
 

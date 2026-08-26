@@ -1343,6 +1343,17 @@ def build_evidence_coverage_matrix(inventory: Dict[str, Any]) -> List[Dict[str, 
     rt_level = inventory.get("runtime_evidence_level") or {}
     testing = inventory.get("testing_evidence") or {}
     media = inventory.get("media_artifacts") or {}
+    observation = inventory.get("runtime_observation_report") or {}
+    gameplay = inventory.get("gameplay_verification") or observation.get(
+        "gameplay_verification"
+    ) or {}
+    gameplay_level = str(
+        gameplay.get("l4_level") or gameplay.get("automated_l4_level") or ""
+    )
+    gameplay_verified = bool(
+        gameplay.get("gameplay_entered") is True
+        and gameplay_level in ("L4_full", "L4_partial")
+    )
 
     rows = [
         {
@@ -1362,9 +1373,15 @@ def build_evidence_coverage_matrix(inventory: Dict[str, Any]) -> List[Dict[str, 
         },
         {
             "type_ar": "ملفات تنفيذية / builds",
-            "coverage_ar": _runtime_artifact_coverage(rt, exec_status),
+            "coverage_ar": (
+                f"شُغّلت فعليًا — {gameplay_level}"
+                if gameplay_verified
+                else _runtime_artifact_coverage(rt, exec_status)
+            ),
             "authority_ar": (
-                "ملاحظة تشغيل استشارية — ليست verification"
+                "تحقق تشغيل آلي داخل نافذة اللعبة"
+                if gameplay_verified
+                else "ملاحظة تشغيل استشارية — ليست verification"
                 if exec_status == "observed_runtime_advisory"
                 else "رُصدت — لم تُشغَّل"
                 if exec_status == "detected_not_executed" or rt.get("executables_detected")
@@ -1373,8 +1390,8 @@ def build_evidence_coverage_matrix(inventory: Dict[str, Any]) -> List[Dict[str, 
         },
         {
             "type_ar": "تشغيل اللعب (gameplay execution)",
-            "coverage_ar": "غير مُتحقَّق",
-            "authority_ar": "unavailable",
+            "coverage_ar": gameplay_level if gameplay_verified else "غير مُتحقَّق",
+            "authority_ar": "automated_runtime" if gameplay_verified else "unavailable",
         },
         {
             "type_ar": "فيديو لعب",
@@ -1388,17 +1405,31 @@ def build_evidence_coverage_matrix(inventory: Dict[str, Any]) -> List[Dict[str, 
         },
         {
             "type_ar": "التحقق من التشغيل",
-            "coverage_ar": _status_label((inventory.get("runtime_verification") or {}).get("status")),
+            "coverage_ar": (
+                f"متحقق — {gameplay_level}"
+                if gameplay_verified
+                else _status_label((inventory.get("runtime_verification") or {}).get("status"))
+            ),
             "authority_ar": (
-                "ملاحظة تشغيل استشارية — مراجعة بشرية مطلوبة"
+                "اختبارات متطلبات آلية متعددة الأدلة"
+                if gameplay_verified
+                else "ملاحظة تشغيل استشارية — مراجعة بشرية مطلوبة"
                 if (inventory.get("runtime_verification") or {}).get("status") == "observed_advisory"
                 else "غير متاح"
             ),
         },
         {
             "type_ar": "مستوى أدلة التشغيل",
-            "coverage_ar": f"L{rt_level.get('level', 0)} — {rt_level.get('label_ar', '')}",
-            "authority_ar": rt_level.get("authority", "none"),
+            "coverage_ar": (
+                f"{gameplay_level} — اختبار داخل نافذة اللعبة"
+                if gameplay_verified
+                else f"L{rt_level.get('level', 0)} — {rt_level.get('label_ar', '')}"
+            ),
+            "authority_ar": (
+                "automated_l4"
+                if gameplay_verified
+                else rt_level.get("authority", "none")
+            ),
         },
     ]
     return rows

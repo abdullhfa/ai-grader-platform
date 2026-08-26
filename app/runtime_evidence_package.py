@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 from app.pro_engine_gameplay_governance import detect_primary_game_engine
 from app.runtime_replay_viewer import path_to_upload_url
 
-PACKAGE_VERSION = "runtime_evidence_package_v2"
+PACKAGE_VERSION = "runtime_evidence_package_v3"
 
 _SCREENSHOT_SLOTS = (
     ("startup", ("launch", "startup", "pre_interaction")),
@@ -23,7 +23,7 @@ _SCREENSHOT_SLOTS = (
 
 _REQ_EVENT_MAP: Dict[str, Tuple[str, ...]] = {
     "player_movement": ("movement_observed", "input_detected", "scene_transition"),
-    "jump": ("jump_observed", "movement_observed"),
+    "jump": ("jump_observed",),
     "collect_items": ("collectible_interaction_observed", "score_changed"),
     "score_system": ("score_changed",),
     "enemy_interaction": ("enemy_interaction_observed", "game_over_seen"),
@@ -39,6 +39,7 @@ _REQ_RESULT_ALIASES: Dict[str, str] = {
     "menu_ui": "menu_navigation",
     "win_condition": "win_lose_condition",
     "lose_condition": "win_lose_condition",
+    "restart": "restart",
 }
 
 
@@ -295,10 +296,8 @@ def _extract_events(
             signal="player_moved" if moved else "visual_response_to_input",
         )
 
-    if semantics.get("interaction_detected") and not moved:
-        add("jump_observed", 0.55, note="weak_proxy_from_interaction")
-    elif moved:
-        add("jump_observed", 0.65, note="proxy_movement_only")
+    if signals.get("jump_detected") in ("detected", "yes", "observed", True):
+        add("jump_observed", 0.92, signal="jump_detected")
 
     if signals.get("score_changed") in ("detected", "yes", "observed") or semantics.get(
         "score_progression_detected"
@@ -348,8 +347,6 @@ def _map_requirements(
             continue
         candidates = _REQ_EVENT_MAP.get(req_id, ())
         evidence = [e for e in candidates if e in event_names]
-        if not evidence and req.get("mentioned_in_sources"):
-            evidence = [e for e in event_names if e.endswith("_observed")][:1]
         if shot_files and evidence:
             evidence = list(evidence) + [shot_files[min(len(shot_files) - 1, 1)]]
         mapping.append(
@@ -358,6 +355,9 @@ def _map_requirements(
                 "label_ar": req.get("label_ar") or req_id,
                 "evidence": evidence,
                 "mentioned_in_sources": bool(req.get("mentioned_in_sources")),
+                "applicability": req.get("applicability") or (
+                    "required" if req.get("mentioned_in_sources") else "not_mentioned"
+                ),
             }
         )
     return mapping
@@ -409,41 +409,72 @@ def _requirement_confidence(
 ) -> List[Dict[str, Any]]:
     by_event = {e["event"]: float(e.get("confidence") or 0) for e in events}
     direct_results = _requirement_results_by_id(gameplay_verification or {})
-    source, source_ar = _confidence_source_for_level(evidence_level, runtime_gameplay_verified)
+    base_source, base_source_ar = _confidence_source_for_level(
+        evidence_level, runtime_gameplay_verified
+    )
     rows: List[Dict[str, Any]] = []
     for row in mapping:
         req = str(row.get("requirement") or "")
+        applicability = str(row.get("applicability") or "not_mentioned")
         result_id = _REQ_RESULT_ALIASES.get(req, req)
-        direct = direct_results.get(result_id)
+        # Prefer the feature-specific result.  A legacy combined
+        # ``win_lose_condition`` row is only a fallback; otherwise observing a
+        # loss could incorrectly mark an unimplemented win path as verified.
+        direct = direct_results.get(req) or direct_results.get(result_id)
         verified: Optional[bool] = None
-        if direct is not None:
+        source, source_ar = base_source, base_source_ar
+        if applicability == "not_applicable":
+            pct = None
+            source = "not_applicable"
+            source_ar = "غير مطلوب"
+        elif direct is not None:
             try:
                 score = max(0.0, min(1.0, float(direct.get("confidence") or 0)))
             except (TypeError, ValueError):
                 score = 0.0
             pct = round(100 * score)
             verified = direct.get("verified") is True
+            basis = str(direct.get("verification_basis") or "")
+            if basis == "source_runtime_corroboration":
+                source = "cross_modal_l4"
+                source_ar = "تحقق L4 متعدد الأدلة"
         else:
             evs = row.get("evidence") or []
             scores = [by_event[e] for e in evs if e in by_event]
-            pct = round(100 * (sum(scores) / len(scores))) if scores else 0
-        if source == "file_analysis" and pct > 0:
+            if scores:
+                pct = round(100 * (sum(scores) / len(scores)))
+            elif row.get("mentioned_in_sources"):
+                pct = None
+                source = "documented_only"
+                source_ar = "موثق نصيًا فقط"
+            else:
+                pct = 0
+        if source == "file_analysis" and isinstance(pct, int) and pct > 0:
             pct = min(pct, 79)
         rows.append(
             {
                 "requirement": req,
                 "label_ar": row.get("label_ar") or req,
                 "confidence_pct": pct,
+                "applicability": applicability,
                 "confidence_source": source,
                 "confidence_source_ar": source_ar,
                 "verified": verified,
                 "verification_status_ar": (
-                    "متحقق"
+                    "غير مطلوب لهذه اللعبة"
+                    if applicability == "not_applicable"
+                    else "متحقق"
                     if verified is True
                     else (
                         "غير متحقق"
                         if verified is False
-                        else ("لم يُختبر مباشرة" if source.startswith("runtime_") else "استدلال")
+                        else (
+                            "موثق فقط — لم يُختبر مباشرة"
+                            if source == "documented_only"
+                            else "لم يُختبر مباشرة"
+                            if source.startswith("runtime_")
+                            else "استدلال"
+                        )
                     )
                 ),
             }
@@ -579,9 +610,9 @@ def attach_runtime_evidence_package(
 ) -> Dict[str, Any]:
     inv = artifact_inventory or grading_result.get("artifact_inventory") or {}
     checklist = requirement_checklist or grading_result.get("requirement_checklist")
-    if not checklist:
-        from app.requirement_checklist import build_requirement_checklist
+    from app.requirement_checklist import CHECKLIST_VERSION, build_requirement_checklist
 
+    if not checklist or str(checklist.get("version") or "") != CHECKLIST_VERSION:
         checklist = build_requirement_checklist(
             student_text=student_text or str(grading_result.get("student_text") or ""),
             reference_solution=reference_solution,

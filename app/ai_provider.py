@@ -1,5 +1,5 @@
 """
-AI providers: Google Gemini (primary), OpenRouter (cloud fallback), Ollama (local dev).
+AI providers: Google Gemini, DeepSeek, OpenRouter, and Ollama (local dev).
 
 Production deployment:
     AI_PROVIDER=gemini             ← recommended (cheapest + best for BTEC)
@@ -15,6 +15,11 @@ Cloud fallback option (when GEMINI quota hits):
 Local dev fallback (Ollama):
     AI_PROVIDER=ollama
     OLLAMA_BASE_URL=http://localhost:11434/v1
+
+DeepSeek Vision option:
+    AI_PROVIDER=deepseek
+    DEEPSEEK_API_KEY=sk-...
+    DEEPSEEK_MODEL=deepseek-v4-flash-vision-exp
 """
 import base64
 import os
@@ -176,7 +181,7 @@ class EmptyVisionResponse(Exception):
 
 # Whitelist of providers that the code actually knows how to talk to.
 # Anything not in here is mapped to "gemini" (the safest default).
-_ALLOWED = frozenset({"gemini", "openrouter", "ollama"})
+_ALLOWED = frozenset({"gemini", "deepseek", "openrouter", "ollama"})
 
 
 def _normalize_provider(name: Optional[str]) -> str:
@@ -221,6 +226,11 @@ def _gemini_api_key_looks_valid() -> bool:
     return bool(key) and key.startswith("AIza")
 
 
+def _deepseek_api_key_present() -> bool:
+    """Do not add DeepSeek to auto-discovery unless it is actually configured."""
+    return bool((os.getenv("DEEPSEEK_API_KEY") or "").strip())
+
+
 def _looks_like_google_api_error_json(obj: Any) -> bool:
     """True if parsed JSON is a Google-style API error object, not our teacher guide."""
     if not isinstance(obj, dict) or "error" not in obj:
@@ -234,7 +244,7 @@ def _looks_like_google_api_error_json(obj: Any) -> bool:
 
 
 class AIProvider:
-    """Gemini (Google), OpenRouter, or Ollama, all via OpenAI-compatible client."""
+    """Gemini, DeepSeek, OpenRouter, or Ollama via OpenAI-compatible clients."""
 
     def __init__(self, provider: Optional[str] = None, model: Optional[str] = None):
         self.provider = _normalize_provider(
@@ -248,6 +258,8 @@ class AIProvider:
     def _initialize_provider(self) -> None:
         if self.provider == "gemini":
             self._init_gemini()
+        elif self.provider == "deepseek":
+            self._init_deepseek()
         elif self.provider == "openrouter":
             self._init_openrouter()
         elif self.provider == "ollama":
@@ -271,6 +283,24 @@ class AIProvider:
         )
         self.model = self._model_override or os.getenv("GEMINI_MODEL", "gemini-2.5-pro")
         print(f"[OK] Initialized Gemini (OpenAI-compat) with model: {self.model}")
+
+    def _init_deepseek(self) -> None:
+        """DeepSeek's native OpenAI-compatible Chat Completions endpoint."""
+        from openai import OpenAI  # type: ignore
+
+        api_key = (os.getenv("DEEPSEEK_API_KEY") or "").strip()
+        if not api_key:
+            raise ValueError(
+                "DEEPSEEK_API_KEY not found in environment. "
+                "Create a key at https://platform.deepseek.com/api_keys"
+            )
+
+        base_url = (os.getenv("DEEPSEEK_BASE_URL") or "https://api.deepseek.com").strip()
+        self.client = OpenAI(api_key=api_key, base_url=base_url)
+        self.model = self._model_override or os.getenv(
+            "DEEPSEEK_MODEL", "deepseek-v4-flash-vision-exp"
+        )
+        print(f"[OK] Initialized DeepSeek with model: {self.model}")
 
     def _init_openrouter(self) -> None:
         """OpenRouter is a unified gateway. Useful for routing to Gemini Pro via a single API key."""
@@ -341,10 +371,15 @@ class AIProvider:
         if max_tokens:
             params["max_tokens"] = _effective_max_tokens(self.provider, self.model, max_tokens)  # type: ignore
         # Gemini's OpenAI-compat endpoint doesn't accept these.
-        if seed is not None and self.provider not in ["gemini"]:
+        if seed is not None and self.provider not in ["gemini", "deepseek"]:
             params["seed"] = seed  # type: ignore
         if response_format and self.provider not in ["gemini"]:
             params["response_format"] = response_format  # type: ignore
+        if self.provider == "deepseek":
+            # Keep ordinary grading calls deterministic and ensure the answer is
+            # returned in message.content rather than consuming the output budget
+            # as hidden reasoning.
+            params["extra_body"] = {"thinking": {"type": "disabled"}}
 
         if self.provider == "ollama":
             last_exc: Optional[Exception] = None
@@ -632,12 +667,15 @@ class AIProvider:
                     "image_url": {"url": f"data:{mime_type};base64,{b64}"},
                 }
             )
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[{"role": "user", "content": content}],
-            temperature=temperature,
-            max_tokens=8192,
-        )
+        params: Dict[str, Any] = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": content}],
+            "temperature": temperature,
+            "max_tokens": 8192,
+        }
+        if self.provider == "deepseek":
+            params["extra_body"] = {"thinking": {"type": "disabled"}}
+        response = self.client.chat.completions.create(**params)
         msg = response.choices[0].message
         raw = msg.content
         if raw is None or not str(raw).strip():
@@ -665,7 +703,7 @@ def get_ai_provider(provider: Optional[str] = None) -> AIProvider:
             env_p = _normalize_provider(os.getenv("AI_PROVIDER", "gemini"))
             providers_to_try.append(env_p)
             # Auto-discovery only when AI_PROVIDER is unset/invalid.
-            cloud_chain = ["gemini", "openrouter"]
+            cloud_chain = ["gemini", "deepseek", "openrouter"]
             if _ollama_fallback_enabled():
                 cloud_chain.append("ollama")
             for p in cloud_chain:
@@ -677,6 +715,8 @@ def get_ai_provider(provider: Optional[str] = None) -> AIProvider:
         if p == "gemini" and not _gemini_api_key_looks_valid():
             print("⚠️  Skipping gemini fallback: GEMINI_API_KEY is missing or not a Google AI key (AIza…)")
             continue
+        if p == "deepseek" and not _deepseek_api_key_present():
+            continue
         try:
             return AIProvider(p)
         except Exception as e:
@@ -685,7 +725,7 @@ def get_ai_provider(provider: Optional[str] = None) -> AIProvider:
             continue
     raise Exception(
         f"Failed to initialize any AI provider. Last error: {last_error}. "
-        f"Hint: set AI_PROVIDER=gemini and GEMINI_API_KEY in your .env."
+        "Hint: configure AI_PROVIDER and its matching API key in your .env."
     )
 
 
@@ -700,6 +740,14 @@ def resolve_vision_model(grading_mode: str | None = None) -> str:
     prov = _normalize_provider(os.getenv("AI_PROVIDER", "gemini"))
     if prov == "ollama":
         dedicated = (os.getenv("OLLAMA_VISION_MODEL") or "").strip()
+        if dedicated:
+            return dedicated
+    if prov == "deepseek":
+        dedicated = (os.getenv("DEEPSEEK_VISION_MODEL") or "").strip()
+        if dedicated:
+            return dedicated
+    if prov == "gemini":
+        dedicated = (os.getenv("GEMINI_VISION_MODEL") or "").strip()
         if dedicated:
             return dedicated
     return resolve_grading_model(grading_mode)
@@ -756,6 +804,19 @@ def resolve_grading_model(grading_mode: str | None) -> str:
             or os.getenv("OPENROUTER_MODEL_PRO")
             or "google/gemini-2.5-pro"
         ).strip()
+    if prov == "deepseek":
+        if fast:
+            return (
+                os.getenv("DEEPSEEK_MODEL_FAST")
+                or os.getenv("DEEPSEEK_MODEL")
+                or "deepseek-v4-flash-vision-exp"
+            ).strip()
+        return (
+            os.getenv("DEEPSEEK_PRO_MODEL")
+            or os.getenv("DEEPSEEK_MODEL_PRO")
+            or os.getenv("DEEPSEEK_MODEL")
+            or "deepseek-v4-flash-vision-exp"
+        ).strip()
     return (os.getenv("OLLAMA_MODEL") or "deepseek-coder").strip()
 
 
@@ -791,13 +852,14 @@ def get_global_provider() -> AIProvider:
             # Honour AI_PROVIDER=ollama|gemini|openrouter — do not fall back to Gemini silently.
             _fallback_providers = []
         else:
-            chain = ["gemini", "openrouter"]
+            chain = ["gemini", "deepseek", "openrouter"]
             if _ollama_fallback_enabled():
                 chain.append("ollama")
             _fallback_providers = [
                 p for p in chain
                 if p != _global_provider.provider
                 and not (p == "gemini" and not _gemini_api_key_looks_valid())
+                and not (p == "deepseek" and not _deepseek_api_key_present())
             ]
     return _global_provider
 
@@ -809,6 +871,8 @@ def get_fallback_provider() -> Optional[AIProvider]:
     while _fallback_providers:
         p = _fallback_providers.pop(0)
         if p == "gemini" and not _gemini_api_key_looks_valid():
+            continue
+        if p == "deepseek" and not _deepseek_api_key_present():
             continue
         try:
             fallback = AIProvider(p)
@@ -822,10 +886,11 @@ def get_fallback_provider() -> Optional[AIProvider]:
 
 
 def reset_global_provider() -> None:
-    global _global_provider, _fallback_providers, _grading_provider_cache
+    global _global_provider, _fallback_providers, _grading_provider_cache, _vision_provider_instance
     _global_provider = None
     _fallback_providers = []
     _grading_provider_cache = {}
+    _vision_provider_instance = None
 
 
 def check_provider_health() -> Dict[str, Any]:

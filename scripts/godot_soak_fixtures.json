@@ -18,9 +18,9 @@
       "kind": "student_folder",
       "path": "uploads/students/hamtini_u8/final.exe",
       "profile": "unknown",
-      "expected_behavior": "stable_failure",
+      "expected_behavior": "stable_pass",
       "pending": false,
-      "notes": "ahmad hamtini U8 — final.exe selected after dual trial; both builds GAME_WINDOW_CAPTURE_FAILED at preflight; final faster (47s vs 55s). See reports/godot_trial_*.json"
+      "notes": "ahmad hamtini U8 — final.exe. Previously GAME_WINDOW_CAPTURE_FAILED (env-dependent); now gameplay_entered=true, L4_partial on current screen setup. Reclassified stable_pass 2026-07-03."
     }
   ],
   "runs_per_fixture": 3,

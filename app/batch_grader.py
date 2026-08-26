@@ -909,6 +909,10 @@ async def grade_student_submission(
 
     if skip_grading_cache_default():
         skip_grading_cache = True
+    # Secondary review needs the finalized authoritative rows, not the older
+    # primary-only payload stored by the legacy grading cache.
+    if os.getenv("SECONDARY_REVIEW_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}:
+        skip_grading_cache = True
 
     if selected_criteria is None:
         # Empty = grade all criteria from assignment (BTEC unit codes like 8/B.P3)
@@ -1538,6 +1542,14 @@ async def grade_student_submission(
             "achieved": is_achieved,
             "score": ai_score,
             "feedback": feedback,
+            "primary_ai_decision": {
+                "provider": provider.provider,
+                "model": provider.model,
+                "achieved": is_achieved,
+                "score": ai_score,
+                "evidence": evidence,
+                "reasoning": reasoning,
+            },
             "decision_matrix": [{"requirement": level, "met": is_achieved, "evidence": evidence, "reasoning": reasoning}],
             "covered_points": [evidence] if is_achieved and evidence else [],
             "missing_points": [reasoning] if not is_achieved and reasoning else []
@@ -1630,6 +1642,11 @@ async def grade_student_submission(
             "confidence": ai_detection.get("confidence", ""),
             "method": ai_detection.get("method", ""),
             "cache_key": det_cache_key,
+        },
+        "primary_ai_grader": {
+            "provider": provider.provider,
+            "model": provider.model,
+            "role": "primary",
         },
     }
 
@@ -1800,7 +1817,29 @@ def build_grading_coverage_notice(
             )
 
     engines = profile.get("engines_detected") or []
-    if has_code_files and any(str(e).lower() in _GAME_ENGINE_IDS for e in engines):
+    _coverage_inv = artifact_inventory or {}
+    _coverage_gv = _coverage_inv.get("gameplay_verification") or (
+        _coverage_inv.get("runtime_observation_report") or {}
+    ).get("gameplay_verification") or {}
+    _coverage_level = str(
+        _coverage_gv.get("l4_level")
+        or _coverage_gv.get("automated_l4_level")
+        or ""
+    )
+    _gameplay_l4_verified = bool(
+        _coverage_gv.get("gameplay_entered") is True
+        and _coverage_level in ("L4_full", "L4_partial")
+    )
+    if (
+        has_code_files
+        and any(str(e).lower() in _GAME_ENGINE_IDS for e in engines)
+        and _gameplay_l4_verified
+    ):
+        lines.append(
+            f"وُجدت ملفات مشروع/كود، وشُغّلت اللعبة فعليًا داخل نافذتها بمستوى "
+            f"{_coverage_level}؛ جُمعت أدلة التشغيل مع التحليل الساكن للكود."
+        )
+    elif has_code_files and any(str(e).lower() in _GAME_ENGINE_IDS for e in engines):
         lines.append(
             "وُجدت ملفات مشروع/كود؛ التصحيح يعتمد على قراءة الملفات والنص **دون تشغيل** اللعبة أو المحاكي."
         )
@@ -1809,7 +1848,13 @@ def build_grading_coverage_notice(
             "وُجدت ملفات برمجية؛ التصحيح يعتمد على قراءة الشفرة **دون تشغيل** البرنامج للتحقق من السلوك."
         )
 
-    if executable_names:
+    if executable_names and _gameplay_l4_verified:
+        sample = "، ".join(executable_names[:3])
+        lines.append(
+            f"ملف(ات) تنفيذية ({sample}) شُغّلت آليًا، ودخل الاختبار إلى حلقة اللعب "
+            f"بمستوى {_coverage_level}."
+        )
+    elif executable_names:
         sample = "، ".join(executable_names[:3])
         lines.append(
             f"ملف(ات) تنفيذية ({sample}) **رُصدت** ضمن التسليم — "
@@ -1861,7 +1906,11 @@ def build_grading_coverage_notice(
 
     header = "📋 نطاق التصحيح الآلي (حدود السلطة — presence ≠ authority)"
     body = "\n".join(f"• {ln}" for ln in lines)
-    matrix = inv.get("evidence_coverage_matrix") or build_evidence_coverage_matrix(inv)
+    matrix = (
+        build_evidence_coverage_matrix(inv)
+        if _gameplay_l4_verified
+        else inv.get("evidence_coverage_matrix") or build_evidence_coverage_matrix(inv)
+    )
     return {
         "text_ar": f"{header}\n{body}",
         "items": [{"message": ln} for ln in lines],
@@ -1977,13 +2026,22 @@ async def grade_batch_async(
                 else:
                     _cached_preview = str(student_info.get("_text_preview") or "").strip()
                     if len(_cached_preview) >= 50:
-                        student_text = _cached_preview
+                        primary_student_text = _cached_preview
                     else:
-                        student_text = await _loop.run_in_executor(
+                        primary_student_text = await _loop.run_in_executor(
                             None,
                             extract_text_from_file,
                             student_info["path"],
                         )
+                    # A single BTEC archive may contain Aim B + Aim C.  The
+                    # archive intake and plagiarism slice already know about all
+                    # Word files, so PRO grading must not silently evaluate only
+                    # the primary/largest document.
+                    student_text = (
+                        word_only_text
+                        if len(word_doc_paths) > 1 and word_only_text.strip()
+                        else primary_student_text
+                    )
                     image_count = await _loop.run_in_executor(
                         None,
                         DocumentProcessor.count_images,
@@ -2830,6 +2888,10 @@ async def grade_batch_async(
         skip_grading_cache: bool,
     ) -> Dict:
         # ==================== VALIDATE GRADING RESULT ====================
+            # Keep the complete document corpus available to deterministic,
+            # governance, and runtime-academic checks.  The AI prompt may be
+            # capped independently, but academic rules must see Aim B + Aim C.
+            grading_result["student_text"] = (word_only_text or student_text).strip()
             # Ensure all required fields exist with proper values
             print(f"\n🔍 [VALIDATION] Checking grading result for {student_info['name']}")
             print(f"   Keys present: {list(grading_result.keys())}")
@@ -3783,6 +3845,26 @@ async def grade_batch_async(
                         )
                 except Exception as _cov_err:
                     print(f"⚠️ [EVIDENCE-COVERAGE] skipped: {_cov_err}")
+
+            if not _mode_flags.get("skip_production_layers"):
+                try:
+                    from app.secondary_ai_review import run_secondary_review
+
+                    _review = run_secondary_review(
+                        grading_result,
+                        student_text=student_text or "",
+                        grading_criteria=grading_criteria,
+                        reference_solution=reference_solution,
+                        artifact_inventory=artifact_inventory,
+                    )
+                    print(
+                        f"🔎 [SECONDARY-REVIEW] {student_info['name']}: "
+                        f"status={_review.get('status')} "
+                        f"reviewed={_review.get('reviewed_count', 0)} "
+                        f"disagreements={len(_review.get('disagreements') or [])}"
+                    )
+                except Exception as _review_err:
+                    print(f"⚠️ [SECONDARY-REVIEW] skipped: {_review_err}")
 
             # Final check: Log what we're about to return
             print(f"📊 [FINAL RESULT] {student_info['name']}:")

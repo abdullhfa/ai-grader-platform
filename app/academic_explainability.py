@@ -957,7 +957,7 @@ def build_missing_evidence_diagnostics(
         runtime_row["status_ar"] = "لم تُشغَّل — ملاحظة تشغيل L4/L3 فقط — لا تحقق gameplay"
         runtime_row["present"] = False
         runtime_row["blocks_achievement_ar"] = (
-            "C.P5/C.P6/C.M3/C.D3 — يلزم إثبات ميكانيك اللعب (Jump/Score/Win-Lose) عبر L5."
+            "C.P5/C.P6/C.M3 — يلزم إثبات ميكانيك اللعب (Jump/Score/Win-Lose) آلياً أو من الأدلة المرفقة."
         )
     runtime_signal_present = bool(obs.get("runtime_observed") or obs.get("runtime_verified"))
     if media_row and not reached_gameplay and media_row.get("present") and runtime_signal_present and not fast_mode:
