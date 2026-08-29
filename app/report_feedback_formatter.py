@@ -112,6 +112,17 @@ def _runtime_engine_label_ar(engine_id: str) -> str:
     }.get((engine_id or "").strip().lower(), "اللعبة")
 
 
+def normalize_agent_play_label_ar(value: Any) -> str:
+    """Remove legacy wording that equated an L4 entry with a complete game."""
+    text = clean_report_text(str(value or ""))
+    if "L4 كامل" in text or "حركة + قفز/نقاط" in text:
+        return (
+            "نعم — تم الدخول إلى اللعب الأساسي (L4). "
+            "لا يعني ذلك اكتمال اللعبة؛ نتائج الميزات موضحة منفصلة."
+        )
+    return text
+
+
 def ensure_runtime_outcome_engine(
     outcome: Optional[Dict[str, Any]], *, engine_id: str = ""
 ) -> Dict[str, Any]:
@@ -120,6 +131,10 @@ def ensure_runtime_outcome_engine(
     resolved = str(out.get("engine_id") or engine_id or "").strip().lower()
     out["engine_id"] = resolved
     out["engine_label_ar"] = out.get("engine_label_ar") or _runtime_engine_label_ar(resolved)
+    if out.get("agent_play_result_ar"):
+        out["agent_play_result_ar"] = normalize_agent_play_label_ar(
+            out.get("agent_play_result_ar")
+        )
     return out
 
 
@@ -141,7 +156,9 @@ def build_runtime_outcome(
     evidence = gv.get("failure_evidence") if isinstance(gv.get("failure_evidence"), dict) else {}
 
     if gameplay_entered is True and not failure_code:
-        agent_result_ar = agent_play_label_ar or "نعم — دخل gameplay (L4)"
+        agent_result_ar = normalize_agent_play_label_ar(
+            agent_play_label_ar or "نعم — دخل gameplay (L4)"
+        )
     elif failure_code or failure_ar:
         agent_result_ar = agent_play_label_ar or "لا — لم يُثبت gameplay"
     else:
@@ -169,10 +186,46 @@ def build_runtime_outcome(
 
     p5_open = bool(criterion_pass.get("P5"))
     p6_open = bool(criterion_pass.get("P6"))
+
+    decisions = {
+        str(item.get("criterion") or "").strip(): item
+        for item in (gate.get("decisions") or [])
+        if isinstance(item, dict)
+    }
+
+    def _criterion_impact(criterion: str, is_open: bool) -> str:
+        if is_open:
+            if criterion == "P6":
+                return "C.P6: Gate مفتوح — تحقق التشغيل ووثائق الاختبار المطلوبة"
+            return "C.P5: Gate مفتوح — تحققت متطلبات التشغيل والميزات المطلوبة"
+
+        decision = decisions.get(criterion) or {}
+        reason_ar = str(decision.get("reason_ar") or "").strip()
+        if not reason_ar:
+            missing = [
+                str(item)
+                for item in (
+                    (gate.get("required_feature_verification") or {}).get("missing") or []
+                )
+                if str(item).strip()
+            ]
+            if missing:
+                reason_ar = "ميزات مطلوبة غير مثبتة: " + ", ".join(missing)
+            elif gameplay_entered is not True:
+                reason_ar = "لم يثبت الدخول إلى gameplay بالمستوى المطلوب"
+            else:
+                reason_ar = "الأدلة المطلوبة لهذا المعيار غير مكتملة"
+        return f"C.{criterion}: Gate مغلق — {reason_ar}"
+
     impact_lines = [
-        f"C.P5: {'Gate مفتوح — يمكن منح المعيار عند استيفاء أدلة الملفات' if p5_open else 'Gate مغلق — يتطلب gameplay L4'}",
-        f"C.P6: {'Gate مفتوح — يتطلب وثائق اختبار + L4' if p6_open else 'Gate مغلق — يتطلب gameplay L4 ووثائق اختبار'}",
+        _criterion_impact("P5", p5_open),
+        _criterion_impact("P6", p6_open),
     ]
+    criterion_reasons_ar: Dict[str, str] = {}
+    for criterion, line in zip(("P5", "P6"), impact_lines):
+        marker = "Gate مغلق — "
+        if marker in line:
+            criterion_reasons_ar[criterion] = line.split(marker, 1)[1].strip()
 
     return {
         "engine_id": (engine_id or "").strip().lower(),
@@ -186,6 +239,7 @@ def build_runtime_outcome(
         "l4_level": l4_level,
         "criterion_pass_p5": p5_open,
         "criterion_pass_p6": p6_open,
+        "criterion_reasons_ar": criterion_reasons_ar,
     }
 
 
@@ -248,7 +302,12 @@ def format_criterion_feedback_for_report(
 
     parts: List[str] = []
     if institutional_only:
-        body = assessor or feedback
+        # The terminal governance decision is the source of truth.  Persisted
+        # AI feedback may pre-date the runtime gate (for example, it may repeat
+        # the C.P5 feature failure for C.P6 even when C.P6 was actually blocked
+        # by missing test records).  Prefer the authoritative gate note whenever
+        # the criterion is not awardable.
+        body = runtime_note_ar or assessor or feedback
         if body:
             parts.append("قرار الحوكمة المؤسسية:")
             parts.append(body)
@@ -270,6 +329,42 @@ def format_criterion_feedback_for_report(
     if not parts:
         return clean_report_text((feedback or "").strip())
     return clean_report_text("\n\n".join(parts))
+
+
+def format_score_fraction_ar(total: Any, maximum: Any) -> str:
+    """Return an RTL-stable Arabic score instead of the ambiguous ``100/23``."""
+    return f"{total} من {maximum}"
+
+
+def criterion_decision_matrix_for_report(
+    criteria: Dict[str, Any],
+    *,
+    authoritative_reason_ar: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    """Use the terminal runtime-gate decision in teacher-facing matrices.
+
+    Raw AI matrices are useful during analysis, but after a deterministic gate
+    rejects a criterion they can overstate weak source snippets as executable
+    proof.  A blocked report must show the final gate reason and nothing that
+    contradicts it.
+    """
+    raw = criteria.get("decision_matrix") or []
+    matrix = [dict(row) for row in raw if isinstance(row, dict)]
+    if not criteria.get("runtime_gate_block") or bool(criteria.get("achieved")):
+        return matrix
+
+    reason_ar = clean_report_text(
+        str(
+            authoritative_reason_ar
+            or criteria.get("award_block_reason_ar")
+            or criteria.get("runtime_observation_note_ar")
+            or "لم تكتمل أدلة التشغيل المطلوبة لهذا المعيار"
+        )
+    )
+    requirement = str(criteria.get("criteria_level") or "المعيار")
+    if matrix:
+        requirement = str(matrix[0].get("requirement") or requirement)
+    return [{"requirement": requirement, "met": False, "evidence": reason_ar}]
 
 
 def criterion_report_display(
@@ -322,6 +417,12 @@ def clean_report_text(text: str) -> str:
         .replace("&#39;", "'")
         .replace("&#x27;", "'")
     )
+    # Internal audit tokens are useful in JSON but must never leak into a
+    # teacher-facing Arabic report.
+    t = t.replace(
+        "runtime_l4_verified_override",
+        "تم التحقق بالتشغيل الفعلي داخل اللعبة (L4)",
+    )
     # «quoted Arabic» reads better in RTL than ASCII '…'
     def _arabic_quote(m: re.Match[str]) -> str:
         inner = m.group(1)
@@ -331,3 +432,51 @@ def clean_report_text(text: str) -> str:
 
     t = re.sub(r"'([^']{1,120})'", _arabic_quote, t)
     return strip_embedded_json_blocks(t.strip())
+
+
+_RUNTIME_FEATURE_TERMS = {
+    "lives_system": ("الأرواح", "للأرواح", "نظام الأرواح", "lives system"),
+    "timer_system": ("المؤقت", "الموقت", "نظام الوقت", "timer"),
+    "difficulty_levels": ("مستويات الصعوبة", "difficulty levels"),
+    "score_system": ("نظام النقاط", "احتساب النقاط", "score system"),
+    "win_condition": ("شرط الفوز", "حالة الفوز", "win condition"),
+    "restart": ("إعادة التشغيل", "إعادة بدء اللعبة", "restart"),
+}
+
+
+def sanitize_strengths_for_runtime(
+    strengths: Any,
+    grading_result: Optional[Dict[str, Any]],
+) -> List[str]:
+    """Remove praise for mechanics that runtime/code evidence explicitly rejected."""
+    values = strengths if isinstance(strengths, list) else []
+    result = grading_result or {}
+    package = result.get("runtime_evidence_package") or {}
+    confidence_rows = package.get("requirement_confidence") or []
+    rejected = {
+        str(row.get("requirement") or row.get("req_id") or "").strip()
+        for row in confidence_rows
+        if isinstance(row, dict) and row.get("verified") is False
+    }
+    if not rejected:
+        gate = result.get("automated_gate") or result.get("runtime_feature_gate") or {}
+        rejected.update(
+            str(item).strip()
+            for item in (
+                (gate.get("required_feature_verification") or {}).get("missing") or []
+            )
+            if str(item).strip()
+        )
+
+    cleaned: List[str] = []
+    for value in values:
+        text_value = clean_report_text(str(value or ""))
+        lower = text_value.casefold()
+        contradicts_runtime = any(
+            req_id in rejected
+            and any(term.casefold() in lower for term in terms)
+            for req_id, terms in _RUNTIME_FEATURE_TERMS.items()
+        )
+        if text_value and not contradicts_runtime:
+            cleaned.append(text_value)
+    return cleaned

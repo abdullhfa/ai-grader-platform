@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from app.pro_evidence_signals import (
-    text_has_design_decisions,
+    text_has_design_peer_evidence,
     text_has_test_plan_evidence,
     text_has_user_testing_evidence,
 )
@@ -71,6 +71,19 @@ class DesignEvidenceBundle:
         return score
 
     @property
+    def bp3_complete(self) -> bool:
+        """B.P3 requires a design package, not merely any two design signals."""
+        has_visual = self.ui_visual_count >= 1 or (
+            self.embedded_image_count >= 3 and _UI_VISUAL.search(self.corpus)
+        )
+        return bool(
+            self.design_doc_present
+            and len(self.structure_hits) >= 2
+            and has_visual
+            and self.test_section_present
+        )
+
+    @property
     def bp4_score(self) -> int:
         score = 0
         if self.ui_visual_count >= 1 or _UI_VISUAL.search(self.corpus):
@@ -78,6 +91,22 @@ class DesignEvidenceBundle:
         if self.survey_present or self.test_section_present:
             score += 1
         return score
+
+    @property
+    def bp4_complete(self) -> bool:
+        """B.P4 needs peer-design review plus evidence that it guided change."""
+        peer_review = text_has_design_peer_evidence(self.corpus)
+        guided_change = bool(
+            re.search(
+                r"(?:بناءً\s+على|استناداً\s+إلى|استنادا\s+الى|بعد)"
+                r"[\s\S]{0,120}(?:ملاحظات|تعليقات|feedback|مراجعة)"
+                r"|(?:ملاحظات|تعليقات|feedback|مراجعة)[\s\S]{0,120}"
+                r"(?:عدلت|غيرت|حسنت|نسخة\s+محسنة|improv|chang)",
+                self.corpus,
+                re.I,
+            )
+        )
+        return bool(peer_review and guided_change)
 
 
 def _band_prefix(criteria_level: str) -> str:
@@ -130,7 +159,9 @@ def build_design_evidence_bundle(
         or bool(_GENERIC_SURVEY_RE.search(text))
     )
 
-    test_section_present = text_has_test_plan_evidence(text) or text_has_design_decisions(text)
+    # A design justification is not a test plan.  Treating the two as
+    # interchangeable previously awarded B.P3 to incomplete design packs.
+    test_section_present = text_has_test_plan_evidence(text)
 
     paths_blob = "\n".join(
         str(p)
@@ -174,7 +205,7 @@ def evaluate_bp3_deterministic(
 ) -> Tuple[bool, int, str, str, List[Dict[str, str]]]:
     score = bundle.bp3_score
     is_pro = execution_mode.upper() == "PRO"
-    achieved = score >= 2
+    achieved = bundle.bp3_complete
     verdict = "pass" if achieved else ("inconclusive" if not is_pro and score == 1 else "fail")
     if achieved:
         reason = f"bp3_signals={score}/3"
@@ -204,7 +235,7 @@ def evaluate_bp4_deterministic(
     score = bundle.bp4_score
     is_pro = execution_mode.upper() == "PRO"
     # PRO: ≥1 visual-design OR survey/test signal (foundational pass, not peer review).
-    achieved = score >= 1 if is_pro else score >= 2
+    achieved = bundle.bp4_complete
     verdict = "pass" if achieved else ("inconclusive" if not is_pro and score == 1 else "fail")
     if achieved:
         reason = f"bp4_visual_signals={score}"

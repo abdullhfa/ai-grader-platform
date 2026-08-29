@@ -35,6 +35,16 @@ def repair_llm_json_string(raw: str) -> str:
     """
     s = raw
 
+    # A cloud model can occasionally omit the opening quote of a property
+    # name while leaving the closing quote, for example: C.P7": {...}.
+    # Restrict repair to line-leading, JSON-safe key characters so text inside
+    # evidence/reasoning strings is never rewritten.
+    s = re.sub(
+        r'(?m)^(\s*)([A-Za-z0-9_./-]+)"?\s*:',
+        r'\1"\2":',
+        s,
+    )
+
     # "reasoning": "..." ]  →  "reasoning": "..." }
     for field in ("reasoning", "evidence", "overall_feedback"):
         s = re.sub(

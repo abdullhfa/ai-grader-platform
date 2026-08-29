@@ -293,10 +293,12 @@ def generate_student_report_pdf(
     elements.append(Paragraph(arabic_text(" الملخص التنفيذي"), heading_style))
 
     # RTL table: value on left (col 0), label on right (col 1)
+    from app.report_feedback_formatter import format_score_fraction_ar
+
     summary_data = [
         [f"{grade_level}", ": " + arabic_text("الدرجة الإجمالية")],
         [f"{percentage:.1f}%", ": " + arabic_text("النسبة المئوية")],
-        [f"{total_score} / {max_score}", ": " + arabic_text("الدرجة الكلية")],
+        [arabic_text(format_score_fraction_ar(total_score, max_score)), ": " + arabic_text("الدرجة الكلية")],
         [f"{ai_score}%", ": " + arabic_text("نسبة الذكاء الاصطناعي")],
         [f"{plag_max:.1f}%", ": " + arabic_text("نسبة الانتحال")],
     ]
@@ -512,14 +514,21 @@ def generate_student_report_pdf(
             from app.report_feedback_formatter import format_criterion_feedback_for_report
             feedback = format_criterion_feedback_for_report(
                 feedback,
-                runtime_note_ar=criteria.get("runtime_observation_note_ar"),
+                runtime_note_ar=(
+                    criteria.get("award_block_reason_ar")
+                    or criteria.get("runtime_observation_note_ar")
+                ),
+                achieved=achieved,
+                awardable=criteria.get("awardable", achieved),
             )
             elements.append(Paragraph("<b>: </b>" + arabic_text("<b>الملاحظات</b>"), bold_style))
             elements.append(Paragraph(pdf_cell_text(feedback), justified_style))
             elements.append(Spacer(1, 0.15 * inch))
 
         # Decision Matrix (New Strict BTEC Feedback)
-        decision_matrix = criteria.get('decision_matrix', [])
+        from app.report_feedback_formatter import criterion_decision_matrix_for_report
+
+        decision_matrix = criterion_decision_matrix_for_report(criteria)
         if not isinstance(decision_matrix, list):
             decision_matrix = []
         if decision_matrix:
@@ -627,7 +636,10 @@ def generate_student_report_pdf(
         elements.append(Spacer(1, 0.3 * inch))
 
     # Strengths — Section 8 format
-    strengths = grading_result.get('strengths', [])
+    from app.report_feedback_formatter import sanitize_strengths_for_runtime
+    strengths = sanitize_strengths_for_runtime(
+        grading_result.get('strengths', []), grading_result
+    )
     if strengths:
         elements.append(Paragraph(arabic_text("نقاط قوة الطالب"), heading_style))
         for i, strength in enumerate(strengths, 1):

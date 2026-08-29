@@ -9,6 +9,35 @@ import shutil
 from pathlib import Path
 from typing import List, Optional, Tuple
 
+
+def _user_folder_is_authenticated(path: Optional[Path]) -> bool:
+    if not path or not path.is_dir():
+        return False
+    if path.name.lower().startswith("unknownuser_"):
+        return False
+    return any(
+        (path / marker).is_file()
+        for marker in ("licence.plist", "license.plist", "licence.json", "license.json")
+    )
+
+
+def _find_user_folder() -> Optional[Path]:
+    explicit = os.environ.get("AI_GRADER_GAMEMAKER_USER_FOLDER")
+    if explicit:
+        candidate = Path(explicit).expanduser()
+        return candidate.resolve() if _user_folder_is_authenticated(candidate) else None
+    for env_name in ("APPDATA", "LOCALAPPDATA"):
+        base = os.environ.get(env_name)
+        if not base:
+            continue
+        for product_root in sorted(Path(base).glob("GameMaker*"), reverse=True):
+            if not product_root.is_dir():
+                continue
+            for candidate in product_root.iterdir():
+                if _user_folder_is_authenticated(candidate):
+                    return candidate.resolve()
+    return None
+
 class GameMakerToolchain:
     @property
     def installed(self) -> bool:
@@ -17,21 +46,17 @@ class GameMakerToolchain:
 
     @property
     def ready(self) -> bool:
-        """True only when IDE, Igor, and a runtime root are all available."""
+        """True when Igor and a runtime are available for local Compile/Run."""
         return bool(self.installed and self.igor_path and self.runtime_root)
 
     def __init__(self, ide_path: Optional[Path], igor_path: Optional[Path], runtime_root: Optional[Path], user_folder: Optional[Path] = None, reason: Optional[str] = None):
         self.ide_path = ide_path
         self.igor_path = igor_path
         self.runtime_root = runtime_root
-        self.user_folder = user_folder or (
-            Path(os.environ["AI_GRADER_GAMEMAKER_USER_FOLDER"])
-            if os.environ.get("AI_GRADER_GAMEMAKER_USER_FOLDER")
-            else None
-        )
+        self.user_folder = user_folder or _find_user_folder()
         self.reason = reason or (
             "ready"
-            if self.igor_path and self.runtime_root and self.installed
+            if self.ready
             else "gamemaker_not_installed"
             if not self.installed
             else "gamemaker_runtime_missing"
@@ -40,7 +65,7 @@ class GameMakerToolchain:
     def to_dict(self) -> dict:
         return {
             "installed": self.installed,
-            "ready": self.igor_path is not None and self.runtime_root is not None,
+            "ready": self.ready,
             "ide_path": str(self.ide_path) if self.ide_path else None,
             "igor_path": str(self.igor_path) if self.igor_path else None,
             "runtime_root": str(self.runtime_root) if self.runtime_root else None,
@@ -271,6 +296,7 @@ def discover_gamemaker_toolchain() -> GameMakerToolchain:
         ide_path=ide_path.resolve() if ide_path and ide_path.exists() else None,
         igor_path=igor_path,
         runtime_root=runtime_root,
+        user_folder=_find_user_folder(),
     )
 
 def preflight_gamemaker_runtime_dependency(student_files: List[str]) -> dict:
@@ -351,9 +377,9 @@ def preflight_gamemaker_runtime_dependency(student_files: List[str]) -> dict:
                 "pause_required": True,
                 "passed": False,
                 "dependency": "gamemaker",
-                "reason": "gamemaker_runtime_missing",
-                "pause_reason": "gamemaker_runtime_missing",
-                "message_ar": "تم العثور على GameMaker، لكن Runtime/Igor غير جاهز. افتح GameMaker وسجّل الدخول واتركه ينزّل Runtime ثم اضغط Complete.",
+                "reason": tc.reason,
+                "pause_reason": tc.reason,
+                "message_ar": "تم العثور على GameMaker، لكن Runtime/Igor غير جاهز. افتح GameMaker واتركه ينزّل Runtime ثم اضغط Complete.",
                 "projects": projects,
                 "toolchain": tc.to_dict(),
                 "download_url": "https://gamemaker.io/en/download",

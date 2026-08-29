@@ -146,3 +146,44 @@ def test_start_game_full_reset_is_recognised_as_restart_implementation(tmp_path)
     signals = PlaytestOrchestrator._source_feature_signals(exe)
 
     assert signals["restart"] is True
+
+
+def test_isolated_gamemaker_build_resolves_sibling_source_and_generic_objects(tmp_path):
+    session = tmp_path / "runtime_sessions" / "run-1"
+    exe = session / "ide_compile" / "runtime" / "GameMakerLocalRunner.exe"
+    exe.parent.mkdir(parents=True)
+    exe.write_bytes(b"")
+    source = session / "source_project"
+    (source / "student.yyp").parent.mkdir(parents=True)
+    (source / "student.yyp").write_text("{}", encoding="utf-8")
+    player = source / "objects" / "Object1"
+    player.mkdir(parents=True)
+    (player / "Keyboard_39.gml").write_text("x=x+4;", encoding="utf-8")
+    (player / "Collision_Object6.gml").write_text(
+        "instance_destroy(other);", encoding="utf-8"
+    )
+    (player / "Collision_Object2.gml").write_text(
+        "room_goto(rm_game33);", encoding="utf-8"
+    )
+    dead = source / "objects" / "unused"
+    dead.mkdir(parents=True)
+    (dead / "Alarm_0.gml").write_text("room_restart();", encoding="utf-8")
+
+    assert PlaytestOrchestrator._submission_source_root(exe) == source
+    signals = PlaytestOrchestrator._source_feature_signals(exe)
+    assert signals["collect_items"] is True
+    assert signals["enemy_interaction"] is True
+    assert signals["lose_condition"] is True
+    assert signals["score_system"] is False
+    assert signals["win_condition"] is False
+    assert signals["restart"] is False
+
+
+def test_white_bitmap_terminal_text_is_detected(tmp_path):
+    path = tmp_path / "lose.png"
+    image = Image.new("RGB", (500, 400), (95, 160, 70))
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((150, 110, 350, 145), fill="white")
+    image.save(path)
+
+    assert PlaytestOrchestrator._terminal_overlay_visible({"path": str(path)}) is True

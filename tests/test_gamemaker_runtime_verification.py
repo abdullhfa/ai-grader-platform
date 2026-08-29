@@ -182,6 +182,57 @@ def test_menu_navigator_accepts_confirmed_gamemaker_scene_change(tmp_path: Path,
     assert result.visual_state == "gameplay"
 
 
+def test_gamemaker_large_play_button_is_menu_and_clicked(tmp_path: Path, monkeypatch):
+    """Regression: a colourful PLAY panel must not be mistaken for a HUD."""
+    from PIL import Image, ImageDraw
+    from app.gameplay_verifier import MenuNavigator
+
+    exe = tmp_path / "StudentGame.exe"
+    exe.write_bytes(b"MZ")
+    (tmp_path / "data.win").write_bytes(b"runner")
+    menu = tmp_path / "menu.png"
+    gameplay = tmp_path / "gameplay.png"
+
+    image = Image.new("RGB", (518, 447), (95, 155, 65))
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle((55, 55, 465, 225), radius=25, fill=(150, 220, 20), outline=(95, 50, 30), width=8)
+    image.save(menu)
+    Image.new("RGB", (518, 447), (35, 65, 120)).save(gameplay)
+
+    clicked = []
+    shots = iter((menu, menu, gameplay))
+    monkeypatch.setattr("app.gameplay_verifier.time.sleep", lambda _seconds: None)
+    monkeypatch.setattr("app.window_focus_manager.focus_game_window", lambda **_kwargs: True)
+    monkeypatch.setattr(
+        "app.gameplay_verifier._click_gamemaker_menu_candidate",
+        lambda **kwargs: clicked.append(kwargs["attempt"]) or True,
+    )
+
+    def capture(*_args, **_kwargs):
+        path = next(shots)
+        return {
+            "status": "captured",
+            "path": str(path),
+            "visual_state": "gameplay_candidate",
+            "visual_stats": {"avg_luma_approx": 80},
+            "capture_scope": "game_window",
+            "game_window_detected": True,
+            "game_window_bbox": [20, 30, 538, 477],
+            "process_pid": 123,
+        }
+
+    result = MenuNavigator(max_attempts=3).navigate_to_gameplay(
+        artifact_path=exe,
+        process_pid=123,
+        capture_screenshot=capture,
+        elapsed_seconds=4.0,
+    )
+
+    assert clicked == [0]
+    assert result.gameplay_entered is True
+    assert result.log[0]["action"] == "gamemaker_click_menu_candidate"
+
+
 def test_scene_change_uses_pillow_when_skimage_is_unavailable(tmp_path: Path):
     """Production does not install scikit-image; menu -> gameplay must still pass."""
     from PIL import Image
@@ -753,6 +804,14 @@ def test_existing_student_exe_is_launched_and_never_deleted(tmp_path: Path, monk
     (student / "objects" / "obj_player" / "Step_0.gml").write_text(
         "keyboard_check(vk_right);", encoding="utf-8"
     )
+    reserved = student / "_ai_grader_gm_runtime"
+    reserved.mkdir()
+    (reserved / "student-owned.txt").write_text("do-not-touch", encoding="utf-8")
+    original_files = {
+        path.relative_to(student).as_posix(): path.read_bytes()
+        for path in student.rglob("*")
+        if path.is_file()
+    }
     launched: list[Path] = []
 
     def fake_smoke(session, executable, **_kwargs):
@@ -786,14 +845,20 @@ def test_existing_student_exe_is_launched_and_never_deleted(tmp_path: Path, monk
     assert [path.resolve() for path in launched] == [exe.resolve()]
     assert exe.is_file()
     assert (student / "data.win").is_file()
-    assert not (student / "_ai_grader_gm_runtime").exists()
+    assert (reserved / "student-owned.txt").read_text(encoding="utf-8") == "do-not-touch"
+    final_files = {
+        path.relative_to(student).as_posix(): path.read_bytes()
+        for path in student.rglob("*")
+        if path.is_file()
+    }
+    assert final_files == original_files
     assert result["build_pipeline"]["ide_build_attempted"] is False
     assert result["build_pipeline"].get("student_runtime", {}).get("generated") is not True
     assert result["gameplay_replay"]["method"] == "exe_smoke"
     assert result["signals"]["functional_smoke_pass"] is True
 
 
-def test_missing_exe_is_built_into_student_folder_then_removed(tmp_path: Path, monkeypatch):
+def test_missing_exe_is_built_and_run_only_inside_workspace(tmp_path: Path, monkeypatch):
     from app.runtime_engines.base import RuntimeSession
     from app.runtime_engines.gamemaker.runtime_verification import (
         run_gamemaker_runtime_verification,
@@ -804,9 +869,16 @@ def test_missing_exe_is_built_into_student_folder_then_removed(tmp_path: Path, m
     yyp = student / "Game.yyp"
     yyp.write_text('{"resourceType":"GMProject","resources":[]}', encoding="utf-8")
     (student / "player.gml").write_text("keyboard_check(vk_right);", encoding="utf-8")
+    original_files = {
+        path.relative_to(student).as_posix(): path.read_bytes()
+        for path in student.rglob("*")
+        if path.is_file()
+    }
     seen: dict = {}
 
     def fake_run(cmd, **_kwargs):
+        project_arg = next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("/project="))
+        seen["build_yyp"] = Path(project_arg)
         out_dir = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("/of=")))
         target = next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("/tf="))
         with zipfile.ZipFile(out_dir / target, "w") as zf:
@@ -820,6 +892,7 @@ def test_missing_exe_is_built_into_student_folder_then_removed(tmp_path: Path, m
         seen["exe"] = exe
         seen["exists_during_run"] = exe.is_file()
         seen["inside_student"] = student.resolve() in exe.resolve().parents
+        seen["inside_workspace"] = (tmp_path / "ws").resolve() in exe.resolve().parents
         seen["data_win"] = (exe.parent / "data.win").is_file()
         session.screenshot_paths.append(tmp_path / "shot.png")
         (tmp_path / "shot.png").write_bytes(b"png")
@@ -853,13 +926,65 @@ def test_missing_exe_is_built_into_student_folder_then_removed(tmp_path: Path, m
     result = run_gamemaker_runtime_verification(session, layout, timeout_seconds=5)
 
     assert seen["exists_during_run"] is True
-    assert seen["inside_student"] is True
+    assert seen["inside_student"] is False
+    assert seen["inside_workspace"] is True
+    assert (tmp_path / "ws").resolve() in seen["build_yyp"].resolve().parents
+    assert student.resolve() not in seen["build_yyp"].resolve().parents
     assert seen["data_win"] is True
     assert seen["exe"].name.endswith(".exe")
     assert not (student / "_ai_grader_gm_runtime").exists()
     assert list(student.rglob("*.exe")) == []
+    final_files = {
+        path.relative_to(student).as_posix(): path.read_bytes()
+        for path in student.rglob("*")
+        if path.is_file()
+    }
+    assert final_files == original_files
     assert result["build_pipeline"]["ide_build_attempted"] is True
-    assert result["build_pipeline"]["student_runtime"]["generated"] is True
-    assert result["signals"]["generated_runtime_cleanup"]["cleaned"] is True
+    assert result["build_pipeline"]["student_runtime"]["generated"] is False
+    assert result["build_pipeline"]["workspace_runtime"]["generated"] is True
+    assert result["build_pipeline"]["source_isolation"]["isolated"] is True
+    assert result["signals"]["generated_runtime_cleanup"]["reason"] == "workspace_managed_no_student_write"
     assert result["gameplay_replay"]["method"] == "exe_smoke"
     assert result["signals"]["functional_smoke_pass"] is True
+
+
+def test_package_permission_failure_falls_back_to_local_compile_runner(tmp_path: Path, monkeypatch):
+    from app.runtime_engines.gamemaker.runtime_verification import _try_ide_build
+
+    runtime = tmp_path / "runtime"
+    igor = runtime / "bin" / "igor" / "windows" / "x64" / "Igor.exe"
+    runner = runtime / "windows" / "x64" / "Runner.exe"
+    igor.parent.mkdir(parents=True)
+    runner.parent.mkdir(parents=True)
+    igor.write_bytes(b"MZ")
+    runner.write_bytes(b"MZ-runner")
+    project = tmp_path / "student" / "Game.yyp"
+    project.parent.mkdir()
+    project.write_text('{"resourceType":"GMProject"}', encoding="utf-8")
+    monkeypatch.setenv("AI_GRADER_GAMEMAKER_IGOR", str(igor))
+    monkeypatch.setenv("AI_GRADER_GAMEMAKER_RUNTIME_ROOT", str(runtime))
+    monkeypatch.delenv("AI_GRADER_GAMEMAKER_USER_FOLDER", raising=False)
+    calls: list[str] = []
+
+    def fake_run(cmd, **_kwargs):
+        worker_command = str(cmd[-1])
+        calls.append(worker_command)
+        if worker_command == "PackageZip":
+            return subprocess.CompletedProcess(
+                cmd, 1, stdout="Permission Error : Unable to obtain permission to execute", stderr=""
+            )
+        output = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("/of=")))
+        output.parent.mkdir(parents=True, exist_ok=True)
+        (output.parent / "Game.win").write_bytes(b"compiled")
+        return subprocess.CompletedProcess(cmd, 0, stdout="Igor complete.", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    result = _try_ide_build(project, tmp_path / "workspace", timeout_seconds=30)
+
+    assert calls == ["PackageZip", "Compile"]
+    assert result["success"] is True
+    assert result["method"] == "igor_compile_local_runner"
+    executable = Path(result["executable"])
+    assert executable.is_file()
+    assert (executable.parent / "data.win").read_bytes() == b"compiled"

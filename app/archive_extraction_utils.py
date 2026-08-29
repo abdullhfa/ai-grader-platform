@@ -1104,6 +1104,37 @@ _NESTED_BUILD_NAME_HINTS = (
     "exe", "build", "game", "win", "html5", "release", "export",
     "بعد التعديل", "قبل التعديل", "اللعبة", "العبة", "لعبة", "تشغيل",
 )
+_MAX_GAMEMAKER_SOURCE_MEMBERS = 2000
+
+
+def gamemaker_source_project_members(paths: list[str]) -> set[str]:
+    """Return the complete source tree needed to build a source-only project.
+
+    Selective extraction used to retain YYP/GML while dropping YY resources and
+    sprite/audio assets. That produced a project that looked valid to inventory
+    but could never compile. A supplied runnable EXE keeps the existing narrow
+    extraction path; source-only GameMaker projects keep their complete tree.
+    """
+    normalized = list(dict.fromkeys(p.replace("\\", "/") for p in paths))
+    if any(
+        PurePosixPath(path).suffix.lower() == ".exe"
+        and is_primary_game_executable(path)
+        for path in normalized
+    ):
+        return set()
+    yyp_paths = [path for path in normalized if PurePosixPath(path).suffix.lower() == ".yyp"]
+    if not yyp_paths:
+        return set()
+
+    roots = {PurePosixPath(path).parent for path in yyp_paths}
+    selected: list[str] = []
+    for path in normalized:
+        pure = PurePosixPath(path)
+        if is_runtime_nested_archive(path):
+            continue
+        if any(root == PurePosixPath(".") or root == pure.parent or root in pure.parents for root in roots):
+            selected.append(path)
+    return set(selected[:_MAX_GAMEMAKER_SOURCE_MEMBERS])
 
 
 def is_runtime_nested_archive(decoded: str) -> bool:
@@ -1261,6 +1292,7 @@ def selective_extract_rar(
     list_timeout = archive_list_timeout_seconds(archive_bytes)
 
     by_student: dict[str, list[str]] = {}
+    visible_by_student: dict[str, list[str]] = {}
     indexed = 0
     try:
         for decoded in iter_rar_member_paths(
@@ -1269,6 +1301,7 @@ def selective_extract_rar(
             timeout=list_timeout,
             on_list_progress=on_list_progress,
         ):
+            visible_by_student.setdefault(_archive_student_group_key(decoded), []).append(decoded)
             if len(display) < _ARCHIVE_DISPLAY_PATH_CAP:
                 display.append(decoded)
             if not _member_worth_indexing(
@@ -1293,6 +1326,10 @@ def selective_extract_rar(
         )
 
     to_extract: set[str] = set()
+    gamemaker_source_names: set[str] = set()
+    for group_paths in visible_by_student.values():
+        gamemaker_source_names.update(gamemaker_source_project_members(group_paths))
+    to_extract.update(gamemaker_source_names)
     for group_key, paths in by_student.items():
         docs: list[str] = []
         code_scored: list[tuple[tuple[int, int], str]] = []
@@ -1356,11 +1393,17 @@ def selective_extract_rar(
         max_extract_files,
         max_archive_extract_files(grading_mode, archive_bytes=archive_bytes),
     )
+    if gamemaker_source_names:
+        _file_cap = max(
+            _file_cap,
+            min(len(gamemaker_source_names), _MAX_GAMEMAKER_SOURCE_MEMBERS),
+        )
     if len(gradable_names) > _file_cap:
         protected = {
             name
             for name in gradable_names
             if PurePosixPath(name).name.lower() in _GAMEMAKER_RUNTIME_FILENAMES
+            or name in gamemaker_source_names
             or is_runnable_game_artifact(name)
             or is_runtime_nested_archive(name)
             or (
@@ -1368,7 +1411,12 @@ def selective_extract_rar(
                 and is_primary_game_executable(name)
             )
         }
-        keep = list(dict.fromkeys([*protected, *gradable_names]))[:_file_cap]
+        keep = list(
+            dict.fromkeys([
+                *sorted(protected, key=_archive_extract_sort_key),
+                *gradable_names,
+            ])
+        )[:_file_cap]
         print(
             f"⚠️ [RAR-SEL] capping extraction {len(gradable_names)} → {len(keep)} "
             f"file(s) for {Path(archive_path).name}"
@@ -1535,6 +1583,10 @@ def selective_extract_zip(
             by_student.setdefault(_archive_student_group_key(decoded), []).append(decoded)
 
         to_extract: set[str] = set()
+        gamemaker_source_names: set[str] = set()
+        for group_paths in by_student.values():
+            gamemaker_source_names.update(gamemaker_source_project_members(group_paths))
+        to_extract.update(gamemaker_source_names)
         for group_key, paths in by_student.items():
             docs: list[tuple[int, str]] = []
             code_scored: list[tuple[tuple[int, int], str]] = []
@@ -1591,11 +1643,17 @@ def selective_extract_zip(
             max_extract_files,
             max_archive_extract_files(grading_mode, archive_bytes=archive_bytes),
         )
+        if gamemaker_source_names:
+            _file_cap = max(
+                _file_cap,
+                min(len(gamemaker_source_names), _MAX_GAMEMAKER_SOURCE_MEMBERS),
+            )
         if len(gradable_names) > _file_cap:
             protected = {
                 name
                 for name in gradable_names
                 if PurePosixPath(name).name.lower() in _GAMEMAKER_RUNTIME_FILENAMES
+                or name in gamemaker_source_names
                 or is_runnable_game_artifact(name)
                 or is_runtime_nested_archive(name)
                 or (
@@ -1603,7 +1661,12 @@ def selective_extract_zip(
                     and is_primary_game_executable(name)
                 )
             }
-            keep = list(dict.fromkeys([*protected, *gradable_names]))[:_file_cap]
+            keep = list(
+                dict.fromkeys([
+                    *sorted(protected, key=_archive_extract_sort_key),
+                    *gradable_names,
+                ])
+            )[:_file_cap]
             print(
                 f"⚠️ [ZIP-SEL] capping extraction {len(gradable_names)} → {len(keep)} "
                 f"file(s) for {Path(archive_path).name}"

@@ -737,6 +737,78 @@ def _find_play_button_ocr(shot: Dict[str, Any]) -> Optional[Tuple[int, int]]:
     return None
 
 
+def _looks_like_large_center_menu_button(shot: Dict[str, Any]) -> bool:
+    """Detect a large bright GameMaker-style play button without OCR.
+
+    Student games frequently render PLAY with a bitmap font that Tesseract
+    cannot read.  A large, bright, saturated panel across the upper-middle of
+    the client is a safer menu signal than the old coloured-HUD heuristic.
+    The detector deliberately requires both coverage and a bounded vertical
+    extent so ordinary green scenery does not qualify.
+    """
+    path = str(shot.get("path") or "")
+    if not path or not Path(path).is_file():
+        return False
+    try:
+        from PIL import Image  # type: ignore
+
+        image = Image.open(path).convert("RGB")
+        width, height = image.size
+        # Exclude native title chrome and inspect the region where main-menu
+        # buttons normally live.  Resize to keep the operation inexpensive.
+        region = image.crop(
+            (
+                int(width * 0.08),
+                int(height * 0.08),
+                int(width * 0.92),
+                int(height * 0.56),
+            )
+        ).resize((168, 96))
+        bright_saturated = 0
+        bright_green = 0
+        for red, green, blue in region.getdata():
+            high = max(red, green, blue)
+            low = min(red, green, blue)
+            if high >= 155 and high - low >= 55:
+                bright_saturated += 1
+            if green >= 145 and green >= red * 1.18 and green >= blue * 1.45:
+                bright_green += 1
+        area = max(1, region.width * region.height)
+        return bright_saturated / area >= 0.19 and bright_green / area >= 0.12
+    except OSError:
+        return False
+
+
+def _click_gamemaker_menu_candidate(
+    *,
+    shot: Dict[str, Any],
+    attempt: int,
+    process_pid: Optional[int],
+    artifact_path: Path,
+) -> bool:
+    """Click conservative image-relative menu positions in a GameMaker client."""
+    path = str(shot.get("path") or "")
+    try:
+        from PIL import Image  # type: ignore
+
+        with Image.open(path) as image:
+            width, height = image.size
+    except OSError:
+        bbox = shot.get("game_window_bbox") or (0, 0, 1, 1)
+        width = max(1, int(bbox[2]) - int(bbox[0]))
+        height = max(1, int(bbox[3]) - int(bbox[1]))
+
+    # First candidate targets the common large PLAY button.  The second covers
+    # centred menus without risking clicks near native window controls.
+    rel_y = (0.32, 0.50)[min(attempt, 1)]
+    return _click_at_image_position(
+        shot=shot,
+        image_xy=(width // 2, int(height * rel_y)),
+        process_pid=process_pid,
+        artifact_path=artifact_path,
+    )
+
+
 def _click_at_image_position(
     *,
     shot: Dict[str, Any],
@@ -918,10 +990,13 @@ class MenuNavigator:
         has_hud = _hud_keywords_in_text(ocr)
         has_menu = _menu_keywords_in_text(ocr)
         has_menu_screen = any(keyword in ocr for keyword in MENU_SCREEN_KEYWORDS)
+        has_large_menu_button = _looks_like_large_center_menu_button(shot)
         # The screenshot heuristic calls visually rich frames "gameplay_candidate".
         # A GameMaker title screen with colourful level buttons is rich too, so do
         # not treat that hint as proof of gameplay unless the HUD is visible.
         if state == "gameplay_candidate":
+            if has_large_menu_button:
+                return "menu"
             if has_hud:
                 return "gameplay"
             if _looks_like_gamemaker_hud(shot):
@@ -944,9 +1019,24 @@ class MenuNavigator:
         process_pid: Optional[int],
     ) -> str:
         if self._is_gamemaker_export(artifact_path):
-            # GameMaker level menus are commonly keyboard-driven. Trigger one
-            # explicit selection event before Enter; some runners ignore Enter
-            # while the initial menu selection has not emitted a key event yet.
+            play_pos = _find_play_button_ocr(shot)
+            if play_pos and _click_at_image_position(
+                shot=shot,
+                image_xy=play_pos,
+                process_pid=process_pid,
+                artifact_path=artifact_path,
+            ):
+                return "gamemaker_click_play_ocr"
+            # Mouse-event buttons are common in student GameMaker projects.
+            # Try visible central button locations before the keyboard fallback.
+            if attempt < 2 and _looks_like_large_center_menu_button(shot) and _click_gamemaker_menu_candidate(
+                shot=shot,
+                attempt=attempt,
+                process_pid=process_pid,
+                artifact_path=artifact_path,
+            ):
+                return "gamemaker_click_menu_candidate"
+            # Keyboard-driven menus still receive an explicit selection event.
             _send_key_win_legacy(0x28)  # Down arrow
             time.sleep(0.30)
             _send_key_win_legacy(0x0D)  # Enter
@@ -1795,7 +1885,18 @@ class PlaytestOrchestrator:
     @staticmethod
     def _submission_source_root(artifact_path: Path) -> Path:
         """Resolve the student subtree without ever scanning the application root."""
-        parts = artifact_path.resolve().parts
+        resolved = artifact_path.resolve()
+        # Source-only GameMaker projects are copied beside the isolated build
+        # directory: <session>/source_project and <session>/ide_compile/runtime.
+        # The old fallback returned the EXE directory, so no GML was inspected.
+        for parent in list(resolved.parents)[:6]:
+            candidate = parent / "source_project"
+            if candidate.is_dir() and (
+                any(candidate.glob("*.yyp")) or next(candidate.rglob("*.gml"), None)
+            ):
+                return candidate
+
+        parts = resolved.parts
         lowered = [part.lower() for part in parts]
         if "students" in lowered:
             idx = lowered.index("students")
@@ -1808,6 +1909,7 @@ class PlaytestOrchestrator:
     def _source_feature_signals(cls, artifact_path: Path) -> Dict[str, bool]:
         root = cls._submission_source_root(artifact_path)
         chunks: List[str] = []
+        source_files: List[Tuple[Path, str]] = []
         total = 0
         try:
             for fp in root.rglob("*.gml"):
@@ -1817,7 +1919,9 @@ class PlaytestOrchestrator:
                     text = fp.read_text(encoding="utf-8", errors="ignore")[:80_000]
                 except OSError:
                     continue
-                chunks.append(text.lower())
+                lowered = text.lower()
+                chunks.append(lowered)
+                source_files.append((fp, lowered))
                 total += len(text)
         except OSError:
             pass
@@ -1837,6 +1941,34 @@ class PlaytestOrchestrator:
         collect_trigger = "obj_cheese" in source and any(
             token in source
             for token in ("instance_place(", "place_meeting(", "collision_", "instance_destroy(")
+        )
+        # Generic GameMaker projects rarely use canonical object/variable
+        # names.  Identify the controllable object from keyboard event files,
+        # then inspect only its collision handlers to avoid counting unrelated
+        # decoration or dead helper objects as implemented mechanics.
+        player_objects = {
+            fp.parent.name.lower()
+            for fp, text in source_files
+            if fp.name.lower().startswith("keyboard_")
+            and re.search(r"\b[xy]\s*(?:\+=|-=|=\s*[xy]\s*[+-])", text)
+        }
+        player_collisions = [
+            text
+            for fp, text in source_files
+            if fp.parent.name.lower() in player_objects
+            and fp.name.lower().startswith("collision_")
+        ]
+        generic_collect = any(
+            re.search(r"\binstance_destroy\s*\(\s*other\s*\)", text)
+            for text in player_collisions
+        )
+        generic_hazard_transition = any(
+            re.search(
+                r"\b(?:room_goto|game_end)\s*\(|"
+                r"\b(?:global\.)?(?:lives?|mylives|health)\s*(?:-=|--|=\s*[^;\n]*-)",
+                text,
+            )
+            for text in player_collisions
         )
         lives_mutation = bool(
             re.search(
@@ -1877,21 +2009,25 @@ class PlaytestOrchestrator:
         return {
             # A label/variable alone is not implementation proof.  Require a
             # state mutation plus an observable output or consequence.
-            "collect_items": collect_mutation and collect_trigger,
+            "collect_items": (collect_mutation and collect_trigger) or generic_collect,
             "score_system": score_mutation and collect_trigger and "score:" in source,
             "lives_system": lives_mutation
             and any(x in source for x in ("life", "heart", "<3", "gameover")),
-            "enemy_interaction": any(x in source for x in ("obj_cat", "avoid the cat", "avoid cats", "enemy"))
-            and any(x in source for x in ("collision", "place_meeting"))
-            and (lives_mutation or lose_transition),
+            "enemy_interaction": (
+                any(x in source for x in ("obj_cat", "avoid the cat", "avoid cats", "enemy"))
+                and any(x in source for x in ("collision", "place_meeting"))
+                and (lives_mutation or lose_transition)
+            ) or generic_hazard_transition,
             "timer_system": timer_mutation
             and any(x in source for x in ("time:", "alarm[", "gameover")),
             "win_condition": win_transition
             and any(x in source for x in ('phase == "win"', "phase='win'", 'phase = "win"'))
             and any(x in source for x in ("you win", "victory", "all cheese collected")),
-            "lose_condition": lose_transition
-            and any(x in source for x in ('phase == "gameover"', "phase='gameover'", 'phase = "gameover"'))
-            and any(x in source for x in ("game over", "you lose", "defeat")),
+            "lose_condition": (
+                lose_transition
+                and any(x in source for x in ('phase == "gameover"', "phase='gameover'", 'phase = "gameover"'))
+                and any(x in source for x in ("game over", "you lose", "defeat"))
+            ) or generic_hazard_transition,
             "restart": "play again" in source
             and restart_input
             and (direct_restart_action or start_game_reset),
@@ -1910,12 +2046,19 @@ class PlaytestOrchestrator:
             w, h = img.size
             pixels = img.crop((int(w * 0.18), int(h * 0.20), int(w * 0.82), int(h * 0.62))).resize((160, 100))
             vivid = 0
+            near_white = 0
             for red, green, blue in pixels.getdata():
                 is_red = red >= 175 and red >= green * 1.6 and red >= blue * 1.35
                 is_green = green >= 175 and green >= red * 1.45 and green >= blue * 1.25
                 if is_red or is_green:
                     vivid += 1
-            return vivid / 16_000 >= 0.008
+                if red >= 220 and green >= 220 and blue >= 220:
+                    near_white += 1
+            # Bitmap-font terminal screens such as "YOU LOSE" can be plain
+            # white over scenery and are frequently unreadable by OCR.
+            # Clouds and pale scenery may contribute a few white pixels; the
+            # threshold is intentionally high enough to require a large title.
+            return vivid / 16_000 >= 0.008 or near_white / 16_000 >= 0.055
         except OSError:
             return False
 
@@ -2438,7 +2581,9 @@ def _test_document_present(inventory: Dict[str, Any]) -> bool:
     assets = inventory.get("assets_detected") or inventory.get("evidence_completeness_gate", {}).get(
         "assets_detected"
     ) or {}
-    if assets.get("word_pdf") or assets.get("testing_documentation"):
+    # A general report is not a test record.  Treating every DOCX/PDF as C.P6
+    # evidence caused ordinary design reports to manufacture one test entry.
+    if assets.get("testing_documentation"):
         return True
     paths = inventory.get("intake_relative_paths") or inventory.get("submission_paths") or []
     joined = "\n".join(str(p) for p in paths).lower()
@@ -2446,13 +2591,14 @@ def _test_document_present(inventory: Dict[str, Any]) -> bool:
         token in joined
         for token in (
             "test plan",
+            "test_plan",
             "bug log",
+            "bug_log",
             "استبيان",
             "اختبار",
             "survey",
             "questionnaire",
-            ".pdf",
-            ".docx",
+            "testing",
         )
     )
 
@@ -2538,9 +2684,12 @@ def format_agent_play_summary_ar(level: str, verification: Optional[Dict[str, An
             return f"لا — {l4} غير مؤكد (gameplay_entered غير مثبت)"
     l4 = str(gv.get("l4_level") or gv.get("automated_l4_level") or "")
     if gv.get("gameplay_entered") is True and l4 == "L4_full":
-        return "نعم — L4 كامل (حركة + قفز/نقاط — Gate مفتوح)"
+        return (
+            "نعم — تم الدخول إلى اللعب الأساسي (L4). "
+            "لا يعني ذلك اكتمال اللعبة؛ نتائج الميزات موضحة منفصلة."
+        )
     if gv.get("gameplay_entered") is True and l4 == "L4_partial":
-        return "نعم — L4 جزئي (ميكانيكا أساسية — Gate مفتوح لـ C.P5)"
+        return "نعم — L4 جزئي (تم الدخول إلى gameplay)؛ لا يعني ذلك تحقق كل الميزات أو فتح معيار أكاديمي"
     if (level == "L3" or l4 == "L3") and gv.get("gameplay_entered") is not True:
         return (
             "تم تشغيل ملف اللعبة (L3)، لكن لم يتم إثبات اللعب الفعلي (gameplay) في هذا التقرير. "
@@ -2575,8 +2724,21 @@ def build_gameplay_verification_summary(
     grading_mode = None
     if isinstance(grading_result, dict):
         grading_mode = grading_result.get("grading_mode")
+    gv_for_gate = dict(gv)
+    gv_for_gate["requirement_checklist"] = (
+        (grading_result or {}).get("requirement_checklist")
+        or inv.get("requirement_checklist")
+        or gv.get("requirement_checklist")
+        or {}
+    )
+    gv_for_gate["runtime_evidence_package"] = (
+        (grading_result or {}).get("runtime_evidence_package")
+        or inv.get("runtime_evidence_package")
+        or gv.get("runtime_evidence_package")
+        or {}
+    )
     gate = assess_automated_l4_gate(
-        gv,
+        gv_for_gate,
         test_document_present=_test_document_present(inv),
         test_doc_entries=count_test_document_entries(inv),
         functional_smoke_pass=smoke.get("functional_smoke_pass") is True,

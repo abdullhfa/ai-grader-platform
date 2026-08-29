@@ -143,32 +143,76 @@ def _materialize_yyp_source_tree(yyp_path: Path, workspace: Path) -> Dict[str, A
     return {"materialized": False, "yyp_path": str(yyp_path)}
 
 
-def publish_built_runtime_to_student(package_dir: Path, student_root: Path) -> Dict[str, Any]:
-    """Copy a built GameMaker package into the student folder for launch."""
-    dest = student_root.resolve() / GENERATED_RUNTIME_DIRNAME
-    if dest.exists():
-        shutil.rmtree(dest, ignore_errors=True)
-    dest.mkdir(parents=True, exist_ok=True)
-    copied = 0
-    for item in package_dir.rglob("*"):
-        if not item.is_file():
-            continue
-        relative = item.relative_to(package_dir)
-        if any(part in {"", ".", ".."} for part in relative.parts):
-            continue
-        target = dest.joinpath(*relative.parts)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(item, target)
-        copied += 1
-    exe = next(dest.rglob("*.exe"), None)
-    html = next(dest.rglob("index.html"), None)
+def _is_within(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def _isolate_yyp_source_tree(yyp_path: Path, workspace: Path) -> Dict[str, Any]:
+    """Copy submitted GameMaker source into the grader workspace before building.
+
+    Igor may create or update project/cache metadata while compiling. It must
+    never receive a submitted YYP path unless that path is already inside the
+    isolated runtime workspace.
+    """
+    source_yyp = yyp_path.resolve()
+    workspace = workspace.resolve()
+    if _is_within(source_yyp, workspace):
+        return {
+            "isolated": True,
+            "copied": False,
+            "reason": "already_in_workspace",
+            "yyp_path": str(source_yyp),
+            "project_root": str(source_yyp.parent),
+        }
+
+    source_root = source_yyp.parent
+    if _is_within(workspace, source_root):
+        return {
+            "isolated": False,
+            "copied": False,
+            "reason": "workspace_inside_submission",
+            "yyp_path": str(source_yyp),
+        }
+
+    isolated_root = workspace / "source_project"
+    if isolated_root.exists():
+        shutil.rmtree(isolated_root)
+    isolated_root.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        shutil.copytree(
+            source_root,
+            isolated_root,
+            symlinks=True,
+            ignore=shutil.ignore_patterns(GENERATED_RUNTIME_DIRNAME),
+        )
+    except OSError as exc:
+        return {
+            "isolated": False,
+            "copied": False,
+            "reason": "source_isolation_failed",
+            "detail": str(exc),
+            "yyp_path": str(source_yyp),
+        }
+
+    isolated_yyp = isolated_root / source_yyp.name
+    if not isolated_yyp.is_file():
+        return {
+            "isolated": False,
+            "copied": True,
+            "reason": "isolated_yyp_missing",
+            "yyp_path": str(isolated_yyp),
+        }
     return {
-        "generated": True,
-        "generated_runtime_dir": str(dest),
-        "package_dir": str(package_dir),
-        "executable": str(exe.resolve()) if exe else None,
-        "html_entry": str(html.resolve()) if html else None,
-        "copied_files": copied,
+        "isolated": True,
+        "copied": True,
+        "reason": "submission_copied_to_workspace",
+        "source_yyp_path": str(source_yyp),
+        "yyp_path": str(isolated_yyp.resolve()),
+        "project_root": str(isolated_root.resolve()),
     }
 
 
@@ -200,16 +244,21 @@ def run_build_pipeline(
     timeout_seconds: int = 90,
     student_root: Optional[Path] = None,
 ) -> Dict[str, Any]:
-    """Extract YYZ/YYP and optionally invoke GameMaker IDE CLI build."""
+    """Build source-only submissions in isolation; never write student files."""
     pipeline: Dict[str, Any] = {
         "version": "gamemaker_build_pipeline_v1",
         "yyz_extracted": False,
         "yyp_ready": bool(layout.yyp_path),
         "ide_build_attempted": False,
         "runnable_after_pipeline": bool(layout.executable or layout.html_entry),
-        "student_runtime": {"generated": False},
+        "student_runtime": {
+            "generated": False,
+            "reason": "student_tree_write_forbidden",
+        },
+        "workspace_runtime": {"generated": False},
     }
-    publish_root = student_root or layout.project_root
+    # Retained for call compatibility. No build output is ever published here.
+    _ = student_root
 
     if layout.yyz_path and not layout.yyp_path:
         extract_dir = workspace / "yyz_extract"
@@ -231,23 +280,39 @@ def run_build_pipeline(
             layout.yyp_path = Path(str(source_tree["yyp_path"]))
             layout.project_root = layout.yyp_path.parent
             layout.gml_files = list(layout.project_root.rglob("*.gml"))[:200]
+        isolation = _isolate_yyp_source_tree(layout.yyp_path, workspace)
+        pipeline["source_isolation"] = isolation
+        if not isolation.get("isolated"):
+            pipeline["ide_build"] = {
+                "attempted": False,
+                "success": False,
+                "reason": isolation.get("reason") or "source_isolation_failed",
+            }
+            pipeline["layout"] = layout.to_dict()
+            return pipeline
+        layout.yyp_path = Path(str(isolation["yyp_path"]))
+        layout.project_root = layout.yyp_path.parent
+        layout.gml_files = list(layout.project_root.rglob("*.gml"))[:200]
         ide_build = _try_ide_build(layout.yyp_path, workspace, timeout_seconds=timeout_seconds)
         pipeline["ide_build"] = ide_build
         pipeline["ide_build_attempted"] = bool(ide_build.get("attempted"))
         package_exe = Path(str(ide_build["executable"])) if ide_build.get("executable") else None
-        if package_exe and publish_root:
-            published = publish_built_runtime_to_student(package_exe.parent, Path(publish_root))
-            pipeline["student_runtime"] = published
-            if published.get("executable"):
-                layout.executable = Path(str(published["executable"]))
-                ide_build["executable"] = published["executable"]
-            if published.get("html_entry"):
-                layout.html_entry = Path(str(published["html_entry"]))
-                ide_build["html_entry"] = published["html_entry"]
-        elif package_exe:
+        if package_exe:
             layout.executable = package_exe
+            pipeline["workspace_runtime"] = {
+                "generated": True,
+                "isolation": "grader_workspace",
+                "package_dir": str(package_exe.parent.resolve()),
+                "executable": str(package_exe.resolve()),
+            }
         if ide_build.get("html_entry") and not layout.html_entry:
             layout.html_entry = Path(str(ide_build["html_entry"]))
+            pipeline["workspace_runtime"] = {
+                **pipeline["workspace_runtime"],
+                "generated": True,
+                "isolation": "grader_workspace",
+                "html_entry": str(layout.html_entry.resolve()),
+            }
 
     refreshed = probe_gamemaker_layout(layout.yyp_path or layout.yyz_path or layout.project_root or workspace)
     if refreshed.executable:
@@ -257,19 +322,18 @@ def run_build_pipeline(
     if refreshed.gml_files:
         layout.gml_files = refreshed.gml_files
 
-    published_runtime = pipeline.get("student_runtime") or {}
-    if published_runtime.get("executable"):
-        layout.executable = Path(str(published_runtime["executable"]))
-    if published_runtime.get("html_entry"):
-        layout.html_entry = Path(str(published_runtime["html_entry"]))
-
     pipeline["runnable_after_pipeline"] = bool(layout.executable or layout.html_entry)
     pipeline["layout"] = layout.to_dict()
     return pipeline
 
 
 def _try_ide_build(yyp_path: Path, workspace: Path, *, timeout_seconds: int) -> Dict[str, Any]:
-    """Build a Windows package with GameMaker's supported Igor command line."""
+    """Build a runnable Windows artifact through Igor.
+
+    PackageZip may require an export entitlement even though local Compile/Run
+    is available. In that case compile ``data.win`` and pair it with the local
+    runtime Runner.exe inside the isolated grader workspace.
+    """
     toolchain = discover_gamemaker_toolchain()
     if not toolchain.ready:
         return {
@@ -286,7 +350,6 @@ def _try_ide_build(yyp_path: Path, workspace: Path, *, timeout_seconds: int) -> 
     target_zip = out_dir / "gamemaker_windows_build.zip"
     cmd = [
         str(toolchain.igor_path),
-        f"/uf={toolchain.user_folder}",
         f"/rp={toolchain.runtime_root}",
         f"/project={yyp_path.resolve()}",
         f"/cache={cache_dir.resolve()}",
@@ -297,6 +360,8 @@ def _try_ide_build(yyp_path: Path, workspace: Path, *, timeout_seconds: int) -> 
         "Windows",
         "PackageZip",
     ]
+    if toolchain.user_folder:
+        cmd.insert(1, f"/uf={toolchain.user_folder}")
     try:
         proc = subprocess.run(
             cmd,
@@ -345,6 +410,19 @@ def _try_ide_build(yyp_path: Path, workspace: Path, *, timeout_seconds: int) -> 
             }
 
     detail = (proc.stderr or proc.stdout or "")[-2000:]
+    compile_result = _try_local_compile_runner(
+        yyp_path,
+        workspace,
+        toolchain=toolchain,
+        timeout_seconds=timeout_seconds,
+    )
+    if compile_result.get("success"):
+        compile_result["package_attempt"] = {
+            "returncode": proc.returncode,
+            "reason": "package_permission_or_output_unavailable",
+            "detail": detail,
+        }
+        return compile_result
     return {
         "attempted": True,
         "success": False,
@@ -352,6 +430,91 @@ def _try_ide_build(yyp_path: Path, workspace: Path, *, timeout_seconds: int) -> 
         "returncode": proc.returncode,
         "detail": detail,
         "toolchain": toolchain.to_dict(),
+        "local_compile": compile_result,
+    }
+
+
+def _try_local_compile_runner(
+    yyp_path: Path,
+    workspace: Path,
+    *,
+    toolchain,
+    timeout_seconds: int,
+) -> Dict[str, Any]:
+    """Compile data.win and stage the installed local Runner as a runnable EXE."""
+    compile_root = workspace / "ide_compile"
+    out_dir = compile_root / "output"
+    cache_dir = compile_root / "cache"
+    temp_dir = compile_root / "temp"
+    runtime_dir = compile_root / "runtime"
+    for path in (out_dir, cache_dir, temp_dir, runtime_dir):
+        path.mkdir(parents=True, exist_ok=True)
+
+    command = [
+        str(toolchain.igor_path),
+        f"/rp={toolchain.runtime_root}",
+        f"/project={yyp_path.resolve()}",
+        f"/cache={cache_dir.resolve()}",
+        f"/temp={temp_dir.resolve()}",
+        f"/of={(out_dir / 'game.win').resolve()}",
+        "--",
+        "Windows",
+        "Compile",
+    ]
+    if toolchain.user_folder:
+        command.insert(1, f"/uf={toolchain.user_folder}")
+    try:
+        proc = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            errors="replace",
+            timeout=min(max(timeout_seconds, 30), 300),
+            cwd=str(yyp_path.parent),
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {
+            "attempted": True,
+            "success": False,
+            "reason": "igor_local_compile_failed",
+            "detail": str(exc),
+        }
+
+    compiled_win = next(out_dir.rglob("*.win"), None)
+    runner_candidates = [
+        Path(toolchain.runtime_root) / "windows" / "x64" / "Runner.exe",
+        Path(toolchain.runtime_root) / "windows" / "Runner.exe",
+    ]
+    runner = next((path for path in runner_candidates if path.is_file()), None)
+    if proc.returncode == 0 and compiled_win and runner:
+        executable = runtime_dir / "GameMakerLocalRunner.exe"
+        shutil.copy2(runner, executable)
+        shutil.copy2(compiled_win, runtime_dir / "data.win")
+        (runtime_dir / "options.ini").write_text("[Windows]\n", encoding="utf-8")
+        return {
+            "attempted": True,
+            "success": True,
+            "method": "igor_compile_local_runner",
+            "command": command,
+            "returncode": proc.returncode,
+            "compiled_data": str(compiled_win.resolve()),
+            "runner_source": str(runner.resolve()),
+            "executable": str(executable.resolve()),
+            "toolchain": toolchain.to_dict(),
+        }
+
+    return {
+        "attempted": True,
+        "success": False,
+        "reason": (
+            "igor_local_compile_failed"
+            if proc.returncode
+            else "local_runner_or_data_missing"
+        ),
+        "returncode": proc.returncode,
+        "detail": (proc.stderr or proc.stdout or "")[-2000:],
+        "compiled_data": str(compiled_win.resolve()) if compiled_win else None,
+        "runner_found": bool(runner),
     }
 
 
@@ -410,24 +573,15 @@ def run_gamemaker_runtime_verification(
 ) -> Dict[str, Any]:
     """Full PRO verification pipeline."""
     workspace = session.workspace
-    generated_dir: Optional[Path] = None
     build: Dict[str, Any] = {}
     result: Optional[Dict[str, Any]] = None
     try:
-        stale = session.root / GENERATED_RUNTIME_DIRNAME
-        if stale.is_dir():
-            cleanup_generated_gamemaker_runtime(stale, student_root=session.root)
-
         build = run_build_pipeline(
             layout,
             workspace=workspace,
             timeout_seconds=timeout_seconds,
             student_root=session.root,
         )
-        generated = (build.get("student_runtime") or {}).get("generated_runtime_dir")
-        if generated:
-            generated_dir = Path(str(generated))
-            session.signals["generated_runtime_dir"] = str(generated_dir)
         inspection = inspect_gamemaker_objects(layout)
         replay = run_gameplay_replay(session, layout, timeout_seconds=min(90, timeout_seconds))
 
@@ -492,8 +646,9 @@ def run_gamemaker_runtime_verification(
         )
         return result
     finally:
-        cleanup = cleanup_generated_gamemaker_runtime(generated_dir, student_root=session.root)
+        # Runtime artifacts live under session.workspace and are managed with the
+        # runtime session. The submitted tree is intentionally never mutated.
+        cleanup = {"cleaned": False, "reason": "workspace_managed_no_student_write"}
         session.signals["generated_runtime_cleanup"] = cleanup
         if result is not None:
             result["signals"]["generated_runtime_cleanup"] = cleanup
-

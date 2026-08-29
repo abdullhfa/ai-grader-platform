@@ -124,7 +124,7 @@ def assess_gameplay_semantics(
         "score_system" in verified_requirements
     )
     timer_progressed = _signal_true(signals, "timer_progressed") or (
-        "timer" in verified_requirements
+        "timer" in verified_requirements or "timer_system" in verified_requirements
     )
     checkpoint = _signal_true(signals, "progression_checkpoint")
     level_transition = _signal_true(signals, "level_transition")
@@ -167,9 +167,12 @@ def assess_gameplay_semantics(
         has_fail_state
         or _signal_true(signals, "fail_state")
         or _signal_true(signals, "game_over")
+        or "lose_condition" in verified_requirements
         or "win_lose_condition" in verified_requirements
     )
-    has_win_state = has_win_state or "win_lose_condition" in verified_requirements
+    has_win_state = has_win_state or bool(
+        {"win_condition", "win_lose_condition"} & verified_requirements
+    )
 
     gameplay_started = bool(
         obs.get("runtime_observed")

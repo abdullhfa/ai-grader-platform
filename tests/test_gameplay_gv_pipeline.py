@@ -167,12 +167,16 @@ class TestAgentPlaySummaryWording:
     def test_l4_partial_open_gate_wording(self):
         label = format_agent_play_summary_ar("L4", rich_l4_gv())
         assert "L4 جزئي" in label
-        assert "Gate مفتوح" in label
+        assert "Gate مفتوح" not in label
+        assert "لا يعني ذلك تحقق كل الميزات" in label
 
     def test_l4_full_wording(self):
         gv = rich_l4_gv()
         gv["l4_level"] = "L4_full"
-        assert "L4 كامل" in format_agent_play_summary_ar("L4", gv)
+        wording = format_agent_play_summary_ar("L4", gv)
+        assert "تم الدخول إلى اللعب الأساسي (L4)" in wording
+        assert "لا يعني ذلك اكتمال اللعبة" in wording
+        assert "L4 كامل" not in wording
 
     def test_launch_only_is_honest_not_misleading(self):
         label = format_agent_play_summary_ar("L3", {"l4_level": "L3"})

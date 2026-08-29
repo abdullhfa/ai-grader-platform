@@ -310,25 +310,39 @@ def text_has_design_peer_evidence(text: str, *, min_len: int = 250) -> bool:
     if len(t) < min_len:
         return False
     nt = normalize_arabic_text(t)
-    if DESIGN_PEER_TEXT_RE.search(nt):
-        return True
-    if not _GENERIC_SURVEY_RE.search(nt):
-        return False
-    has_design = bool(re.search(r"gdd|تصميم|design|مراجع", nt, re.IGNORECASE))
-    design_review_corpus = bool(
+    has_design = bool(re.search(r"gdd|تصميم|design", nt, re.IGNORECASE))
+    has_peer_or_feedback = bool(
         re.search(
-            r"خيارات\s*التطوير|جمهور\s*مستهدف|قصة\s*مصورة|storyboard|"
-            r"وثيق\w*\s*تصميم|متطلبات\s*(?:التصميم|المشروع)|تحسين(?:ات)?\s*التصميم",
+            r"peer\s*review|reviewer|feedback|two\s+(?:people|peers)|"
+            r"شخصين|مراجعين|مراجع(?:ه)?\s+التصميم|زميل|معلم|"
+            r"تعليقات|ملاحظات|تغذيه\s*راجع|استبيان|استطلاع",
             nt,
             re.IGNORECASE,
         )
     )
-    if has_design and design_review_corpus:
-        return True
-    final_test_only = bool(_FINAL_GAME_TEST_RE.search(nt)) and not bool(
-        re.search(r"مراجعة\s*التصميم|design\s*review|gdd\s*v", nt, re.IGNORECASE)
+    # Mentions such as "design document", target audience, or storyboard are
+    # design content—not proof that another person reviewed the design.
+    return has_design and has_peer_or_feedback
+
+
+def text_has_p7_client_review(text: str, *, min_len: int = 500) -> bool:
+    """C.P7: substantive review of the finished game against client needs."""
+    t = normalize_arabic_text(text or "")
+    if len(t) < min_len:
+        return False
+    has_client = bool(CLIENT_PURPOSE_RE.search(t))
+    has_judgement = bool(EVALUATIVE_JUDGEMENT_RE.search(t))
+    has_finished_game_review = bool(
+        re.search(
+            r"(?:مراجعه|تقييم)\s+(?:مد[ىي]\s+)?(?:تلبيه|فعالي|فاعلي|نجاح|"
+            r"اللعبه\s*النهائيه|النسخه\s*النهائيه)"
+            r"|(?:review|evaluat)\w*[\s\S]{0,120}"
+            r"(?:meets?|against)[\s\S]{0,80}(?:client|user)\s*requirements?",
+            t,
+            re.IGNORECASE,
+        )
     )
-    return has_design and not final_test_only
+    return has_client and has_judgement and has_finished_game_review
 
 
 def path_looks_like_test_plan_doc(path: str) -> bool:

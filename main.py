@@ -77,7 +77,7 @@ from fastapi.responses import (  # type: ignore
     HTMLResponse, JSONResponse, FileResponse, RedirectResponse
 )
 from fastapi.staticfiles import StaticFiles  # type: ignore
-from fastapi.templating import Jinja2Templates  # type: ignore
+from app.template_compat import Jinja2Templates  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
 
 from app.database import get_db, init_db  # type: ignore
@@ -215,9 +215,12 @@ def _patch_starlette_multipart_limits() -> None:
     Batch folder uploads (many small files) exceed that and show:
     "Too many files. Maximum number of files is 1000".
     """
+    import inspect
     import starlette.requests as _sr
 
     _orig = _sr.Request._get_form
+    if getattr(_orig, "_ai_grader_multipart_compat", False):
+        return
 
     try:
         cap_files = int(os.getenv("MULTIPART_MAX_FILES", "8000"))
@@ -231,12 +234,29 @@ def _patch_starlette_multipart_limits() -> None:
     _multipart_ceiling = max(1000, _multipart_ceiling)
     cap_files = max(1000, min(cap_files, _multipart_ceiling))
     cap_fields = max(1000, min(cap_fields, _multipart_ceiling))
+    try:
+        cap_part_size = int(os.getenv("MULTIPART_MAX_PART_SIZE", str(64 * 1024 * 1024)))
+    except ValueError:
+        cap_part_size = 64 * 1024 * 1024
+    cap_part_size = max(1024 * 1024, min(cap_part_size, 512 * 1024 * 1024))
+    _supports_max_part_size = "max_part_size" in inspect.signature(_orig).parameters
 
-    async def _get_form(self, *, max_files=1000, max_fields=1000):  # type: ignore[no-untyped-def]
+    async def _get_form(  # type: ignore[no-untyped-def]
+        self,
+        *,
+        max_files=1000,
+        max_fields=1000,
+        max_part_size=1024 * 1024,
+    ):
         mf = cap_files if max_files == 1000 else max_files
         fld = cap_fields if max_fields == 1000 else max_fields
-        return await _orig(self, max_files=mf, max_fields=fld)
+        part_size = cap_part_size if max_part_size == 1024 * 1024 else max_part_size
+        kwargs = {"max_files": mf, "max_fields": fld}
+        if _supports_max_part_size:
+            kwargs["max_part_size"] = part_size
+        return await _orig(self, **kwargs)
 
+    _get_form._ai_grader_multipart_compat = True  # type: ignore[attr-defined]
     _sr.Request._get_form = _get_form  # type: ignore[method-assign]
 
 
@@ -3475,7 +3495,23 @@ async def results_page(
                 or (_snap_ui.get("artifact_inventory") or {}).get("requirement_evidence_table")
             )
             _gp = _snap_ui.get("grading_profile") or {}
-            _outcome = _gp.get("runtime_outcome") or _gp.get("godot_runtime_outcome")
+            _stored_outcome = _gp.get("runtime_outcome") or _gp.get("godot_runtime_outcome")
+            _outcome = None
+            try:
+                from app.gameplay_verifier import build_gameplay_verification_summary
+
+                _inv_ui = _snap_ui.get("artifact_inventory") or {}
+                _rt_ui = _inv_ui.get("runtime_observation_report") or {}
+                _gv_ui = build_gameplay_verification_summary(
+                    _rt_ui if isinstance(_rt_ui, dict) else None,
+                    inventory=_inv_ui,
+                    grading_result=_snap_ui,
+                )
+                _outcome = _gv_ui.get("runtime_outcome") or _gv_ui.get("godot_runtime_outcome")
+            except Exception:
+                _outcome = None
+            if not _outcome:
+                _outcome = _stored_outcome
             if _outcome:
                 from app.report_feedback_formatter import ensure_runtime_outcome_engine
 
@@ -3485,23 +3521,12 @@ async def results_page(
                     _outcome,
                     engine_id=str(_rt_engine.get("engine") or _inv_engine.get("engine") or ""),
                 )
-            if not _outcome:
-                try:
-                    from app.gameplay_verifier import build_gameplay_verification_summary
-
-                    _inv_ui = _snap_ui.get("artifact_inventory") or {}
-                    _rt_ui = _inv_ui.get("runtime_observation_report") or {}
-                    _gv_ui = build_gameplay_verification_summary(
-                        _rt_ui if isinstance(_rt_ui, dict) else None,
-                        inventory=_inv_ui,
-                        grading_result=_snap_ui,
-                    )
-                    _outcome = _gv_ui.get("runtime_outcome") or _gv_ui.get("godot_runtime_outcome")
-                except Exception:
-                    _outcome = None
             gameplay_profile_summary = {
                 "l4_level": _gp.get("l4_level"),
-                "agent_play_label_ar": _gp.get("agent_play_label_ar"),
+                "agent_play_label_ar": (
+                    (_outcome or {}).get("agent_play_result_ar")
+                    or _gp.get("agent_play_label_ar")
+                ),
                 "gameplay_agent_used": _gp.get("gameplay_agent_used"),
                 "automated_l4_gate": _gp.get("automated_l4_gate"),
                 "runtime_outcome": _outcome,
@@ -9670,6 +9695,26 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
         return
 
+    def prevent_row_split(row):
+        """Keep an evidence row together instead of orphaning code on the next page."""
+        tr_pr = row._tr.get_or_add_trPr()
+        if not tr_pr.xpath("./w:cantSplit"):
+            tr_pr.append(OxmlElement("w:cantSplit"))
+
+    def prepare_table_header(row):
+        """Repeat the header and keep it attached to the first evidence row."""
+        prevent_row_split(row)
+        tr_pr = row._tr.get_or_add_trPr()
+        if not tr_pr.xpath("./w:tblHeader"):
+            tbl_header = OxmlElement("w:tblHeader")
+            tbl_header.set(qn("w:val"), "true")
+            tr_pr.append(tbl_header)
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                p_pr = paragraph._p.get_or_add_pPr()
+                if not p_pr.xpath("./w:keepNext"):
+                    p_pr.append(OxmlElement("w:keepNext"))
+
     def add_heading(text, level=1, color=PRIMARY, bg_color=None):
         p = doc.add_paragraph()
         set_rtl(p)
@@ -10023,6 +10068,8 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         except (TypeError, ValueError):
             plag_max_s = 0.0
 
+        from app.report_feedback_formatter import normalize_agent_play_label_ar
+
         summary_data_s = [
             ("التقدير المعتمد:", _ltr_embed(grade_level_s)),
             ("وضع التصحيح:", _ltr_embed(_mode_label_s)),
@@ -10042,7 +10089,9 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                     "Agent لعب:",
                     _ltr_embed(
                         str(
-                            _gp.get("agent_play_label_ar")
+                            normalize_agent_play_label_ar(
+                                _gp.get("agent_play_label_ar")
+                            )
                             or (
                                 "نعم"
                                 if _gp.get("gameplay_agent_used")
@@ -10059,10 +10108,12 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             summary_data_s.append(
                 ("ملاحظة التقدير المتوقع:", erg.get("disclaimer_ar") or "")
             )
+        from app.report_feedback_formatter import format_score_fraction_ar
+
         summary_data_s.extend([
             ("أعلى معيار متحقق:", _ltr_embed(str(highest_crit_s))),
             ("نسبة المعايير (تحليلي):", _ltr_embed(f"{percentage_s:.1f}%")),
-            ("الدرجة الكلية:", _ltr_embed(f"{total_score_s} / {max_score_s}")),
+            ("الدرجة الكلية:", format_score_fraction_ar(total_score_s, max_score_s)),
             ("نسبة الذكاء الاصطناعي (إرشادي):", f"{ai_icon_s} {_ltr_embed(f'{ai_score_s}%')}"),
             ("نسبة الانتحال:", _ltr_embed(f"{plag_max_s:.1f}%")),
             ("وضع التصحيح:", _ltr_embed(str(exec_mode_s))),
@@ -10138,7 +10189,33 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 _set_run_cs(_dr)
             doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
-        _runtime_outcome = (_gp or {}).get("runtime_outcome") or (_gp or {}).get("godot_runtime_outcome")
+        _stored_runtime_outcome = (
+            (_gp or {}).get("runtime_outcome")
+            or (_gp or {}).get("godot_runtime_outcome")
+        )
+        _runtime_outcome = None
+        # Rebuild from the current snapshot at export time. Persisted outcomes
+        # may contain legacy generic Gate wording even though fresh L4/feature
+        # decisions are available in the snapshot.
+        try:
+            from app.gameplay_verifier import build_gameplay_verification_summary
+
+            _inv_runtime = gs.get("artifact_inventory") or {}
+            _rt_runtime = _inv_runtime.get("runtime_observation_report") or {}
+            _gv_summary = build_gameplay_verification_summary(
+                _rt_runtime if isinstance(_rt_runtime, dict) else None,
+                inventory=_inv_runtime,
+                grading_result=gs,
+            )
+            _runtime_outcome = (
+                _gv_summary.get("runtime_outcome")
+                or _gv_summary.get("godot_runtime_outcome")
+            )
+        except Exception:
+            _runtime_outcome = None
+        if not _runtime_outcome:
+            _runtime_outcome = _stored_runtime_outcome
+        _runtime_reason_by_criterion = {}
         if _runtime_outcome:
             from app.report_feedback_formatter import ensure_runtime_outcome_engine
 
@@ -10148,20 +10225,9 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 _runtime_outcome,
                 engine_id=str(_rt_engine.get("engine") or _inv_engine.get("engine") or ""),
             )
-        if not _runtime_outcome:
-            try:
-                from app.gameplay_verifier import build_gameplay_verification_summary
-
-                _inv_godot = gs.get("artifact_inventory") or {}
-                _rt_godot = _inv_godot.get("runtime_observation_report") or {}
-                _gv_sum_godot = build_gameplay_verification_summary(
-                    _rt_godot if isinstance(_rt_godot, dict) else None,
-                    inventory=_inv_godot,
-                    grading_result=gs,
-                )
-                _runtime_outcome = _gv_sum_godot.get("runtime_outcome") or _gv_sum_godot.get("godot_runtime_outcome")
-            except Exception:
-                _runtime_outcome = None
+            _runtime_reason_by_criterion = dict(
+                _runtime_outcome.get("criterion_reasons_ar") or {}
+            )
         if _runtime_outcome and (
             _runtime_outcome.get("failure_reason_code")
             or _gp.get("gameplay_agent_used")
@@ -10463,6 +10529,8 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         add_heading(" تفاصيل المعايير", level=2, color=PURPLE)
         for criteria in sorted(crs_snap, key=_criteria_sort_from_dict):
             level_c = criteria.get("criteria_level", "")
+            _short_level_c = str(level_c).split(".")[-1].split("/")[-1]
+            _fresh_runtime_reason = _runtime_reason_by_criterion.get(_short_level_c)
             from app.report_feedback_formatter import criterion_report_display
 
             st_icon, st_txt, card_ac, card_bd = criterion_report_display(criteria)
@@ -10519,7 +10587,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 from app.report_feedback_formatter import format_criterion_feedback_for_report
                 fb = format_criterion_feedback_for_report(
                     fb_raw,
-                    runtime_note_ar=criteria.get("runtime_observation_note_ar"),
+                    runtime_note_ar=(
+                        _fresh_runtime_reason
+                        or criteria.get("award_block_reason_ar")
+                        or criteria.get("runtime_observation_note_ar")
+                    ),
                     achieved=bool(criteria.get("achieved", False)),
                     awardable=criteria.get("awardable", criteria.get("achieved")),
                 )
@@ -10538,7 +10610,12 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 )
                 doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
-            dm = criteria.get("decision_matrix") or []
+            from app.report_feedback_formatter import criterion_decision_matrix_for_report
+
+            dm = criterion_decision_matrix_for_report(
+                criteria,
+                authoritative_reason_ar=_fresh_runtime_reason,
+            )
             if isinstance(dm, list) and dm:
                 dm_p = doc.add_paragraph()
                 set_rtl(dm_p)
@@ -10556,6 +10633,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 dm_tbl.columns[0].width = Cm(7.0)
                 dm_tbl.columns[1].width = Cm(3.0)
                 dm_tbl.columns[2].width = Cm(5.0)
+                prepare_table_header(dm_tbl.rows[0])
 
                 headers = ["الدليل (Evidence)", "الحالة (Status)", "المتطلب (Requirement)"]
                 for ci, hd in enumerate(headers):
@@ -10577,6 +10655,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                     if not isinstance(row_data, dict):
                         continue
                     row = dm_tbl.add_row()
+                    prevent_row_split(row)
                     met = bool(row_data.get("met", False))
                     ev = _report_text(row_data.get("evidence", "-"))
                     if not ev or ev == "Not found":
@@ -10653,7 +10732,8 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                     _set_run_cs(r_run)
             doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
-        strengths_s = gs.get("strengths") or []
+        from app.report_feedback_formatter import sanitize_strengths_for_runtime
+        strengths_s = sanitize_strengths_for_runtime(gs.get("strengths") or [], gs)
         improvements_s = gs.get("improvements") or []
         if strengths_s:
             add_heading("🟢 نقاط قوة الطالب", level=2, color=PURPLE)
@@ -10786,11 +10866,13 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             elif ai_score <= 80: ai_icon = "🔴"
             else: ai_icon = "⛔"
 
+            from app.report_feedback_formatter import format_score_fraction_ar
+
             summary_data = [
                 ("الدرجة BTEC النهائية:", _ltr_embed(str(grade_level))),
                 ("أعلى معيار متحقق:", _ltr_embed(str(highest_crit))),
                 ("إكمال المعايير:", _ltr_embed(f"{percentage:.1f}%")),
-                ("الدرجة الكلية:", _ltr_embed(f"{total_score} / {max_score}")),
+                ("الدرجة الكلية:", format_score_fraction_ar(total_score, max_score)),
                 ("نسبة الذكاء الاصطناعي (إرشادي):", f"{ai_icon} {_ltr_embed(f'{ai_score}%')}"),
                 ("نسبة الانتحال:", _ltr_embed(f"{plag_max:.1f}%")),
                 ("وضع التصحيح:", _ltr_embed(str(exec_mode))),
@@ -11057,6 +11139,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 dm_tbl.columns[0].width = Cm(7.0)  # Evidence (Left in RTL)
                 dm_tbl.columns[1].width = Cm(3.0)  # Status
                 dm_tbl.columns[2].width = Cm(5.0)  # Requirement (Right in RTL)
+                prepare_table_header(dm_tbl.rows[0])
 
                 headers = ["الدليل (Evidence)", "الحالة (Status)", "المتطلب (Requirement)"]
                 for ci, hd in enumerate(headers):
@@ -11076,6 +11159,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
                 for row_data in decision_matrix:
                     row = dm_tbl.add_row()
+                    prevent_row_split(row)
                     met = row_data.get("met", False)
                     ev = _report_text(row_data.get("evidence", "-"))
                     if not ev or ev == "Not found":
@@ -11146,6 +11230,9 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 try: improvements = json.loads(summary.improvements)
                 except Exception: pass
 
+            if strengths:
+                from app.report_feedback_formatter import sanitize_strengths_for_runtime
+                strengths = sanitize_strengths_for_runtime(strengths, grading_snapshot or {})
             if strengths:
                 add_heading("🟢 نقاط قوة الطالب", level=2, color=PURPLE)
                 for i, st in enumerate(strengths, 1):

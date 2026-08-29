@@ -31,6 +31,7 @@ def test_referral_when_partial_criteria():
     res = resolve_institutional_classification(grading)
     assert res["outcome_band"] in ("Referral", "Partial")
     assert res["btec_grade"] == "U"
+    assert res["display_grade"] == "U"
     assert "فشل" not in (res.get("runtime_resolution") or {}).get("summary_ar", "")
 
 

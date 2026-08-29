@@ -128,4 +128,3 @@ def test_v1_without_v2_blocks_gamemaker_improvement_criteria(tmp_path: Path):
 
     assert all(row["achieved"] is False for row in gr["criteria_results"])
     assert all(row.get("version_gate_block") for row in gr["criteria_results"])
-

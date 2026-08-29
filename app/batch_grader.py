@@ -38,6 +38,40 @@ import re
 load_dotenv(override=True)
 
 
+def _video_keyframe_limits(*, fast_mode: bool, grading_mode: Optional[str]) -> tuple[int, int, int]:
+    """Return per-video, total, and video-count limits for every grading mode."""
+    if fast_mode:
+        from app.grading_mode_policy import (
+            basic_max_video_keyframe_total,
+            basic_max_video_keyframes,
+            basic_max_videos,
+        )
+
+        return (
+            basic_max_video_keyframes(),
+            basic_max_video_keyframe_total(),
+            basic_max_videos(),
+        )
+    from app.core.grading_profiles import resolve_grading_profile
+
+    total = max(0, int(resolve_grading_profile(grading_mode).max_video_keyframes))
+    per_video = min(5, total)
+    max_videos = max(1, total // max(1, per_video))
+    return per_video, total, max_videos
+
+
+def _initial_submission_paths(student_info: Dict[str, Any]) -> List[str]:
+    """Resolve paths before Vision without depending on later pipeline locals."""
+    paths = [
+        str(path)
+        for path in (student_info.get("submission_paths") or [])
+        if str(path or "").strip()
+    ]
+    if not paths and str(student_info.get("path") or "").strip():
+        paths = [str(student_info["path"])]
+    return paths
+
+
 def extract_text_from_file(file_path: str) -> str:
     """
     Extract text using DocumentProcessor
@@ -1415,7 +1449,10 @@ async def grade_student_submission(
     strengths = []
     improvements = []
 
-    json_parse_attempts = 3 if use_ollama_json else 1
+    # Malformed structured output is not Ollama-specific. Gemini/DeepSeek can
+    # also omit a quote or truncate a response, so every provider gets the same
+    # bounded repair + regeneration policy before the student's grading fails.
+    json_parse_attempts = 3
     parsed = None
     last_parse_err: Exception | None = None
 
@@ -2002,9 +2039,7 @@ async def grade_batch_async(
             enrich_student_submission_flags(student_info)
             _phase(student_info["name"], "extracting", 0.12)
 
-            submission_paths_early = student_info.get("submission_paths") or [
-                str(student_info["path"])
-            ]
+            submission_paths_early = _initial_submission_paths(student_info)
             _loop = asyncio.get_running_loop()
 
             async def _run_extract_stage() -> tuple[str, str, int, str, int]:
@@ -2094,6 +2129,28 @@ async def grade_batch_async(
             _pre_has_code = bool(student_info.get("has_code_files"))
             _pre_has_exe = bool(student_info.get("has_executable_artifacts"))
             _pre_ext = Path(student_info["path"]).suffix.lower()
+            _vision_image_exts = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp", ".tiff"}
+            _pre_submission_paths = [
+                Path(str(path)) for path in (student_info.get("submission_paths") or [])
+            ]
+            _video_exts = {".mp4", ".mov", ".avi", ".mkv", ".webm", ".m4v"}
+            _video_path_hints = [
+                *_pre_submission_paths,
+                *[Path(str(path)) for path in (student_info.get("intake_relative_paths") or [])],
+            ]
+            _pre_has_video = any(path.suffix.lower() in _video_exts for path in _video_path_hints)
+            _project_image_paths = [
+                path for path in _pre_submission_paths
+                if path.suffix.lower() in _vision_image_exts and path.is_file()
+            ]
+            _asset_dirs = {"sprites", "backgrounds", "tilesets", "fonts", "textures"}
+            _project_image_paths.sort(
+                key=lambda path: (
+                    int(any(part.lower() in _asset_dirs for part in path.parts)),
+                    int(bool(re.fullmatch(r"[0-9a-f-]{24,}\.[a-z0-9]+", path.name.lower()))),
+                    path.name.casefold(),
+                )
+            )
             _pre_doc_only = (
                 _pre_ext in (".docx", ".doc", ".pdf", ".pptx")
                 and not _pre_has_code
@@ -2118,7 +2175,9 @@ async def grade_batch_async(
                     or _mode_flags.get("basic_video_keyframes")
                 )
             else:
-                _run_word_vision = image_count > 0 and _primary_is_doc
+                _run_word_vision = bool(
+                    (image_count > 0 and _primary_is_doc) or _project_image_paths or _pre_has_video
+                )
 
             if _run_word_vision:
                 try:
@@ -2150,22 +2209,20 @@ async def grade_batch_async(
                     )
                     if fast_mode:
                         from app.grading_mode_policy import (
-                            basic_max_video_keyframe_total,
-                            basic_max_video_keyframes,
                             effective_basic_max_vision_images,
                         )
 
                         _word_vision_cap = effective_basic_max_vision_images()
-                        _video_kf_per = basic_max_video_keyframes()
-                        _video_kf_cap = basic_max_video_keyframe_total()
                     else:
                         _word_vision_cap = pro_max_vision_images_for_submission(
                             has_code_files=_pre_has_code,
                             has_executable_artifacts=_pre_has_exe,
                             document_only=_pre_doc_only,
                         )
-                        _video_kf_per = 0
-                        _video_kf_cap = 0
+                    _video_kf_per, _video_kf_cap, _video_max_count = _video_keyframe_limits(
+                        fast_mode=fast_mode,
+                        grading_mode=grading_mode,
+                    )
                     print(
                         f"🔍 [VISION] word_cap={'all' if _word_vision_cap <= 0 else _word_vision_cap} "
                         f"video_cap={_video_kf_per}/video total={_video_kf_cap} "
@@ -2176,9 +2233,27 @@ async def grade_batch_async(
                         extracted_images = DocumentProcessor.extract_images(
                             student_info["path"], max_images=_word_vision_cap
                         )
+                    remaining_slots = (
+                        len(_project_image_paths)
+                        if _word_vision_cap <= 0
+                        else max(0, _word_vision_cap - len(extracted_images))
+                    )
+                    standalone_images: List = []
+                    for project_image in _project_image_paths[:remaining_slots]:
+                        standalone_images.extend(
+                            DocumentProcessor.extract_images(str(project_image), max_images=1)
+                        )
+                    if standalone_images:
+                        extracted_images.extend(standalone_images)
+                        print(
+                            f"🔍 [VISION] Added {len(standalone_images)} standalone "
+                            "project/evidence image(s)"
+                        )
 
                     video_keyframe_images: List = []
-                    if fast_mode and _mode_flags.get("basic_video_keyframes") and _video_kf_per > 0:
+                    if _pre_has_video and _video_kf_per > 0 and (
+                        not fast_mode or _mode_flags.get("basic_video_keyframes")
+                    ):
                         from app.basic_video_keyframes import (
                             extract_basic_video_keyframe_images,
                             merge_basic_vision_images,
@@ -2186,7 +2261,10 @@ async def grade_batch_async(
 
                         video_student_info = dict(student_info)
 
-                        video_student_info["submission_paths"] = list(submission_paths or [])
+                        # Vision runs before the expanded submission-path stage below.
+                        # Using the later local here used to raise UnboundLocalError and
+                        # silently skip every Word image and video keyframe in the run.
+                        video_student_info["submission_paths"] = list(submission_paths_early)
 
                         if not video_student_info.get("source_archive_path"):
 
@@ -2205,6 +2283,8 @@ async def grade_batch_async(
                             video_student_info,
 
                             max_frames_per_video=_video_kf_per,
+
+                            max_videos=_video_max_count,
 
                         )
                         if _video_kf_meta.get("frames_extracted"):
@@ -2243,7 +2323,7 @@ async def grade_batch_async(
                         )
                     else:
                         word_vision_images = list(_word_vision_take)
-                        vision_images = word_vision_images
+                        vision_images = [*word_vision_images, *video_keyframe_images[:_video_kf_cap]]
 
                     vision_extracted_count = len(vision_images)
                     print(f"🔍 [VISION] Prepared {vision_extracted_count} image(s) for analysis")
@@ -2263,11 +2343,14 @@ async def grade_batch_async(
                         _has_code = student_info.get("has_code_files", False)
                         _vision_ctx_doc = (
                             f"واجب طالب BTEC Person: {student_info['name']}. "
-                            "هذه لقطات مضمّنة داخل Word/PDF (embedded screenshots)."
+                            "هذه لقطات مضمّنة داخل Word/PDF أو صور أدلة مستقلة "
+                            "مرفقة داخل مشروع الطالب. ميّز بين لقطة تشغيل فعلية "
+                            "وبين sprite/asset تصميمي، ولا تعتبر asset دليل gameplay."
                         )
                         _vision_ctx_video = (
                             f"واجب طالب BTEC Person: {student_info['name']}. "
-                            "هذه مقتطفات keyframe من فيديو تشغيل اللعبة (BASIC)."
+                            "هذه مقتطفات keyframe من فيديو تشغيل اللعبة. حلل تسلسل التشغيل "
+                            "والميكانيكا الظاهرة، ولا تعتبر مجرد ظهور واجهة المحرر دليلاً على الوظيفة."
                         )
                         _evidence_mode = "game" if _has_code else None
 

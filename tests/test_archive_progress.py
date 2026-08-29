@@ -195,3 +195,38 @@ def test_large_zip_does_not_apply_eight_file_cap_to_gamemaker_events(
     )
 
     assert len([rel for rel, _path in extracted if rel.endswith(".gml")]) == 12
+
+
+def test_source_only_gamemaker_zip_keeps_complete_build_and_visual_tree(tmp_path: Path):
+    from app.archive_extraction_utils import selective_extract_zip
+
+    archive = tmp_path / "source-only.zip"
+    with zipfile.ZipFile(archive, "w") as zf:
+        zf.writestr("Student/Game.yyp", '{"resourceType":"GMProject"}')
+        zf.writestr("Student/objects/obj_player/obj_player.yy", "{}")
+        zf.writestr("Student/objects/obj_player/Step_0.gml", "x += 1;")
+        zf.writestr("Student/sprites/spr_player/spr_player.yy", "{}")
+        zf.writestr("Student/sprites/spr_player/frame.png", b"png")
+        zf.writestr("Student/sounds/music/music.yy", "{}")
+        zf.writestr("Student/sounds/music/music.mp3", b"mp3")
+        zf.writestr("Student/gameplay.webm", b"video")
+
+    extracted, _ = selective_extract_zip(
+        str(archive),
+        tmp_path / "out",
+        skip_dir_names=frozenset(),
+        gradable_extensions=(".yyp", ".yy", ".gml", ".png", ".mp3", ".webm"),
+        grading_mode="deep",
+    )
+    rels = {rel.replace("\\", "/") for rel, _path in extracted}
+
+    assert {
+        "Student/Game.yyp",
+        "Student/objects/obj_player/obj_player.yy",
+        "Student/objects/obj_player/Step_0.gml",
+        "Student/sprites/spr_player/spr_player.yy",
+        "Student/sprites/spr_player/frame.png",
+        "Student/sounds/music/music.yy",
+        "Student/sounds/music/music.mp3",
+        "Student/gameplay.webm",
+    } <= rels

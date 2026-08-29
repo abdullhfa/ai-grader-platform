@@ -16,13 +16,16 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
 
         exe = executable.resolve()
         search_root = session.root if session.root else None
-        # The session root is the security boundary.  Never discover sibling uploads.
+        # Submitted executables must remain inside the student root. Grader-built
+        # executables are allowed only inside this session's isolated workspace.
         if search_root is not None:
             search_root = search_root.resolve()
             search_root = search_root.parent if search_root.is_file() else search_root
-            try:
-                exe.relative_to(search_root)
-            except ValueError:
+            allowed_roots = [search_root, session.workspace.resolve()]
+            if not any(
+                _path_is_within(exe, allowed_root)
+                for allowed_root in allowed_roots
+            ):
                 raise ValueError("RUNTIME_EVIDENCE_IDENTITY_MISMATCH: executable outside submission_root")
 
         # Windows PRO grading uses smoke_test_windows_exe as the sandbox:
@@ -89,6 +92,7 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
                 "student_name": session.submission_key,
                 "submission_root": str(search_root) if search_root else None,
                 "project_root": str(search_root) if search_root else None,
+                "generated_runtime_workspace": str(session.workspace.resolve()),
                 "engine": "gamemaker",
                 "gamemaker_launch_assessment": launch_assessment,
             },
@@ -132,6 +136,14 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
         else SessionStatus.FAILED
     )
     return {"success": session.status == SessionStatus.COMPLETED, "observation": observation}
+
+
+def _path_is_within(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
 
 
 def run_html5_fallback(session: RuntimeSession, html_entry: Path, *, timeout_seconds: int) -> Dict[str, Any]:

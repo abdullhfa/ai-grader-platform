@@ -45,6 +45,7 @@ _ARTIFACT_EXT_IN_TEXT = re.compile(
 _EXEC_SHORT = frozenset({"P5", "P6", "P7"})
 _PRO_PLAYTEST_GATED = frozenset({"P6", "M3"})
 _ACADEMIC_DETERMINISTIC_RULES = {
+    "P7": frozenset({"client_requirements_review_v1"}),
     "M2": frozenset({"bm2_design_justification"}),
     "D2": frozenset({"bc_d2_evaluation"}),
 }

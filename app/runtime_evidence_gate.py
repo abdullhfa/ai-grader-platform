@@ -52,6 +52,9 @@ _RUNTIME_CRITICAL_REQUIREMENTS = frozenset(
         "collect_items",
         "score_system",
         "enemy_interaction",
+        "lives_system",
+        "timer_system",
+        "difficulty_levels",
         "win_condition",
         "lose_condition",
         "restart",
@@ -752,16 +755,36 @@ def _promote_l4_gate_row(
 
 
 def _align_overall_feedback_after_runtime_open(grading_result: Dict[str, Any]) -> None:
-    """Replace stale pre-gate praise/hold text with the terminal decision."""
+    """Replace stale pre-gate text with the actual terminal criterion decision."""
     rows = [r for r in (grading_result.get("criteria_results") or []) if isinstance(r, dict)]
     achieved = [str(r.get("criteria_level") or "") for r in rows if r.get("achieved")]
     pending = [str(r.get("criteria_level") or "") for r in rows if not r.get("achieved")]
     grade = str(grading_result.get("grade_level") or "U")
+    runtime_achieved = [
+        str(r.get("criteria_level") or "")
+        for r in rows
+        if r.get("achieved") and _short_level(str(r.get("criteria_level") or "")) in {"P5", "P6"}
+    ]
+    runtime_pending = [
+        str(r.get("criteria_level") or "")
+        for r in rows
+        if not r.get("achieved") and _short_level(str(r.get("criteria_level") or "")) in {"P5", "P6"}
+    ]
+    runtime_sentence = ""
+    if runtime_achieved:
+        runtime_sentence = (
+            f"تم اعتماد معايير التشغيل: {', '.join(runtime_achieved)} بعد مطابقة "
+            "التشغيل الفعلي مع الكود ووثائق الاختبار المطلوبة. "
+        )
+    if runtime_pending:
+        runtime_sentence += (
+            f"لم تُعتمد معايير التشغيل: {', '.join(runtime_pending)}؛ "
+            "وتوضح جداول الأدلة والـGate الميزات أو الوثائق الناقصة. "
+        )
     grading_result["overall_feedback"] = (
         f"التقدير النهائي المعتمد: {grade}. "
         f"تحققت المعايير: {', '.join(achieved) or '-'}. "
-        "تم اعتماد C.P5 وC.P6 بعد تشغيل اللعبة فعلياً والتحقق من gameplay "
-        "والميكانيكا ووثائق الاختبار. "
+        f"{runtime_sentence}"
         f"المعايير التي لم تتحقق بعد: {', '.join(pending) or '-'}؛ "
         "وتحتاج أدلة آلية أو وثائق إضافية بحسب متطلبات كل معيار."
     )
@@ -1029,8 +1052,6 @@ def apply_runtime_evidence_gate(
 
     if changes:
         _recompute_grade(grading_result)
-        if any("runtime_satisfied_l4_open" in change for change in changes):
-            _align_overall_feedback_after_runtime_open(grading_result)
         # Single source of truth: invalidate cached grade-display objects so every
         # downstream reader (UI, Word, PDF, API) re-derives from the gated grade_level
         # instead of a stale higher band (prevents "UI=U but report=M").
@@ -1043,6 +1064,10 @@ def apply_runtime_evidence_gate(
             "btec_grade_level",
         ):
             grading_result.pop(stale_key, None)
+
+    # Word/PDF/UI must never retain a stale sentence claiming that C.P5/C.P6
+    # were awarded after the terminal gate has rejected either row.
+    _align_overall_feedback_after_runtime_open(grading_result)
 
     report = {
         "applied": bool(changes),

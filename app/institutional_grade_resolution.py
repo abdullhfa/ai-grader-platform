@@ -354,7 +354,10 @@ def resolve_institutional_classification(
     if rubric.get("rubric_band") in ("Distinction", "Merit", "Pass"):
         outcome_band = rubric["rubric_band"]
 
-    display_grade = btec if btec in ("D", "M", "P") else outcome_band[0] if outcome_band != "Unclassified" else "U"
+    # ``Partial``/``Referral`` are evidence-workflow labels, not BTEC grades.
+    # Mapping their first letter to P/R previously rendered an official U as
+    # "P" in the Word report, contradicting the authoritative BTEC result.
+    display_grade = btec if btec in ("D", "M", "P", "U") else "U"
     display_ar = _OUTCOME_LABELS_AR.get(outcome_band, outcome_band)
     if btec in ("D", "M", "P"):
         display_ar = f"{display_ar} — معيار BTEC: {btec}"

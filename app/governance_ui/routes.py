@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from app.template_compat import Jinja2Templates
 
 from app.governance.audit_log import read_audit_log
 from app.governance.examiner_mode import load_examiner_review, parse_session_ref
