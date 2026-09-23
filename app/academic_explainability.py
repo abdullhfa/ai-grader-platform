@@ -6,7 +6,7 @@ Principle: decisions (U, HOLD, gated runtime) must be defensible to teachers and
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 _SOURCE_CODE_EXT = frozenset({".cs", ".py", ".java", ".cpp", ".c", ".js", ".gd", ".gml", ".lua"})
 

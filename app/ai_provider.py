@@ -210,6 +210,28 @@ def _gemini_output_token_floor() -> int:
         return 128
 
 
+def _is_gemini_thinking_model(provider: str, model: Optional[str]) -> bool:
+    """Gemini 2.5 models may spend the output budget on internal reasoning tokens."""
+    model_l = (model or "").lower()
+    if provider == "openrouter":
+        model_l = model_l.split("/")[-1]
+    return "2.5" in model_l or "flash" in model_l
+
+
+def _text_looks_like_json_object(text: str) -> bool:
+    """True when text is (or clearly contains) a JSON object — not CoT markdown."""
+    raw = (text or "").strip()
+    if not raw:
+        return False
+    if raw.startswith("{") and "}" in raw:
+        return True
+    if "```json" in raw.lower():
+        return True
+    start = raw.find("{")
+    end = raw.rfind("}")
+    return start != -1 and end > start and (end - start) >= 2
+
+
 def _effective_max_tokens(provider: str, model: Optional[str], max_tokens: Optional[int]) -> Optional[int]:
     if not max_tokens:
         return None
@@ -217,6 +239,8 @@ def _effective_max_tokens(provider: str, model: Optional[str], max_tokens: Optio
         model_l = (model or "").lower()
         if "2.5" in model_l or "flash" in model_l:
             return max(max_tokens, _gemini_output_token_floor())
+    if provider == "openrouter" and _is_gemini_thinking_model(provider, model):
+        return max(max_tokens, _gemini_output_token_floor())
     return max_tokens
 
 
@@ -361,6 +385,8 @@ class AIProvider:
         max_tokens: Optional[int],
         response_format: Optional[Dict],
         seed: Optional[int] = None,
+        *,
+        _json_force_retry: bool = False,
     ) -> str:
         params: Dict[str, Any] = {
             "model": self.model,
@@ -373,6 +399,7 @@ class AIProvider:
         # Gemini's OpenAI-compat endpoint doesn't accept these.
         if seed is not None and self.provider not in ["gemini", "deepseek"]:
             params["seed"] = seed  # type: ignore
+        # OpenRouter + Ollama honour json_object; native Gemini OpenAI-compat often ignores it.
         if response_format and self.provider not in ["gemini"]:
             params["response_format"] = response_format  # type: ignore
         if self.provider == "deepseek":
@@ -425,24 +452,73 @@ class AIProvider:
         if content is None or not str(content).strip():
             reasoning = getattr(msg, "reasoning", None) or ""
             finish = getattr(response.choices[0], "finish_reason", None)
+            thinking = _is_gemini_thinking_model(self.provider, self.model)
+            current_max = max_tokens or params.get("max_tokens")
+            hard_ceiling = max(
+                int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "32768")),
+                int(os.getenv("GEMINI_DEFAULT_OUTPUT_TOKENS", "8192")),
+            )
             if (
-                self.provider == "gemini"
+                thinking
                 and finish == "length"
-                and max_tokens
-                and max_tokens < _gemini_output_token_floor() * 2
+                and current_max
+                and int(current_max) < hard_ceiling
             ):
-                raised = _effective_max_tokens(self.provider, self.model, max(max_tokens * 4, 256))
-                if raised and raised != max_tokens:
+                raised = min(
+                    max(int(current_max) * 4, int(os.getenv("GEMINI_DEFAULT_OUTPUT_TOKENS", "8192"))),
+                    hard_ceiling,
+                )
+                if raised != int(current_max):
                     return self._openai_style_completion(
-                        messages, temperature, raised, response_format, seed
+                        messages,
+                        temperature,
+                        raised,
+                        response_format,
+                        seed,
+                        _json_force_retry=_json_force_retry,
                     )
-            if reasoning and str(reasoning).strip():
-                raise ValueError(
-                    f"Model {self.model!r} returned reasoning only (no answer text). "
-                    "Try OPENROUTER_MODEL=google/gemini-2.5-flash or increase max_tokens."
+            reasoning_s = str(reasoning).strip() if reasoning else ""
+            # Gemini-via-OpenRouter often puts CoT in `reasoning` and leaves
+            # `content` empty. Only accept reasoning when it is actually JSON;
+            # otherwise force one JSON-only retry (avoids GRD-001).
+            if reasoning_s and _text_looks_like_json_object(reasoning_s):
+                print(
+                    f"⚠️ [{self.provider}] {self.model} returned reasoning-only JSON; "
+                    "using reasoning field as fallback."
+                )
+                return reasoning_s
+            if thinking and not _json_force_retry:
+                force_fmt = response_format or {"type": "json_object"}
+                force_msgs = list(messages) + [
+                    {
+                        "role": "user",
+                        "content": (
+                            "CRITICAL: Reply with ONE JSON object only in the assistant "
+                            "content field (start with '{'). Do not put the answer in "
+                            "reasoning/thinking. No markdown fences, no prose."
+                        ),
+                    }
+                ]
+                print(
+                    f"⚠️ [{self.provider}] {self.model} reasoning-only (finish={finish!r}); "
+                    f"forcing JSON retry with max_tokens={hard_ceiling}"
+                )
+                return self._openai_style_completion(
+                    force_msgs,
+                    temperature,
+                    hard_ceiling,
+                    force_fmt if self.provider != "gemini" else response_format,
+                    seed,
+                    _json_force_retry=True,
+                )
+            if reasoning_s:
+                print(
+                    f"⚠️ [{self.provider}] {self.model} reasoning-only non-JSON "
+                    f"(finish={finish!r}); refusing CoT fallback"
                 )
             raise ValueError(
-                f"Empty response from {self.provider} model {self.model!r}"
+                f"Empty JSON response from {self.provider} model {self.model!r} "
+                f"(finish_reason={finish!r}, reasoning_only={bool(reasoning_s)})"
             )
         return str(content)
 

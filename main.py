@@ -363,6 +363,27 @@ from app.production.hardening import RateLimitMiddleware  # noqa: E402
 
 app.add_middleware(RateLimitMiddleware)
 
+# Governance / pilot endpoints expose cohort (student batch) data and accept
+# writes. Several had no auth check, so require a logged-in session for the
+# whole family here. Per-route role checks that already exist still apply.
+_LOGIN_REQUIRED_PREFIXES = (
+    "/api/governance",          # covers /api/governance-pilot, -workshop, -mitigation
+    "/governance-pilot/",
+    "/api/check-ai-balance",
+    "/api/get-units",
+    "/api/get-unit/",
+)
+
+
+@app.middleware("http")
+async def _require_login_for_sensitive_paths(request, call_next):
+    path = request.url.path
+    if path.startswith(_LOGIN_REQUIRED_PREFIXES) and not get_current_user_id(request):
+        if path.startswith("/api/"):
+            return JSONResponse({"status": "error", "message": "غير مسجل"}, status_code=401)
+        return RedirectResponse(url="/login", status_code=302)
+    return await call_next(request)
+
 
 from fastapi.exceptions import RequestValidationError  # noqa: E402
 
@@ -10467,6 +10488,13 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
             st_icon, st_txt, card_ac, card_bd = criterion_report_display(criteria)
             human_review = (criteria.get("achievement_authority") or "") == "HUMAN_REVIEW_REQUIRED"
+            # Fully met = achieved, awardable, and not pending teacher review
+            # (same rule as the status card above). Previously undefined -> NameError.
+            is_ok = (
+                bool(criteria.get("achieved", False))
+                and bool(criteria.get("awardable", criteria.get("achieved", False)))
+                and not human_review
+            )
 
             card_tbl_c = doc.add_table(rows=1, cols=2)
             card_tbl_c.alignment = WD_TABLE_ALIGNMENT.RIGHT
@@ -10965,6 +10993,13 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             _st_icon, status_text_plain, card_accent, card_border = criterion_report_display(
                 crit_snap
             )
+            # Fully met = achieved, awardable, not pending teacher review.
+            # Previously undefined -> NameError when building the Word report.
+            is_achieved = (
+                crit_snap["achieved"]
+                and bool(crit_snap["awardable"])
+                and (crit_snap["achievement_authority"] or "") != "HUMAN_REVIEW_REQUIRED"
+            )
 
             # Criterion header table
             card_tbl = doc.add_table(rows=1, cols=2)
@@ -11278,14 +11313,49 @@ async def download_batch_report_pdf(
 
 # ==================== Settings API ====================
 
+# Masked API keys sent to the browser start with this marker. Values starting
+# with it are never written back, so the real key is never exposed or overwritten.
+_SECRET_MASK_PREFIX = "\u2022\u2022\u2022\u2022"
+
+
+def _mask_secret(value: str) -> str:
+    value = value or ""
+    if not value:
+        return ""
+    return _SECRET_MASK_PREFIX + (value[-4:] if len(value) > 8 else "")
+
+
+def _is_masked_secret(value: Any) -> bool:
+    return isinstance(value, str) and value.startswith(_SECRET_MASK_PREFIX)
+
+
+def _settings_admin_guard(request: Request, db: Session) -> Optional[JSONResponse]:
+    """Settings APIs are admin-only, matching the /settings page guard.
+
+    Returns an error response to send, or None when the caller is an admin.
+    """
+    user_id = get_current_user_id(request)
+    if not user_id:
+        return JSONResponse({"status": "error", "message": "غير مسجل"}, status_code=401)
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if user is None or user.role != models.UserRole.ADMIN:  # type: ignore
+        return JSONResponse({"status": "error", "message": "غير مصرح"}, status_code=403)
+    return None
+
 
 @app.post("/api/test-provider")
-async def test_provider_endpoint(request: Request):
-    """Test a configured Gemini, DeepSeek, or Ollama provider."""
+async def test_provider_endpoint(request: Request, db: Session = Depends(get_db)):
+    """Test a configured Gemini, DeepSeek, or Ollama provider (admin only)."""
+    denied = _settings_admin_guard(request, db)
+    if denied is not None:
+        return denied
     try:
         data = await request.json()
         provider_name = (data.get("provider") or "").strip().lower()
         api_key = (data.get("api_key") or "").strip()
+        if _is_masked_secret(api_key):
+            # Browser only holds the masked key: test with the stored one.
+            api_key = (os.getenv(f"{provider_name.upper()}_API_KEY") or "").strip()
 
         if provider_name not in ("gemini", "deepseek", "ollama"):
             return JSONResponse(
@@ -11339,8 +11409,11 @@ async def test_provider_endpoint(request: Request):
 
 
 @app.post("/api/save-settings")
-async def save_settings_endpoint(request: Request):
-    """Save API settings"""
+async def save_settings_endpoint(request: Request, db: Session = Depends(get_db)):
+    """Save API settings (admin only)."""
+    denied = _settings_admin_guard(request, db)
+    if denied is not None:
+        return denied
     try:
         settings: dict = await request.json()  # type: ignore
 
@@ -11370,6 +11443,13 @@ async def save_settings_endpoint(request: Request):
 
         for key, env_var in settings_map.items():
             val = settings.get(key) if isinstance(settings, dict) else None
+            if _is_masked_secret(val):
+                continue  # unchanged masked key from the form
+            if val and any(ch in str(val) for ch in ("\n", "\r", "\x00")):
+                return JSONResponse(
+                    {"success": False, "message": f" قيمة غير صالحة للحقل {key}"},
+                    status_code=400,
+                )
             if val:
                 # Update environment
                 os.environ[env_var] = str(val)
@@ -11401,15 +11481,18 @@ async def save_settings_endpoint(request: Request):
 
 
 @app.get("/api/get-settings")
-async def get_settings_endpoint():
-    """Get current settings"""
+async def get_settings_endpoint(request: Request, db: Session = Depends(get_db)):
+    """Get current settings (admin only; API keys are masked)."""
+    denied = _settings_admin_guard(request, db)
+    if denied is not None:
+        return denied
     try:
         settings = {
             "grading_mode": os.getenv("GRADING_MODE", "single"),
             "primary_provider": os.getenv("AI_PROVIDER", "gemini"),
-            "gemini_api_key": os.getenv("GEMINI_API_KEY", ""),
+            "gemini_api_key": _mask_secret(os.getenv("GEMINI_API_KEY", "")),
             "gemini_model": os.getenv("GEMINI_MODEL", "gemini-2.5-pro"),
-            "deepseek_api_key": os.getenv("DEEPSEEK_API_KEY", ""),
+            "deepseek_api_key": _mask_secret(os.getenv("DEEPSEEK_API_KEY", "")),
             "deepseek_base_url": os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
             "deepseek_model": os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash-vision-exp"),
             "deepseek_review_model": os.getenv("DEEPSEEK_REVIEW_MODEL", "deepseek-v4-flash-vision-exp"),
