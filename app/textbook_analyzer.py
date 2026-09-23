@@ -596,6 +596,57 @@ LIMITS:
     return merged
 
 
+def _criterion_key(code: str) -> Tuple[str, str]:
+    """Normalise '8/B.P4', 'b-p4', 'P4' -> (aim, 'P4'). Aim is '' when absent."""
+    m = re.search(r"(?:([A-Z]{1,2})[\s.\-])?([PMD])(\d{1,2})\s*$", str(code or "").strip().upper())
+    if not m:
+        return ("", "")
+    return (m.group(1) or "", f"{m.group(2)}{int(m.group(3))}")
+
+
+def _drop_unverified_criteria(
+    ai_result: Dict,
+    brief_codes: List[str],
+    known_criteria_list: Optional[List[Dict]] = None,
+) -> Dict:
+    """Keep only criteria whose code appears in the brief or the official unit list.
+
+    The model must never add assessment criteria that the assignment brief or
+    the specification does not contain. Rejected codes are kept in
+    ``rejected_criteria`` so the teacher can see what was removed.
+    If neither source lists any code, nothing can be verified: criteria are
+    kept but flagged in ``unverified_criteria`` for teacher review.
+    """
+    details = ai_result.get("criteria_details") or {}
+    if not isinstance(details, dict):
+        return ai_result
+    allowed: List[Tuple[str, str]] = [_criterion_key(c) for c in (brief_codes or [])]
+    for item in known_criteria_list or []:
+        if isinstance(item, dict):
+            code = item.get("criteria_level") or item.get("code") or item.get("criterion") or ""
+            allowed.append(_criterion_key(str(code)))
+    allowed = [k for k in allowed if k[1]]
+    if not allowed:
+        ai_result["unverified_criteria"] = list(details.keys())
+        return ai_result
+
+    def _is_allowed(code: str) -> bool:
+        aim, lvl = _criterion_key(code)
+        if not lvl:
+            return False
+        # A source code without an aim (e.g. "P1") matches any aim with that level.
+        return any(lvl == a_lvl and (not aim or not a_aim or aim == a_aim) for a_aim, a_lvl in allowed)
+
+    kept = {c: d for c, d in details.items() if _is_allowed(c)}
+    rejected = [c for c in details if c not in kept]
+    if rejected:
+        print(f" ⚠️ Dropped criteria not found in the brief/specification: {rejected}")
+        ai_result["rejected_criteria"] = rejected
+    ai_result["criteria_details"] = kept
+    ai_result["required_criteria"] = list(kept.keys())
+    return ai_result
+
+
 def analyze_assignment_requirements(assignment_text: str, known_criteria_list: Optional[List[Dict]] = None) -> Dict:
     """
     Analyze assignment requirements using AI to extract TASK-SPECIFIC requirements.
@@ -657,6 +708,11 @@ Language: All text values MUST be in professional Arabic.
                         detail["level"] = "D"
                     else:
                         detail["level"] = "P"
+
+        ai_result = _drop_unverified_criteria(ai_result, regex_codes, known_criteria_list)
+        if not ai_result.get("criteria_details"):
+            print(" ⚠️ No AI criteria could be verified against the brief. Falling back to regex.")
+            return analyze_assignment_requirements_regex(assignment_text, known_criteria_list)
 
         print(f" ✅ AI found {len(ai_result.get('required_criteria', []))} task-specific criteria.")
         return ai_result

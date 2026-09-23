@@ -213,6 +213,21 @@ def _is_gemini_thinking_model(provider: str, model: Optional[str]) -> bool:
     return "2.5" in model_l or "flash" in model_l
 
 
+def _text_looks_like_json_object(text: str) -> bool:
+    """True when text is (or clearly contains) a JSON object — not CoT markdown."""
+    raw = (text or "").strip()
+    if not raw:
+        return False
+    if raw.startswith("{") and "}" in raw:
+        return True
+    # Fenced ```json ... ```
+    if "```json" in raw.lower():
+        return True
+    start = raw.find("{")
+    end = raw.rfind("}")
+    return start != -1 and end > start and (end - start) >= 2
+
+
 def _effective_max_tokens(provider: str, model: Optional[str], max_tokens: Optional[int]) -> Optional[int]:
     if not max_tokens:
         return None
@@ -342,6 +357,8 @@ class AIProvider:
         max_tokens: Optional[int],
         response_format: Optional[Dict],
         seed: Optional[int] = None,
+        *,
+        _json_force_retry: bool = False,
     ) -> str:
         params: Dict[str, Any] = {
             "model": self.model,
@@ -355,6 +372,7 @@ class AIProvider:
             params["max_tokens"] = int(os.getenv("GEMINI_DEFAULT_OUTPUT_TOKENS", "8192"))
         if seed is not None and _supports_completion_seed(self.provider, self.model):
             params["seed"] = seed  # type: ignore
+        # OpenRouter + Ollama honour json_object; native Gemini OpenAI-compat often ignores it.
         if response_format and self.provider not in ["gemini"]:
             params["response_format"] = response_format  # type: ignore
 
@@ -431,16 +449,57 @@ class AIProvider:
                 )
                 if raised != current_max:
                     return self._openai_style_completion(
-                        messages, temperature, raised, response_format, seed
+                        messages,
+                        temperature,
+                        raised,
+                        response_format,
+                        seed,
+                        _json_force_retry=_json_force_retry,
                     )
-            if reasoning and str(reasoning).strip():
+            reasoning_s = str(reasoning).strip() if reasoning else ""
+            # Gemini-via-OpenRouter often puts CoT in `reasoning` and leaves
+            # `content` empty. Returning markdown CoT caused GRD-001
+            # (Expecting value: line 1 column 1). Only accept reasoning when
+            # it is actually JSON; otherwise force one JSON-only retry.
+            if reasoning_s and _text_looks_like_json_object(reasoning_s):
                 print(
-                    f"⚠️ [{self.provider}] {self.model} returned reasoning-only content; "
+                    f"⚠️ [{self.provider}] {self.model} returned reasoning-only JSON; "
                     "using reasoning field as fallback."
                 )
-                return str(reasoning).strip()
+                return reasoning_s
+            if thinking and not _json_force_retry:
+                raised = hard_ceiling
+                force_fmt = response_format or {"type": "json_object"}
+                force_msgs = list(messages) + [
+                    {
+                        "role": "user",
+                        "content": (
+                            "CRITICAL: Reply with ONE JSON object only in the assistant "
+                            "content field (start with '{'). Do not put the answer in "
+                            "reasoning/thinking. No markdown fences, no prose."
+                        ),
+                    }
+                ]
+                print(
+                    f"⚠️ [{self.provider}] {self.model} reasoning-only (finish={finish!r}); "
+                    f"forcing JSON retry with max_tokens={raised}"
+                )
+                return self._openai_style_completion(
+                    force_msgs,
+                    temperature,
+                    raised,
+                    force_fmt if self.provider != "gemini" else response_format,
+                    seed,
+                    _json_force_retry=True,
+                )
+            if reasoning_s:
+                print(
+                    f"⚠️ [{self.provider}] {self.model} reasoning-only non-JSON "
+                    f"(finish={finish!r}); refusing CoT fallback"
+                )
             raise ValueError(
-                f"Empty response from {self.provider} model {self.model!r}"
+                f"Empty JSON response from {self.provider} model {self.model!r} "
+                f"(finish_reason={finish!r}, reasoning_only={bool(reasoning_s)})"
             )
         return str(content)
 
