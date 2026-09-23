@@ -15,22 +15,61 @@ def _signal_graph(obs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def detect_freeze(obs: Dict[str, Any]) -> Dict[str, Any]:
-    """Detect likely freeze: process ran but no input/visual response."""
+    """
+    Detect likely freeze: process ran but no input/visual response.
+
+    A freeze verdict requires POSITIVE evidence (near-identical consecutive
+    frames). "Automated input produced no detected response" alone is NOT a
+    freeze — input injection / OCR failing on the grading host is a platform
+    limitation, not proof the student's game froze. Frame comparison is
+    deterministic for the same screenshots, so this verdict is stable per run.
+    """
     signals = _signal_graph(obs).get("signals") or {}
     duration = float(obs.get("runtime_duration_seconds") or 0)
     visual = signals.get("visual_response_to_input", "none")
     input_det = signals.get("input_detected", "none")
-    frozen = (
+    if input_det in ("none", "unknown") and signals.get("interaction_input_sent") == "yes":
+        input_det = "sent_unconfirmed"
+
+    heuristic_frozen = (
         obs.get("status") == "completed"
         and duration >= 8
         and visual in ("none", "unknown")
         and input_det in ("none", "unknown")
     )
+
+    # Exculpatory / confirmatory frame evidence.
+    frames_compared = 0
+    frames_frozen: Optional[bool] = None
+    shots = [s for s in (obs.get("runtime_screenshots") or []) if isinstance(s, dict)]
+    if shots:
+        try:
+            from app.visual_state_classification import detect_visual_freeze
+
+            frame_report = detect_visual_freeze(shots)
+            frames_compared = int(frame_report.get("compared_pairs") or 0)
+            if frames_compared >= 1:
+                frames_frozen = bool(frame_report.get("freeze_possible"))
+        except Exception:
+            frames_frozen = None
+    if frames_frozen is None and obs.get("freeze_possible") is not None:
+        frames_frozen = bool(obs.get("freeze_possible"))
+
+    if frames_frozen is False:
+        # Distinct frames captured — the game demonstrably kept rendering.
+        frozen = False
+    elif frames_frozen is True:
+        frozen = True
+    else:
+        frozen = heuristic_frozen
+
     return {
         "freeze_suspected": frozen,
         "duration_seconds": duration,
         "visual_response": visual,
         "input_detected": input_det,
+        "frame_pairs_compared": frames_compared,
+        "frame_freeze_evidence": frames_frozen,
     }
 
 
@@ -159,6 +198,32 @@ def functional_smoke_pass(obs: Dict[str, Any]) -> Dict[str, Any]:
     if status == "gated":
         return {"functional_smoke_pass": None, "reason": "gated"}
     return {"functional_smoke_pass": False, "reason": f"status_{status}"}
+
+
+def resolve_functional_smoke(
+    inv: Optional[Dict[str, Any]],
+    obs: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """
+    Canonical functional-smoke verdict for read paths.
+
+    Stored verdicts may predate detector fixes (e.g. the false-freeze bug), so
+    when the stored verdict is not PASS we recompute deterministically from the
+    stored observation. A stored PASS is always kept.
+    """
+    inv = inv or {}
+    obs = obs if obs is not None else (inv.get("runtime_observation_report") or {})
+    stored = ((inv.get("runtime_validation") or {}).get("functional_smoke")) or {}
+    if stored.get("functional_smoke_pass") is True:
+        return stored
+    try:
+        fresh = functional_smoke_pass(obs)
+    except Exception:
+        return stored
+    if fresh.get("functional_smoke_pass") is True:
+        fresh["recomputed_on_read"] = True
+        return fresh
+    return stored or fresh
 
 
 def validate_runtime_observation(obs: Optional[Dict[str, Any]]) -> Dict[str, Any]:

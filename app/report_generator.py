@@ -272,6 +272,56 @@ def generate_student_report_pdf(
     elements.append(student_info_table)
     elements.append(Spacer(1, 0.4 * inch))
 
+    # ⏸ GameMaker install-pause banner (top of report, hard to miss).
+    # Populated by app.runtime_evidence_gate when the submission is a
+    # source-only GameMaker project AND GameMaker/Igor is not installed
+    # on the grading machine. Teacher-mandated: alternative evidence does
+    # NOT bypass this — the banner appears any time the pause is active.
+    _pause_banner = grading_result.get("gamemaker_install_pause_banner") or {}
+    _paused = grading_result.get("grading_paused") or {}
+    if _pause_banner.get("active") or _paused.get("paused"):
+        _title_ar = _pause_banner.get("title_ar") or _paused.get(
+            "short_ar", "⏸ التصحيح مُعلَّق — يتطلب تثبيت GameMaker"
+        )
+        _body_ar = _pause_banner.get("body_ar") or _paused.get(
+            "message_ar", ""
+        )
+        _pause_title_style = ParagraphStyle(
+            "GameMakerPauseTitle",
+            parent=styles["Normal"],
+            fontName=ARABIC_FONT,
+            fontSize=14,
+            leading=20,
+            alignment=TA_RIGHT,
+            textColor=colors.white,
+            spaceAfter=6,
+        )
+        _pause_body_style = ParagraphStyle(
+            "GameMakerPauseBody",
+            parent=styles["Normal"],
+            fontName=ARABIC_FONT,
+            fontSize=11,
+            leading=16,
+            alignment=TA_RIGHT,
+            textColor=colors.HexColor("#1f2937"),
+        )
+        _pause_rows = [
+            [Paragraph(arabic_text(_title_ar), _pause_title_style)],
+            [Paragraph(pdf_cell_text(_body_ar), _pause_body_style)],
+        ]
+        _pause_table = Table(_pause_rows, colWidths=[6 * inch])
+        _pause_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, 0), colors.HexColor("#b45309")),
+            ("BACKGROUND", (0, 1), (0, 1), colors.HexColor("#fef3c7")),
+            ("BOX", (0, 0), (-1, -1), 1.5, colors.HexColor("#92400e")),
+            ("LEFTPADDING", (0, 0), (-1, -1), 14),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 14),
+            ("TOPPADDING", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+        ]))
+        elements.append(_pause_table)
+        elements.append(Spacer(1, 0.4 * inch))
+
     # Overall summary — Executive Summary per Section 8
     # Fields are at top level of grading_result (not nested under 'summary')
     from app.official_grade import resolve_official_grade

@@ -849,8 +849,19 @@ def build_artifact_inventory(
     has_unity_targets = runtime_artifacts.get("unity_build_detected", False) or bool(
         (runtime_artifacts.get("unity_source_signals") or {}).get("source_present")
     )
+    # Include GameMaker *source* projects (.yyp/.gml) so no-exe submissions still
+    # reach the GameMaker engine (IDE auto-build / install-pause). Runnable .exe
+    # builds already light up has_executables — that path is unchanged.
+    has_gamemaker_project = bool(
+        runtime_artifacts.get("gamemaker_detected")
+        and (runtime_artifacts.get("gamemaker_signals") or {}).get("project_present")
+    )
     has_l4_sandbox_targets = (
-        has_executables or has_html5_build or has_godot_project or has_unity_targets
+        has_executables
+        or has_html5_build
+        or has_godot_project
+        or has_unity_targets
+        or has_gamemaker_project
     )
     has_source = len(source_files) > 0
 

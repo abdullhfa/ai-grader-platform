@@ -205,14 +205,25 @@ def _gemini_output_token_floor() -> int:
         return 128
 
 
+def _is_gemini_thinking_model(provider: str, model: Optional[str]) -> bool:
+    """Gemini 2.5 models may spend the output budget on internal reasoning tokens."""
+    model_l = (model or "").lower()
+    if provider == "openrouter":
+        model_l = model_l.split("/")[-1]
+    return "2.5" in model_l or "flash" in model_l
+
+
 def _effective_max_tokens(provider: str, model: Optional[str], max_tokens: Optional[int]) -> Optional[int]:
     if not max_tokens:
         return None
-    if provider == "gemini":
-        model_l = (model or "").lower()
-        if "2.5" in model_l or "flash" in model_l:
-            return max(max_tokens, _gemini_output_token_floor())
+    if provider in ("gemini", "openrouter") and _is_gemini_thinking_model(provider, model):
+        return max(max_tokens, _gemini_output_token_floor())
     return max_tokens
+
+
+def _supports_completion_seed(provider: str, model: Optional[str]) -> bool:
+    """seed breaks some OpenRouter/Gemini reasoning models (empty content); ollama only."""
+    return provider == "ollama"
 
 
 def _gemini_api_key_looks_valid() -> bool:
@@ -340,8 +351,9 @@ class AIProvider:
         }
         if max_tokens:
             params["max_tokens"] = _effective_max_tokens(self.provider, self.model, max_tokens)  # type: ignore
-        # Gemini's OpenAI-compat endpoint doesn't accept these.
-        if seed is not None and self.provider not in ["gemini"]:
+        elif _is_gemini_thinking_model(self.provider, self.model):
+            params["max_tokens"] = int(os.getenv("GEMINI_DEFAULT_OUTPUT_TOKENS", "8192"))
+        if seed is not None and _supports_completion_seed(self.provider, self.model):
             params["seed"] = seed  # type: ignore
         if response_format and self.provider not in ["gemini"]:
             params["response_format"] = response_format  # type: ignore
@@ -390,22 +402,43 @@ class AIProvider:
         if content is None or not str(content).strip():
             reasoning = getattr(msg, "reasoning", None) or ""
             finish = getattr(response.choices[0], "finish_reason", None)
+            thinking = _is_gemini_thinking_model(self.provider, self.model)
+            current_max = max_tokens or params.get("max_tokens")
+            # Hard ceiling for the widen-and-retry loop below. Previously this
+            # only fired while current_max < GEMINI_DEFAULT_OUTPUT_TOKENS
+            # (8192) — but most callers (e.g. the main criteria-grading call)
+            # already start AT 8192, so a submission whose evidence is large
+            # enough that the model spends the whole 8192-token budget on
+            # internal reasoning (finish_reason="length") never got a retry
+            # at all: it silently fell through to returning the raw
+            # reasoning trace as if it were the answer, which then fails to
+            # parse as JSON downstream. Raising the ceiling lets a truncated
+            # 8192-token attempt retry once at a larger budget before giving
+            # up.
+            hard_ceiling = max(
+                int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "32768")),
+                int(os.getenv("GEMINI_DEFAULT_OUTPUT_TOKENS", "8192")),
+            )
             if (
-                self.provider == "gemini"
+                thinking
                 and finish == "length"
-                and max_tokens
-                and max_tokens < _gemini_output_token_floor() * 2
+                and current_max
+                and current_max < hard_ceiling
             ):
-                raised = _effective_max_tokens(self.provider, self.model, max(max_tokens * 4, 256))
-                if raised and raised != max_tokens:
+                raised = min(
+                    max(int(current_max) * 4, int(os.getenv("GEMINI_DEFAULT_OUTPUT_TOKENS", "8192"))),
+                    hard_ceiling,
+                )
+                if raised != current_max:
                     return self._openai_style_completion(
                         messages, temperature, raised, response_format, seed
                     )
             if reasoning and str(reasoning).strip():
-                raise ValueError(
-                    f"Model {self.model!r} returned reasoning only (no answer text). "
-                    "Try OPENROUTER_MODEL=google/gemini-2.5-flash or increase max_tokens."
+                print(
+                    f"⚠️ [{self.provider}] {self.model} returned reasoning-only content; "
+                    "using reasoning field as fallback."
                 )
+                return str(reasoning).strip()
             raise ValueError(
                 f"Empty response from {self.provider} model {self.model!r}"
             )

@@ -15,11 +15,26 @@ def verify_mechanics(
     obs = observation or {}
     inv = inventory or {}
     sem = assess_gameplay_semantics(obs, inventory=inv)
+    static = obs.get("static_mechanics") or inv.get("static_mechanics") or {}
+    static_ids = set(static.get("detected_ids") or [])
     trace = _interaction_trace(obs)
     gv = _gameplay_verification_blob(obs, inventory=inv, grading_result=None)
-    movement_ok = bool(gv.get("player_movement_verified") or trace.get("player_movement_verified"))
-    jump_ok = bool(gv.get("jump_detected") or trace.get("jump_detected") or movement_ok)
-    score_ok = bool(gv.get("score_change_detected") or sem.get("score_progression_detected"))
+    movement_ok = bool(
+        gv.get("player_movement_verified")
+        or trace.get("player_movement_verified")
+        or "player_movement" in static_ids
+    )
+    jump_ok = bool(
+        gv.get("jump_detected")
+        or trace.get("jump_detected")
+        or "player_jump" in static_ids
+        or movement_ok
+    )
+    score_ok = bool(
+        gv.get("score_change_detected")
+        or sem.get("score_progression_detected")
+        or "score_system" in static_ids
+    )
     win_or_lose_ok = bool(sem.get("win_state_detected") or sem.get("fail_state_detected"))
     loop_ok = bool(sem.get("gameplay_loop_complete"))
     l4 = str(gv.get("l4_level") or trace.get("l4_level") or "")
@@ -43,6 +58,15 @@ def verify_mechanics(
         "player_movement_detected": movement_ok,
         "win_or_lose_detected": win_or_lose_ok,
         "gameplay_loop_complete": loop_ok,
+        "timer_system_detected": bool(
+            sem.get("timer_system_detected") or "timer_system" in static_ids
+        ),
+        "lives_or_health_detected": bool(
+            sem.get("lives_or_health_detected")
+            or "lives_system" in static_ids
+            or "health_system" in static_ids
+        ),
+        "static_mechanics_ids": sorted(static_ids),
         "source": "deterministic_semantic_verification",
         "findings_ar": sem.get("findings_ar") or [],
     }

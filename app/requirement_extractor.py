@@ -16,6 +16,8 @@ _REQ_LABELS_AR: Dict[str, str] = {
     "win_lose_condition": "شرط الفوز أو الخسارة",
     "collect_items": "جمع العناصر",
     "enemy_interaction": "تفاعل العدو",
+    "timer_system": "نظام الوقت / المؤقت",
+    "lives_system": "نظام الأرواح / الصحة",
 }
 
 
@@ -96,15 +98,24 @@ def _menu_navigation_test() -> RequirementTest:
     )
 
 
-def _player_movement_test() -> RequirementTest:
+def _player_movement_test(engine: str = "godot") -> RequirementTest:
+    # GameMaker student games in Jordan BTEC overwhelmingly use arrow keys
+    # (vk_left/vk_right); Godot/Unity briefs use WASD. Send both to avoid
+    # false negatives regardless of the student's key bindings.
+    sequence = [
+        InputAction("key_hold", "d", duration=0.6),
+        InputAction("key_hold", "a", duration=0.6),
+    ]
+    if (engine or "").lower() in ("gamemaker", "scratch"):
+        sequence = [
+            InputAction("key_hold", "right", duration=0.6),
+            InputAction("key_hold", "left", duration=0.6),
+        ] + sequence
     return RequirementTest(
         req_id="player_movement",
         description=_REQ_LABELS_AR["player_movement"],
         btec_criteria=["C.P5"],
-        input_sequence=[
-            InputAction("key_hold", "d", duration=0.6),
-            InputAction("key_hold", "a", duration=0.6),
-        ],
+        input_sequence=sequence,
         verification_method="pixel_shift_horizontal",
         success_threshold=0.03,
         required_for_gate=True,
@@ -147,15 +158,19 @@ def _win_lose_test() -> RequirementTest:
     )
 
 
-DEFAULT_GODOT_EXE_PLAN = RequirementPlan(
-    engine="godot",
-    requirements=[
+def _base_requirements(engine: str = "godot") -> List[RequirementTest]:
+    return [
         _menu_navigation_test(),
-        _player_movement_test(),
+        _player_movement_test(engine),
         _player_jump_test(),
         _score_system_test(),
         _win_lose_test(),
-    ],
+    ]
+
+
+DEFAULT_GODOT_EXE_PLAN = RequirementPlan(
+    engine="godot",
+    requirements=_base_requirements("godot"),
     extraction_confidence=1.0,
 )
 
@@ -176,6 +191,24 @@ _OPTIONAL_REQ_BUILDERS: Dict[str, Any] = {
         btec_criteria=["C.M3"],
         input_sequence=[InputAction("key_hold", "d", duration=5.0)],
         verification_method="ocr_endgame_screen",
+        success_threshold=0.6,
+        required_for_gate=False,
+    ),
+    "timer_system": lambda: RequirementTest(
+        req_id="timer_system",
+        description=_REQ_LABELS_AR["timer_system"],
+        btec_criteria=["C.P5", "C.M3"],
+        input_sequence=[InputAction("wait", duration=2.0)],
+        verification_method="ocr_hud_change",
+        success_threshold=0.6,
+        required_for_gate=False,
+    ),
+    "lives_system": lambda: RequirementTest(
+        req_id="lives_system",
+        description=_REQ_LABELS_AR["lives_system"],
+        btec_criteria=["C.P5", "C.M3"],
+        input_sequence=[InputAction("key_hold", "d", duration=3.0)],
+        verification_method="ocr_hud_change",
         success_threshold=0.6,
         required_for_gate=False,
     ),
@@ -207,13 +240,13 @@ class RequirementExtractor:
             return RequirementPlan(
                 submission_id=submission_id,
                 engine=engine or "godot",
-                requirements=list(DEFAULT_GODOT_EXE_PLAN.requirements),
+                requirements=_base_requirements(engine or "godot"),
                 extracted_from=list(document_paths or []),
                 extraction_confidence=1.0,
             )
 
-        base = list(DEFAULT_GODOT_EXE_PLAN.requirements)
-        optional_ids = ("collect_items", "enemy_interaction")
+        base = _base_requirements(engine or "godot")
+        optional_ids = ("collect_items", "enemy_interaction", "timer_system", "lives_system")
         for opt_id in optional_ids:
             if opt_id in mentioned and opt_id in _OPTIONAL_REQ_BUILDERS:
                 base.append(_OPTIONAL_REQ_BUILDERS[opt_id]())
@@ -239,7 +272,7 @@ class RequirementExtractor:
         return RequirementPlan(
             submission_id=submission_id,
             engine=engine,
-            requirements=list(DEFAULT_GODOT_EXE_PLAN.requirements),
+            requirements=_base_requirements(engine or "godot"),
             extracted_from=[],
             extraction_confidence=1.0,
         )

@@ -197,7 +197,7 @@ def _deliverable_pass_for_row(
 
 
 _GOVERNANCE_DENIAL_LEAD = re.compile(
-    r"^[ \t]*⚠️\s*\[حوكمة BTEC\]\s*لم يتحقق المعيار مؤسسياً[^\n]*\n+",
+    r"^[ \t]*⚠️\s*\[حوكمة BTEC\]\s*لم\s+يتحقق\s+المعيار(?:\s+مؤسسياً)?[^\n]*\n+",
     re.MULTILINE,
 )
 _AI_SECTION = re.compile(
@@ -489,6 +489,19 @@ def finalize_grading_criteria_results(
         )
         if gate_report.get("changes"):
             changes.extend(gate_report["changes"])
+            changes.extend(
+                reconcile_authoritative_achieved(
+                    grading_result, artifact_inventory=artifact_inventory
+                )
+            )
+            criteria = grading_result.get("criteria_results") or []
+            grading_result["grade_level"] = determine_grade_level(criteria)
+            total = sum(int(r.get("score") or 0) for r in criteria if isinstance(r, dict))
+            n = len(criteria) or 1
+            pct = int(total / n)
+            grading_result["percentage"] = pct
+            grading_result["total_score"] = pct
+            grading_result["criteria_score_pct"] = pct
         if grading_result.get("pearson_btec_pro") and gate_report.get("changes"):
             try:
                 from app.btec_criteria_governance import apply_btec_awardability
@@ -499,6 +512,33 @@ def finalize_grading_criteria_results(
                 grading_result["grade_level"] = institutional_grade_from_awardable(criteria)
             except Exception:
                 pass
+        # After the gate certifies rows, feedback text must not contradict the
+        # final verdict (e.g. stale "لم يتحقق المعيار" from an overturned layer).
+        try:
+            from app.btec_criteria_governance import enforce_achieved_feedback_consistency
+
+            changes.extend(
+                enforce_achieved_feedback_consistency(
+                    grading_result.get("criteria_results") or []
+                )
+            )
+        except Exception:
+            pass
+        # Merit/Distinction rows may cite specific Pass/Merit prerequisites as
+        # "لم يتم تحقيقها" from an AI pass that ran before those prerequisites
+        # were promoted above — realign against the now-final achieved map.
+        try:
+            from app.btec_criteria_governance import (
+                enforce_prerequisite_citation_consistency,
+            )
+
+            changes.extend(
+                enforce_prerequisite_citation_consistency(
+                    grading_result.get("criteria_results") or []
+                )
+            )
+        except Exception:
+            pass
     except Exception:
         pass
 

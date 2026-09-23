@@ -79,6 +79,14 @@ def assess_gameplay_semantics(
     graph = obs.get("runtime_signal_graph") or {}
     signals = graph.get("signals") or {}
 
+    # Deterministic static mechanics evidence (GameMaker GML analyzer, etc.).
+    static = (
+        obs.get("static_mechanics")
+        or inv.get("static_mechanics")
+        or {}
+    )
+    static_ids = set(static.get("detected_ids") or [])
+
     screenshots = obs.get("runtime_screenshots") or []
     captured = [
         s for s in screenshots if isinstance(s, dict) and s.get("status") == "captured"
@@ -100,19 +108,34 @@ def assess_gameplay_semantics(
     )
 
     visual_tokens = _collect_visual_tokens(obs)
-    has_fail_state = any(t in _FAIL_STATE_MARKERS for t in visual_tokens)
-    has_win_state = any(t in _WIN_STATE_MARKERS for t in visual_tokens)
-    menu_navigation_detected = any(t in _MENU_MARKERS for t in visual_tokens) or _signal_true(
-        signals, "menu_navigation"
+    has_fail_state = any(t in _FAIL_STATE_MARKERS for t in visual_tokens) or (
+        "lose_condition" in static_ids
     )
-    restart_flow_detected = any(t in _RESTART_MARKERS for t in visual_tokens) or _signal_true(
-        signals, "restart_flow"
+    has_win_state = any(t in _WIN_STATE_MARKERS for t in visual_tokens) or (
+        "win_condition" in static_ids
     )
-    has_lives_system = any(t in _LIVES_MARKERS for t in visual_tokens) or (
-        _signal_true(signals, "lives_changed")
+    menu_navigation_detected = (
+        any(t in _MENU_MARKERS for t in visual_tokens)
+        or _signal_true(signals, "menu_navigation")
+        or "menu_ui" in static_ids
+    )
+    restart_flow_detected = (
+        any(t in _RESTART_MARKERS for t in visual_tokens)
+        or _signal_true(signals, "restart_flow")
+        or "restart_flow" in static_ids
+    )
+    has_lives_system = (
+        any(t in _LIVES_MARKERS for t in visual_tokens)
+        or _signal_true(signals, "lives_changed")
         or _signal_true(signals, "health_changed")
+        or "lives_system" in static_ids
+        or "health_system" in static_ids
     )
     health_or_lives_detected = has_lives_system
+    timer_system_detected = _signal_true(signals, "timer_progressed") or (
+        "timer_system" in static_ids
+    )
+    score_system_implemented = "score_system" in static_ids
 
     # Progression can be explicit transition, score growth, or structured checkpoint signal.
     score_progression_detected = score_changed or timer_progressed
@@ -168,10 +191,16 @@ def assess_gameplay_semantics(
         findings_ar.append("fail state غير واضح من الملاحظة")
     if restart_flow_detected:
         findings_ar.append("تم رصد restart/respawn flow")
-    if not has_lives_system:
+    if has_lives_system:
+        findings_ar.append("تم رصد نظام الأرواح/الصحة بالأدلة")
+    else:
         findings_ar.append("نظام الأرواح/الصحة غير ظاهر بالأدلة")
+    if timer_system_detected:
+        findings_ar.append("تم رصد نظام الوقت/المؤقت بالأدلة")
     if loop_incomplete:
         findings_ar.append("حلقة اللعب غير مكتملة وظيفيًا")
+    if static_ids:
+        findings_ar.extend(static.get("findings_ar") or [])
 
     return {
         "version": 1,
@@ -184,6 +213,9 @@ def assess_gameplay_semantics(
         "menu_navigation_detected": menu_navigation_detected,
         "health_or_lives_detected": health_or_lives_detected,
         "lives_or_health_detected": has_lives_system,
+        "timer_system_detected": timer_system_detected,
+        "score_system_implemented": score_system_implemented,
+        "static_mechanics_ids": sorted(static_ids),
         "win_state_detected": has_win_state,
         "gameplay_loop_complete": gameplay_loop_complete,
         "progression_missing": progression_missing,

@@ -947,9 +947,15 @@ def rar_member_uncompressed_size(
 
         _apply_rarfile_unrar_tool()
         if rar_handle is not None:
-            return int(rar_handle.getinfo(member_name).file_size or 0)
+            resolved = _rarfile_resolve_member_name(rar_handle, member_name)
+            if resolved is None:
+                return 0
+            return int(rar_handle.getinfo(resolved).file_size or 0)
         with rarfile.RarFile(archive_path, "r") as rf:
-            return int(rf.getinfo(member_name).file_size or 0)
+            resolved = _rarfile_resolve_member_name(rf, member_name)
+            if resolved is None:
+                return 0
+            return int(rf.getinfo(resolved).file_size or 0)
     except Exception:
         return 0
 
@@ -996,6 +1002,62 @@ def list_rar_members_fast(archive_path: str, *, timeout: int = 600) -> list[str]
     )
 
 
+def _rar_path_looks_console_garbled(path: str) -> bool:
+    """True when Windows `unrar lb` replaced non-ASCII (e.g. Arabic) with '?'."""
+    return path.count("?") >= 2
+
+
+def _rar_member_ascii_fingerprint(path: str) -> str:
+    """Match garbled lb paths to rarfile Unicode names via ASCII-safe skeleton."""
+    norm = path.replace("\\", "/").lower()
+    chars: list[str] = []
+    for ch in norm:
+        o = ord(ch)
+        if ch in "/._-+()[] " or (48 <= o <= 57) or (97 <= o <= 122):
+            chars.append(ch)
+        else:
+            # Arabic / '?' / other → single wildcard slot
+            if not chars or chars[-1] != "*":
+                chars.append("*")
+    return "".join(chars)
+
+
+def _rarfile_resolve_member_name(rf, member_name: str) -> str | None:
+    """Return rarfile-internal name for member_name (exact or Arabic-garbled lb alias)."""
+    want = member_name.replace("\\", "/")
+    try:
+        rf.getinfo(member_name)
+        return member_name
+    except Exception:
+        pass
+    try:
+        rf.getinfo(want)
+        return want
+    except Exception:
+        pass
+    names = list(rf.namelist())
+    for name in names:
+        if name.replace("\\", "/") == want:
+            return name
+    if not _rar_path_looks_console_garbled(want):
+        return None
+    want_fp = _rar_member_ascii_fingerprint(want)
+    want_base = PurePosixPath(want).name.lower()
+    matches = [
+        name
+        for name in names
+        if PurePosixPath(name.replace("\\", "/")).name.lower() == want_base
+        and _rar_member_ascii_fingerprint(name) == want_fp
+    ]
+    if len(matches) == 1:
+        return matches[0]
+    if len(matches) > 1:
+        # Prefer exact length / path-depth tie-break
+        matches.sort(key=lambda n: (n.count("/"), len(n), n))
+        return matches[0]
+    return None
+
+
 def iter_rar_member_paths(
     archive_path: str,
     *,
@@ -1003,9 +1065,51 @@ def iter_rar_member_paths(
     timeout: int,
     on_list_progress=None,
 ):
-    """Stream RAR member paths from `unrar lb` — avoids loading huge namelist() in Python."""
+    """
+    Stream RAR member paths.
+
+    Prefer rarfile.namelist() — on Windows, `unrar lb` often replaces Arabic path
+    segments with '?', which then fail rarfile.getinfo / selective extract (GRD-001).
+    Fall back to `unrar lb` only when rarfile cannot open the archive.
+    """
     import subprocess
     import time
+
+    def _emit_filtered(paths):
+        listed = 0
+        for ln in paths:
+            decoded = collapse_redundant_archive_path(str(ln).replace("\\", "/"))
+            if not decoded:
+                continue
+            if not _archive_member_visible(decoded):
+                continue
+            if skip_dir_names and path_has_ignored_segment(decoded, skip_dir_names):
+                continue
+            listed += 1
+            if on_list_progress and listed % 25 == 0:
+                try:
+                    on_list_progress(listed)
+                except Exception:
+                    pass
+            yield decoded
+        if on_list_progress and listed:
+            try:
+                on_list_progress(listed)
+            except Exception:
+                pass
+
+    # --- Preferred: rarfile (correct Unicode names on RAR5 / Arabic folders) ---
+    try:
+        import rarfile  # type: ignore[import-untyped]
+
+        _apply_rarfile_unrar_tool()
+        with rarfile.RarFile(archive_path, "r") as rf:
+            names = list(rf.namelist())
+        if names:
+            yield from _emit_filtered(names)
+            return
+    except Exception as _rf_list_exc:
+        print(f"⚠️ [RAR] rarfile namelist failed, falling back to unrar lb: {_rf_list_exc}")
 
     tool = find_unrar_tool()
     if not tool:
@@ -1023,6 +1127,7 @@ def iter_rar_member_paths(
     assert proc.stdout is not None
     started = time.monotonic()
     listed = 0
+    garbled = 0
     try:
         for raw in proc.stdout:
             if time.monotonic() - started > timeout:
@@ -1031,6 +1136,8 @@ def iter_rar_member_paths(
             ln = raw.decode("utf-8", errors="replace").strip().replace("\\", "/")
             if not ln:
                 continue
+            if _rar_path_looks_console_garbled(ln):
+                garbled += 1
             decoded = collapse_redundant_archive_path(ln)
             if not _archive_member_visible(decoded):
                 continue
@@ -1054,6 +1161,11 @@ def iter_rar_member_paths(
         except Exception:
             proc.kill()
             proc.wait(timeout=5)
+        if garbled and garbled >= max(3, listed // 2):
+            print(
+                f"⚠️ [RAR] unrar lb produced {garbled}/{listed} garbled path(s) "
+                f"for {Path(archive_path).name} — Unicode names likely lost"
+            )
 
 
 def _archive_student_group_key(decoded: str) -> str:
@@ -1603,18 +1715,25 @@ def read_rar_member_bytes(archive_path: str, member_name: str, *, rar_handle=Non
     """
     Read one RAR member without creating nested long paths on disk.
     Prefer rarfile (handles RAR5 + Unicode names); fall back to `unrar p`.
+    Resolves Windows `unrar lb` garbled Arabic paths against rarfile.namelist().
     """
     if rar_handle is not None:
-        info = rar_handle.getinfo(member_name)
-        return rar_handle.read(info)
+        resolved = _rarfile_resolve_member_name(rar_handle, member_name)
+        if resolved is None:
+            raise FileNotFoundError(f"No such file: {member_name}")
+        return rar_handle.read(rar_handle.getinfo(resolved))
 
     try:
         import rarfile  # type: ignore[import-untyped]
 
         _apply_rarfile_unrar_tool()
         with rarfile.RarFile(archive_path, "r") as rf:
-            info = rf.getinfo(member_name)
-            return rf.read(info)
+            resolved = _rarfile_resolve_member_name(rf, member_name)
+            if resolved is None:
+                raise FileNotFoundError(f"No such file: {member_name}")
+            return rf.read(rf.getinfo(resolved))
+    except FileNotFoundError:
+        raise
     except Exception:
         return _unrar_pipe_bytes(archive_path, member_name)
 

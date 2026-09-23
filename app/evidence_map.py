@@ -279,6 +279,23 @@ def build_evidence_summary_from_snapshot(
     if not snapshot or not isinstance(snapshot, dict):
         return empty
 
+    # GameMaker install-pause is a separate state from C.P5/C.P6 Gate.
+    # Do not count paused students as "تأثر بـ Gate" — the UI must show the
+    # install banner / pause reason instead.
+    paused = snapshot.get("grading_paused") or {}
+    if isinstance(paused, dict) and paused.get("paused"):
+        out = _finalize_evidence_summary(
+            total_criteria=len(
+                [r for r in (snapshot.get("criteria_results") or []) if isinstance(r, dict)]
+            ),
+            gate_downgrade_count=0,
+            high_coverage_not_achieved_count=0,
+            coverage_threshold=coverage_threshold,
+        )
+        out["grading_paused"] = True
+        out["pause_reason"] = paused.get("reason")
+        return out
+
     inv = snapshot.get("artifact_inventory") or {}
     paths = snapshot.get("submission_paths") or []
     game = is_game_submission(inv, submission_paths=list(paths))

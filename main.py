@@ -3020,6 +3020,21 @@ async def batch_results_page(
                 f" [DISPLAY OK] {submission.student_name}: {summary.percentage}% - {summary.grade_level}"
             )
 
+        grading_paused = None
+        gamemaker_install_pause_banner = None
+        if submission.grading_snapshot_json:
+            try:
+                _pause_snap = _json.loads(str(submission.grading_snapshot_json))
+                _paused_blob = _pause_snap.get("grading_paused")
+                if isinstance(_paused_blob, dict) and _paused_blob.get("paused"):
+                    grading_paused = _paused_blob
+                _banner_blob = _pause_snap.get("gamemaker_install_pause_banner")
+                if isinstance(_banner_blob, dict) and _banner_blob.get("active"):
+                    gamemaker_install_pause_banner = _banner_blob
+            except Exception:
+                grading_paused = None
+                gamemaker_install_pause_banner = None
+
         results_data.append(
             {
                 "submission": submission,
@@ -3037,6 +3052,8 @@ async def batch_results_page(
                 else None,
                 "evidence_summary": evidence_summary,
                 "is_u_high_coverage": is_u_high_coverage,
+                "grading_paused": grading_paused,
+                "gamemaker_install_pause_banner": gamemaker_install_pause_banner,
             }
         )
 
@@ -3049,6 +3066,12 @@ async def batch_results_page(
         ),
         "evidence_issue_count": sum(
             1 for r in results_data if (r.get("evidence_summary") or {}).get("has_evidence_issue")
+        ),
+        "gamemaker_paused_count": sum(
+            1
+            for r in results_data
+            if isinstance(r.get("grading_paused"), dict)
+            and r["grading_paused"].get("paused")
         ),
         "coverage_threshold": 50,
     }
@@ -9595,6 +9618,60 @@ async def download_report_word(submission_id: int, request: Request, db: Session
     _set_run_cs(sub_r)
 
     grading_snapshot: dict[str, Any] | None = None
+
+    def _render_gamemaker_pause_banner(_snapshot: dict) -> None:
+        """
+        Prominent top-of-report banner for the strict GameMaker install pause.
+        Placed above every other section so a teacher opening the docx sees
+        the pause reason before anything else. Silent no-op when not paused.
+        """
+        _banner = _snapshot.get("gamemaker_install_pause_banner") or {}
+        _paused = _snapshot.get("grading_paused") or {}
+        if not _banner.get("active") and not _paused.get("paused"):
+            return
+        _title = str(
+            _banner.get("title_ar")
+            or _paused.get("short_ar")
+            or "⏸ التصحيح مُعلَّق — يتطلب تثبيت GameMaker"
+        )
+        _body = str(_banner.get("body_ar") or _paused.get("message_ar") or "")
+        _btbl = doc.add_table(rows=2, cols=1)
+        _btbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+        _btbl.autofit = False
+        try:
+            _btbl.columns[0].width = Cm(16)
+        except Exception:
+            pass
+        _title_cell = _btbl.rows[0].cells[0]
+        _body_cell = _btbl.rows[1].cells[0]
+        for _c, _bg in ((_title_cell, "B45309"), (_body_cell, "FEF3C7")):
+            _tcPr = _c._tc.get_or_add_tcPr()
+            _shd = OxmlElement("w:shd")
+            _shd.set(qn("w:val"), "clear")
+            _shd.set(qn("w:color"), "auto")
+            _shd.set(qn("w:fill"), _bg)
+            _tcPr.append(_shd)
+        _tp = _title_cell.paragraphs[0]
+        set_rtl(_tp)
+        _tp.paragraph_format.space_before = Pt(8)
+        _tp.paragraph_format.space_after = Pt(4)
+        _tr = _tp.add_run(_title)
+        _tr.bold = True
+        _tr.font.size = Pt(14)
+        _tr.font.color.rgb = WHITE
+        _tr.font.name = "Calibri"
+        _set_run_cs(_tr)
+        _bp = _body_cell.paragraphs[0]
+        set_rtl(_bp)
+        _bp.paragraph_format.space_before = Pt(6)
+        _bp.paragraph_format.space_after = Pt(8)
+        _br = _bp.add_run(_body)
+        _br.font.size = Pt(11)
+        _br.font.color.rgb = BODY_TEXT
+        _br.font.name = "Calibri"
+        _set_run_cs(_br)
+        _spacer = doc.add_paragraph()
+        _spacer.paragraph_format.space_after = Pt(8)
     if getattr(submission, "grading_snapshot_json", None):
         try:
             _parsed_snapshot = json.loads(str(submission.grading_snapshot_json))
@@ -9826,6 +9903,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
     if grading_snapshot:
         # ── Body from same payload as PDF (grading_snapshot) ──────────
         gs = grading_snapshot
+        # Prominent "⏸ install GameMaker" banner — must appear ABOVE every
+        # other section so a teacher opening the docx sees the pause reason
+        # before the student info / summary / criteria. No-op unless the
+        # strict pause is active.
+        _render_gamemaker_pause_banner(gs)
         info_data_snap = [
             ("اسم الطالب:", submission.student_name or "—"),
             ("تاريخ التصحيح:", _ltr_embed(_dt.now().strftime('%Y-%m-%d %H:%M'))),
@@ -9856,6 +9938,32 @@ async def download_report_word(submission_id: int, request: Request, db: Session
 
         rule_bundle_s = format_rule_bundle_label(provenance_from_payload(gs))
         _gp = gs.get("grading_profile") if isinstance(gs.get("grading_profile"), dict) else {}
+        # Refresh gameplay/agent-play fields at render time — stored values may
+        # predate gate/policy updates; the summary is deterministic and cheap.
+        try:
+            from app.gameplay_verifier import build_gameplay_verification_summary as _bgvs
+
+            _inv_fresh = gs.get("artifact_inventory") or {}
+            _rt_fresh = _inv_fresh.get("runtime_observation_report") or {}
+            _gv_fresh = _bgvs(
+                _rt_fresh if isinstance(_rt_fresh, dict) else None,
+                inventory=_inv_fresh,
+                grading_result=gs,
+            )
+            if _gv_fresh:
+                _gp = dict(_gp)
+                _gp["agent_play_label_ar"] = _gv_fresh.get("agent_play_label_ar") or _gp.get(
+                    "agent_play_label_ar"
+                )
+                _gp["gameplay_evidence_level"] = _gv_fresh.get("evidence_level") or _gp.get(
+                    "gameplay_evidence_level"
+                )
+                _gp["l4_level"] = _gv_fresh.get("l4_level") or _gp.get("l4_level")
+                _gp["gameplay_agent_used"] = _gv_fresh.get("gameplay_agent_used")
+                if _gv_fresh.get("godot_runtime_outcome"):
+                    _gp["godot_runtime_outcome"] = _gv_fresh["godot_runtime_outcome"]
+        except Exception:
+            pass
         _mode_label_s = str(gs.get("grading_mode_label") or _gp.get("mode_label") or "PRO")
         ai_info_s = gs.get("ai_detection_info") or {}
         try:
@@ -9874,6 +9982,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             ("التقدير المعتمد:", _ltr_embed(grade_level_s)),
             ("وضع التصحيح:", _ltr_embed(_mode_label_s)),
         ]
+        _paused_s = gs.get("grading_paused") or {}
+        if _paused_s.get("paused"):
+            summary_data_s.insert(
+                1, ("حالة التصحيح:", str(_paused_s.get("message_ar") or "معلّق"))
+            )
         if _gp:
             summary_data_s.append(
                 ("عمق التحقق:", _ltr_embed(str(_gp.get("runtime_depth") or "—")))
@@ -9970,7 +10083,27 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         ):
             from app.report_feedback_formatter import format_godot_runtime_outcome_ar
 
-            add_heading(" نتيجة تشغيل Godot (Agent play)", level=2, color=PURPLE)
+            _engine_name = str(_godot_outcome.get("engine_display_name") or "").strip()
+            if not _engine_name:
+                try:
+                    from app.pro_engine_gameplay_governance import detect_primary_game_engine
+
+                    _eng_id = detect_primary_game_engine(gs.get("artifact_inventory") or {})
+                    _engine_name = {
+                        "godot": "Godot",
+                        "gamemaker": "GameMaker",
+                        "unity": "Unity",
+                        "scratch": "Scratch",
+                        "unreal": "Unreal",
+                    }.get(_eng_id, "")
+                except Exception:
+                    _engine_name = ""
+            _agent_heading = (
+                f" نتيجة تشغيل {_engine_name} (Agent play)"
+                if _engine_name
+                else " نتيجة التشغيل (Agent play)"
+            )
+            add_heading(_agent_heading, level=2, color=PURPLE)
             _go_p = doc.add_paragraph()
             set_rtl(_go_p)
             _go_r = _go_p.add_run(format_godot_runtime_outcome_ar(_godot_outcome))
@@ -9978,7 +10111,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             _go_r.font.color.rgb = BODY_TEXT
             _go_r.font.name = 'Calibri'
             _set_run_cs(_go_r)
-            _go_p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            # bidi paragraphs: default alignment is already RIGHT — setting jc flips it in Word
             doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
         try:
@@ -10044,7 +10177,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             _rt_r.font.color.rgb = BODY_TEXT
             _rt_r.font.name = 'Calibri'
             _set_run_cs(_rt_r)
-            _rt_p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            # bidi paragraphs: default alignment is already RIGHT — setting jc flips it in Word
             doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
         add_heading("🔗 تحليل الانتحال (Plagiarism Analysis)", level=2, color=PURPLE)
@@ -10241,7 +10374,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 ex_r.font.color.rgb = BODY_TEXT
                 ex_r.font.name = 'Calibri'
                 _set_run_cs(ex_r)
-                ex_b.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                # bidi paragraphs: default alignment is already RIGHT — setting jc flips it in Word
                 doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
             fb_raw = str(criteria.get("feedback", "") or "")
@@ -10252,6 +10385,10 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                     runtime_note_ar=criteria.get("runtime_observation_note_ar"),
                     achieved=bool(criteria.get("achieved", False)),
                     awardable=criteria.get("awardable", criteria.get("achieved")),
+                    gate_open=bool(
+                        criteria.get("runtime_l4_verified")
+                        or criteria.get("static_corroborated_runtime")
+                    ),
                 )
                 fb_p = doc.add_paragraph()
                 set_rtl(fb_p)
@@ -10268,7 +10405,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 fb_ru.font.color.rgb = BODY_TEXT
                 fb_ru.font.name = 'Calibri'
                 _set_run_cs(fb_ru)
-                fb_b.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                # bidi paragraphs: default alignment is already RIGHT — setting jc flips it in Word
                 doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
             dm = criteria.get("decision_matrix") or []
@@ -10439,7 +10576,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
             fb_or.font.color.rgb = BODY_TEXT
             fb_or.font.name = 'Calibri'
             _set_run_cs(fb_or)
-            fb_o.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            # bidi paragraphs: default alignment is already RIGHT — setting jc flips it in Word
 
     else:
         # ════════════════════════════════════════════════════════════
@@ -10763,7 +10900,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 fb_text_run.font.color.rgb = BODY_TEXT
                 fb_text_run.font.name = 'Calibri'
                 _set_run_cs(fb_text_run)
-                fb_text.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                # bidi paragraphs: default alignment is already RIGHT — setting jc flips it in Word
                 doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
             # Decision Matrix Reconstruction
@@ -10945,7 +11082,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 fb_run.font.color.rgb = BODY_TEXT
                 fb_run.font.name = 'Calibri'
                 _set_run_cs(fb_run)
-                fb_text.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                # bidi paragraphs: default alignment is already RIGHT — setting jc flips it in Word
 
     # Save to memory
     file_stream = io.BytesIO()

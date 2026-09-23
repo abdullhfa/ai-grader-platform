@@ -632,6 +632,8 @@ def _attach_terminal_godot_classify_if_missing(
     proc_crashed = out.get("smoke_result") in ("early_exit", "launch_error") or (
         signals.get("crash") == "observed"
     )
+    from app.gameplay_verifier import _capture_scope_degraded
+
     failure = classify_runtime_failure(
         window_detected=window_detected,
         black_screen_duration_s=0,
@@ -643,6 +645,7 @@ def _attach_terminal_godot_classify_if_missing(
         process_crashed=proc_crashed,
         boot_timed_out=not interaction_ran
         and out.get("smoke_result") in ("stable_window", "launch_ok"),
+        capture_scope_degraded=_capture_scope_degraded(shots),
     )
     if not failure:
         return
@@ -701,6 +704,7 @@ def smoke_test_windows_exe(
 
     launch_cwd = cwd or path.parent
     search_root: Optional[Path] = None
+    submission_paths: List[Any] = []
     if session_ctx:
         for key in ("submission_root", "project_root", "search_root"):
             raw = session_ctx.get(key)
@@ -1232,13 +1236,53 @@ def observe_runtime_artifacts(
     files = [p for p in paths if p.is_file()]
     apks, pcks, exes = _pick_primary_artifacts(files)
 
+    gm_ide_build: Optional[Dict[str, Any]] = None
     if not apks and not pcks and not exes:
-        return {
+        # GameMaker source-only submission (.yyp + .gml, no exe): attempt a
+        # local headless build (Igor) so the game can still be smoke-tested.
+        yyp_candidates = [p for p in files if p.suffix.lower() == ".yyp"]
+        if yyp_candidates:
+            try:
+                import tempfile
+
+                from app.runtime_engines.gamemaker.ide_builder import build_from_source_with_install_pause
+
+                build_ws = Path(tempfile.mkdtemp(prefix="gm_build_"))
+                gm_ide_build = build_from_source_with_install_pause(yyp_candidates[0], build_ws)
+                built_exe = gm_ide_build.get("executable")
+                if gm_ide_build.get("success") and built_exe and Path(str(built_exe)).is_file():
+                    exes = [Path(str(built_exe))]
+            except Exception as exc:
+                gm_ide_build = {"attempted": False, "success": False, "reason": str(exc)}
+
+    if not apks and not pcks and not exes:
+        out_no_artifacts: Dict[str, Any] = {
             "status": "no_artifacts",
             "contract_id": CONTRACT_ID,
             "observation_summary_ar": "لا ملفات .exe/.apk/.pck للملاحظة.",
             "runtime_signal_graph": None,
         }
+        if gm_ide_build is not None:
+            out_no_artifacts["gamemaker_ide_build"] = gm_ide_build
+            if gm_ide_build.get("reason_ar"):
+                out_no_artifacts["observation_summary_ar"] = (
+                    "لا يوجد ملف تشغيل، والبناء التلقائي لم يكتمل: "
+                    + str(gm_ide_build.get("reason_ar"))
+                )
+        # Source-only: still record deterministic static mechanics evidence.
+        try:
+            from app.runtime_engines.gamemaker.gml_mechanics import analyze_gml_mechanics
+
+            gml_files = [p for p in files if p.suffix.lower() == ".gml"]
+            yyps = [p for p in files if p.suffix.lower() == ".yyp"]
+            root = yyps[0].parent if yyps else None
+            if gml_files or root:
+                out_no_artifacts["static_mechanics"] = analyze_gml_mechanics(
+                    root, gml_files=gml_files or None
+                )
+        except Exception:
+            pass
+        return out_no_artifacts
 
     session_ctx = {
         "runtime_session_id": f"ros_{uuid.uuid4().hex[:12]}",
@@ -1247,6 +1291,16 @@ def observe_runtime_artifacts(
         "student_name": student_name,
         "submission_paths": [str(p) for p in paths],
     }
+    try:
+        from app.pro_engine_gameplay_governance import detect_primary_game_engine
+
+        detected_engine = detect_primary_game_engine(
+            None, submission_paths=[str(p) for p in paths]
+        )
+        if detected_engine and detected_engine != "unknown":
+            session_ctx["engine"] = detected_engine
+    except Exception:
+        pass
     submission_root = paths[0].parent if paths and paths[0].is_file() else (paths[0] if paths else None)
     if submission_root is not None:
         session_ctx["submission_root"] = str(submission_root)
@@ -1329,6 +1383,7 @@ def observe_runtime_artifacts(
         "status": "completed",
         "contract_id": CONTRACT_ID,
         "observation_mode": OBSERVATION_MODE,
+        "gamemaker_ide_build": gm_ide_build,
         "runtime_observed": runtime_observed,
         "runtime_verified": runtime_verified,
         "runtime_observation": "completed",
@@ -1379,6 +1434,27 @@ def observe_runtime_artifacts(
             )
         ),
     }
+    # Deterministic static mechanics evidence from source files (GameMaker GML).
+    # Stored in the observation report so every downstream consumer (gates,
+    # semantics, evidence package, reports) sees identical evidence every run.
+    try:
+        from app.runtime_engines.gamemaker.gml_mechanics import analyze_gml_mechanics
+
+        gml_files = [p for p in files if p.suffix.lower() == ".gml"]
+        yyp_files = [p for p in files if p.suffix.lower() == ".yyp"]
+        project_root = yyp_files[0].parent if yyp_files else None
+        if project_root is None and not gml_files:
+            # Files may be filtered upstream — scan near the submission root.
+            if submission_root is not None and Path(submission_root).is_dir():
+                found = sorted(Path(submission_root).rglob("*.yyp"))
+                if found:
+                    project_root = found[0].parent
+        if gml_files or project_root:
+            result["static_mechanics"] = analyze_gml_mechanics(
+                project_root, gml_files=gml_files or None
+            )
+    except Exception:
+        pass
     try:
         from app.mechanics_verifier import verify_mechanics
 

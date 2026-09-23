@@ -21,6 +21,8 @@ _REQUIREMENT_PATTERNS: Tuple[Tuple[str, str, str], ...] = (
     ("lose_condition", r"game\s*over|lose\s*condition|death|player\s*dies|خسارة|نهاية\s*اللعبة", "شرط الخسارة"),
     ("restart", r"restart|retry|respawn|إعادة\s*التشغيل|إعادة\s*المحاولة", "إعادة التشغيل"),
     ("menu_ui", r"main\s*menu|start\s*button|pause\s*menu|قائمة\s*رئيسية", "واجهة / قائمة"),
+    ("timer_system", r"\btimer\b|count\s*down|countdown|time\s*limit|time\s*left|مؤقت|عداد\s*الوقت|وقت\s*(?:محدد|متبقي)|إضافة\s*وقت", "نظام الوقت / المؤقت"),
+    ("lives_system", r"\blives\b|\blife\b|\bhealth\b|\bhearts?\b|\bhp\b|أرواح|حياة|صحة|قلوب|إضافة\s*أرواح", "نظام الأرواح / الصحة"),
     ("level_design", r"level\s*design|multiple\s*levels|مستوى|مراحل", "تصميم المستويات"),
 )
 

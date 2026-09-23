@@ -148,6 +148,27 @@ def _gameplay_verification_from_nested(obs: Dict[str, Any]) -> tuple[Dict[str, A
     return {}, None
 
 
+def _capture_scope_degraded(shots: Any) -> bool:
+    """True when the run recorded desktop_fallback captures with NO valid
+    game_window capture — the agent went blind (window closed / capture lost).
+
+    Conservative: fires only when desktop_fallback is explicitly recorded, so
+    runs whose screenshot records lack capture_scope are unaffected.
+    """
+    if not isinstance(shots, list) or not shots:
+        return False
+    saw_desktop = False
+    for s in shots:
+        if not isinstance(s, dict):
+            continue
+        scope = str(s.get("capture_scope") or "")
+        if scope == "game_window" and s.get("status") == "captured":
+            return False
+        if scope == "desktop_fallback":
+            saw_desktop = True
+    return saw_desktop
+
+
 def _ensure_failure_reason_code_on_negative_gameplay(
     gv: Dict[str, Any],
     obs: Dict[str, Any],
@@ -160,6 +181,27 @@ def _ensure_failure_reason_code_on_negative_gameplay(
     if gv.get("terminal_classify") == "capture_pipeline":
         return gv
     if gv.get("failure_reason_code"):
+        # Consistency upgrade: a stale NO_VISUAL_RESPONSE_TO_INPUT code must not
+        # survive when this run has desktop_fallback captures only — the agent
+        # was blind, so blaming the game is dishonest. Keep every other code.
+        if gv.get("failure_reason_code") == "NO_VISUAL_RESPONSE_TO_INPUT" and _capture_scope_degraded(
+            obs.get("runtime_screenshots")
+        ):
+            from app.godot_runtime.failure_taxonomy import classify_capture_failure
+
+            failure = classify_capture_failure(
+                window_detected=bool(obs.get("runtime_observed")),
+                process_alive=bool(obs.get("runtime_observed")),
+                capture_scope_last="desktop_fallback",
+                capture_retries_exhausted=True,
+                probe_phase="mid_run_window_lost",
+            )
+            upgraded = dict(gv)
+            upgraded["failure_reason_code"] = failure.code
+            upgraded["failure_reason_ar"] = failure.reason_ar
+            upgraded["failure_evidence"] = failure.evidence
+            upgraded["terminal_classify"] = "capture_pipeline"
+            return upgraded
         return gv
 
     trace = obs.get("interaction_trace") or obs.get("runtime_interaction_trace") or {}
@@ -217,6 +259,7 @@ def _ensure_failure_reason_code_on_negative_gameplay(
         process_crashed=proc_crashed,
         boot_timed_out=not interaction_ran
         and obs.get("smoke_result") in ("stable_window", "launch_ok"),
+        capture_scope_degraded=_capture_scope_degraded(shots),
     )
     if failure is None:
         return gv
@@ -240,14 +283,18 @@ def _gameplay_verification_blob(
     def _finalize(blob: Dict[str, Any]) -> Dict[str, Any]:
         return _ensure_failure_reason_code_on_negative_gameplay(blob, obs)
 
-    if _is_nonempty_mapping(obs.get("gameplay_verification")):
-        return _finalize(dict(obs["gameplay_verification"]))
-    if _is_nonempty_mapping(inv.get("gameplay_verification")):
-        return _finalize(dict(inv["gameplay_verification"]))
+    # Preference order (authoritative-first): result -> inventory -> observation.
+    # sync_authoritative_gv writes the resolved GV into result + inventory, so
+    # the synced inventory must win over a raw observation blob (which may be a
+    # stale weak L3 shell on pre-sync snapshots).
     if isinstance(grading_result, dict) and _is_nonempty_mapping(
         grading_result.get("gameplay_verification")
     ):
         return _finalize(dict(grading_result["gameplay_verification"]))
+    if _is_nonempty_mapping(inv.get("gameplay_verification")):
+        return _finalize(dict(inv["gameplay_verification"]))
+    if _is_nonempty_mapping(obs.get("gameplay_verification")):
+        return _finalize(dict(obs["gameplay_verification"]))
 
     nested_gv, source = _gameplay_verification_from_nested(obs)
     if nested_gv:
@@ -367,6 +414,31 @@ def resolve_authoritative_gameplay_verification(
     return dict(best)
 
 
+def sync_authoritative_gv(
+    artifact_inventory: Optional[Dict[str, Any]] = None,
+    grading_result: Optional[Dict[str, Any]] = None,
+) -> bool:
+    """Write richest gameplay_verification from resolve_authoritative into result + inventory."""
+    inv = artifact_inventory if isinstance(artifact_inventory, dict) else {}
+    result = grading_result if isinstance(grading_result, dict) else {}
+    synced = resolve_authoritative_gameplay_verification(
+        artifact_inventory=inv,
+        grading_result=result,
+    )
+    if not _is_nonempty_mapping(synced):
+        return False
+    gv = dict(synced)
+    result["gameplay_verification"] = gv
+    inv["gameplay_verification"] = gv
+    rt = inv.get("runtime_observation_report")
+    if isinstance(rt, dict):
+        rt_out = dict(rt)
+        rt_out["gameplay_verification"] = gv
+        inv["runtime_observation_report"] = rt_out
+    result["artifact_inventory"] = inv
+    return True
+
+
 def _ocr_image_path(path: str) -> str:
     if not path or not Path(path).is_file():
         return ""
@@ -390,7 +462,23 @@ def _hud_keywords_in_text(text: str) -> bool:
 
 
 def _center_band_shift(before_path: str, after_path: str) -> Tuple[float, float]:
-    """Return (horizontal_shift, vertical_shift) on center 40% band."""
+    """Return (horizontal_shift, vertical_shift) motion evidence on center 40% band.
+
+    FIXED 2026-07-06 (false-positive bug, submission 50 / Ahmad Bakr):
+    The previous implementation returned ``max`` mean-abs-diff across artificial
+    offsets. Any textured frame (HUD boxes, tiles) compared against ITSELF at a
+    nonzero offset produces a large diff, so the metric measured TEXTURE, not
+    MOTION — identical before/after frames scored h~7.4 / v~26.5 and always
+    crossed the 2.5/3.0 thresholds, falsely "verifying" movement and jump.
+
+    Correct semantics: motion evidence = frame difference at zero offset (d0)
+    MINUS how well a translation re-aligns them (best shifted diff).
+    - identical frames            -> d0 = 0                     -> 0 (no motion)
+    - HUD-only change (timer)     -> d0 small, no alignment gain -> ~0
+    - real translation (movement) -> d0 large, aligned offset recovers -> positive
+    Honest under-detection is acceptable (L5 video path exists); false
+    verification is never acceptable.
+    """
     if not before_path or not after_path:
         return 0.0, 0.0
     try:
@@ -411,31 +499,35 @@ def _center_band_shift(before_path: str, after_path: str) -> Tuple[float, float]
         a_band = after.crop((left, top, right, bottom)).resize((48, 48))
         b_px = list(b_band.getdata())
         a_px = list(a_band.getdata())
-        h_shifts: List[float] = []
-        for offset in range(-6, 7):
-            if offset == 0:
-                continue
-            score = 0.0
+
+        def _mean_abs_diff(dx: int, dy: int) -> float:
+            total = 0.0
+            count = 0
             for y in range(48):
+                ny = y + dy
+                if not (0 <= ny < 48):
+                    continue
                 for x in range(48):
-                    nx = x + offset
+                    nx = x + dx
                     if 0 <= nx < 48:
-                        score += abs(int(b_px[y * 48 + x]) - int(a_px[y * 48 + nx]))
-            h_shifts.append((abs(offset), score / (48 * 48)))
-        best_h = max((s for _, s in h_shifts), default=0.0)
-        v_shifts: List[float] = []
-        for offset in range(-6, 7):
-            if offset == 0:
-                continue
-            score = 0.0
-            for y in range(48):
-                for x in range(48):
-                    ny = y + offset
-                    if 0 <= ny < 48:
-                        score += abs(int(b_px[y * 48 + x]) - int(a_px[ny * 48 + x]))
-            v_shifts.append((abs(offset), score / (48 * 48)))
-        best_v = max((s for _, s in v_shifts), default=0.0)
-        return round(best_h, 3), round(best_v, 3)
+                        total += abs(int(b_px[y * 48 + x]) - int(a_px[ny * 48 + nx]))
+                        count += 1
+            return total / count if count else 0.0
+
+        d0 = _mean_abs_diff(0, 0)
+        if d0 <= 0.0:
+            return 0.0, 0.0
+        best_h_aligned = min(
+            (_mean_abs_diff(offset, 0) for offset in range(-6, 7) if offset != 0),
+            default=d0,
+        )
+        best_v_aligned = min(
+            (_mean_abs_diff(0, offset) for offset in range(-6, 7) if offset != 0),
+            default=d0,
+        )
+        h_score = max(0.0, d0 - best_h_aligned)
+        v_score = max(0.0, d0 - best_v_aligned)
+        return round(h_score, 3), round(v_score, 3)
     except OSError:
         return 0.0, 0.0
 
@@ -481,7 +573,11 @@ def _send_key_win(vk: int, *, hold_ms: int = 80) -> bool:
 
 
 def _key_hold(label: str, seconds: float) -> bool:
-    vk_map = {"W": 0x57, "A": 0x41, "S": 0x53, "D": 0x44, "SPACE": 0x20, "ENTER": 0x0D}
+    vk_map = {
+        "W": 0x57, "A": 0x41, "S": 0x53, "D": 0x44,
+        "SPACE": 0x20, "ENTER": 0x0D,
+        "LEFT": 0x25, "UP": 0x26, "RIGHT": 0x27, "DOWN": 0x28,
+    }
     vk = vk_map.get(label.upper())
     if vk is None:
         return False
@@ -1028,7 +1124,10 @@ def _execute_input_action(
         return "click_center"
     if action.action == "key":
         key = (action.key or "Return").upper()
-        vk_map = {"RETURN": 0x0D, "ENTER": 0x0D, "SPACE": 0x20}
+        vk_map = {
+            "RETURN": 0x0D, "ENTER": 0x0D, "SPACE": 0x20,
+            "LEFT": 0x25, "UP": 0x26, "RIGHT": 0x27, "DOWN": 0x28,
+        }
         vk = vk_map.get(key, 0x0D)
         _send_key_win(vk)
         return f"key:{key}"
@@ -1036,6 +1135,9 @@ def _execute_input_action(
         label = (action.key or "D").upper()
         _key_hold(label, max(action.duration, 0.1))
         return f"key_hold:{label}"
+    if action.action == "wait":
+        time.sleep(max(action.duration, 0.1))
+        return f"wait:{action.duration}"
     return "unknown"
 
 
@@ -1825,6 +1927,11 @@ def format_agent_play_summary_ar(level: str, verification: Optional[Dict[str, An
         return "نعم — L4 كامل (حركة + قفز/نقاط — Gate مفتوح)"
     if gv.get("gameplay_entered") is True and l4 == "L4_partial":
         return "نعم — L4 جزئي (ميكانيكا أساسية — Gate مفتوح لـ C.P5)"
+    if (level == "L3" or l4 == "L3") and gv.get("gameplay_entered") is not True:
+        return (
+            "تم تشغيل ملف اللعبة (L3)، لكن لم يتم إثبات اللعب الفعلي (gameplay) في هذا التقرير. "
+            "يمكن اعتماد فيديو تشغيل أو مراجعة بشرية (L5) لإثبات C.P5/C.P6."
+        )
     labels = {
         "L5": "نعم — L5 (Gameplay مؤكد / playtest بشري)",
         "L4": "نعم — L4 (تغيير بصري بعد إدخال اللاعب)",
@@ -1848,34 +1955,151 @@ def build_gameplay_verification_summary(
     obs = _observation_from(observation, inventory, grading_result)
     trace = _interaction_trace(obs)
     inv = inventory if isinstance(inventory, dict) else {}
-    smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
-        "functional_smoke"
-    ) or {}
+    gr = grading_result if isinstance(grading_result, dict) else {}
+    try:
+        from app.runtime.validation_engine import resolve_functional_smoke
+
+        smoke = resolve_functional_smoke(inv, obs)
+    except Exception:
+        smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
+            "functional_smoke"
+        ) or {}
+    if smoke.get("functional_smoke_pass") is not True:
+        # Gate-resolved verdict persisted on the grading result (read paths).
+        persisted_smoke = gr.get("runtime_smoke_resolved") or {}
+        if persisted_smoke.get("functional_smoke_pass") is True:
+            smoke = persisted_smoke
     grading_mode = None
     if isinstance(grading_result, dict):
         grading_mode = grading_result.get("grading_mode")
+
+    # Deterministic static corroboration — mirror the terminal runtime gate so
+    # the teacher-facing Agent-play panel never contradicts the awarded grade.
+    static_corroborated = False
+    static_core_n = 0
+    gv_eff = gv
+    try:
+        from app.pro_engine_gameplay_governance import (
+            resolve_static_mechanics,
+            static_core_mechanics_count,
+        )
+
+        _sub_paths = [
+            str(p)
+            for p in (
+                inv.get("submission_paths")
+                or inv.get("intake_relative_paths")
+                or gr.get("submission_paths")
+                or []
+            )
+            if p
+        ]
+        _static = (
+            gr.get("static_mechanics")
+            if isinstance(gr.get("static_mechanics"), dict)
+            and (gr.get("static_mechanics") or {}).get("detected_ids")
+            else resolve_static_mechanics(
+                inv, obs=obs, submission_paths=_sub_paths or None
+            )
+        )
+        static_core_n = static_core_mechanics_count(_static)
+        if smoke.get("functional_smoke_pass") is True and static_core_n >= 1:
+            static_corroborated = True
+            gv_eff = dict(gv)
+            prev = int(gv_eff.get("mechanics_verified_count") or 0)
+            gv_eff["mechanics_verified_count"] = max(prev, static_core_n)
+            gv_eff["gameplay_entered"] = True
+            gv_eff["l4_level"] = calculate_l4_level(
+                gameplay_entered=True,
+                mechanics_verified_count=gv_eff["mechanics_verified_count"],
+            )
+            gv_eff["static_corroborated"] = True
+    except Exception:
+        static_corroborated = False
+        gv_eff = gv
+
     gate = assess_automated_l4_gate(
-        gv,
+        gv_eff,
         test_document_present=_test_document_present(inv),
         test_doc_entries=count_test_document_entries(inv),
         functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
         grading_mode=grading_mode,
     )
-    agent_label = format_agent_play_summary_ar(level, gv)
+    if static_corroborated:
+        agent_label = (
+            f"نعم — اللعبة اشتغلت بنجاح، و{static_core_n} من الميزات الأساسية "
+            "مثبتة من كود مشروع الطالب (إثبات موثّق بالملف والسطر)"
+        )
+    else:
+        agent_label = format_agent_play_summary_ar(level, gv)
     from app.report_feedback_formatter import build_godot_runtime_outcome
 
-    godot_outcome = build_godot_runtime_outcome(gv, gate, agent_play_label_ar=agent_label)
+    engine_id = ""
+    try:
+        from app.pro_engine_gameplay_governance import detect_primary_game_engine
+
+        _engine_paths = [
+            str(p)
+            for p in (
+                inv.get("submission_paths")
+                or inv.get("intake_relative_paths")
+                or gr.get("submission_paths")
+                or gr.get("intake_relative_paths")
+                or []
+            )
+            if p
+        ]
+        engine_id = detect_primary_game_engine(inv, submission_paths=_engine_paths or None)
+        if engine_id == "unknown" and (
+            gr.get("static_mechanics") or inv.get("static_mechanics")
+        ):
+            # Static GML mechanics evidence implies a GameMaker project.
+            engine_id = "gamemaker"
+    except Exception:
+        engine_id = ""
+    # Single source of truth for the "impact on C.P5/C.P6" narrative: the L4
+    # sandbox gate (`gate.criterion_pass`) only knows about automated in-app
+    # launch evidence, but a criterion can also be granted through a
+    # different accepted path (documented gameplay video, human review,
+    # deliverable-pass with source code). Without this, the Agent-play
+    # section can say "cannot grant — need video" for a row the requirement
+    # table shows as already achieved — read the *actual* final verdict for
+    # C.P5/C.P6 straight from criteria_results so both sections always agree.
+    _criteria_open: Dict[str, bool] = {}
+    for _row in gr.get("criteria_results") or []:
+        if not isinstance(_row, dict):
+            continue
+        _lvl = str(_row.get("criteria_level") or "").strip().upper()
+        _short = _lvl.split(".")[-1] if "." in _lvl else _lvl
+        if _short in ("P5", "P6"):
+            _criteria_open[_short] = bool(_row.get("achieved")) and bool(
+                _row.get("awardable", True)
+            )
+    godot_outcome = build_godot_runtime_outcome(
+        gv_eff,
+        gate,
+        agent_play_label_ar=agent_label,
+        engine_id=engine_id,
+        criteria_open=_criteria_open,
+    )
     return {
-        "evidence_level": level,
-        "l4_level": gv.get("l4_level") or gate.get("l4_level"),
+        "evidence_level": "L4" if static_corroborated and level == "L3" else level,
+        "l4_level": gv_eff.get("l4_level") or gate.get("l4_level"),
         "agent_play_label_ar": agent_label,
-        "gameplay_agent_used": level in ("L3", "L4", "L5") or bool(gv.get("gameplay_entered")),
+        "gameplay_agent_used": level in ("L3", "L4", "L5") or bool(gv_eff.get("gameplay_entered")),
         "visual_delta_score": trace.get("visual_delta_score") or gv.get("visual_delta_score"),
-        "runtime_verified": level in ("L4", "L5") or gate.get("l4_full") or gate.get("l4_partial"),
+        "runtime_verified": (
+            level in ("L4", "L5")
+            or gate.get("l4_full")
+            or gate.get("l4_partial")
+            or static_corroborated
+        ),
         "player_movement_verified": gv.get("player_movement_verified"),
         "automated_l4_gate": gate,
-        "gameplay_entered": gv.get("gameplay_entered"),
+        "gameplay_entered": gv_eff.get("gameplay_entered"),
         "failure_reason_code": gv.get("failure_reason_code"),
         "failure_reason_ar": gv.get("failure_reason_ar"),
+        "static_corroborated_runtime": static_corroborated,
+        "static_core_mechanics_count": static_core_n,
         "godot_runtime_outcome": godot_outcome,
     }

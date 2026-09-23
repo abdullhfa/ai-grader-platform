@@ -83,6 +83,64 @@ _STRUCTURE_ONLY_METHODS = frozenset(
     }
 )
 
+# Deterministic static (source-code) mechanic ids → core gameplay check keys.
+_STATIC_CORE_MAP: Dict[str, str] = {
+    "player_movement": "player_movement",
+    "player_jump": "jump_mechanic",
+    "score_system": "score_hud",
+    "win_condition": "win_state",
+    "lose_condition": "lose_state",
+    "level_progression": "scene_transition",
+}
+
+
+def resolve_static_mechanics(
+    inv: Optional[Dict[str, Any]],
+    *,
+    obs: Optional[Dict[str, Any]] = None,
+    submission_paths: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """
+    Deterministic static mechanics report (GameMaker GML analyzer).
+
+    Priority: inventory → observation report → gamemaker artifact analysis →
+    recompute from .gml files on disk. Always deterministic for the same bytes.
+    """
+    inv = inv or {}
+    obs = obs if obs is not None else (inv.get("runtime_observation_report") or {})
+    static = inv.get("static_mechanics") or obs.get("static_mechanics") or {}
+    if not static.get("detected_ids"):
+        gm = obs.get("gamemaker_artifact_analysis") or inv.get("gamemaker_artifact_analysis") or {}
+        if isinstance(gm, dict) and (gm.get("gml_mechanics") or {}).get("detected_ids"):
+            static = gm["gml_mechanics"]
+    if not static.get("detected_ids") and submission_paths:
+        try:
+            from pathlib import Path
+
+            from app.runtime_engines.gamemaker.gml_mechanics import analyze_gml_mechanics
+
+            gml_files = [
+                Path(p)
+                for p in submission_paths
+                if str(p).lower().endswith(".gml") and Path(str(p)).is_file()
+            ]
+            yyps = [
+                Path(p)
+                for p in submission_paths
+                if str(p).lower().endswith(".yyp") and Path(str(p)).is_file()
+            ]
+            root = yyps[0].parent if yyps else None
+            if gml_files or root:
+                static = analyze_gml_mechanics(root, gml_files=gml_files or None)
+        except Exception:
+            static = static or {}
+    return static if isinstance(static, dict) else {}
+
+
+def static_core_mechanics_count(static: Optional[Dict[str, Any]]) -> int:
+    ids = set((static or {}).get("detected_ids") or [])
+    return sum(1 for k in _STATIC_CORE_MAP if k in ids)
+
 
 def _detect_tools_from_paths(
     inv: Dict[str, Any],
@@ -302,9 +360,66 @@ def assess_playtest_evidence(
             pass
     telemetry = build_runtime_telemetry(inv, gameplay_checks=checks)
 
-    smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
-        "functional_smoke"
-    ) or {}
+    try:
+        from app.runtime.validation_engine import resolve_functional_smoke
+
+        smoke = resolve_functional_smoke(inv, obs)
+    except Exception:
+        smoke = (inv.get("runtime_validation") or obs.get("runtime_validation") or {}).get(
+            "functional_smoke"
+        ) or {}
+    if smoke.get("functional_smoke_pass") is True:
+        # Stored verdict may predate detector fixes; align telemetry with the
+        # canonical (possibly recomputed) smoke verdict.
+        telemetry["functional_smoke_pass"] = True
+        if telemetry.get("game_launch_attempted") is None and telemetry.get("window_opened"):
+            telemetry["game_launch_attempted"] = True
+
+    # --- Deterministic static corroboration (GameMaker source evidence) ---
+    # When the game demonstrably runs (stable window, no crash, smoke PASS) and
+    # the mechanics are proven in the student's own source code (file:line
+    # evidence), count those mechanics toward the gameplay floor. This replaces
+    # flaky OCR/pixel-only playtest as the deciding factor and is 100%
+    # reproducible: same submission bytes → same verdict, every run.
+    static = resolve_static_mechanics(inv, obs=obs, submission_paths=submission_paths)
+    static_ids = set(static.get("detected_ids") or [])
+    static_core_n = static_core_mechanics_count(static)
+    smoke_corroborated = bool(
+        smoke.get("functional_smoke_pass") is True
+        and telemetry.get("window_opened")
+        and not telemetry.get("crash")
+        and not telemetry.get("structure_only")
+    )
+    static_corroborated = smoke_corroborated and static_core_n >= 1
+    if static_corroborated:
+        mech_map = static.get("mechanics") or {}
+        for mech_id, core_key in _STATIC_CORE_MAP.items():
+            if mech_id in static_ids and not (checks.get(core_key) or {}).get("observed"):
+                checks[core_key] = {
+                    "observed": True,
+                    "source": "static_gml_corroborated_runtime",
+                    "evidence": list(
+                        ((mech_map.get(mech_id) or {}).get("evidence") or [])[:3]
+                    ),
+                }
+
+    gv_eff: Dict[str, Any] = dict(gv) if isinstance(gv, dict) else {}
+    if static_corroborated:
+        try:
+            from app.gameplay_verifier import calculate_l4_level
+
+            prev_mech = int(gv_eff.get("mechanics_verified_count") or 0)
+            gv_eff["mechanics_verified_count"] = max(prev_mech, static_core_n)
+            gv_eff["gameplay_entered"] = True
+            gv_eff["l4_level"] = calculate_l4_level(
+                gameplay_entered=True,
+                mechanics_verified_count=gv_eff["mechanics_verified_count"],
+            )
+            gv_eff["static_corroborated"] = True
+            gv_eff["static_mechanics_ids"] = sorted(static_ids)
+        except Exception:
+            gv_eff = dict(gv) if isinstance(gv, dict) else {}
+
     try:
         from app.gameplay_verifier import (
             _test_document_present,
@@ -313,7 +428,7 @@ def assess_playtest_evidence(
         )
 
         automated_gate = assess_automated_l4_gate(
-            gv,
+            gv_eff or gv,
             test_document_present=_test_document_present(inv),
             test_doc_entries=count_test_document_entries(inv),
             functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
@@ -332,8 +447,16 @@ def assess_playtest_evidence(
 
     gvi = inv.get("gameplay_video_inference") or {}
     va = gvi.get("video_analysis") or {}
+    rt_art = inv.get("runtime_artifacts") or {}
+    video_in_paths = any(
+        str(p).lower().endswith((".mp4", ".avi", ".mov", ".mkv", ".webm", ".m4v"))
+        for p in (submission_paths or [])
+    )
     gameplay_video_documented = bool(
         inv.get("gameplay_video_detected")
+        or rt_art.get("gameplay_video_detected")
+        or rt_art.get("gameplay_videos")
+        or video_in_paths
         or gvi.get("status") in ("analyzed", "completed", "partial")
         or va.get("runtime_hints")
         or va.get("scenes_detected")
@@ -375,6 +498,7 @@ def assess_playtest_evidence(
         "automated_l4_verified": bool(
             automated_gate.get("l4_full") or automated_gate.get("l4_partial")
         ),
+        "static_corroborated_runtime": static_corroborated,
     }
     if paths["automated_l4_full"]:
         paths["runtime_gameplay_validated"] = True
@@ -401,6 +525,9 @@ def assess_playtest_evidence(
         "min_core_mechanics_required": min_mech,
         "structure_only_runtime": telemetry.get("structure_only"),
         "automated_l4_gate": automated_gate,
+        "static_mechanics": static,
+        "static_core_mechanics_count": static_core_n,
+        "static_corroborated_runtime": static_corroborated,
         "summary_ar": _summary_ar(engine_id, policy, paths, telemetry, mechanics_n, min_mech),
     }
 

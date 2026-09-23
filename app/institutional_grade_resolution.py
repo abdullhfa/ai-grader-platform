@@ -298,6 +298,17 @@ def resolve_institutional_classification(
     )
     has_doc = bool((inv.get("documentation") or {}).get("files"))
 
+    # Check GameMaker IDE build pause status
+    build_pipeline = grading_result.get("build_pipeline") or obs.get("gamemaker_build_pipeline") or {}
+    ide_build = build_pipeline.get("ide_build") or {}
+    gamemaker_paused = bool(ide_build.get("paused"))
+    gamemaker_install_wait = ide_build.get("wait_exhausted_seconds") or ide_build.get("resumed_after_install_wait_seconds")
+    has_yyp_project = bool(
+        grading_result.get("gamemaker_layout", {}).get("yyp_path")
+        or obs.get("gamemaker_yyp_metadata")
+        or (inv.get("source_code") or {}).get("gamemaker_project_detected")
+    )
+
     tier_code = str(tier.get("tier") or "").upper()
     if not tier_code and runtime_res.get("runtime_verified"):
         tier_code = "A"
@@ -318,12 +329,16 @@ def resolve_institutional_classification(
         outcome_band = "Referral"
     elif runtime_res.get("partial_runtime_verified") or _promo.get("strong_partial"):
         outcome_band = "Partial"
+    elif gamemaker_paused and has_yyp_project and achieved > 0:
+        # GameMaker IDE paused for install — don't penalize with U
+        outcome_band = "Referral" if pct >= 20 else "Partial"
     elif (
         achieved > 0
         or runtime_res.get("runtime_observed")
         or has_pck_src
         or (has_exe and has_doc)
         or tier_code in ("A", "B")
+        or (has_yyp_project and achieved > 0)  # GameMaker project with some achievement
     ):
         outcome_band = "Partial"
     else:

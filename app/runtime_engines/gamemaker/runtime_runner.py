@@ -56,6 +56,7 @@ def run_exe_smoke(session: RuntimeSession, executable: Path, *, timeout_seconds:
                 "student_name": session.submission_key,
                 "submission_root": str(search_root) if search_root else None,
                 "project_root": str(search_root) if search_root else None,
+                "engine": "gamemaker",
             },
             cwd=runtime_cwd,
         )

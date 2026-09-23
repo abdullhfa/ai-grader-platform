@@ -295,7 +295,7 @@
                                 <h4 class="text-lg font-bold text-gray-800">{{ result.criteria_level }}{% if result.criteria_name %} - {{ result.criteria_name }}{% endif %}</h4>
                                 <span
                                     class="text-sm {% if result.achieved %}text-green-600{% elif result.verdict_status == 'inconclusive' or result.requires_pro %}text-amber-600{% else %}text-red-500{% endif %} font-medium">
-                                    {% if result.achieved %}تحقق أكاديمياً{% elif result.verdict_status == 'inconclusive' or result.requires_pro %}غير حاسم — يتطلب PRO{% else %}لم يتحقق{% endif %}
+                                    {% if result.achieved %}تحقق المعيار{% elif result.verdict_status == 'inconclusive' or result.requires_pro %}غير حاسم — يتطلب PRO{% else %}لم يتحقق المعيار{% endif %}
                                 </span>
                             </div>
                         </div>

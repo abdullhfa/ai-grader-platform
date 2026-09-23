@@ -89,8 +89,8 @@ _RUNTIME_ONLY_AUTHORITIES = frozenset(
 _EXECUTION_SHORT = frozenset({"P5", "P6", "P7", "M3"})
 
 _PREREQUISITE_GATE_AR = {
-    "missing_pass_criteria": "محجوب — C.P5/C.P6 لم يُتحققا (Prerequisite)",
-    "missing_merit_criteria": "محجوب — معايير Merit ناقصة (Prerequisite)",
+    "missing_pass_criteria": "يتطلب إتمام C.P5 و C.P6 أولاً",
+    "missing_merit_criteria": "يتطلب إتمام معايير Merit أولاً",
 }
 
 
@@ -815,14 +815,37 @@ def apply_pro_execution_runtime_cap(
     criteria_results: List[Dict[str, Any]],
     *,
     gate_report: Optional[Dict[str, Any]] = None,
+    artifact_inventory: Optional[Dict[str, Any]] = None,
 ) -> List[str]:
     """
     C.P5/C.P6/C.P7: smoke/runtime (L4) cannot alone prove BTEC achievement — needs test/doc evidence.
+
+    Exception (deterministic): when the run passed smoke AND the mechanics are
+    proven in the student's own source code (Static-Corroborated Runtime), the
+    runtime authority is corroborated evidence, not "runtime alone" — no demotion.
     """
     changes: List[str] = []
     gate_report = gate_report or {}
     assets = gate_report.get("assets_detected") or {}
     has_test_doc = bool(assets.get("word_pdf")) or bool(assets.get("executable"))
+
+    static_corroborated = False
+    if artifact_inventory:
+        try:
+            from app.pro_engine_gameplay_governance import (
+                resolve_static_mechanics,
+                static_core_mechanics_count,
+            )
+
+            rv = artifact_inventory.get("runtime_validation") or {}
+            smoke_pass = (rv.get("functional_smoke") or {}).get(
+                "functional_smoke_pass"
+            ) is True
+            static = resolve_static_mechanics(artifact_inventory)
+            static_corroborated = smoke_pass and static_core_mechanics_count(static) >= 1
+        except Exception:
+            static_corroborated = False
+
     for row in criteria_results:
         if not isinstance(row, dict) or not row.get("achieved"):
             continue
@@ -831,6 +854,9 @@ def apply_pro_execution_runtime_cap(
             continue
         auth = str(row.get("achievement_authority") or "").upper()
         if "RUNTIME" not in auth and auth != "RUNTIME_VALIDATION":
+            continue
+        if static_corroborated and has_test_doc:
+            row["static_corroborated_runtime"] = True
             continue
         gate_row = _gate_row_for_level(gate_report, str(row.get("criteria_level") or ""))
         if _row_has_linked_evidence(row, gate_row) and has_test_doc:
@@ -990,11 +1016,7 @@ def build_criteria_breakdown_for_ui(
         awardable = bool(awardable)
         gate_blocked = bool(cr.get("runtime_gate_block"))
         block_ar = _compact_gate_reason(cr, gate_summary=gate_summary)
-        if achieved and not awardable and str(cr.get("award_block_reason") or "") == "missing_pass_criteria":
-            achieved_display_ar = "جزئي — محجوب (Prerequisite)"
-        elif achieved and not awardable:
-            achieved_display_ar = "جزئي — محجوب"
-        elif achieved:
+        if achieved:
             achieved_display_ar = "نعم"
         else:
             achieved_display_ar = "لا"
@@ -1045,7 +1067,11 @@ def apply_pro_pearson_btec_package(
     gate = grading_result.get("evidence_completeness_gate") or {}
     changes: List[str] = []
     changes.extend(apply_pro_evidence_gate_demotions(working, gate))
-    changes.extend(apply_pro_execution_runtime_cap(working, gate_report=gate))
+    changes.extend(
+        apply_pro_execution_runtime_cap(
+            working, gate_report=gate, artifact_inventory=artifact_inventory
+        )
+    )
     changes.extend(
         apply_pro_runtime_without_academic_demotion(working, gate_report=gate)
     )

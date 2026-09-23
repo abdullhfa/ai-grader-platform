@@ -32,6 +32,25 @@ _REQ_EVENT_MAP: Dict[str, Tuple[str, ...]] = {
     "restart": ("restart_flow_observed",),
     "menu_ui": ("menu_detected", "launch_success"),
     "level_design": ("scene_transition",),
+    "timer_system": ("timer_evidence", "score_changed"),
+    "lives_system": ("lives_evidence", "enemy_interaction_observed"),
+}
+
+# Static (source-code) mechanic id → evidence event name + confidence.
+_STATIC_EVENT_MAP: Dict[str, Tuple[str, float]] = {
+    "player_movement": ("movement_observed", 0.9),
+    "player_jump": ("jump_observed", 0.9),
+    "score_system": ("score_changed", 0.9),
+    "timer_system": ("timer_evidence", 0.9),
+    "lives_system": ("lives_evidence", 0.9),
+    "health_system": ("lives_evidence", 0.85),
+    "win_condition": ("win_screen_seen", 0.88),
+    "lose_condition": ("game_over_seen", 0.88),
+    "collect_items": ("collectible_interaction_observed", 0.85),
+    "enemy_interaction": ("enemy_interaction_observed", 0.85),
+    "menu_ui": ("menu_detected", 0.85),
+    "restart_flow": ("restart_flow_observed", 0.85),
+    "level_progression": ("scene_transition", 0.85),
 }
 
 
@@ -317,6 +336,29 @@ def _extract_events(
     if semantics.get("health_or_lives_detected"):
         add("enemy_interaction_observed", 0.72, note="lives_or_health_signal")
 
+    # Deterministic static (source-code) evidence — same result every run.
+    # Only credited when the game actually launched (window/screenshots present),
+    # so pure paper submissions never gain runtime-style confidence.
+    static = obs.get("static_mechanics") or inv.get("static_mechanics") or {}
+    static_ids = set(static.get("detected_ids") or [])
+    if static_ids and boot.get("launch_success") and not boot.get("crash_detected"):
+        mech_map = static.get("mechanics") or {}
+        for mech_id, (event_name, conf) in _STATIC_EVENT_MAP.items():
+            if mech_id not in static_ids:
+                continue
+            evidence = ((mech_map.get(mech_id) or {}).get("evidence") or [])[:2]
+            add(
+                event_name,
+                conf,
+                source="static_gml",
+                note="code_evidence",
+                evidence=[
+                    f"{Path(str(e.get('file'))).name}:{e.get('line')}"
+                    for e in evidence
+                    if isinstance(e, dict)
+                ],
+            )
+
     best: Dict[str, Dict[str, Any]] = {}
     for row in events:
         ev = row["event"]
@@ -356,12 +398,19 @@ def _map_requirements(
     return mapping
 
 
-def _confidence_source_for_level(evidence_level: str, runtime_gameplay_verified: bool) -> tuple[str, str]:
+def _confidence_source_for_level(
+    evidence_level: str,
+    runtime_gameplay_verified: bool,
+    *,
+    static_corroborated: bool = False,
+) -> tuple[str, str]:
     level = str(evidence_level or "").upper()
     if level == "L5":
         return "runtime_l5", "ثقة playtest L5"
     if level == "L4" or runtime_gameplay_verified:
         return "runtime_l4", "ثقة تشغيل L4"
+    if static_corroborated:
+        return "runtime_plus_code", "ثقة تشغيل + أدلة كود (حتمية)"
     if level == "L3":
         return "runtime_l3", "ثقة تشغيل L3"
     return "file_analysis", "ثقة تحليل ملفات"
@@ -373,9 +422,14 @@ def _requirement_confidence(
     *,
     runtime_gameplay_verified: bool,
     evidence_level: str = "L1",
+    static_corroborated: bool = False,
 ) -> List[Dict[str, Any]]:
     by_event = {e["event"]: float(e.get("confidence") or 0) for e in events}
-    source, source_ar = _confidence_source_for_level(evidence_level, runtime_gameplay_verified)
+    source, source_ar = _confidence_source_for_level(
+        evidence_level,
+        runtime_gameplay_verified,
+        static_corroborated=static_corroborated,
+    )
     rows: List[Dict[str, Any]] = []
     for row in mapping:
         req = str(row.get("requirement") or "")
@@ -450,11 +504,16 @@ def build_runtime_evidence_package(
     except Exception:
         pass
     requirement_mapping = _map_requirements(checklist, events, screenshots)
+    static_pkg = obs.get("static_mechanics") or inv.get("static_mechanics") or {}
+    static_corroborated = bool(
+        (static_pkg.get("detected_ids") or []) and boot.get("runtime_status") == "PASS"
+    )
     req_confidence = _requirement_confidence(
         requirement_mapping,
         events,
         runtime_gameplay_verified=runtime_gameplay_verified,
         evidence_level=evidence_level,
+        static_corroborated=static_corroborated,
     )
     strength = _strength_label(boot, events)
 
@@ -478,10 +537,15 @@ def build_runtime_evidence_package(
         "events": events,
         "requirement_mapping": requirement_mapping,
         "requirement_confidence": req_confidence,
+        "static_corroborated": static_corroborated,
         "confidence_model_ar": (
             "أرقام الثقة من تشغيل حقيقي (نافذة اللعبة)"
             if runtime_gameplay_verified
-            else "أرقام الثقة من تحليل ملفات/استدلال — ليست gameplay فعلي"
+            else (
+                "أرقام الثقة من تشغيل ناجح + أدلة حتمية من كود المشروع (ملف:سطر)"
+                if static_corroborated
+                else "أرقام الثقة من تحليل ملفات/استدلال — ليست gameplay فعلي"
+            )
         ),
         "runtime_evidence_strength": strength,
         "runtime_evidence_strength_ar": strength_ar,

@@ -73,7 +73,7 @@ def fast_grading_flags(grading_mode: str | None) -> Dict[str, bool]:
         "basic_video_keyframes": fast,
         "enable_web_browser_automation": False,
         "enable_android_emulator_automation": False,
-        "enable_gamemaker_runtime_verification": False,
+        "enable_gamemaker_runtime_verification": True,   # always on: pause-for-install needs this
         "enable_scratch_runtime_verification": False,
     }
 
@@ -106,7 +106,6 @@ BASIC_SKIP_EXTRACT_SUFFIXES = frozenset(
         ".tiff",
         ".ico",
         ".psd",
-        ".yy",
         ".import",
     }
 )

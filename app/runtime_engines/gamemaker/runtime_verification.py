@@ -77,51 +77,31 @@ def run_build_pipeline(
 
 
 def _try_ide_build(yyp_path: Path, workspace: Path, *, timeout_seconds: int) -> Dict[str, Any]:
-    # Never auto-launch GameMaker IDE from PATH during teacher batch grading — it opens GUI
-    # file dialogs and blocks the session. IDE builds are CI-only when explicitly enabled.
-    ide = os.environ.get("AI_GRADER_GAMEMAKER_IDE", "").strip()
-    if os.environ.get("AI_GRADER_GAMEMAKER_IDE_BUILD", "").strip().lower() not in (
-        "1",
-        "true",
-        "yes",
-        "on",
-    ):
-        return {"attempted": False, "reason": "gamemaker_ide_build_disabled"}
-    if not ide or not Path(ide).is_file():
-        return {"attempted": False, "reason": "gamemaker_ide_not_configured"}
+    """Headless auto-build of source-only GameMaker projects (Igor-based) with install pause."""
+    from app.runtime_engines.gamemaker.ide_builder import build_from_source_with_install_pause
 
-    out_dir = workspace / "ide_build"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    # GameMaker 2024+ CI-style flags vary by license; try common batch patterns.
-    cmd_variants = [
-        [ide, f"/project={yyp_path}", "/compile", f"/output={out_dir}"],
-        [ide, str(yyp_path), "--compile", str(out_dir)],
-    ]
-    last_err = ""
-    for cmd in cmd_variants:
-        try:
-            proc = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=min(timeout_seconds, 120),
-                cwd=str(yyp_path.parent),
-            )
-            if proc.returncode == 0:
-                exe = next(out_dir.rglob("*.exe"), None) or next(yyp_path.parent.rglob("*.exe"), None)
-                html = next(out_dir.rglob("index.html"), None) or next(yyp_path.parent.rglob("index.html"), None)
-                return {
-                    "attempted": True,
-                    "success": True,
-                    "command": cmd,
-                    "executable": str(exe) if exe else None,
-                    "html_entry": str(html) if html else None,
-                }
-            last_err = (proc.stderr or proc.stdout or "")[-400:]
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            last_err = str(exc)
+    def _on_status(event: str, payload: Dict[str, Any]) -> None:
+        """Log pause/resume events during GameMaker install wait."""
+        logger.info(
+            f"[GAMEMAKER-IDE-BUILD-STATUS] event={event} reason={payload.get('reason')} "
+            f"waited={payload.get('resumed_after_install_wait_seconds') or payload.get('wait_exhausted_seconds')}"
+        )
 
-    return {"attempted": True, "success": False, "reason": "ide_build_failed", "detail": last_err}
+    build = build_from_source_with_install_pause(
+        yyp_path, workspace, timeout_seconds=max(timeout_seconds, 120), on_status=_on_status
+    )
+    return {
+        "attempted": bool(build.get("attempted")),
+        "success": bool(build.get("success")),
+        "executable": build.get("executable"),
+        "html_entry": None,
+        "reason": build.get("reason"),
+        "reason_ar": build.get("reason_ar"),
+        "tools": build.get("tools"),
+        "paused": build.get("paused"),
+        "resumed_after_install_wait_seconds": build.get("resumed_after_install_wait_seconds"),
+        "wait_exhausted_seconds": build.get("wait_exhausted_seconds"),
+    }
 
 
 def run_gameplay_replay(
@@ -180,6 +160,8 @@ def run_gamemaker_runtime_verification(
     replay = run_gameplay_replay(session, layout, timeout_seconds=min(45, timeout_seconds))
 
     artifact = analyze_gamemaker_artifacts(layout)
+    gml_mechanics = artifact.get("gml_mechanics") or {}
+    static_ids = gml_mechanics.get("detected_ids") or []
     signals = {
         "gamemaker_build_pipeline_ok": build.get("runnable_after_pipeline"),
         "object_inspection_ok": inspection.get("inspection_ok"),
@@ -197,6 +179,8 @@ def run_gamemaker_runtime_verification(
             and replay.get("gameplay_observed")
             and replay.get("method") in ("exe_smoke", "html5_headless")
         ),
+        "static_mechanics_detected": static_ids,
+        "static_mechanics_count": len(static_ids),
     }
 
     result = {
@@ -219,6 +203,10 @@ def run_gamemaker_runtime_verification(
     session.signals["object_inspection"] = inspection
     session.signals["gameplay_replay"] = replay
     session.signals["artifact_analysis"] = artifact
+    session.signals["gml_mechanics"] = gml_mechanics
+    gm_obs = session.signals.get("gamemaker_observation")
+    if isinstance(gm_obs, dict):
+        gm_obs["static_mechanics"] = gml_mechanics
     session.signals["gamemaker_runtime_verification"] = result["gamemaker_runtime_verification"]
     session.signals["runtime_method"] = result["method"]
 

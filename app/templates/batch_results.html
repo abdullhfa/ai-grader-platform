@@ -1026,6 +1026,14 @@
                 </div>
             </div>
 
+            {% if batch_evidence_stats and batch_evidence_stats.gamemaker_paused_count %}
+            <div class="stat-card" title="تصحيح معلّق بانتظار تثبيت GameMaker ثم إعادة التصحيح">
+                <div class="stat-label">معلّق — GameMaker</div>
+                <div class="stat-body">
+                    <div class="stat-value stat-value--amber">{{ batch_evidence_stats.gamemaker_paused_count }}</div>
+                </div>
+            </div>
+            {% endif %}
             {% if batch_evidence_stats %}
             <div class="stat-card" title="طلبة لديهم معايير تشغيل محجوبة (Runtime Gate)">
                 <div class="stat-label">تأثر بـ Gate</div>
@@ -1082,14 +1090,16 @@
                 {% set has_diag = (result.explainability and result.explainability.missing_evidence_diagnostics and (result.explainability.missing_evidence_diagnostics.rows or [])) or (result.explainability and result.explainability.evidence_coverage_by_criterion) or (result.explainability and result.explainability.runtime_evidence_package and result.explainability.runtime_evidence_package.requirement_confidence) or (result.pearson_criteria_rows or []) %}
                 {% set student_label = result.submission.file_path.split('\\')[-1].split('/')[-1] if result.submission.file_path else result.submission.student_name %}
                 {% set es = result.evidence_summary or {} %}
-                {% set has_gate = es.get('has_gate_issue') %}
-                {% set is_hcu = result.is_u_high_coverage %}
-                {% set has_ev_issue = es.get('has_evidence_issue') %}
+                {% set paused = result.grading_paused if result.grading_paused else none %}
+                {% set has_gate = es.get('has_gate_issue') and not (paused and paused.paused) %}
+                {% set is_hcu = result.is_u_high_coverage and not (paused and paused.paused) %}
+                {% set has_ev_issue = es.get('has_evidence_issue') and not (paused and paused.paused) %}
                 <div class="student-item{% if has_diag %} student-item--has-diag{% endif %}"
                      data-student-id="{{ result.submission.id }}"
                      data-gate-issue="{{ 'true' if has_gate else 'false' }}"
                      data-high-coverage-u="{{ 'true' if is_hcu else 'false' }}"
-                     data-evidence-issue="{{ 'true' if has_ev_issue else 'false' }}">
+                     data-evidence-issue="{{ 'true' if has_ev_issue else 'false' }}"
+                     data-grading-paused="{{ 'true' if paused and paused.paused else 'false' }}">
                     <div class="student-item-header">
                         <span class="student-index">{{ loop.index }}</span>
                         <div>
@@ -1114,9 +1124,11 @@
                                 {% set og = result.official_grade or {} %}
                                 {% set btec_short = og.grade if og.get('grade') else (result.summary.grade_level or 'U').split()[0] %}
                                 {% if btec_short not in ['D', 'M', 'P', 'U'] %}{% set btec_short = 'U' %}{% endif %}
-                                <div class="grade-stack"{% if btec_short == 'U' and has_gate %} title="U — لم تتحقق C.P5/C.P6 بسبب عدم وجود أدلة Gameplay (Runtime PASS / فيديو لعب / L5 Playtest)."{% elif btec_short == 'U' and is_hcu %} title="U — تغطية أدلة عالية من الملفات لكن المعايير التنفيذية لم تُمنح."{% endif %}>
+                                <div class="grade-stack"{% if paused and paused.paused %} title="{{ paused.message_ar or '' }}"{% elif btec_short == 'U' and has_gate %} title="U — لم تتحقق C.P5/C.P6 بسبب عدم وجود أدلة Gameplay (Runtime PASS / فيديو لعب / L5 Playtest)."{% elif btec_short == 'U' and is_hcu %} title="U — تغطية أدلة عالية من الملفات لكن المعايير التنفيذية لم تُمنح."{% endif %}>
                                     {{ render_grade_badge(btec_short) }}
-                                    {% if btec_short == 'U' and has_gate %}
+                                    {% if paused and paused.paused %}
+                                    <div class="grade-u-reason" title="{{ paused.message_ar }}">{{ paused.short_ar or '⏸ معلّق — ثبّت GameMaker ثم أعد التصحيح' }}</div>
+                                    {% elif btec_short == 'U' and has_gate %}
                                     <div class="grade-u-reason">U بسبب Gate على C.P5/C.P6</div>
                                     {% elif btec_short == 'U' and is_hcu %}
                                     <div class="grade-u-reason">U — تغطية عالية دون تحقق</div>
@@ -1261,7 +1273,7 @@
                             {% if result.explainability and result.explainability.godot_runtime_outcome %}
                             {% set gro = result.explainability.godot_runtime_outcome %}
                             <div class="godot-runtime-outcome">
-                                <div class="godot-runtime-outcome-title">نتيجة Agent play (Godot)</div>
+                                <div class="godot-runtime-outcome-title">نتيجة Agent play{% if gro.engine_display_name %} ({{ gro.engine_display_name }}){% endif %}</div>
                                 <p>{{ gro.agent_play_result_ar }}</p>
                                 <div class="godot-runtime-outcome-title" style="margin-top:0.5rem">سبب الفشل النهائي</div>
                                 <p>
@@ -1317,11 +1329,19 @@
                             </p>
                             {% endif %}
                             {% if rep.screenshots %}
+                            {% if rep.static_corroborated %}
+                            <p class="diag-coverage-note diag-runtime-note">
+                                تم التحقق عبر <strong class="diag-coverage-strong">تشغيل ناجح + أدلة حتمية من كود المشروع (ملف:سطر)</strong> —
+                                بوابة C.P5/C.P6 مفتوحة. اللقطات أدناه توثّق جلسة التشغيل، والإثبات الأساسي للميكانيكيات من كود الطالب نفسه.
+                            </p>
+                            <div class="student-diag-title student-diag-title--spaced-sm">لقطات التشغيل (توثيق جلسة التشغيل)</div>
+                            {% else %}
                             <p class="diag-coverage-note diag-runtime-note">
                                 التشغيل الآلي على الخادم وفحص الملفات <strong class="diag-coverage-strong">لا يُعتبر دليلاً كاملاً على اللعب الفعلي (Gameplay)</strong>.
                                 لتحقيق C.P5/C.P6/C.M3/C.D3 يُطلب فيديو لعب من داخل اللعبة (حركة اللاعب، النقاط، تفاعل العدو) أو اختبار بشري موثّق (L5).
                             </p>
                             <div class="student-diag-title student-diag-title--spaced-sm">لقطات التشغيل (مرصودة — لا تثبت gameplay)</div>
+                            {% endif %}
                             <div class="runtime-shots-grid">
                                 {% for shot in rep.screenshots %}
                                 {% if shot.url or shot.path %}
@@ -1371,7 +1391,9 @@
                                             {% if pearson_match.row and pearson_match.row.gate_blocked %}
                                             محجوب — {{ pearson_match.row.gate_reason_ar or 'Runtime Gate' }}
                                             {% elif pearson_match.row and pearson_match.row.achieved and not pearson_match.row.awardable %}
-                                            {{ pearson_match.row.gate_reason_ar or 'تحقق جزئي — Prerequisite غير مكتمل' }}
+                                            {{ pearson_match.row.gate_reason_ar or 'معايير سابقة غير مكتملة' }}
+                                            {% elif pearson_match.row and pearson_match.row.achieved and cr.coverage_pct < 40 %}
+                                            المعيار محقق — النسبة هنا مؤشر بحث آلي في الملفات فقط، والتحقق تم بأدلة أقوى (التقرير/التشغيل/الكود)
                                             {% else %}
                                             —
                                             {% endif %}
@@ -1398,9 +1420,7 @@
                                     <tr>
                                         <td class="diag-req">{{ cr.criteria_level }}</td>
                                         <td class="diag-status">
-                                            {% if cr.achieved and not cr.awardable %}
-                                            <span class="diag-status-gate">{{ cr.achieved_display_ar or 'جزئي — محجوب' }}</span>
-                                            {% elif cr.achieved %}
+                                            {% if cr.achieved %}
                                             <span class="diag-status-ok">{{ cr.achieved_display_ar or 'نعم' }}</span>
                                             {% else %}
                                             <span class="diag-status-bad">{{ cr.achieved_display_ar or 'لا' }}</span>

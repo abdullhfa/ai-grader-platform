@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Any, Dict
 
 from app.runtime_engines.base import RuntimeEngine, RuntimeSession, SessionStatus
 from app.runtime_engines.capabilities import RuntimeCapabilities
@@ -62,12 +63,80 @@ class GameMakerRuntimeEngine(RuntimeEngine):
 
         session._gm_layout = layout
 
+    def _ensure_build_or_pause_for_install(self, session: RuntimeSession, layout) -> bool:
+        """
+        No compiled build shipped with this submission (no .exe / data.win /
+        html5 export) — always try to build the source project with the
+        GameMaker IDE (Igor), regardless of STANDARD vs PRO grading tier.
+
+        This runs unconditionally (not gated behind
+        ``enable_gamemaker_runtime_verification``) because skipping it in
+        STANDARD/fast mode was silently treating "we never checked" the same
+        as "GameMaker isn't installed" — demoting runtime-gated criteria to a
+        U grade even when GameMaker was actually available on the grading
+        machine. If GameMaker genuinely isn't installed yet (Windows-only
+        tool), this pauses and re-polls for a bounded window so the build
+        + grading resumes automatically the moment it's installed.
+
+        Completely inert — never called — when the submission already ships
+        a runnable .exe/html5 build; that path is untouched.
+        """
+        from app.runtime_engines.gamemaker.ide_builder import (
+            build_from_source_with_install_pause,
+        )
+
+        print(
+            f"🎮 [GAMEMAKER-NO-EXE] submission={session.submission_key} "
+            f"yyp={layout.yyp_path} — no .exe/html5 shipped, attempting "
+            f"auto-build via GameMaker IDE (this print only appears if the "
+            f"new install-check code is actually loaded and reached)"
+        )
+
+        def _on_status(event: str, payload: Dict[str, Any]) -> None:
+            print(
+                f"🎮 [GAMEMAKER-INSTALL-GATE] submission={session.submission_key} "
+                f"event={event} reason={payload.get('reason')!r} "
+                f"waited={payload.get('resumed_after_install_wait_seconds') or payload.get('wait_exhausted_seconds')}"
+            )
+            try:
+                session.events.record(
+                    event,
+                    reason=payload.get("reason"),
+                    reason_ar=payload.get("reason_ar"),
+                    waited_seconds=payload.get("resumed_after_install_wait_seconds")
+                    or payload.get("wait_exhausted_seconds"),
+                )
+            except Exception:
+                pass
+
+        build = build_from_source_with_install_pause(
+            layout.yyp_path,
+            session.workspace,
+            on_status=_on_status,
+        )
+        session.signals["gamemaker_ide_build"] = build
+        print(
+            f"🎮 [GAMEMAKER-BUILD-RESULT] submission={session.submission_key} "
+            f"success={build.get('success')} reason={build.get('reason')!r} "
+            f"executable={build.get('executable')} tools={build.get('tools')}"
+        )
+        if build.get("success") and build.get("executable"):
+            exe_path = Path(str(build["executable"]))
+            if exe_path.is_file():
+                layout.executable = exe_path
+                return True
+        return False
+
     def execute(self, session: RuntimeSession, *, timeout_seconds: int) -> None:
         layout = getattr(session, "_gm_layout", None) or probe_gamemaker_layout(session.root)
         pro_runtime = bool(session.signals.get("enable_gamemaker_runtime_verification"))
-        static_only = (not pro_runtime) or _env_static_only()
+        env_static_only = _env_static_only()
 
-        if pro_runtime and not static_only:
+        freshly_built = False
+        if layout.yyp_path and not layout.executable and not layout.html_entry and not env_static_only:
+            freshly_built = self._ensure_build_or_pause_for_install(session, layout)
+
+        if (pro_runtime or freshly_built) and not env_static_only:
             run_gamemaker_runtime_verification(
                 session,
                 layout,
@@ -77,6 +146,7 @@ class GameMakerRuntimeEngine(RuntimeEngine):
 
         analysis = analyze_gamemaker_artifacts(layout)
         session.signals["artifact_analysis"] = analysis
+        session.signals["gml_mechanics"] = analysis.get("gml_mechanics") or {}
         session.signals["runtime_method"] = "gamemaker_artifact_analysis"
         session.status = SessionStatus.COMPLETED
         session.events.record(

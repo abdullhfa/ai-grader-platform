@@ -64,6 +64,40 @@ PHASE_LABELS_AR = {
 }
 
 
+def advance_phase_timeline(info: dict, phase: str, *, now: float | None = None) -> None:
+    """Per-phase stopwatch on the batch progress blob (diagnosis for slow runs).
+
+    Appends/closes entries in info["phase_timeline"]:
+      {"phase", "label", "started_at", "ended_at", "duration_s"}
+    so the UI/ops can see exactly where grading time went (extract vs vision vs
+    LLM vs runtime vs saving) instead of guessing. Additive & side-effect free.
+    """
+    ts = time.time() if now is None else now
+    timeline = info.setdefault("phase_timeline", [])
+    last = timeline[-1] if timeline else None
+    if last is not None and last.get("phase") == phase:
+        return
+    if last is not None and "ended_at" not in last:
+        last["ended_at"] = ts
+        last["duration_s"] = round(ts - float(last.get("started_at") or ts), 1)
+    timeline.append(
+        {
+            "phase": phase,
+            "label": PHASE_LABELS_AR.get(phase, phase),
+            "started_at": ts,
+        }
+    )
+
+
+def close_phase_timeline(info: dict, *, now: float | None = None) -> None:
+    """Close the open phase entry (call when a student finishes)."""
+    ts = time.time() if now is None else now
+    timeline = info.get("phase_timeline") or []
+    if timeline and "ended_at" not in timeline[-1]:
+        timeline[-1]["ended_at"] = ts
+        timeline[-1]["duration_s"] = round(ts - float(timeline[-1].get("started_at") or ts), 1)
+
+
 def _clone_graded_submission(
     db,
     source_sub: Submission,
@@ -698,6 +732,7 @@ async def run_batch_grading_job(
             info["current_student"] = student_name
             info["current_phase"] = phase
             info["phase_label"] = PHASE_LABELS_AR.get(phase, info.get("phase_label") or "")
+            advance_phase_timeline(info, phase)
             info["student_progress"] = max(0.0, min(0.99, student_progress))
             _sync_progress_percent(info)
             _commit_progress(batch_progress, assignment_id, info)
@@ -709,6 +744,7 @@ async def run_batch_grading_job(
             total = max(int(info.get("total") or 0), 1)
             if int(info.get("completed") or 0) < total:
                 info["completed"] = int(info.get("completed") or 0) + 1
+            close_phase_timeline(info)
             info.setdefault("student_times", []).append(
                 time.time() - info.get("start_time", time.time())
             )

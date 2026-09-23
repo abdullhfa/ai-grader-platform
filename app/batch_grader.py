@@ -1411,7 +1411,13 @@ async def grade_student_submission(
     strengths = []
     improvements = []
 
-    json_parse_attempts = 3 if use_ollama_json else 1
+    # Was previously 1 attempt (no corrective retry at all) for non-Ollama
+    # providers, so any single malformed/empty JSON response (including a
+    # thinking-model reasoning-only fallback — see ai_provider.py) failed
+    # the whole grading job immediately with no automatic retry. The
+    # corrective retry prompt below works the same way regardless of
+    # provider, so give every provider the same chance to self-correct.
+    json_parse_attempts = 3
     parsed = None
     last_parse_err: Exception | None = None
 
@@ -2041,6 +2047,15 @@ async def grade_batch_async(
                 and not _pre_has_code
                 and not _pre_has_exe
             )
+            # Vision target resolution: when the primary submission entry is a
+            # code/project bundle (GameMaker .yyp, Unity/Godot project, zip of
+            # source files, ...) rather than a Word/PDF/PPTX file, embedded
+            # images live inside the *companion* report doc (already resolved
+            # above as word_doc_path) — not at student_info["path"]. Without
+            # this fallback, vision silently never runs for project
+            # submissions even when a written report with screenshots (or a
+            # scanned evidence doc) was submitted alongside the project.
+            _vision_target_path = str(student_info["path"])
             try:
                 from app.grading_mode_policy import (
                     effective_basic_max_vision_images,
@@ -2048,11 +2063,42 @@ async def grade_batch_async(
                     pro_max_vision_images_for_submission,
                 )
 
-                _primary_is_doc = is_word_embedded_vision_document(str(student_info["path"]))
+                _primary_is_doc = is_word_embedded_vision_document(_vision_target_path)
+                if not _primary_is_doc and word_doc_path:
+                    if is_word_embedded_vision_document(str(word_doc_path)):
+                        _vision_target_path = str(word_doc_path)
+                        _primary_is_doc = True
             except Exception:
                 _primary_is_doc = _pre_ext in (".docx", ".doc", ".pdf", ".pptx")
+                if not _primary_is_doc and word_doc_path:
+                    if Path(word_doc_path).suffix.lower() in (".docx", ".doc", ".pdf", ".pptx"):
+                        _vision_target_path = str(word_doc_path)
+                        _primary_is_doc = True
                 effective_basic_max_vision_images = lambda: 10  # type: ignore
                 pro_max_vision_images_for_submission = lambda **_: 5  # type: ignore
+
+            # Loose evidence images: a code/project submission (GameMaker,
+            # Unity, Godot, Scratch) may include standalone screenshot files
+            # sitting directly in the zip instead of embedded in a Word
+            # report — these are otherwise never seen by vision at all.
+            # Skip generated engine asset folders (sprites/layers/etc.) since
+            # those are game art, not submitted evidence, and would just
+            # waste vision calls / confuse the analysis.
+            _IMAGE_FILE_EXTS = (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp", ".tiff")
+            _ASSET_DIR_RE = re.compile(
+                r"[\\/](sprites?|layers|backgrounds?|tilesets?|fonts?)[\\/]", re.IGNORECASE
+            )
+            _loose_image_paths: List[str] = []
+            if not _primary_is_doc:
+                try:
+                    _loose_image_paths = [
+                        str(p)
+                        for p in submission_paths_early
+                        if str(p).lower().endswith(_IMAGE_FILE_EXTS)
+                        and not _ASSET_DIR_RE.search(str(p))
+                    ]
+                except Exception:
+                    _loose_image_paths = []
 
             if fast_mode:
                 _run_word_vision = bool(
@@ -2060,7 +2106,9 @@ async def grade_batch_async(
                     or _mode_flags.get("basic_video_keyframes")
                 )
             else:
-                _run_word_vision = image_count > 0 and _primary_is_doc
+                _run_word_vision = image_count > 0 and (
+                    _primary_is_doc or bool(_loose_image_paths)
+                )
 
             if _run_word_vision:
                 try:
@@ -2116,8 +2164,26 @@ async def grade_batch_async(
                     extracted_images: List = []
                     if image_count > 0 and _primary_is_doc:
                         extracted_images = DocumentProcessor.extract_images(
-                            student_info["path"], max_images=_word_vision_cap
+                            _vision_target_path, max_images=_word_vision_cap
                         )
+                    if not extracted_images and _loose_image_paths:
+                        _loose_cap = (
+                            len(_loose_image_paths)
+                            if _word_vision_cap <= 0
+                            else _word_vision_cap
+                        )
+                        for _img_path in sorted(_loose_image_paths)[:_loose_cap]:
+                            try:
+                                extracted_images.extend(
+                                    DocumentProcessor.extract_images(_img_path, max_images=1)
+                                )
+                            except Exception:
+                                pass
+                        if extracted_images:
+                            print(
+                                f"🔍 [VISION] {len(extracted_images)} loose evidence image(s) "
+                                "found directly in the project submission (not embedded in a doc)"
+                            )
 
                     video_keyframe_images: List = []
                     if fast_mode and _mode_flags.get("basic_video_keyframes") and _video_kf_per > 0:
@@ -2369,6 +2435,31 @@ async def grade_batch_async(
                 )
             except Exception:
                 pass
+
+            # GameMaker source-only + IDE missing → soft-pause BEFORE AI.
+            # Leaves the .exe grading path completely untouched.
+            try:
+                from app.runtime_engines.gamemaker.install_gate import (
+                    build_gamemaker_install_pause_result,
+                    should_soft_pause_for_missing_gamemaker_ide,
+                )
+
+                if should_soft_pause_for_missing_gamemaker_ide(list(submission_paths)):
+                    paused_result = build_gamemaker_install_pause_result(
+                        student_info=student_info,
+                        submission_paths=list(submission_paths),
+                        grading_criteria=grading_criteria,
+                        grading_mode=grading_mode or "pro",
+                    )
+                    print(
+                        f"⏸ [GAMEMAKER-EARLY-PAUSE] {student_info['name']}: "
+                        "source-only GameMaker + IDE not installed — "
+                        "skipping AI grading (no GRD-001)"
+                    )
+                    _phase(student_info["name"], "saving", 0.98)
+                    return paused_result
+            except Exception as _gm_pause_err:
+                print(f"⚠️ [GAMEMAKER-EARLY-PAUSE] probe skipped: {_gm_pause_err}")
 
             project_profile_for_audit: Dict = {}
             if _mode_flags.get("ultra_light_project_profile"):
@@ -3257,6 +3348,7 @@ async def grade_batch_async(
                         evidence_gate=_eg,
                         runtime_validation=_rv,
                         grading_mode=grading_mode,
+                        artifact_inventory=artifact_inventory,
                     )
                     try:
                         from app.visual_evidence_registry import apply_game_criteria_pro_gate
@@ -3509,6 +3601,31 @@ async def grade_batch_async(
                         )
                 except Exception as _pearson_err:
                     print(f"⚠️ [PEARSON-PRO] skipped: {_pearson_err}")
+
+            # GameMaker install-pause gate — must run before institutional resolution
+            # so that a source-only .yyp submission with no GameMaker on the grading
+            # machine gets the ⏸ pause banner instead of a bare U grade.
+            try:
+                from app.runtime_evidence_gate import apply_runtime_evidence_gate
+
+                _gate_report = apply_runtime_evidence_gate(
+                    grading_result,
+                    artifact_inventory=artifact_inventory,
+                )
+                _gate_paused = (_gate_report.get("grading_paused") or {})
+                if _gate_paused.get("paused"):
+                    print(
+                        f"⏸ [GAMEMAKER-PAUSE-GATE] {student_info['name']}: "
+                        f"{_gate_paused.get('short_ar', 'paused — install GameMaker')}"
+                    )
+                else:
+                    print(
+                        f"🎮 [RUNTIME-GATE] {student_info['name']}: "
+                        f"status={_gate_report.get('runtime_status')} "
+                        f"satisfied={_gate_report.get('satisfied')}"
+                    )
+            except Exception as _gate_err:
+                print(f"⚠️ [RUNTIME-GATE] skipped: {_gate_err}")
 
             if not _mode_flags.get("skip_institutional_resolution"):
                 try:

@@ -12,6 +12,7 @@
 - [x] **3. Surfaces** — `failure_reason_code` + `failure_reason_ar` in snapshot, UI, Word (baseline `9fbf57e`)
 - [x] **4. Soak test** — `scripts/godot_soak_test.py` matrix (3 fixtures × 3 runs = 9 active)
 - [x] **5. Fix until stable** — 9/9 correct; submission_50 ×3 P; student_godot_2 ×3 `GAME_WINDOW_CAPTURE_FAILED`
+  > ⚠️ 2026-07-03: `godot_soak_fixtures.json` reclassified student_godot_2 as `stable_pass` (gameplay_entered=true, L4_partial on current screen setup). This line reflects the OLDER soak. Re-run soak 3× before treating either outcome as baseline.
 - [ ] **6. Sign off** — date + commit hash below (pending human sign-off)
 
 ---
@@ -70,6 +71,7 @@
 - [x] **B** — student_godot_2 + corpus in soak matrix (stable outcomes)
 - [ ] **C** — No movement/jump false positives (not re-verified this soak)
 - [ ] **D** — Word/UI/Governance contract verified
+- [ ] **D.1** — Authoritative GV wired into production: full_grade Word/PDF matches soak for submission_50 (`l4_level`, `gameplay_entered`, `criterion_pass_p5/p6`)
 - [x] **E** — Failures reproducible with `failure_reason_code`
 
 ---

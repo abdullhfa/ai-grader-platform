@@ -59,6 +59,16 @@ def analyze_gamemaker_artifacts(layout: GameMakerLayout) -> Dict[str, Any]:
     if layout.gml_files:
         result["gml_analysis"] = _summarize_gml(layout.gml_files)
 
+    try:
+        from app.runtime_engines.gamemaker.gml_mechanics import analyze_gml_mechanics
+
+        result["gml_mechanics"] = analyze_gml_mechanics(
+            layout.project_root,
+            gml_files=layout.gml_files or None,
+        )
+    except Exception as exc:  # pragma: no cover — analyzer must never break grading
+        result["gml_mechanics"] = {"version": "error", "error": str(exc), "mechanics": {}}
+
     result["project_graph"] = _project_graph(layout.project_root or layout.yyp_path.parent if layout.yyp_path else None)
     result["completeness_hint"] = _completeness_score(result)
     return result

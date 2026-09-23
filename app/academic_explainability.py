@@ -610,7 +610,12 @@ def build_missing_evidence_diagnostics(
     ).get("runtime_observed")
 
     rv = inventory.get("runtime_validation") or obs.get("runtime_validation") or {}
-    smoke = (rv.get("functional_smoke") or {}) if isinstance(rv, dict) else {}
+    try:
+        from app.runtime.validation_engine import resolve_functional_smoke
+
+        smoke = resolve_functional_smoke(inventory, obs)
+    except Exception:
+        smoke = (rv.get("functional_smoke") or {}) if isinstance(rv, dict) else {}
     smoke_pass = smoke.get("functional_smoke_pass") is True
     runtime_method = str(
         obs.get("observation_mode")
@@ -900,18 +905,61 @@ def build_missing_evidence_diagnostics(
     mechanics_level = str(mechanics.get("mechanics_level") or "").upper()
     reached_l5 = l5_human or mechanics_level == "L5"
     fast_mode = (grading_mode or "").strip().lower() in ("fast", "basic", "standard")
-    if runtime_row and not reached_l5 and not fast_mode:
-        runtime_row["status_ar"] = "ملاحظة تشغيل L4/L3 فقط — لا تحقق gameplay نهائي بدون L5"
-        runtime_row["present"] = False
-        runtime_row["blocks_achievement_ar"] = (
-            "C.P5/C.P6/C.M3/C.D3 — يلزم إثبات ميكانيك اللعب (Jump/Score/Win-Lose) عبر L5."
+
+    # Deterministic static corroboration: smoke PASS + mechanics proven in the
+    # student's own source (file:line) — equivalent verification path to L4/L5
+    # for the diagnostic panel (mirrors the runtime evidence gate policy).
+    static_corroborated = False
+    static_core_n = 0
+    try:
+        from app.pro_engine_gameplay_governance import (
+            resolve_static_mechanics,
+            static_core_mechanics_count,
         )
+
+        _paths_static = [
+            str(p)
+            for p in (
+                inventory.get("submission_paths")
+                or inventory.get("intake_relative_paths")
+                or []
+            )
+            if p
+        ]
+        _static = resolve_static_mechanics(
+            inventory, obs=obs, submission_paths=_paths_static or None
+        )
+        static_core_n = static_core_mechanics_count(_static)
+        static_corroborated = smoke_pass and static_core_n >= 1
+    except Exception:
+        static_corroborated = False
+
+    if runtime_row and not reached_l5 and not fast_mode:
+        if static_corroborated:
+            runtime_row["status_ar"] = (
+                f"تشغيل ناجح + {static_core_n} ميكانيكيات مثبتة من كود المشروع "
+                "(أدلة ملف:سطر حتمية) — بوابة C.P5/C.P6 مفتوحة"
+            )
+            runtime_row["present"] = True
+            runtime_row.pop("blocks_achievement_ar", None)
+        else:
+            runtime_row["status_ar"] = "ملاحظة تشغيل L4/L3 فقط — لا تحقق gameplay نهائي بدون L5"
+            runtime_row["present"] = False
+            runtime_row["blocks_achievement_ar"] = (
+                "C.P5/C.P6/C.M3/C.D3 — يلزم إثبات ميكانيك اللعب (Jump/Score/Win-Lose) عبر L5."
+            )
     runtime_signal_present = bool(obs.get("runtime_observed") or obs.get("runtime_verified"))
     if media_row and not reached_l5 and media_row.get("present") and runtime_signal_present and not fast_mode:
-        media_row["status_ar"] = "تحليل بصري استشاري — لا يثبت صحة الميكانيك بدون L5"
-        media_row["blocks_achievement_ar"] = (
-            "الصور/الفيديو وحدها غير كافية لاعتماد الإنجاز دون تحقق ميكانيكي L5."
-        )
+        if static_corroborated:
+            media_row["status_ar"] = (
+                "تحليل بصري + أدلة كود حتمية — الميكانيكيات مثبتة من مصدر المشروع"
+            )
+            media_row.pop("blocks_achievement_ar", None)
+        else:
+            media_row["status_ar"] = "تحليل بصري استشاري — لا يثبت صحة الميكانيك بدون L5"
+            media_row["blocks_achievement_ar"] = (
+                "الصور/الفيديو وحدها غير كافية لاعتماد الإنجاز دون تحقق ميكانيكي L5."
+            )
 
     missing = [r["requirement_ar"] for r in rows if not r.get("present")]
     core_missing = [
@@ -942,6 +990,75 @@ def build_missing_evidence_diagnostics(
     }
 
 
+_REQ_LABELS_AR: Dict[str, str] = {
+    "menu_navigation": "دخول اللعبة من القائمة",
+    "player_movement": "حركة اللاعب",
+    "player_jump": "القفز",
+    "score_system": "نظام النقاط",
+    "win_lose_condition": "شرط الفوز أو الخسارة",
+}
+
+
+def build_requirement_evidence_table(
+    grading_result: Optional[Dict[str, Any]] = None,
+    *,
+    inventory: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Requirement → input → screenshot → result → BTEC criterion (Word/UI table)."""
+    gr = grading_result or {}
+    inv = inventory or gr.get("artifact_inventory") or {}
+    gv = (
+        gr.get("gameplay_verification")
+        or inv.get("gameplay_verification")
+        or (inv.get("runtime_observation_report") or {}).get("gameplay_verification")
+        or {}
+    )
+    pkg = gv.get("evidence_package") or gr.get("evidence_package") or {}
+    l4_level = str(gv.get("l4_level") or gv.get("automated_l4_level") or "L3")
+    rows: List[Dict[str, Any]] = []
+
+    for result in pkg.get("results") or []:
+        if not isinstance(result, dict):
+            continue
+        req_id = str(result.get("req_id") or "")
+        before = result.get("before_screenshot") or {}
+        after = result.get("after_screenshot") or {}
+        verified = bool(result.get("verified"))
+        rows.append(
+            {
+                "requirement_id": req_id,
+                "requirement_ar": _REQ_LABELS_AR.get(req_id, req_id),
+                "input_summary": result.get("detail") or "—",
+                "before_path": str(before.get("path") or ""),
+                "after_path": str(after.get("path") or ""),
+                "before_label": str(before.get("label") or ""),
+                "after_label": str(after.get("label") or ""),
+                "capture_scope": str(before.get("capture_scope") or after.get("capture_scope") or ""),
+                "verified": verified,
+                "result_ar": "مُتحقق" if verified else "لم يُتحقق",
+                "btec_criteria": result.get("btec_criteria") or [],
+                "confidence": float(result.get("confidence") or 0),
+                "reason": str(result.get("reason") or ""),
+            }
+        )
+
+    gate = gv.get("gate_decisions") or {}
+    return {
+        "version": "requirement_evidence_table_v1",
+        "l4_level": l4_level,
+        "gameplay_entered": bool(gv.get("gameplay_entered")),
+        "agent_play_label_ar": str(gv.get("authority_note_ar") or ""),
+        "rows": rows,
+        "gate_decisions": gate.get("decisions") or [],
+        "criterion_pass": gate.get("criterion_pass") or {},
+        "summary_ar": (
+            f"جدول أدلة المتطلبات — {len(rows)} اختبار، مستوى L4: {l4_level}"
+            if rows
+            else "لا توجد أدلة متطلبات مسجّلة بعد"
+        ),
+    }
+
+
 def attach_academic_explainability(
     inventory: Dict[str, Any],
     *,
@@ -961,6 +1078,12 @@ def attach_academic_explainability(
         project_profile=project_profile,
         grading_mode=grading_mode,
     )
+    try:
+        inventory["requirement_evidence_table"] = build_requirement_evidence_table(
+            inventory=inventory,
+        )
+    except Exception:
+        pass
     return inventory
 
 

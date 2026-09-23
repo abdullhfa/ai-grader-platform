@@ -906,8 +906,31 @@ def extract_explainability_for_ui(snapshot: Optional[Dict[str, Any]]) -> Optiona
             or inv.get("criterion_authority")
         ),
     }
+    try:
+        gp = snapshot.get("grading_profile") if isinstance(snapshot.get("grading_profile"), dict) else {}
+        outcome = gp.get("godot_runtime_outcome")
+        if not outcome:
+            from app.gameplay_verifier import build_gameplay_verification_summary
+
+            rt = inv.get("runtime_observation_report") or {}
+            gv_sum = build_gameplay_verification_summary(
+                rt if isinstance(rt, dict) else None,
+                inventory=inv,
+                grading_result=snapshot,
+            )
+            outcome = gv_sum.get("godot_runtime_outcome")
+        if outcome:
+            out["godot_runtime_outcome"] = outcome
+    except Exception:
+        pass
     if isinstance(history, list) and history:
         out["explainability_revision_history"] = history
+    try:
+        from app.academic_explainability import build_requirement_evidence_table
+
+        out["requirement_evidence_table"] = build_requirement_evidence_table(snapshot, inventory=inv)
+    except Exception:
+        pass
     return out
 
 

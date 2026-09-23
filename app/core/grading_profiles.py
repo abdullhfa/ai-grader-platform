@@ -36,6 +36,9 @@ class GradingProfile:
     max_images: int
     max_video_keyframes: int
     governance_shared: bool = True
+    requirement_driven_playtest: bool = False
+    automated_l4_gate: bool = False
+    pro_gameplay_evidence_table: bool = False
     flags: Dict[str, bool] = field(default_factory=dict)
 
     def to_metadata(self) -> Dict[str, Any]:
@@ -55,6 +58,9 @@ class GradingProfile:
             "max_images": self.max_images,
             "max_video_keyframes": self.max_video_keyframes,
             "governance_shared": self.governance_shared,
+            "requirement_driven_playtest": self.requirement_driven_playtest,
+            "automated_l4_gate": self.automated_l4_gate,
+            "pro_gameplay_evidence_table": self.pro_gameplay_evidence_table,
             "explanation_strategy": (
                 "template" if self.mode is GradingMode.STANDARD else "template+ai_polish"
             ),
@@ -101,6 +107,9 @@ PRO_PROFILE = GradingProfile(
     max_runtime_seconds=120,
     max_images=PRO_MAX_VISION_IMAGES,
     max_video_keyframes=25,
+    requirement_driven_playtest=True,
+    automated_l4_gate=True,
+    pro_gameplay_evidence_table=True,
     flags=_pro_flags,
 )
 
@@ -135,8 +144,14 @@ def attach_grading_mode_metadata(
         if rt.get("runtime_depth"):
             meta["runtime_depth"] = rt.get("runtime_depth")
     try:
-        from app.gameplay_verifier import build_gameplay_verification_summary
+        from app.gameplay_verifier import (
+            build_gameplay_verification_summary,
+            sync_authoritative_gv,
+        )
 
+        sync_authoritative_gv(inv, out)
+        inv = out.get("artifact_inventory") if isinstance(out.get("artifact_inventory"), dict) else inv
+        rt = inv.get("runtime_observation_report") or out.get("runtime_observation_report") or rt
         gv = build_gameplay_verification_summary(
             rt if isinstance(rt, dict) else None,
             inventory=inv,
@@ -148,6 +163,9 @@ def attach_grading_mode_metadata(
         meta["runtime_verified"] = gv.get("runtime_verified")
         meta["l4_level"] = gv.get("l4_level")
         meta["automated_l4_gate"] = gv.get("automated_l4_gate")
+        meta["failure_reason_code"] = gv.get("failure_reason_code")
+        meta["failure_reason_ar"] = gv.get("failure_reason_ar")
+        meta["godot_runtime_outcome"] = gv.get("godot_runtime_outcome")
     except Exception:
         pass
     out["grading_profile"] = meta

@@ -30,6 +30,16 @@ _PRAISE_WHEN_LOW_GRADE = re.compile(
 )
 
 # Strong «not achieved» signals in Arabic/English feedback (achieved=True is invalid).
+_SEALED_DETERMINISTIC_AUTHORITIES = frozenset(
+    {
+        "DESIGN_EVIDENCE_RULE_V1",
+        "VISUAL_DESIGN_RULE_V1",
+        "RUNTIME_VALIDATION",
+        "RUNTIME_L4_GATE",
+    }
+)
+
+
 _FEEDBACK_DENIES_ACHIEVEMENT = re.compile(
     r"(?:"
     r"لم\s+يقدم\s+الطالب|"
@@ -105,15 +115,20 @@ _BTEC_GOV_FEEDBACK_PREFIX = re.compile(
     re.MULTILINE,
 )
 
+_PARTIAL_AWARD_FEEDBACK_PREFIX = re.compile(
+    r"^تحقق\s+أكاديمياً\s+جزئياً\s*—\s*لا\s+يُمنح\s+رسمياً\.?\s*",
+    re.MULTILINE,
+)
+
 _AI_DISCLAIMER_TAG = re.compile(
     r"\[تحليل الذكاء الاصطناعي[^\]]*\]\s*",
     re.IGNORECASE,
 )
 
 AWARD_BLOCK_REASONS_AR = {
-    "criterion_not_met": "المعيار لم يتحقق أكاديمياً",
-    "missing_pass_criteria": "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Pass ناقصة)",
-    "missing_merit_criteria": "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Merit ناقصة)",
+    "criterion_not_met": "لم يتحقق المعيار",
+    "missing_pass_criteria": "يتطلب إتمام جميع معايير Pass أولاً",
+    "missing_merit_criteria": "يتطلب إتمام جميع معايير Merit أولاً",
 }
 
 
@@ -141,6 +156,7 @@ def strip_btec_governance_feedback(text: str) -> str:
     for _ in range(12):
         prev = cleaned
         cleaned = _BTEC_GOV_FEEDBACK_PREFIX.sub("", cleaned)
+        cleaned = _PARTIAL_AWARD_FEEDBACK_PREFIX.sub("", cleaned)
         cleaned = _AI_DISCLAIMER_TAG.sub("", cleaned)
         cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
         if cleaned == prev:
@@ -326,11 +342,102 @@ def enforce_not_achieved_feedback_consistency(
         if not _FEEDBACK_CLAIMS_ACHIEVEMENT.search(fb):
             continue
         reason_ar = _institutional_not_achieved_reason_ar(row)
-        row["feedback"] = f"لم يتحقق المعيار مؤسسياً. {reason_ar}"
+        row["feedback"] = f"لم يتحقق المعيار. {reason_ar}"
         if isinstance(row.get("decision_matrix"), list) and row["decision_matrix"]:
             if isinstance(row["decision_matrix"][0], dict):
                 row["decision_matrix"][0]["met"] = False
         changes.append(f"{row.get('criteria_level')}:not_achieved_feedback_aligned")
+    return changes
+
+
+_STALE_DENIAL_SENTENCES = (
+    "أدلة التشغيل الآلية (L4) لا تكفي لإثبات تحقق معيار الإنتاج/الاختبار — مطلوب مراجعة بشرية (L5) أو playtest موثّق.",
+    "تشغيل/كود (L4) لا يثبت تحقق معيار التنفيذ/الاختبار — مطلوب توثيق اختبار أو playtest (L5/نصي).",
+)
+
+# Plain-Arabic positive explanations for the deterministic design-evidence rules
+# (app/design_evidence_assessor.py). Keyed by the reason-code prefix before "=".
+_ACHIEVED_REASON_PREFIX_AR = {
+    "bp3_signals": (
+        "تحقق المعيار من خلال: وصف/وثيقة لتصميم اللعبة، بنية لعب واضحة "
+        "(ميكانيكيات أو مستويات أو تحكم)، وعناصر تصميم بصري موثقة في تقرير الطالب."
+    ),
+    "bp4_visual_signals": (
+        "تحقق المعيار من خلال: عناصر تصميم بصري للواجهة/الشاشات موثقة في تقرير "
+        "الطالب، إلى جانب استبيان أو قسم اختبار للتصميم."
+    ),
+}
+
+
+def _institutional_achieved_reason_ar(row: Dict[str, Any]) -> str:
+    """Plain-Arabic, evidence-grounded reason an achieved=True row is achieved.
+
+    Never invents evidence: falls back to a generic, rule-scoped statement
+    when no specific signal codes are available.
+    """
+    det = row.get("deterministic_rubric") or {}
+    reason = str(det.get("reason") or "").strip()
+    prefix = reason.split("=", 1)[0]
+    if prefix in _ACHIEVED_REASON_PREFIX_AR:
+        return _ACHIEVED_REASON_PREFIX_AR[prefix]
+    rule_id = str(row.get("rule_id") or det.get("rule_id") or "").strip()
+    if rule_id == "evidence_gate":
+        return (
+            "تشغيل ناجح موثّق + ميكانيكيات مثبتة من كود المشروع (أدلة ملف:سطر)، "
+            "أو فيديو لعب/مراجعة معلم موثّقة."
+        )
+    gov = str(row.get("governance_adjustment_ar") or "").strip()
+    if gov:
+        return gov
+    return "استوفى المعيار الأدلة الأساسية المطلوبة وفق قواعد التصحيح الحتمية لهذا المعيار."
+
+
+def enforce_achieved_feedback_consistency(
+    criteria_results: List[Dict[str, Any]],
+) -> List[str]:
+    """
+    Align teacher-facing feedback when achieved=True but the stored feedback
+    text (written by the AI pass *before* a deterministic rule or the runtime
+    gate later flipped the row to achieved=True) still reads as a denial —
+    e.g. "لم يتم تحقيق المعيار... screenshot_count: 0". Partial/leading-sentence
+    stripping is not reliable across arbitrary AI phrasing, so once ANY denial
+    signal is detected anywhere in the text, the whole feedback is replaced
+    with an accurate, rule-grounded positive statement. The report must never
+    say a criterion was not met for a row the system has certified achieved.
+    """
+    changes: List[str] = []
+    for row in criteria_results:
+        if not isinstance(row, dict) or not row.get("achieved"):
+            continue
+
+        # Decision-matrix consistency: an achieved criterion must not display
+        # "غير متحقق" for requirement rows that carry cited evidence — that met
+        # flag was force-cleared by an earlier (overturned) demotion layer.
+        matrix = row.get("decision_matrix")
+        if isinstance(matrix, list):
+            for cell in matrix:
+                if not isinstance(cell, dict) or cell.get("met"):
+                    continue
+                evidence = str(
+                    cell.get("evidence") or cell.get("evidence_ref") or ""
+                ).strip()
+                if evidence and evidence not in ("-", "—", "Not found"):
+                    cell["met"] = True
+                    changes.append(
+                        f"{row.get('criteria_level')}:decision_matrix_met_aligned"
+                    )
+
+        raw = _feedback_text(row)
+        if not raw:
+            continue
+        denies = bool(_FEEDBACK_DENIES_ACHIEVEMENT.search(raw)) or any(
+            sentence in raw for sentence in _STALE_DENIAL_SENTENCES
+        )
+        if not denies:
+            continue
+        reason_ar = _institutional_achieved_reason_ar(row)
+        row["feedback"] = f"تحقق المعيار. {reason_ar}"
+        changes.append(f"{row.get('criteria_level')}:achieved_feedback_aligned")
     return changes
 
 
@@ -358,14 +465,117 @@ def _prerequisite_block_reason_ar(level: str, achieved_map: Dict[str, bool]) -> 
     missing = [p for p in prereqs if not achieved_map.get(p)]
     if missing:
         joined = " و".join(missing)
-        return f"محجوب — {joined} لم يُتحققا (Prerequisite)"
+        return f"يتطلب إتمام {joined} أولاً."
     return AWARD_BLOCK_REASONS_AR.get("missing_pass_criteria", "")
+
+
+_PREREQ_CODE_RE = re.compile(r"\b[BC]\.[PMD]\d\b")
+
+# Plain-Arabic explanation of *this row's own* shortfall (independent of any
+# prerequisite), keyed by the deterministic rule's reason code — used once a
+# stale "prerequisite not met" claim has been cleared away and needs to be
+# replaced with the row's real, still-valid reason for not being achieved.
+_DET_NOT_ACHIEVED_REASON_AR = {
+    "merit_analysis_missing": (
+        "لا يظهر في تقرير الطالب تحليل نقدي كافٍ لفعالية أو جودة تصميم اللعبة "
+        "بالعمق والتفصيل المطلوبين لمستوى Merit."
+    ),
+    "distinction_evaluation_missing": (
+        "لا يظهر في تقرير الطالب تقييم نقدي شامل (نقاط قوة وضعف وتوصيات تحسين) "
+        "بالعمق والتفصيل المطلوبين لمستوى Distinction."
+    ),
+    "presentation_insufficient": (
+        "لم يقدَّم دليل عرض تقديمي (شرائح أو تسجيل) موجّه لجمهور تقني."
+    ),
+}
+
+
+def enforce_prerequisite_citation_consistency(
+    criteria_results: List[Dict[str, Any]],
+) -> List[str]:
+    """Fix stale prerequisite citations in Merit/Distinction feedback.
+
+    A Merit/Distinction row's feedback is often written by the AI pass in the
+    same batch as — and sometimes citing — its Pass-level prerequisites
+    (e.g. "لا يمكن منح Merit لأن B.P3 و B.P4 لم يتم تحقيقها"). When those
+    prerequisites are later promoted to achieved=True by a deterministic rule
+    or the runtime gate, that citation goes stale: the report ends up
+    claiming a criterion is blocked by prerequisites the same report shows as
+    achieved. This rewrites the feedback using the current, final achieved
+    map — either the real (still-missing) prerequisite reason, or, if the
+    prerequisites are now all satisfied, this row's own remaining shortfall.
+    """
+    changes: List[str] = []
+    achieved_map = _achieved_short_levels(criteria_results)
+    for row in criteria_results:
+        if not isinstance(row, dict) or row.get("achieved"):
+            continue
+        level = str(row.get("criteria_level") or "")
+        short = _short_criterion_code(level)
+        prereqs = BTEC_PREREQUISITE_CHAIN.get(short) or []
+        if not prereqs:
+            continue
+        fb = _feedback_text(row)
+        if not fb:
+            continue
+        cited_codes = set(_PREREQ_CODE_RE.findall(fb))
+        if not cited_codes:
+            continue
+        stale = any(
+            code in prereqs and achieved_map.get(code) for code in cited_codes
+        )
+        if not stale:
+            continue
+        still_missing = [p for p in prereqs if not achieved_map.get(p)]
+        if still_missing:
+            reason_ar = _prerequisite_block_reason_ar(level, achieved_map)
+        else:
+            det = row.get("deterministic_rubric") or {}
+            det_reason = str(det.get("reason") or "")
+            own_reason_ar = _DET_NOT_ACHIEVED_REASON_AR.get(det_reason)
+            prereq_list = "، ".join(prereqs)
+            if own_reason_ar:
+                reason_ar = f"معايير Pass/Merit المرتبطة ({prereq_list}) متحققة الآن — {own_reason_ar}"
+            else:
+                reason_ar = (
+                    f"معايير Pass/Merit المرتبطة ({prereq_list}) متحققة الآن، لكن هذا "
+                    "المعيار نفسه لم يستوفِ بعد الأدلة المطلوبة له."
+                )
+        row["feedback"] = f"لم يتحقق المعيار. {reason_ar}"
+        changes.append(f"{level}:prerequisite_citation_aligned")
+    return changes
+
+
+def _teacher_block_reason_ar(reason: str) -> str:
+    """Normalize internal award-block codes into plain teacher-facing Arabic."""
+    r = str(reason or "").strip()
+    if not r:
+        return ""
+    r = re.sub(r"^محجوب\s*—\s*", "", r)
+    r = re.sub(r"\s*\(Prerequisite\)\s*$", "", r, flags=re.IGNORECASE)
+    for old, new in (
+        (
+            "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Pass ناقصة)",
+            AWARD_BLOCK_REASONS_AR["missing_pass_criteria"],
+        ),
+        (
+            "تحقق أكاديمياً — لا يُمنح رسمياً (معايير Merit ناقصة)",
+            AWARD_BLOCK_REASONS_AR["missing_merit_criteria"],
+        ),
+        ("المعيار لم يتحقق أكاديمياً", AWARD_BLOCK_REASONS_AR["criterion_not_met"]),
+    ):
+        r = r.replace(old, new)
+    if re.search(r"لم\s+ي[ُu]?تحقق", r, flags=re.IGNORECASE):
+        codes = re.sub(r"\s+لم\s+ي[ُu]?تحقق.*$", "", r, flags=re.IGNORECASE).strip()
+        if codes:
+            return f"يتطلب إتمام {codes} أولاً."
+    return r.rstrip(".")
 
 
 def enforce_achieved_not_awardable_feedback(
     criteria_results: List[Dict[str, Any]],
 ) -> List[str]:
-    """Replace AI praise when achieved=True but awardable=False (Merit blocked by Pass)."""
+    """Clarify teacher feedback when achieved=True but awardable=False."""
     changes: List[str] = []
     achieved_map = _achieved_short_levels(criteria_results)
     for row in criteria_results:
@@ -374,14 +584,25 @@ def enforce_achieved_not_awardable_feedback(
         if row.get("awardable", True):
             continue
         level = str(row.get("criteria_level") or "")
-        reason = str(row.get("award_block_reason_ar") or "").strip()
+        reason = _teacher_block_reason_ar(str(row.get("award_block_reason_ar") or "").strip())
         if not reason:
             reason = _prerequisite_block_reason_ar(level, achieved_map)
         if not reason:
-            reason = str(
+            reason = _teacher_block_reason_ar(
                 AWARD_BLOCK_REASONS_AR.get(str(row.get("award_block_reason") or ""), "")
             )
-        row["feedback"] = f"تحقق أكاديمياً جزئياً — لا يُمنح رسمياً. {reason}"
+        raw = strip_btec_governance_feedback(_feedback_text(row))
+        praise_only = (
+            not raw
+            or (len(raw) < 100 and _PRAISE_WHEN_LOW_GRADE.search(raw))
+            or (len(raw) < 80 and _FEEDBACK_CLAIMS_ACHIEVEMENT.search(raw))
+        )
+        if praise_only:
+            row["feedback"] = f"تحقق المعيار. {reason}".strip() if reason else "تحقق المعيار."
+        elif reason and reason not in raw:
+            row["feedback"] = f"{raw}\n\n{reason}"
+        else:
+            row["feedback"] = raw
         row["report_display_status"] = "partial_blocked"
         changes.append(f"{level}:achieved_not_awardable_feedback")
     return changes
@@ -435,6 +656,10 @@ def enforce_feedback_achieved_consistency(
     changes: List[str] = []
     for row in criteria_results:
         if not isinstance(row, dict) or not row.get("achieved"):
+            continue
+        auth = str(row.get("achievement_authority") or "")
+        det = row.get("deterministic_rubric") or {}
+        if auth in _SEALED_DETERMINISTIC_AUTHORITIES and det.get("deterministic_achieved"):
             continue
         fb = _feedback_text(row)
         if not fb:
@@ -584,7 +809,7 @@ def apply_btec_awardability(criteria_results: List[Dict[str, Any]]) -> Dict[str,
     missing_pass_label = " و".join(missing_pass_short) if missing_pass_short else ""
 
     if missing_pass_label:
-        block_ar = f"محجوب — {missing_pass_label} لم يُتحققا (Prerequisite)"
+        block_ar = f"يتطلب إتمام {missing_pass_label} أولاً."
         for row in criteria_results:
             if not isinstance(row, dict):
                 continue

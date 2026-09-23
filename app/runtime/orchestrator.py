@@ -352,6 +352,8 @@ def run_runtime_observation(
             observation["unity_play_session"] = session_signals["play_session"]
 
     if session_result.get("engine") == "gamemaker":
+        if session_signals.get("gamemaker_ide_build"):
+            observation["gamemaker_ide_build"] = session_signals["gamemaker_ide_build"]
         if session_signals.get("artifact_analysis"):
             observation["gamemaker_artifact_analysis"] = session_signals["artifact_analysis"]
         if session_signals.get("gamemaker_observation"):
@@ -366,6 +368,11 @@ def run_runtime_observation(
             observation["gamemaker_gameplay_replay"] = session_signals["gameplay_replay"]
         if session_signals.get("build_pipeline"):
             observation["gamemaker_build_pipeline"] = session_signals["build_pipeline"]
+        gm_static = session_signals.get("gml_mechanics") or (
+            (session_signals.get("artifact_analysis") or {}).get("gml_mechanics")
+        )
+        if gm_static:
+            observation["static_mechanics"] = gm_static
 
         gm_obs = session_signals.get("gamemaker_observation")
         if isinstance(gm_obs, dict):
