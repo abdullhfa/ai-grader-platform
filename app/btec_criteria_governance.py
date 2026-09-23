@@ -342,7 +342,7 @@ def enforce_not_achieved_feedback_consistency(
         if not _FEEDBACK_CLAIMS_ACHIEVEMENT.search(fb):
             continue
         reason_ar = _institutional_not_achieved_reason_ar(row)
-        row["feedback"] = f"لم يتحقق المعيار. {reason_ar}"
+        row["feedback"] = f"لم يتحقق المعيار مؤسسياً. {reason_ar}"
         if isinstance(row.get("decision_matrix"), list) and row["decision_matrix"]:
             if isinstance(row["decision_matrix"][0], dict):
                 row["decision_matrix"][0]["met"] = False
@@ -598,7 +598,9 @@ def enforce_achieved_not_awardable_feedback(
             or (len(raw) < 80 and _FEEDBACK_CLAIMS_ACHIEVEMENT.search(raw))
         )
         if praise_only:
-            row["feedback"] = f"تحقق المعيار. {reason}".strip() if reason else "تحقق المعيار."
+            row["feedback"] = (
+                f"تحقق المعيار جزئياً. {reason}".strip() if reason else "تحقق المعيار جزئياً."
+            )
         elif reason and reason not in raw:
             row["feedback"] = f"{raw}\n\n{reason}"
         else:

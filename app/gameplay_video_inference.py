@@ -132,6 +132,7 @@ def _analyze_sampled_frames(
         prev_hist = hist
         prev_top_hist = top_hist
     hints: List[Dict[str, Any]] = []
+    temporal: Dict[str, Any] = {}
 
     if motion_scores:
         avg_motion = sum(motion_scores) / len(motion_scores)

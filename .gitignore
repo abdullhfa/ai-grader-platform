@@ -74,6 +74,19 @@ uploads/assignments/
 uploads/reports/
 uploads/debug/
 uploads/textbooks/
+uploads/replay_snapshots/
+uploads/runtime_sessions/
+uploads/runtime/
+uploads/audit/
+uploads/batch*/
+# Prefer ignoring all runtime uploads except specification/templates
+uploads/**
+!uploads/specification/
+!uploads/specification/**
+!uploads/templates/
+!uploads/templates/**
+!uploads/config/
+!uploads/config/**
 
 # The templates folder itself stays in version control; only its cache is ignored
 uploads/specification/cache/

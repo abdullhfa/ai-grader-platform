@@ -355,6 +355,16 @@ def evaluate_criterion_deterministic(
 
     from app.design_evidence_assessor import is_b_band_criterion, try_evaluate_design_criterion
 
+    level_upper = criteria_level.upper()
+    peer_review_p4 = short == "P4" and ("B.P4" in level_upper or "C.P4" in level_upper) and (
+        "peer" in desc
+        or "review" in desc
+        or "استبيان" in text
+        or "استطلاع" in text
+        or "survey" in text
+        or "C.P4" in criteria_level.upper()
+        or "B.P4" in criteria_level.upper()
+    )
     if is_b_band_criterion(criteria_level, short, "P3") or is_b_band_criterion(
         criteria_level, short, "P4"
     ):
@@ -364,9 +374,10 @@ def evaluate_criterion_deterministic(
             artifact_inventory=artifact_inventory,
             execution_mode=execution_mode,
         )
-        if design_row is not None:
+        if design_row is not None and (
+            bool(design_row.get("deterministic_achieved")) or not peer_review_p4
+        ):
             return design_row
-
 
 
     missing = (evidence_gate_row or {}).get("missing_artifacts") or []
@@ -750,13 +761,11 @@ def evaluate_criterion_deterministic(
 
 
 
-    if short == "P4" and _band_prefix(criteria_level) == "C" and (
-        "peer" in desc or "review" in desc or "C.P4" in criteria_level.upper()
-    ):
+    if short == "P4" and ("B.P4" in level_upper or "C.P4" in level_upper) and peer_review_p4:
 
         from app.pro_evidence_signals import text_has_design_peer_evidence
 
-        ok = text_has_design_peer_evidence(text)
+        ok = bool(_PEER_REVIEW_PATTERN.search(text)) or text_has_design_peer_evidence(text)
 
         return _wrap_row(
 

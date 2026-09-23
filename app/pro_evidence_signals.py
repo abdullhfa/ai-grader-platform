@@ -21,7 +21,7 @@ TEST_PLAN_TEXT_RE = re.compile(
     r"test\s*plan|test\s*cases?|bug\s*log|user\s*test(?:ing)?|play\s*test|playtest"
     r"|خطة\s*اختبار|تقرير\s*اختبار|نتائج\s*اختبار|سجل\s*أخطاء|سجل\s*الأخطاء"
     r"|اختبار\s*المستخدم|تجربة\s*المستخدم|اختبار\s*اللعبة"
-    r"|functional\s*test|testing\s*phase|جدول\s*اختبار"
+    r"|functional\s*test|testing\s*phase|مرحلة\s*الاختبار|جدول\s*اختبار"
     r")",
     re.IGNORECASE,
 )

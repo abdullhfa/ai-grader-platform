@@ -24,10 +24,21 @@ def _stable_json(obj: Any) -> str:
 
 
 def resolve_execution_mode(grading_mode: Optional[str]) -> str:
+    if not grading_mode:
+        return "PRO"
+    gm = str(grading_mode).strip().lower()
+    # Provenance stamp uses BASIC/PRO (not UI labels like STANDARD).
+    if gm in ("basic", "fast", "standard", "basic_mode"):
+        return "BASIC"
+    if gm in ("pro", "deep", "advanced"):
+        return "PRO"
     try:
         from app.grading_mode_policy import grading_mode_display_label
 
-        return grading_mode_display_label(grading_mode or "deep")
+        label = grading_mode_display_label(gm)
+        if label in ("BASIC", "STANDARD"):
+            return "BASIC"
+        return "PRO" if label == "PRO" else label
     except Exception:
         return "PRO"
 
