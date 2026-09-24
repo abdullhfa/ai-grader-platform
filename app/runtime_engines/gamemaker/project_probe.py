@@ -363,6 +363,18 @@ def _collect_gml_files(root: Path, limit: int = 200) -> List[Path]:
     return found
 
 
+def _safe_exe_search_base(path: Optional[Path]) -> bool:
+    """Reject shallow roots (drive / Users) so rglob('*.exe') cannot scan the disk."""
+    if path is None:
+        return False
+    try:
+        resolved = path.resolve()
+    except OSError:
+        return False
+    # Need at least e.g. C:\Users\<name> or /home/<name> — never C:\ or C:\Users alone.
+    return len(resolved.parts) >= 3
+
+
 def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
     layout = GameMakerLayout()
     search_root = root.parent if root.is_file() else root
@@ -397,18 +409,14 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
     )
 
     if not layout.executable:
-        # Search the full submission tree — .yyp may live under code/ while .exe is in V1/.
+        # Sibling folders (e.g. code/ vs V1/) — climb at most one parent, never to drive root.
         search_bases: List[Path] = []
-        for base in (
-            layout.project_root,
-            search_root,
-            *((layout.project_root.parents if layout.project_root else [])),
-            *((search_root.parents if search_root else [])),
-        ):
-            if base and base not in search_bases:
+        one_up = search_root.parent if search_root else None
+        for base in (layout.project_root, search_root, one_up):
+            if base and base not in search_bases and _safe_exe_search_base(base):
                 search_bases.append(base)
         candidates: List[Path] = []
-        for pr in search_bases[:6]:
+        for pr in search_bases[:3]:
             for fp in pr.rglob("*.exe"):
                 if _is_gamemaker_exe(fp, project_root=layout.project_root or pr):
                     candidates.append(fp)
