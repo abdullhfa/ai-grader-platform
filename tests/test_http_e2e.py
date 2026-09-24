@@ -64,11 +64,9 @@ class TestHttpE2E(unittest.TestCase):
         self.assertIsInstance(body, (list, dict))
 
     def test_governance_freeze_registry(self):
+        # Governance APIs require a logged-in session (audit fix, Sep 2026).
         resp = self.client.get("/api/governance/freeze-registry")
-        self.assertEqual(resp.status_code, 200)
-        body = resp.json()
-        self.assertEqual(body.get("report_type"), "governance_freeze_registry")
-        self.assertIn("l4_gate", body)
+        self.assertEqual(resp.status_code, 401)
 
     def test_batch_grade_progress_not_found(self):
         resp = self.client.get("/api/batch-grade-progress/999999")
@@ -88,7 +86,7 @@ class TestHttpE2E(unittest.TestCase):
 
     def test_governance_contracts(self):
         resp = self.client.get("/api/governance-contracts")
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 401)
 
 
 if __name__ == "__main__":

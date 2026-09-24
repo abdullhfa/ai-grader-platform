@@ -1341,8 +1341,22 @@ async def grade_student_submission(
         except Exception:
             max_retries = 2
     response_text = None
-    use_ollama_json = getattr(provider, "provider", "") == "ollama"
-    json_response_format = {"type": "json_object"} if use_ollama_json else None
+    # Force JSON mode on Ollama + OpenRouter. Native Gemini often ignores it;
+    # OpenRouter Gemini still benefits when content would otherwise be empty
+    # and only CoT lands in `reasoning` (GRD-001 Expecting value char 0).
+    _prov = getattr(provider, "provider", "") or ""
+    use_json_object = _prov in ("ollama", "openrouter")
+    json_response_format = {"type": "json_object"} if use_json_object else None
+    try:
+        grading_max_tokens = int(
+            os.getenv(
+                "GRADING_MAX_TOKENS",
+                os.getenv("GEMINI_DEFAULT_OUTPUT_TOKENS", "16384"),
+            )
+            or "16384"
+        )
+    except ValueError:
+        grading_max_tokens = 16384
 
     for attempt in range(max_retries):
         try:
@@ -1355,6 +1369,7 @@ async def grade_student_submission(
                     ],
                     temperature=0.0,
                     seed=42,  # DETERMINISTIC
+                    max_tokens=grading_max_tokens,
                     response_format=json_response_format,
                 )
 
@@ -1375,11 +1390,25 @@ async def grade_student_submission(
                 "request too large", "token", "context_length", "max_tokens",
                 "rate limit", "resource_exhausted"
             ])
+            is_empty_json = any(
+                kw in error_msg.lower()
+                for kw in (
+                    "empty json response",
+                    "reasoning_only",
+                    "empty response from",
+                )
+            )
 
             if is_rate_limit and attempt < max_retries - 1:
                 wait_secs = 65  # 65 seconds to ensure TPM window resets
                 print(f"⏳ [{attempt + 1}/{max_retries}] حد التوكن - انتظار {wait_secs} ثانية ثم إعادة محاولة...")
                 await asyncio.sleep(wait_secs)
+                continue
+            elif is_empty_json and attempt < max_retries - 1:
+                print(
+                    f"🔄 [{attempt + 1}/{max_retries}] رد فارغ/reasoning-only — إعادة محاولة JSON..."
+                )
+                await asyncio.sleep(2)
                 continue
             else:
                 # Try fallback provider before giving up
@@ -1443,6 +1472,7 @@ async def grade_student_submission(
                         ],
                         temperature=0.0,
                         seed=42,
+                        max_tokens=grading_max_tokens,
                         response_format=json_response_format,
                     )
 
