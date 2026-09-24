@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, List, Optional
@@ -375,6 +376,29 @@ def _safe_exe_search_base(path: Optional[Path]) -> bool:
     return len(resolved.parts) >= 3
 
 
+def _parent_ok_for_sibling_exe_search(parent: Path, child: Path) -> bool:
+    """Allow one-level-up search only for small sibling trees (e.g. code/ vs V1/)."""
+    if not _safe_exe_search_base(parent):
+        return False
+    try:
+        # pytest temp roots accumulate hundreds of prior tests — never scan them.
+        name = parent.name.lower()
+        if name.startswith("pytest-") or name.startswith("pytest_"):
+            return False
+        if "pytest-of-" in str(parent).lower():
+            return False
+        # Bound fan-out so a huge parent cannot wedge detect().
+        children = 0
+        with os.scandir(parent) as it:
+            for _ in it:
+                children += 1
+                if children > 40:
+                    return False
+        return True
+    except OSError:
+        return False
+
+
 def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
     layout = GameMakerLayout()
     search_root = root.parent if root.is_file() else root
@@ -412,9 +436,15 @@ def probe_gamemaker_layout(root: Path) -> GameMakerLayout:
         # Sibling folders (e.g. code/ vs V1/) — climb at most one parent, never to drive root.
         search_bases: List[Path] = []
         one_up = search_root.parent if search_root else None
-        for base in (layout.project_root, search_root, one_up):
+        for base in (layout.project_root, search_root):
             if base and base not in search_bases and _safe_exe_search_base(base):
                 search_bases.append(base)
+        if (
+            one_up
+            and one_up not in search_bases
+            and _parent_ok_for_sibling_exe_search(one_up, search_root)
+        ):
+            search_bases.append(one_up)
         candidates: List[Path] = []
         for pr in search_bases[:3]:
             for fp in pr.rglob("*.exe"):
