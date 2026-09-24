@@ -5,10 +5,23 @@ import json
 from pathlib import Path
 
 import pytest
+from sqlalchemy import create_engine
+
+
+def _isolate_sqlite(tmp_path, monkeypatch, db_name: str = "sprint4.db") -> None:
+    """Bind app.database to a fresh SQLite file under tmp_path (pool-safe)."""
+    monkeypatch.chdir(tmp_path)
+    import app.database as dbmod
+
+    dbmod.engine.dispose()
+    url = f"sqlite:///{(tmp_path / db_name).resolve().as_posix()}"
+    dbmod.DATABASE_URL = url
+    dbmod.engine = create_engine(url, connect_args={"check_same_thread": False, "timeout": 30})
+    dbmod.SessionLocal.configure(bind=dbmod.engine)
 
 
 def test_rbac_seed_and_assign(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
+    _isolate_sqlite(tmp_path, monkeypatch, "rbac_assign.db")
     from app.database import SessionLocal, init_db
     from app.auth.permissions_store import (
         assign_user_role,
@@ -41,7 +54,7 @@ def test_rbac_seed_and_assign(tmp_path, monkeypatch):
 
 
 def test_resolve_governance_role_db_backed(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
+    _isolate_sqlite(tmp_path, monkeypatch, "rbac_gov.db")
     from app.database import SessionLocal, init_db
     from app.auth.permissions_store import assign_user_role, seed_rbac_defaults
     from app.governance.permissions import GovernanceRole, resolve_governance_role

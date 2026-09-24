@@ -1,4 +1,7 @@
-"""Re-grade Sama's Scratch submission (verifies game-artifact path fallback fix)."""
+"""Re-grade a local Scratch sample submission (verifies game-artifact path fallback).
+
+Point STUDENT_ROOT at a local uploads/students/<id> folder that is not committed.
+"""
 from __future__ import annotations
 
 import asyncio
@@ -18,6 +21,10 @@ load_dotenv(override=True)
 os.environ["WHATSAPP_AUTO_START"] = "false"
 os.environ.setdefault("PRO_FAST_PATH", "0")
 
+# Local-only path; do not commit student folders under uploads/students/.
+STUDENT_ROOT = ROOT / "uploads" / "students" / "sample_scratch"
+SAMPLE_STUDENT_NAME = "Sample Scratch Student"
+
 
 async def main() -> None:
     from app.batch_grader import grade_batch_async
@@ -32,8 +39,12 @@ async def main() -> None:
         SubmissionStatus,
     )
 
-    student_root = ROOT / "uploads" / "students" / "bx48"
+    student_root = STUDENT_ROOT
+    if not student_root.is_dir():
+        raise SystemExit(f"missing sample folder: {student_root}")
     paths = sorted({str(p) for p in student_root.rglob("*") if p.is_file()}, key=str.lower)
+    if not paths:
+        raise SystemExit(f"no files under {student_root}")
     main_doc = next((p for p in paths if p.lower().endswith((".docx", ".doc"))), paths[0])
 
     db = SessionLocal()
@@ -59,7 +70,7 @@ async def main() -> None:
         db.close()
 
     student_info = {
-        "name": "Sama Ziad AlRahahleh",
+        "name": SAMPLE_STUDENT_NAME,
         "path": main_doc,
         "email": "",
         "student_id": "",
@@ -87,7 +98,7 @@ async def main() -> None:
     try:
         batch = BatchGrading(
             assignment_id=1,
-            batch_name=f"Sama Scratch regrade {datetime.utcnow():%Y-%m-%d %H:%M}",
+            batch_name=f"Scratch sample regrade {datetime.utcnow():%Y-%m-%d %H:%M}",
             total_students=1,
             processed_students=1,
             status=BatchStatus.COMPLETED,

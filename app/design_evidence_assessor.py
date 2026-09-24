@@ -245,15 +245,19 @@ def try_evaluate_design_criterion(
         achieved, det_score, reason, verdict, found = evaluate_bp3_deterministic(
             bundle, criteria_level=criteria_level, execution_mode=execution_mode
         )
+        # GDD-shaped corpora keep legacy rule_id so evidence gates / reports
+        # still attribute the criterion to gdd_document (not a silent swap).
+        rule_id = "gdd_document" if bundle.design_doc_gdd else RULE_BP3
+        authority = "DETERMINISTIC" if bundle.design_doc_gdd else AUTH_BP3
         return _wrap_row(
             criteria_level=criteria_level,
-            rule_id=RULE_BP3,
+            rule_id=rule_id,
             execution_mode=execution_mode,
             runtime="design_evidence",
             achieved=achieved,
             score=det_score,
             reason=reason,
-            authority=AUTH_BP3,
+            authority=authority,
             verdict_status=verdict,
             text=bundle.corpus,
             evidence_rules=tuple((k, _GDD_DOC) for k in ("gdd", "design")),

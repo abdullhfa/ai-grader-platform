@@ -14,7 +14,8 @@ def test_criterion_report_display_blocked_merit():
         {"achieved": True, "awardable": False}
     )
     assert icon == "⏸"
-    assert "محجوب" in text
+    assert text.startswith("محجوب")
+    assert "تحقق المعيار" not in text.split("—")[0]
     assert bg == "FEF3C7"
 
 
@@ -40,10 +41,10 @@ def test_godot_runtime_outcome_structured_sections():
         agent_play_label_ar="لا — MENU_NOT_RESOLVED",
     )
     text = format_godot_runtime_outcome_ar(outcome)
-    assert "نتيجة Agent play" in text
-    assert "سبب الفشل النهائي" in text
-    assert "ملخص الأدلة" in text
-    assert "C.P5 / C.P6" in text
+    assert "نتيجة تشغيل اللعبة" in text
+    assert "سبب عدم اكتمال التشغيل" in text or "سبب الفشل النهائي" in text
+    assert "تفاصيل تقنية" in text or "ملخص الأدلة" in text
+    assert "C.P5" in text and "C.P6" in text
     assert "MENU_NOT_RESOLVED" in text
     assert outcome["criterion_pass_p5"] is False
 

@@ -87,6 +87,8 @@ uploads/**
 !uploads/templates/**
 !uploads/config/
 !uploads/config/**
+# Runtime WhatsApp numbers — keep example only
+uploads/config/whatsapp_settings.json
 
 # The templates folder itself stays in version control; only its cache is ignored
 uploads/specification/cache/

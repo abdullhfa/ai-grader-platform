@@ -374,7 +374,8 @@ def criterion_report_display(
     if achieved and awardable:
         return "✅", "تحقق المعيار (Achieved)", "D1FAE5", "10B981"
     if achieved and not awardable:
-        return "⏸", "تحقق المعيار — معايير سابقة ناقصة", "FEF3C7", "F59E0B"
+        # Lead with "محجوب" so teachers/students do not misread Merit as granted.
+        return "⏸", "محجوب — تحقق أكاديمياً ومعايير سابقة ناقصة", "FEF3C7", "F59E0B"
     return "❌", "لم يتحقق المعيار (Not Achieved)", "FEE2E2", "EF4444"
 
 
