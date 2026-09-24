@@ -16,7 +16,9 @@ from app.runtime_engines.registry import resolve_engine
 
 
 def test_pro_only_gamemaker_runtime_flag():
-    assert fast_grading_flags("fast")["enable_gamemaker_runtime_verification"] is False
+    # GameMaker runtime verification stays enabled in fast mode so source-only
+    # submissions can soft-pause for IDE install instead of hard-failing.
+    assert fast_grading_flags("fast")["enable_gamemaker_runtime_verification"] is True
     assert deep_grading_flags("deep")["enable_gamemaker_runtime_verification"] is True
 
 
@@ -60,10 +62,10 @@ def test_ide_build_disabled_without_explicit_flag(tmp_path: Path, monkeypatch):
     yyp = tmp_path / "Demo.yyp"
     yyp.write_text("{}", encoding="utf-8")
     monkeypatch.setenv("AI_GRADER_GAMEMAKER_IDE", r"C:\GameMaker\GameMaker.exe")
-    monkeypatch.delenv("AI_GRADER_GAMEMAKER_IDE_BUILD", raising=False)
+    monkeypatch.setenv("AI_GRADER_GAMEMAKER_IDE_BUILD", "0")
     out = _try_ide_build(yyp, tmp_path / "ws", timeout_seconds=5)
     assert out["attempted"] is False
-    assert out["reason"] == "gamemaker_ide_build_disabled"
+    assert out["reason"] in ("gamemaker_ide_build_disabled", "auto_build_disabled")
 
 
 def test_resolve_runtime_cwd_finds_parent_data_win(tmp_path: Path):

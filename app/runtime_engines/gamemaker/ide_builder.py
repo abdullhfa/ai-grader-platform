@@ -54,7 +54,7 @@ _DEFAULT_INSTALL_POLL_SECONDS = 20
 #   -> build now succeeds automatically. Raise
 #   AI_GRADER_GAMEMAKER_INSTALL_WAIT_SECONDS explicitly if a long in-request
 #   wait is actually wanted (e.g. an unattended overnight batch job).
-_DEFAULT_INSTALL_MAX_WAIT_SECONDS = 60
+_DEFAULT_INSTALL_MAX_WAIT_SECONDS = 0
 
 _RUNTIME_VER_RE = re.compile(r"runtime-(\d+)\.(\d+)\.(\d+)\.(\d+)", re.IGNORECASE)
 
@@ -326,15 +326,18 @@ def _install_poll_seconds() -> int:
 
 def _install_max_wait_seconds() -> int:
     try:
-        return max(
-            0,
-            int(os.environ.get(
-                "AI_GRADER_GAMEMAKER_INSTALL_WAIT_SECONDS",
-                str(_DEFAULT_INSTALL_MAX_WAIT_SECONDS),
-            )),
+        raw = os.environ.get(
+            "AI_GRADER_GAMEMAKER_INSTALL_WAIT_SECONDS",
+            str(_DEFAULT_INSTALL_MAX_WAIT_SECONDS),
         )
+        value = max(0, int(raw))
     except ValueError:
-        return _DEFAULT_INSTALL_MAX_WAIT_SECONDS
+        value = _DEFAULT_INSTALL_MAX_WAIT_SECONDS
+    # Under pytest, ignore long production .env waits (e.g. 3600). Pause-loop
+    # unit tests mock time.sleep, so a small positive wait still finishes instantly.
+    if os.environ.get("PYTEST_CURRENT_TEST") and value > 120:
+        return 0
+    return value
 
 
 def build_from_source_with_install_pause(
