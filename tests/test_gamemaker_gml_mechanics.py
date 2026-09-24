@@ -165,6 +165,9 @@ def test_source_only_submission_attempts_build_and_records_static(
     from app import runtime_observation_sandbox as ros
     from app.runtime_engines.gamemaker import ide_builder
 
+    # Do not block the suite waiting for a real GameMaker install.
+    monkeypatch.setenv("AI_GRADER_GAMEMAKER_INSTALL_WAIT_SECONDS", "0")
+
     calls = {}
 
     def fake_build(yyp, workspace, timeout_seconds=None):
