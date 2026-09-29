@@ -264,7 +264,7 @@ def _pearson_pro_blocks_promotion(
 ) -> bool:
     # Runtime gate hold is absolute and mode-independent: once a runtime-dependent
     # criterion is blocked for lack of runtime evidence, NO path may re-promote it.
-    if row.get("runtime_gate_block") or row.get("version_gate_block"):
+    if row.get("runtime_gate_block") or row.get("version_gate_block") or row.get("dependency_blocked_by"):
         return True
     if not grading_result.get("pearson_btec_pro"):
         return False
@@ -594,8 +594,25 @@ def finalize_grading_criteria_results(
                 grading_result["grade_level"] = institutional_grade_from_awardable(criteria)
             except Exception:
                 pass
-    except Exception:
-        pass
+    except Exception as gate_error:
+        # Fail CLOSED: never keep a runtime-dependent award because the seal crashed.
+        from app.runtime_evidence_gate import apply_runtime_gate_fail_closed
+
+        failure = apply_runtime_gate_fail_closed(
+            grading_result, gate_error, artifact_inventory=artifact_inventory
+        )
+        if failure.get("blocked"):
+            changes.extend(f"{level}:runtime_gate_error_block" for level in failure["blocked"])
+            if grading_result.get("pearson_btec_pro"):
+                try:
+                    from app.btec_criteria_governance import apply_btec_awardability
+                    from app.pro_btec_pearson import institutional_grade_from_awardable
+
+                    criteria = grading_result.get("criteria_results") or []
+                    apply_btec_awardability(criteria)
+                    grading_result["grade_level"] = institutional_grade_from_awardable(criteria)
+                except Exception:
+                    pass
 
     version_changes = apply_gamemaker_version_gate(grading_result, artifact_inventory)
     if version_changes:

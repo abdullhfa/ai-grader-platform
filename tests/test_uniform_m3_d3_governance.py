@@ -302,7 +302,7 @@ def test_single_version_or_ambiguous_layout_never_opens_m3(tmp_path):
 
 
 # ── integration through the terminal gate ────────────────────────────────────
-def _gate_result(tmp_path: Path, monkeypatch, student_text: str, root: Path):
+def _gate_result(tmp_path: Path, monkeypatch, student_text: str, root: Path, teacher=None):
     rows = [
         {**_academic_row("C.P5"), "achieved": True, "score": 75},
         {**_academic_row("C.P6"), "achieved": True, "score": 75},
@@ -325,6 +325,11 @@ def _gate_result(tmp_path: Path, monkeypatch, student_text: str, root: Path):
         "submission_paths": [str(doc)],
         "intake_relative_paths": ["Aim C.docx"],
     }
+    if teacher:
+        from app.runtime_evidence_gate import record_teacher_confirmation
+
+        for key in teacher:
+            record_teacher_confirmation(grading, key, confirmed_by="reviewer", note="checked V1→V2")
     monkeypatch.setattr(
         "app.runtime_evidence_gate.evaluate_runtime_evidence",
         lambda *_a, **_k: {
@@ -348,15 +353,22 @@ def test_terminal_gate_blocks_m3_when_improvements_are_unsupported(tmp_path, mon
     assert report["m3_code_diff"]["status"] == "improvements_mostly_unsupported"
 
 
-def test_terminal_gate_opens_m3_only_with_supported_code_diff_and_human_l5(tmp_path, monkeypatch):
+def test_terminal_gate_opens_m3_only_with_supported_code_diff_and_explicit_teacher_confirmation(
+    tmp_path, monkeypatch
+):
+    from app.runtime_evidence_gate import record_teacher_confirmation
+
     root = _gamemaker_versions(tmp_path, v2_step="spd = 6;\nif (place_meeting(x, y, obj_wall)) { x -= spd; }\n")
     grading, report, by = _gate_result(
-        tmp_path, monkeypatch, "بعد الاختبار قمت بزيادة سرعة الفأر spd في كود التحكم.", root
+        tmp_path, monkeypatch, "بعد الاختبار قمت بزيادة سرعة الفأر spd في كود التحكم.", root,
+        teacher={"M3": True},
     )
     assert report["m3_code_diff"]["ok"] is True
     assert by["C.M3"]["achieved"] is True
     assert by["C.M3"]["achievement_authority"] == "HUMAN_CONFIRMED_RUNTIME_GATE"
     assert by["C.M3"]["ai_verification"]["automatic"] is False
+    assert grading["teacher_confirmations"]["M3"]["confirmed_by"] == "reviewer"
+    assert callable(record_teacher_confirmation)
 
 
 # ── 3. Executable discovery ──────────────────────────────────────────────────

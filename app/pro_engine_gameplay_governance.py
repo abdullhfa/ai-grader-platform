@@ -276,11 +276,20 @@ def assess_playtest_evidence(
     gameplay_checks: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
-    Pearson PRO playtest paths (any one satisfies C.P6 / M3 / D2 / D3 gates):
+    Pearson PRO playtest *evidence paths* (any one makes ``any_path_satisfied`` true):
       1. L5 human playtest
       2. Documented gameplay video inference
       3. Runtime + gameplay validation (engine-specific floor)
       4. Human review authority already recorded
+
+    ``any_path_satisfied`` answers only "does SOME runtime-related evidence exist?".
+    It is NOT criterion awardability:
+      * ``gameplay_video_documented`` means a video was detected/analysed — it is
+        documented evidence, not a validated run (``runtime_gameplay_validated``).
+      * Awarding C.P5 / C.P6 / C.M3 still needs the per-criterion automated L4
+        verdict in ``runtime_evidence_gate.BTECCriterionMapper``; C.M3 also needs a
+        V1→V2 code diff and an explicit teacher confirmation.  A video-only or
+        L5-only submission satisfies this function yet is not awardable.
     """
     inv = artifact_inventory or {}
     engine_id = detect_primary_game_engine(inv, submission_paths=submission_paths)
@@ -382,7 +391,9 @@ def assess_playtest_evidence(
         paths["runtime_gameplay_validated"] = True
     # L4_partial is tracked for per-criterion gate decisions (P5 only) in
     # apply_runtime_evidence_gate — it must NOT satisfy the overall gate alone.
-    # For source-only GameMaker projects with documented WebM gameplay video, ensure any_path is satisfied
+    # A documented gameplay video counts as an evidence PATH (any_path), e.g. for
+    # source-only GameMaker projects with WebM footage.  That lifts only the blanket
+    # "runtime not verified" block; it does not make any criterion awardable.
     any_path = any(
         (
             paths["human_playtest"],

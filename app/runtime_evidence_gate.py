@@ -7,11 +7,22 @@ Golden rule (PRO governance):
     images, AI description, static analysis (incl. Scratch static graph), and the
     mere *presence* of a project/.sb3/.exe are NOT sufficient on their own.
 
-Accepted runtime evidence (any ONE satisfies the gate):
-    1. Runtime PASS         — real launch + gameplay validation (engine sandbox)
-    2. Gameplay video       — documented gameplay footage
-    3. Human review (L5)    — teacher-verified / visually-corroborated playtest
-    4. Human review recorded
+Evidence PATHS vs criterion AWARDABILITY (three distinct things — do not conflate):
+
+    a. Evidence *paths* (``evaluate_runtime_evidence`` → ``satisfied``). Any ONE of
+       these means "some runtime-related evidence exists", which only lifts the
+       blanket "runtime not verified" block:
+         1. Runtime PASS         — real launch + gameplay validation (engine sandbox)
+         2. Gameplay video       — documented gameplay footage (detected/documented)
+         3. Human review (L5)    — teacher-verified / visually-corroborated playtest
+         4. Human review recorded
+    b. Runtime gameplay *validated* — the engine sandbox actually launched and played
+       the build.  A gameplay video is NOT this: it is documented evidence only.
+    c. Criterion *awardability* (``BTECCriterionMapper.evaluate`` → ``criterion_pass``).
+       C.P5 / C.P6 / C.M3 additionally need the per-criterion automated L4 verdict
+       (and C.P6 test documentation, C.M3 code-diff + explicit teacher confirmation).
+       A video-only or L5-only submission therefore satisfies (a) but is NOT awardable
+       under (c).
 
 If a submission is a game project but NONE of the above is present, every gated
 criterion is forced to achieved=False / awardable=False and marked with a
@@ -381,6 +392,63 @@ def _code_diff_gate_view(code_diff: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+TEACHER_CONFIRMABLE = frozenset({"M3", "D3"})
+
+
+def read_teacher_confirmations(*sources: Optional[Dict[str, Any]]) -> Dict[str, bool]:
+    """Explicit human confirmations for higher bands, read from ``teacher_confirmations``.
+
+    A confirmation only counts when it is an *event record* written by the human
+    review path (``record_teacher_confirmation``): ``confirmed is True`` and a
+    non-empty ``confirmed_by``.  A bare ``True`` and — importantly — a completed L5
+    playtest are never treated as a confirmation: L5 says the game was played,
+    not that the improvement/self-management standard was judged by a teacher.
+    """
+    out: Dict[str, bool] = {}
+    for src in sources:
+        records = (src or {}).get("teacher_confirmations")
+        if not isinstance(records, dict):
+            continue
+        for key, entry in records.items():
+            short = _short_level(str(key))
+            if (
+                short in TEACHER_CONFIRMABLE
+                and isinstance(entry, dict)
+                and entry.get("confirmed") is True
+                and str(entry.get("confirmed_by") or "").strip()
+            ):
+                out[short] = True
+    return out
+
+
+def record_teacher_confirmation(
+    grading_result: Dict[str, Any],
+    criterion: str,
+    *,
+    confirmed_by: str,
+    note: str = "",
+    confirmed_at: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Write the explicit teacher-confirmation event for M3/D3 (human review path only)."""
+    from datetime import datetime, timezone
+
+    short = _short_level(str(criterion))
+    if short not in TEACHER_CONFIRMABLE:
+        raise ValueError(f"teacher confirmation applies to {sorted(TEACHER_CONFIRMABLE)}, not {criterion!r}")
+    who = str(confirmed_by or "").strip()
+    if not who:
+        raise ValueError("confirmed_by (the reviewing teacher) is required")
+    record = {
+        "confirmed": True,
+        "confirmed_by": who,
+        "confirmed_at": confirmed_at
+        or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "note": str(note or "")[:500],
+    }
+    grading_result.setdefault("teacher_confirmations", {})[short] = record
+    return record
+
+
 class BTECCriterionMapper:
     """Map EvidencePackage / gameplay verification to per-criterion gate decisions."""
 
@@ -406,6 +474,7 @@ class BTECCriterionMapper:
         engine_id: Optional[str] = None,
         student_text: str = "",
         code_diff: Optional[Dict[str, Any]] = None,
+        l5_playtest_completed: bool = False,
     ) -> Dict[str, Any]:
         from app.gameplay_verifier import calculate_l4_level
 
@@ -484,6 +553,10 @@ class BTECCriterionMapper:
             reason = ""
             reason_ar = ""
 
+            if rule.criterion in TEACHER_CONFIRMABLE:
+                # Two independent facts — never inferred from one another.
+                chain.append(f"l5_playtest_completed={bool(l5_playtest_completed)}")
+                chain.append(f"teacher_confirmation={'recorded' if confirmed else 'missing'}")
             if rule.criterion == "M3":
                 m3_diff = _code_diff_gate_view(code_diff)
                 chain.extend(m3_diff["chain"])
@@ -491,11 +564,16 @@ class BTECCriterionMapper:
             if rule.teacher_confirmation_required:
                 open_gate = confirmed and l4_ok and runtime_ok
                 reason = "teacher_confirmation_required"
-                reason_ar = (
-                    "يتطلب تأكيد المعلم — لا يُفتح تلقائياً في PRO"
-                    if not confirmed
-                    else "تأكيد المعلم مسجّل"
-                )
+                if confirmed:
+                    reason_ar = "تأكيد المعلم الصريح مسجّل"
+                elif l5_playtest_completed:
+                    reason = "l5_completed_teacher_confirmation_missing"
+                    reason_ar = (
+                        "اكتمل اختبار اللعب L5 لكن لا يوجد تأكيد صريح من المعلم — "
+                        "اكتمال L5 لا يُعدّ تأكيداً (لا يُفتح تلقائياً)"
+                    )
+                else:
+                    reason_ar = "يتطلب تأكيد المعلم الصريح — لا يُفتح تلقائياً في PRO"
                 if open_gate and rule.criterion == "M3" and not m3_diff["ok"]:
                     # Improvement must be provable in V1→V2 code, not just claimed.
                     open_gate = False
@@ -811,6 +889,172 @@ def _code_diff_summary(code_diff: Optional[Dict[str, Any]]) -> Optional[Dict[str
     return {k: code_diff.get(k) for k in keep if k in code_diff}
 
 
+_GATE_ERROR_AUTHORITY = "RUNTIME_GATE_ERROR"
+_FAIL_CLOSED_SHORT = RUNTIME_GATED_SHORT | {"D3"}
+_GATE_ERROR_REASON_AR = (
+    "تعذّر تنفيذ بوابة التحقق من التشغيل بسبب خطأ داخلي، لذلك لا يُمنح هذا المعيار "
+    "(NOT VERIFIED) إلى أن تُعاد البوابة بنجاح أو تُراجع يدوياً."
+)
+_PRE_GATE_KEYS = ("achieved", "score", "verdict_status")
+
+
+def _row_state(row: Dict[str, Any]) -> Dict[str, Any]:
+    return {k: row.get(k) for k in _PRE_GATE_KEYS}
+
+
+def _clear_runtime_gate_error(grading_result: Dict[str, Any]) -> None:
+    """The gate ran again and succeeded: drop a stale error marker and its HOLD flags."""
+    err = grading_result.pop("runtime_gate_error", None)
+    if not isinstance(err, dict):
+        return
+    prior = err.get("prior") or {}
+    if grading_result.get("grade_decision_status") == "HOLD":
+        for key in ("grade_decision_status", "official_grade_provisional", "human_review_required",
+                    "grade_level_provisional"):
+            if prior.get(key) is None:
+                grading_result.pop(key, None)
+            else:
+                grading_result[key] = prior[key]
+
+
+def _looks_like_game_fail_safe(
+    grading_result: Dict[str, Any], artifact_inventory: Optional[Dict[str, Any]]
+) -> bool:
+    """Game detection for the error path: if detection itself fails, assume a game (fail closed)."""
+    try:
+        inv = artifact_inventory or grading_result.get("artifact_inventory") or {}
+        return is_game_submission(inv, submission_paths=_collect_paths(grading_result, inv))
+    except Exception:
+        return True
+
+
+def apply_runtime_gate_fail_closed(
+    grading_result: Dict[str, Any],
+    error: BaseException,
+    *,
+    artifact_inventory: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """The terminal seal itself failed → nothing runtime-dependent may stay awarded.
+
+    Called by the finalizer instead of swallowing the exception.  It never raises:
+    P5/P6/M3/D3 are demoted (they cannot be trusted from an earlier layer),
+    ``runtime_gate_error`` records why, the decision is put on HOLD/provisional for
+    human review, and the grade is recomputed from the demoted rows.  A later
+    successful gate run clears the marker and re-evaluates normally.
+    """
+    err: Dict[str, Any] = {
+        "version": GATE_VERSION,
+        "status": "NOT_VERIFIED",
+        "error_type": type(error).__name__,
+        "error": str(error)[:300],
+        "blocked": [],
+        "applied": False,
+    }
+    grading_result["runtime_gate_error"] = err
+    try:
+        criteria = grading_result.get("criteria_results")
+        if not isinstance(criteria, list) or not criteria:
+            return err
+        if not _looks_like_game_fail_safe(grading_result, artifact_inventory):
+            err["reason"] = "not_a_game_submission"
+            return err
+
+        for row in criteria:
+            if not isinstance(row, dict):
+                continue
+            short = _short_level(str(row.get("criteria_level") or ""))
+            if short not in _FAIL_CLOSED_SHORT:
+                continue
+            if short == "D3" and (row.get("achieved") or row.get("awardable")):
+                row.setdefault("pre_gate_state", _row_state(row))
+            if short == "D3":
+                row["dependency_blocked_by"] = "gate_error"
+            was_awarding = bool(row.get("achieved") or row.get("awardable"))
+            row["runtime_gate_block"] = True
+            _demote_row(row, _GATE_ERROR_REASON_AR)
+            row["awardable"] = False
+            row["achievement_authority"] = _GATE_ERROR_AUTHORITY
+            row["award_block_reason"] = "runtime_gate_error"
+            row["award_block_reason_ar"] = _GATE_ERROR_REASON_AR
+            if was_awarding:
+                err["blocked"].append(str(row.get("criteria_level")))
+
+        err["prior"] = {
+            key: grading_result.get(key)
+            for key in ("grade_decision_status", "official_grade_provisional",
+                        "human_review_required", "grade_level_provisional")
+        }
+        _recompute_grade(grading_result)
+        grading_result["grade_level_provisional"] = grading_result.get("grade_level")
+        grading_result["grade_decision_status"] = "HOLD"
+        grading_result["official_grade_provisional"] = True
+        grading_result["human_review_required"] = True
+        for stale_key in ("institutional_resolution", "grade_display_metrics",
+                          "btec_institutional_award", "expected_runtime_grade",
+                          "institutional_grade_display", "btec_grade_level"):
+            grading_result.pop(stale_key, None)
+        err["applied"] = True
+    except Exception as inner:  # pragma: no cover - the fallback must never raise
+        err["fallback_error"] = f"{type(inner).__name__}: {str(inner)[:200]}"
+    return err
+
+
+def _enforce_d3_dependency(criteria: Sequence[Dict[str, Any]]) -> List[str]:
+    """Row-level ``M3 blocked → D3 blocked`` (BTEC: Distinction needs every Merit).
+
+    D3 is not a runtime mechanic, so the gate never *awards* it; it only refuses to
+    leave D3 achieved while M3 is not.  The block is recorded on the D3 row
+    (``dependency_blocked_by`` + ``award_block_reason``) and reversed if M3 later
+    passes and the row had been achieved before the block.
+    """
+    rows = [r for r in criteria if isinstance(r, dict)]
+    m3 = next((r for r in rows if _short_level(str(r.get("criteria_level") or "")) == "M3"), None)
+    if m3 is None:
+        return []
+    m3_ok = bool(m3.get("achieved")) and m3.get("awardable") is not False and not m3.get("runtime_gate_block")
+    changes: List[str] = []
+    for row in rows:
+        if _short_level(str(row.get("criteria_level") or "")) != "D3":
+            continue
+        level = row.get("criteria_level")
+        blocked_by = row.get("dependency_blocked_by")
+        if not m3_ok:
+            reason_ar = "لم يتحقق C.M3 (أو حُجب)، ولا يُمنح C.D3 دون تحقق كل معايير Merit."
+            if row.get("achieved") or row.get("awardable"):
+                row.setdefault("pre_gate_state", _row_state(row))
+                _demote_row(row, reason_ar)
+                row["awardable"] = False
+                row["dependency_blocked_by"] = "M3"
+                row["award_block_reason"] = "dependency_m3_not_met"
+                row["award_block_reason_ar"] = reason_ar
+                changes.append(f"{level}:dependency_blocked_by_M3")
+            elif blocked_by == "gate_error":
+                # The gate recovered but M3 still is not awardable: the reason is now M3.
+                row["dependency_blocked_by"] = "M3"
+                row["award_block_reason"] = "dependency_m3_not_met"
+                row["award_block_reason_ar"] = reason_ar
+                if row.get("achievement_authority") == _GATE_ERROR_AUTHORITY:
+                    row.pop("achievement_authority", None)
+                row.pop("runtime_gate_block", None)
+        elif blocked_by in ("M3", "gate_error"):
+            # M3 passes now: lift only OUR block, restoring the state we recorded.
+            row.pop("dependency_blocked_by", None)
+            row.pop("award_block_reason", None)
+            row.pop("award_block_reason_ar", None)
+            row.pop("runtime_gate_block", None)
+            if row.get("achievement_authority") == _GATE_ERROR_AUTHORITY:
+                row.pop("achievement_authority", None)
+            prior = row.pop("pre_gate_state", None)
+            if isinstance(prior, dict) and prior.get("achieved"):
+                row["achieved"] = True
+                row["score"] = max(int(row.get("score") or 0), int(prior.get("score") or 0))
+                row["verdict_status"] = prior.get("verdict_status") or "pass"
+                row["awardable"] = True
+                row.pop("governance_adjustment_ar", None)
+                changes.append(f"{level}:dependency_block_lifted")
+    return changes
+
+
 def is_game_submission(
     inventory: Optional[Dict[str, Any]],
     *,
@@ -845,10 +1089,13 @@ def evaluate_runtime_evidence(
     *,
     submission_paths: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
-    """Return the canonical runtime-evidence verdict for a submission.
+    """Return the canonical runtime-evidence *path* verdict for a submission.
 
     Reuses ``assess_playtest_evidence`` (the established accepted-evidence union:
     L5 human playtest, gameplay video, runtime+gameplay validation, human review).
+
+    ``satisfied`` means "some runtime-related evidence exists".  It is not a claim
+    that the game was run, and not criterion awardability — see the module docstring.
     """
     inv = inventory or {}
     try:
@@ -904,6 +1151,7 @@ def apply_runtime_evidence_gate(
     if not isinstance(criteria, list) or not criteria:
         return {"applied": False, "reason": "no_criteria"}
 
+    _clear_runtime_gate_error(grading_result)
     inv = artifact_inventory or grading_result.get("artifact_inventory") or {}
     # The terminal gate is also called on report/read paths.  Resolve engine
     # adapter nesting here so a GameMaker GV stored under platform_analyses is
@@ -957,10 +1205,12 @@ def apply_runtime_evidence_gate(
             or inv.get("intake_relative_paths")
             or [],
         }
-        teacher_confirmed = {}
+        # L5 playtest completion and teacher confirmation are SEPARATE facts.  Only an
+        # explicit ``teacher_confirmations`` record (written by the human review path)
+        # confirms M3/D3; a completed playtest never does.
         l5 = inv.get("l5_human_playtest") or grading_result.get("l5_human_playtest") or {}
-        if l5.get("status") in ("complete_visual", "confirmed"):
-            teacher_confirmed = {"M3": True, "D3": True}
+        l5_playtest_completed = l5.get("status") == "complete_visual"
+        teacher_confirmed = read_teacher_confirmations(grading_result, inv)
         # The gameplay verifier owns direct and source+runtime proof; the
         # checklist owns applicability.  Pass both to the final criterion gate
         # so it evaluates every required feature instead of a mechanic count.
@@ -986,9 +1236,12 @@ def apply_runtime_evidence_gate(
             engine_id=verdict.get("engine_id"),
             student_text=str(grading_result.get("student_text") or ""),
             code_diff=code_diff,
+            l5_playtest_completed=l5_playtest_completed,
         )
-    except Exception:
-        automated_gate = {}
+    except Exception as gate_err:
+        # Fail closed: an empty verdict means no criterion passes (rows are demoted
+        # below).  Keep the reason visible instead of swallowing it.
+        automated_gate = {"error": f"{type(gate_err).__name__}: {str(gate_err)[:200]}"}
     criterion_pass = automated_gate.get("criterion_pass") or {}
 
     changes: List[str] = []
@@ -1059,6 +1312,8 @@ def apply_runtime_evidence_gate(
                 row.pop("engine_governance_engine", None)
                 if was_awarding:
                     changes.append(f"{row.get('criteria_level')}:required_feature_gate_block")
+
+    changes.extend(_enforce_d3_dependency(criteria))
 
     if changes:
         _recompute_grade(grading_result)
