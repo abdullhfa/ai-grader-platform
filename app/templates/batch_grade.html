@@ -1590,10 +1590,19 @@
         return parts.length > 1 ? parts.pop().toLowerCase() : '';
     }
 
+    // Build-output folders may hold the student's shipped game (bin/Release/game.exe).
+    // The file decides, not the folder name; the server re-checks with the shared
+    // is_primary_game_executable filter (installers / crash handlers stay ignored).
+    const BUILD_OUTPUT_DIRS = new Set(['bin', 'obj', 'debug', 'release', 'build', '_build', 'builds']);
+    const BUILD_EXEC_RE = /\.(exe|pck|x86_64|apk|aab)$|(^|\/)data\.win$/i;
+
     function pathMatchesIntakeIgnore(relPath) {
         const norm = String(relPath || '').replace(/\\/g, '/');
         const parts = norm.split('/').filter(Boolean).map(p => p.toLowerCase());
-        return parts.some(p => INTAKE_IGNORE_DIRS.has(p));
+        const hits = parts.filter(p => INTAKE_IGNORE_DIRS.has(p));
+        if (!hits.length) return false;
+        if (hits.every(p => BUILD_OUTPUT_DIRS.has(p)) && BUILD_EXEC_RE.test(norm)) return false;
+        return true;
     }
 
     function filterFilesForIntake(fileList) {

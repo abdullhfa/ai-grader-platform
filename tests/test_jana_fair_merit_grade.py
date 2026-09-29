@@ -113,7 +113,7 @@ def test_finalizer_restores_academic_m2_d2_and_clears_stale_ai_denials():
         assert "لم يتم تحقيق" not in by_level[level]["feedback"]
 
 
-def test_gamemaker_d3_is_verified_automatically_from_documents_plus_l4():
+def test_gamemaker_d3_never_opens_from_documents_plus_l4_alone():
     from app.runtime_evidence_gate import BTECCriterionMapper
 
     def row(level: str, rule: str) -> dict:
@@ -151,15 +151,17 @@ def test_gamemaker_d3_is_verified_automatically_from_documents_plus_l4():
         student_text=JANA_LIKE,
     )
 
-    assert result["criterion_pass"]["M3"] is True
-    assert result["criterion_pass"]["D3"] is True
+    assert result["criterion_pass"]["M3"] is False
+    assert result["criterion_pass"]["D3"] is False
     d3 = next(d for d in result["decisions"] if d["criterion"] == "D3")
-    assert d3["automatic"] is True
-    assert d3["teacher_confirmation_required"] is False
+    assert d3["automatic"] is False
+    assert d3["teacher_confirmation_required"] is True
+    # Advisory only: a strong documentary corpus is shown to the teacher but
+    # cannot open Distinction by itself.
     assert d3["ai_academic_verified"] is True
 
 
-def test_gamemaker_m3_opens_on_l4_partial_with_improvement_docs():
+def test_gamemaker_m3_does_not_open_on_l4_partial_with_improvement_docs():
     from app.runtime_evidence_gate import BTECCriterionMapper
 
     m3_row = {
@@ -206,5 +208,5 @@ def test_gamemaker_m3_opens_on_l4_partial_with_improvement_docs():
         engine_id="gamemaker",
         student_text=JANA_LIKE,
     )
-    assert result["criterion_pass"]["M3"] is True
+    assert result["criterion_pass"]["M3"] is False
     assert result["criterion_pass"]["D3"] is False

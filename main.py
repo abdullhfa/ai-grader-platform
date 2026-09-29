@@ -7813,9 +7813,23 @@ async def batch_grade(
         _INTAKE_EXTENSIONS = _ALL_EXTENSIONS
 
         def _is_in_skip_dir(filepath: str) -> bool:
-            """Check if file is inside a build/system directory."""
+            """Check if file is inside a build/system directory.
+
+            A game executable inside a build-output folder (bin/, obj/, Release/…)
+            is submission evidence and is never skipped on the folder name alone.
+            """
             parts = Path(filepath).parts
-            return any(p.lower() in _SKIP_DIRS for p in parts)
+            hits = [p.lower() for p in parts if p.lower() in _SKIP_DIRS]
+            if not hits:
+                return False
+            from app.project_intelligence.submission_intake import (
+                BUILD_OUTPUT_DIR_NAMES,
+                is_build_executable_path,
+            )
+
+            if all(h in BUILD_OUTPUT_DIR_NAMES for h in hits) and is_build_executable_path(filepath):
+                return False
+            return True
 
         def _merge_intake_videos_from_display(
             all_arc: list,

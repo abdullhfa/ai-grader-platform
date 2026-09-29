@@ -27,19 +27,26 @@ from app.game_engine_signatures import (  # noqa: E402
     RUNNABLE_GAME_EXTENSIONS as _RUNNABLE_GAME_EXT,
     RUNNABLE_GAME_FILENAMES as _RUNNABLE_GAME_FILENAMES,
 )
+# Engine caches / VCS / temp trees: never descended into.
 _SKIP_DIRS = frozenset(
     {
         "monobleedingedge",
         "library",
         "temp",
-        "obj",
-        "bin",
         "node_modules",
         ".godot",
         ".import",
         "embedruntime",
+        ".git",
+        "__macosx",
     }
 )
+# Build-output folders: only game *executables* are evidence here (the folder name
+# alone must not hide ``bin/Release/game.exe``); other files inside stay ignored.
+_BUILD_NOISE_DIRS = frozenset({"bin", "obj"})
+_MAX_EXE_DISCOVERY = 64
+_MAX_WALK_ENTRIES = 40_000
+_MAX_WALK_DEPTH = 14
 
 _GDD_PATTERN = re.compile(
     r"gdd|game\s+design|وثيق[ةه]\s+(?:ب)?تصميم|تصميم\s+(?:إلكترونية\s+)?اللعبة",
@@ -151,37 +158,62 @@ def expand_submission_paths(
 
     has_code = any(Path(p).suffix.lower() in _CODE_EXT for p in out)
     has_exe = any(Path(p).suffix.lower() in _EXE_EXT for p in out)
-    if has_code and has_exe and len(out) >= 4:
-        return out
+    already_rich = has_code and has_exe and len(out) >= 4
 
     root = _bounded_submission_root(primary_path or (paths[0] if paths else ""))
     try:
         from app.godot_submission_utils import should_skip_grading_path
 
-        _max_expand = 400
-        for f in root.rglob("*"):
-            if len(out) >= _max_expand:
-                break
-            if not f.is_file():
+        walked = list(_walk_submission_files(root))
+
+        # Pass 1 — executables.  Always runs and is never capped by the generic
+        # file budget, so a large submission cannot push a game build out of the
+        # inventory (nor does an "already rich" path list hide a second build).
+        exes_added = 0
+        for f in walked:
+            ext = f.suffix.lower()
+            if ext not in _EXE_EXT or f.name.startswith("~$"):
                 continue
+            if should_skip_grading_path(f):
+                continue
+            if ext == ".exe" and "unitycrashhandler" in f.name.lower():
+                continue
+            if ext == ".exe":
+                try:
+                    from app.archive_extraction_utils import is_primary_game_executable
+
+                    if not is_primary_game_executable(str(f)):
+                        continue
+                except Exception:
+                    pass
+            rp = str(f.resolve())
+            if rp in seen:
+                continue
+            seen.add(rp)
+            out.append(rp)
+            exes_added += 1
+            if exes_added >= _MAX_EXE_DISCOVERY:
+                break
+
+        if already_rich:
+            return out
+
+        # Pass 2 — code / docs / media, bounded, and never from build-noise dirs.
+        _max_expand = 400
+        for f in walked:
+            if len(out) >= _max_expand + exes_added:
+                break
             if f.name.startswith("~$"):
                 continue
-            if any(part.lower() in _SKIP_DIRS for part in _relative_parts(f, root)):
+            rel_parts = [p.lower() for p in _relative_parts(f, root)]
+            if any(part in _BUILD_NOISE_DIRS for part in rel_parts):
                 continue
             if should_skip_grading_path(f):
                 continue
             ext = f.suffix.lower()
-            if ext in (_DOC_EXT | _CODE_EXT | _EXE_EXT | _MEDIA_EXT | _IMAGE_EXT):
-                if ext == ".exe" and "unitycrashhandler" in f.name.lower():
-                    continue
-                if ext == ".exe":
-                    try:
-                        from app.archive_extraction_utils import is_primary_game_executable
-
-                        if not is_primary_game_executable(str(f)):
-                            continue
-                    except Exception:
-                        pass
+            if ext in _EXE_EXT:
+                continue  # handled in pass 1
+            if ext in (_DOC_EXT | _CODE_EXT | _MEDIA_EXT | _IMAGE_EXT):
                 rp = str(f.resolve())
                 if rp not in seen:
                     seen.add(rp)
@@ -189,6 +221,27 @@ def expand_submission_paths(
     except OSError:
         pass
     return out
+
+
+def _walk_submission_files(root: Path):
+    """Bounded, pruned walk (skips engine caches instead of visiting them)."""
+    import os
+
+    seen_entries = 0
+    try:
+        base_depth = len(root.resolve().parts)
+    except OSError:
+        return
+    for dirpath, dirnames, filenames in os.walk(root):
+        depth = len(Path(dirpath).parts) - base_depth
+        dirnames[:] = [
+            d for d in dirnames if d.lower() not in _SKIP_DIRS and depth < _MAX_WALK_DEPTH
+        ]
+        for fn in filenames:
+            seen_entries += 1
+            if seen_entries > _MAX_WALK_ENTRIES:
+                return
+            yield Path(dirpath) / fn
 
 
 def _has_godot_export_bundle(paths: Sequence[str]) -> bool:

@@ -2415,6 +2415,7 @@ def assess_automated_l4_gate(
     criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
     engine_id: str | None = None,
     student_text: str = "",
+    code_diff: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Criterion-level automated L4 gate decisions (Option C policy)."""
     from app.runtime_evidence_gate import BTECCriterionMapper
@@ -2431,6 +2432,7 @@ def assess_automated_l4_gate(
         criteria_results=criteria_results,
         engine_id=engine_id,
         student_text=student_text,
+        code_diff=code_diff,
     )
 
 

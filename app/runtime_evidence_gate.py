@@ -246,7 +246,7 @@ _HIGHER_BAND_AI_MARKERS: Dict[str, tuple[str, ...]] = {
 def _assess_ai_academic_evidence(
     row: Optional[Dict[str, Any]], criterion: str, *, student_text: str = ""
 ) -> Dict[str, Any]:
-    """Verify higher-band academic evidence without relying on a human flag.
+    """Advisory academic-evidence check for higher bands (never opens a gate).
 
     Runtime proves that the prototype works.  This check independently requires
     the stored AI/deterministic rubric verdict plus traceable documentary evidence
@@ -337,6 +337,50 @@ def _assess_ai_academic_evidence(
     }
 
 
+_CODE_DIFF_REASON_AR = {
+    "not_evaluated": "لم يُقيَّم فرق الكود بين V1 وV2 — لا يُفتح C.M3 بلا دليل تحسين في الكود.",
+    "versions_not_found": "لم يُعثر على نسختين مميّزتين V1 وV2 — لا يمكن إثبات التحسين بالكود.",
+    "versions_not_separable": "تعذّر فصل V1 عن V2 بوضوح في ملفات الطالب — لا يمكن إثبات التحسين.",
+    "no_submission_root": "تعذّر تحديد مجلد ملفات الطالب لمقارنة النسخ.",
+    "no_code_change": "لا يوجد أي تغيير فعلي في الكود/الموارد بين V1 وV2 — لا تحسين قابل للإثبات.",
+    "no_claims_to_link": "يوجد فرق بين النسختين لكن لم تُرصد تحسينات معلنة يمكن ربطها به.",
+    "improvements_mostly_unsupported": (
+        "أغلب التحسينات المعلنة لا أثر لها في الكود بين V1 وV2 (Unsupported) — لا يُفتح C.M3."
+    ),
+    "error": "تعذّر إجراء مقارنة الكود بين V1 وV2 — لا يُفتح C.M3.",
+}
+
+
+def _code_diff_gate_view(code_diff: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Normalise the V1→V2 code-diff report into the M3 gate's ok/reason/chain."""
+    if not isinstance(code_diff, dict) or not code_diff.get("evaluated"):
+        status = "not_evaluated"
+        return {
+            "ok": False,
+            "reason": "m3_code_diff_not_evaluated",
+            "reason_ar": _CODE_DIFF_REASON_AR[status],
+            "chain": ["m3_code_diff=not_evaluated"],
+        }
+    status = str(code_diff.get("status") or "error")
+    ok = bool(code_diff.get("ok"))
+    chain = [
+        f"m3_code_diff={status}",
+        f"m3_code_diff_changes={int(code_diff.get('substantive_change_count') or 0)}",
+        f"m3_claims_supported={int(code_diff.get('supported_claims') or 0)}"
+        f"/{int(code_diff.get('claims_total') or 0)}",
+    ]
+    return {
+        "ok": ok,
+        "reason": "m3_code_diff_supported" if ok else f"m3_code_diff_{status}",
+        "reason_ar": (
+            "التحسين مثبت بفرق الكود بين V1 وV2"
+            if ok
+            else _CODE_DIFF_REASON_AR.get(status, _CODE_DIFF_REASON_AR["error"])
+        ),
+        "chain": chain,
+    }
+
+
 class BTECCriterionMapper:
     """Map EvidencePackage / gameplay verification to per-criterion gate decisions."""
 
@@ -361,6 +405,7 @@ class BTECCriterionMapper:
         criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
         engine_id: Optional[str] = None,
         student_text: str = "",
+        code_diff: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         from app.gameplay_verifier import calculate_l4_level
 
@@ -418,95 +463,32 @@ class BTECCriterionMapper:
                     chain.append(f"required:{req_id}=unverified")
 
             confirmed = bool(teacher_confirmed.get(rule.criterion))
-            required_l4 = rule.min_l4_level
-            if engine.startswith("gamemaker") and rule.criterion == "M3":
-                required_l4 = "L4_partial"
-            l4_ok = self._l4_satisfies(l4, required_l4)
+            l4_ok = self._l4_satisfies(l4, rule.min_l4_level)
             test_ok = test_doc_entries >= rule.min_test_doc_entries
             runtime_ok = functional_smoke_pass or gameplay_entered or movement
-            gamemaker_ai_higher_band = engine.startswith("gamemaker") and rule.criterion in {
-                "M3",
-                "D3",
-            }
+            # Uniform governance: every engine (GameMaker included) follows the same
+            # policy.  Higher bands are never opened by an automatic AI/regex
+            # composite; M3/D3 need explicit human confirmation on top of runtime.
+            effective_automatic = rule.automatic
+            effective_teacher_required = rule.teacher_confirmation_required
+            # Advisory only: shown to the teacher, never opens a gate by itself.
             academic = (
                 _assess_ai_academic_evidence(
                     criteria_by_short.get(rule.criterion),
                     rule.criterion,
                     student_text=student_text,
                 )
-                if gamemaker_ai_higher_band
+                if rule.criterion in {"M3", "D3"}
                 else {"verified": False, "confidence": 0.0, "checks": {}, "marker_hits": []}
             )
-            effective_automatic = rule.automatic or gamemaker_ai_higher_band
-            effective_teacher_required = (
-                rule.teacher_confirmation_required and not gamemaker_ai_higher_band
-            )
+            reason = ""
+            reason_ar = ""
 
-            if gamemaker_ai_higher_band:
-                # GameMaker higher bands are decided by a composite automated proof:
-                # full runtime/gameplay, a test record, and the AI academic evidence.
-                test_ok = test_doc_entries >= max(1, rule.min_test_doc_entries)
-                if required_features.get("available"):
-                    prerequisite_ok = bool(
-                        criterion_pass.get("P5") is True
-                        and criterion_pass.get("P6") is True
-                        and (
-                            criterion_pass.get("M3") is True
-                            if rule.criterion == "D3"
-                            else True
-                        )
-                    )
-                else:
-                    # Compatibility for snapshots created before per-feature
-                    # requirement evidence existed.  New grading runs always
-                    # carry the checklist/package and use the strict chain.
-                    prerequisite_ok = (
-                        criterion_pass.get("M3") is True
-                        if rule.criterion == "D3"
-                        else True
-                    )
-                documented_m3 = False
-                if rule.criterion == "M3":
-                    from app.pro_evidence_signals import text_has_improvement_from_testing
+            if rule.criterion == "M3":
+                m3_diff = _code_diff_gate_view(code_diff)
+                chain.extend(m3_diff["chain"])
 
-                    documented_m3 = text_has_improvement_from_testing(
-                        student_text or ""
-                    ) and len(student_text or "") > 350
-                academic_ok = bool(academic.get("verified")) or documented_m3
-                open_gate = bool(
-                    l4_ok
-                    and runtime_ok
-                    and test_ok
-                    and academic_ok
-                    and prerequisite_ok
-                )
-                chain.extend(
-                    [
-                        f"ai_academic_verified={bool(academic.get('verified'))}",
-                        f"ai_verification_confidence={academic.get('confidence', 0.0):.2f}",
-                        f"test_document_verified={test_ok}",
-                        f"prerequisite_verified={prerequisite_ok}",
-                    ]
-                )
-                if open_gate:
-                    reason = "automatic_ai_runtime_composite"
-                    reason_ar = (
-                        "تحقق آلي كامل: تحليل أكاديمي بالذكاء الاصطناعي + "
-                        "تشغيل GameMaker فعلي L4 + سجل اختبار"
-                    )
-                elif not l4_ok or not runtime_ok:
-                    reason = "automated_runtime_evidence_insufficient"
-                    reason_ar = "لم تكفِ أدلة تشغيل GameMaker الآلية لهذا المعيار"
-                elif not test_ok:
-                    reason = "automated_test_evidence_insufficient"
-                    reason_ar = "لم يرصد النظام سجل اختبار كافياً للتحقق الآلي"
-                elif not prerequisite_ok:
-                    reason = "automated_prerequisite_not_met"
-                    reason_ar = "لم يتحقق C.M3 آلياً، لذلك لا يمكن فتح C.D3"
-                else:
-                    reason = "automated_academic_evidence_insufficient"
-                    reason_ar = "لم تستوفِ الأدلة الأكاديمية شروط التحقق الآلي لهذا المعيار"
-            elif rule.teacher_confirmation_required:
+            if rule.teacher_confirmation_required:
                 open_gate = confirmed and l4_ok and runtime_ok
                 reason = "teacher_confirmation_required"
                 reason_ar = (
@@ -514,6 +496,15 @@ class BTECCriterionMapper:
                     if not confirmed
                     else "تأكيد المعلم مسجّل"
                 )
+                if open_gate and rule.criterion == "M3" and not m3_diff["ok"]:
+                    # Improvement must be provable in V1→V2 code, not just claimed.
+                    open_gate = False
+                    reason = m3_diff["reason"]
+                    reason_ar = m3_diff["reason_ar"]
+                if open_gate and rule.criterion == "D3" and not criterion_pass.get("M3"):
+                    open_gate = False
+                    reason = "prerequisite_m3_not_met"
+                    reason_ar = "لم يتحقق C.M3 (تحسين مثبت بالكود والتشغيل)، لذلك لا يُفتح C.D3"
             else:
                 open_gate = l4_ok and runtime_ok and test_ok
                 if rule.criterion == "P5":
@@ -568,7 +559,7 @@ class BTECCriterionMapper:
             "criterion_pass": criterion_pass,
             "decisions": [d.to_dict() for d in decisions],
             "engine_id": engine or None,
-            "higher_band_verification": "automated_ai" if engine.startswith("gamemaker") else "policy_default",
+            "higher_band_verification": "policy_default",
             "required_feature_verification": required_features,
             "summary_ar": (
                 f"L4 آلي ({l4}) — ميكانيكا={mechanics} لقطات={shots}"
@@ -691,22 +682,23 @@ def _promote_l4_gate_row(
         if short in {"P5", "P6"}:
             row["achievement_authority"] = "RUNTIME_VALIDATION"
     if short in {"M3", "D3"}:
-        row["achievement_authority"] = "AI_RUNTIME_COMPOSITE"
+        # Higher bands open only after human L5 confirmation + runtime (+ for M3
+        # a provable V1→V2 code diff).  They are never an AI/regex composite.
+        row["achievement_authority"] = "HUMAN_CONFIRMED_RUNTIME_GATE"
         row["ai_verification"] = {
-            "status": "verified",
-            "automatic": True,
+            "status": "advisory_only",
+            "automatic": False,
             "human_review_required": False,
             "confidence": float((decision or {}).get("ai_verification_confidence") or 0.0),
-            "method": "academic_ai_plus_gamemaker_l4_runtime",
+            "method": "human_l5_confirmation_plus_l4_runtime",
         }
         academic_snapshot = row.get("academic_snapshot")
         if isinstance(academic_snapshot, dict):
             academic_snapshot["human_review_required"] = {
                 "required": False,
                 "severity": "none",
-                "reasons": ["resolved_by_automated_ai_runtime_composite"],
+                "reasons": ["resolved_by_human_l5_confirmation_plus_runtime"],
             }
-            academic_snapshot["review_confidence"] = 1.0
     # Engine governance runs before the terminal runtime seal.  Once the
     # criterion's L4 + document requirements pass, its earlier temporary hold
     # is stale and must not leak into the report beside an Achieved verdict.
@@ -722,15 +714,13 @@ def _promote_l4_gate_row(
         )
     elif short == "M3":
         row["feedback"] = (
-            "تحقق C.M3 آلياً دون تدخل بشري: أكد تحليل الذكاء الاصطناعي فعالية "
-            "العرض والتوثيق، وأثبت تشغيل GameMaker بمستوى L4_full عمل النموذج "
-            "الأولي والميكانيكا، مع وجود سجل اختبار مرتبط."
+            "تحقق C.M3 بعد تأكيد المعلم/الاختبار البشري L5: أُثبت تشغيل اللعبة بمستوى "
+            "L4_full وتحسين موثّق قابل للإثبات بفرق الكود بين V1 وV2."
         )
     elif short == "D3":
         row["feedback"] = (
-            "تحقق C.D3 آلياً دون تدخل بشري: أكد تحليل الذكاء الاصطناعي أن العرض "
-            "مقنع وشامل ويتضمن تحليلاً نقدياً وتبريراً مدعوماً بالبيانات، وأثبت "
-            "تشغيل GameMaker بمستوى L4_full فعالية النموذج الأولي."
+            "تحقق C.D3 بعد تأكيد المعلم/الاختبار البشري L5 وتحقق C.M3، مع إثبات "
+            "تشغيل اللعبة بمستوى L4_full."
         )
     else:
         row["feedback"] = (
@@ -778,6 +768,47 @@ def _collect_paths(
             if isinstance(val, list):
                 pool.extend(str(p) for p in val if p)
     return pool
+
+
+def _compute_m3_code_diff(
+    grading_result: Dict[str, Any],
+    criteria: Sequence[Dict[str, Any]],
+    submission_paths: Sequence[str],
+) -> Optional[Dict[str, Any]]:
+    """V1→V2 code-diff evidence, computed only when a C.M3 row exists.
+
+    Any failure is reported as an error status (M3 stays blocked) — never skipped.
+    """
+    has_m3 = any(
+        isinstance(r, dict) and _short_level(str(r.get("criteria_level") or "")) == "M3"
+        for r in criteria
+    )
+    if not has_m3:
+        return None
+    cached = grading_result.get("m3_code_diff")
+    if isinstance(cached, dict) and cached.get("evaluated"):
+        return cached
+    try:
+        from app.version_code_diff import evaluate_m3_code_diff
+
+        diff = evaluate_m3_code_diff(
+            submission_paths, str(grading_result.get("student_text") or "")
+        )
+    except Exception as err:  # pragma: no cover - defensive
+        diff = {"evaluated": True, "ok": False, "status": "error", "error": str(err)}
+    grading_result["m3_code_diff"] = diff
+    return diff
+
+
+def _code_diff_summary(code_diff: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not isinstance(code_diff, dict):
+        return None
+    keep = (
+        "version", "evaluated", "ok", "status", "v1_root", "v2_root",
+        "substantive_change_count", "claims_total", "supported_claims",
+        "supported_ratio", "unsupported_claims",
+    )
+    return {k: code_diff.get(k) for k in keep if k in code_diff}
 
 
 def is_game_submission(
@@ -912,6 +943,7 @@ def apply_runtime_evidence_gate(
         "functional_smoke"
     ) or {}
     automated_gate: Dict[str, Any] = {}
+    code_diff = _compute_m3_code_diff(grading_result, criteria, submission_paths)
     try:
         from app.gameplay_verifier import (
             _test_document_present,
@@ -953,6 +985,7 @@ def apply_runtime_evidence_gate(
             criteria_results=criteria,
             engine_id=verdict.get("engine_id"),
             student_text=str(grading_result.get("student_text") or ""),
+            code_diff=code_diff,
         )
     except Exception:
         automated_gate = {}
@@ -1054,6 +1087,7 @@ def apply_runtime_evidence_gate(
         "gated_criteria": sorted(RUNTIME_GATED_SHORT),
         "changes": changes,
         "automated_l4_gate": automated_gate,
+        "m3_code_diff": _code_diff_summary(code_diff),
         "summary_ar": verdict.get("summary_ar"),
     }
     grading_result["runtime_evidence_gate"] = report
