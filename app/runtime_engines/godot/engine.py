@@ -155,8 +155,21 @@ class GodotRuntimeEngine(RuntimeEngine):
             return
 
         if not executable and not pck_path:
+            import shutil as _shutil
+
+            from app.game_verification_policy import _COPY_IGNORE, register_temporary_build_dir
+
+            tmp_build_root = session.workspace / "_tmp_build"
+            register_temporary_build_dir(session.signals, tmp_build_root)
+            export_project = tmp_build_root / "project"
+            try:
+                if export_project.exists():
+                    _shutil.rmtree(export_project, ignore_errors=True)
+                _shutil.copytree(project_root, export_project, ignore=_COPY_IGNORE)
+            except OSError:
+                export_project = project_root  # fallback: export in place
             export_result = run_godot_export(
-                project_root,
+                export_project,
                 timeout_seconds=min(timeout_seconds * 2, 300),
             )
             session.signals["export_attempt"] = export_result

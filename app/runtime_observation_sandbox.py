@@ -6,6 +6,8 @@ Output: runtime_signal_graph → criterion mapping → grading adjudication supp
 """
 from __future__ import annotations
 
+import os
+
 import re
 import struct
 import subprocess
@@ -1220,6 +1222,17 @@ def build_runtime_signal_graph(analyses: List[Dict[str, Any]]) -> Dict[str, Any]
     }
 
 
+def _submission_root_for(paths: List[Path]) -> Optional[Path]:
+    """Common folder of all submitted files (used for source scans/builds)."""
+    parents = [str((p.parent if p.is_file() else p).resolve()) for p in paths if p.exists()]
+    if not parents:
+        return None
+    try:
+        return Path(os.path.commonpath(parents))
+    except ValueError:
+        return Path(parents[0])
+
+
 def observe_runtime_artifacts(
     submission_paths: Optional[List[str]] = None,
     *,
@@ -1228,6 +1241,76 @@ def observe_runtime_artifacts(
     batch_id: Optional[int] = None,
     student_name: str = "",
     grading_mode: str | None = None,
+    required_requirement_ids: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """
+    Game verification policy wrapper:
+      1. .exe supplied  -> run it and verify each requirement at runtime.
+      2. no .exe        -> build a TEMPORARY .exe (isolated copy), run it,
+                           then delete the temporary build (always, in finally).
+      3. every requirement the runtime could not confirm is re-checked in the
+         student's source code (file:line evidence, teacher confirmation).
+    """
+    from app.game_verification_policy import (
+        prepare_temporary_executable,
+        reconcile_game_requirements,
+    )
+
+    paths = [Path(p) for p in (submission_paths or []) if p]
+    files = [p for p in paths if p.is_file()]
+    root = _submission_root_for(paths)
+    apks, pcks, exes = _pick_primary_artifacts(files)
+
+    temp_build = None
+    if not apks and not pcks and not exes:
+        temp_build = prepare_temporary_executable(files, root)
+    try:
+        result = _observe_runtime_artifacts_core(
+            submission_paths,
+            enable_smoke_test=enable_smoke_test,
+            submission_id=submission_id,
+            batch_id=batch_id,
+            student_name=student_name,
+            grading_mode=grading_mode,
+            temp_build=temp_build,
+        )
+    finally:
+        if temp_build is not None:
+            temp_build.cleanup()
+
+    if temp_build is not None:
+        result["temporary_build"] = temp_build.to_dict()
+
+    # Layer 2 — source-code verification for requirements runtime could not prove.
+    try:
+        from app.game_source_mechanics import analyze_source_mechanics
+
+        source = analyze_source_mechanics(root, files=files)
+        result["source_mechanics"] = source
+        gv = result.get("gameplay_verification")
+        runtime_ran = bool(gv) or any(
+            a.get("type") == "exe" and a.get("attempted")
+            for a in (result.get("artifact_analyses") or [])
+            if isinstance(a, dict)
+        )
+        req_ids = list(required_requirement_ids or [])
+        result["requirement_verification"] = reconcile_game_requirements(
+            gv, source, required_ids=req_ids or None, runtime_attempted=runtime_ran
+        )
+    except Exception as exc:  # never break grading
+        result.setdefault("errors", []).append(f"requirement_verification_error:{exc}")
+    return result
+
+
+def _observe_runtime_artifacts_core(
+    submission_paths: Optional[List[str]] = None,
+    *,
+    enable_smoke_test: bool = True,
+    submission_id: Optional[int] = None,
+    batch_id: Optional[int] = None,
+    student_name: str = "",
+    grading_mode: str | None = None,
+    temp_build: Any = None,
 ) -> Dict[str, Any]:
     """
     Run L4 observation sandbox on executable artifacts in submission paths.
@@ -1237,23 +1320,13 @@ def observe_runtime_artifacts(
     apks, pcks, exes = _pick_primary_artifacts(files)
 
     gm_ide_build: Optional[Dict[str, Any]] = None
-    if not apks and not pcks and not exes:
-        # GameMaker source-only submission (.yyp + .gml, no exe): attempt a
-        # local headless build (Igor) so the game can still be smoke-tested.
-        yyp_candidates = [p for p in files if p.suffix.lower() == ".yyp"]
-        if yyp_candidates:
-            try:
-                import tempfile
-
-                from app.runtime_engines.gamemaker.ide_builder import build_from_source_with_install_pause
-
-                build_ws = Path(tempfile.mkdtemp(prefix="gm_build_"))
-                gm_ide_build = build_from_source_with_install_pause(yyp_candidates[0], build_ws)
-                built_exe = gm_ide_build.get("executable")
-                if gm_ide_build.get("success") and built_exe and Path(str(built_exe)).is_file():
-                    exes = [Path(str(built_exe))]
-            except Exception as exc:
-                gm_ide_build = {"attempted": False, "success": False, "reason": str(exc)}
+    if temp_build is not None:
+        # Source-only submission: the wrapper built a temporary .exe in an
+        # isolated workspace (deleted by the wrapper after this returns).
+        if getattr(temp_build, "engine", "") == "gamemaker":
+            gm_ide_build = dict(temp_build.info or {})
+        if not apks and not pcks and not exes and temp_build.success:
+            exes = [temp_build.executable]
 
     if not apks and not pcks and not exes:
         out_no_artifacts: Dict[str, Any] = {
@@ -1469,8 +1542,9 @@ def observe_runtime_artifacts(
 
 def format_observation_for_grading(observation: Dict[str, Any]) -> str:
     """Inject into AI / adjudication context."""
+    req_block = _format_requirement_verification(observation)
     if observation.get("status") != "completed":
-        return ""
+        return req_block
     lines = [
         "=== RUNTIME OBSERVATION SANDBOX (L4 — controlled) ===",
         observation.get("observation_summary_ar", ""),
@@ -1532,5 +1606,33 @@ def format_observation_for_grading(observation: Dict[str, Any]) -> str:
     )
     lines.append(
         "⛔ runtime screenshots prove only a captured visual surface/output; they do not prove mechanics, scoring, physics, win/loss, or user experience."
+    )
+    if req_block:
+        lines.append(req_block)
+    return "\n".join(lines)
+
+
+def _format_requirement_verification(observation: Dict[str, Any]) -> str:
+    """Per-requirement verdicts: runtime first, source-code fallback."""
+    rv = observation.get("requirement_verification") or {}
+    rows = rv.get("requirements") or []
+    if not rows:
+        return ""
+    lines = ["=== GAME REQUIREMENTS (runtime first, then source code) ==="]
+    tb = observation.get("temporary_build") or {}
+    if tb:
+        cleanup = tb.get("cleanup") or {}
+        lines.append(
+            f"temporary_build: engine={tb.get('engine')} success={tb.get('success')} "
+            f"deleted_after_run={cleanup.get('deleted')}"
+        )
+    for row in rows:
+        lines.append(f"- {row.get('summary_ar')}")
+        for ev in (row.get("code_evidence") or [])[:2]:
+            lines.append(
+                f"    code: {Path(str(ev.get('file', ''))).name}:{ev.get('line')} — {ev.get('snippet')}"
+            )
+    lines.append(
+        "⛔ code-only evidence = implemented but NOT observed running — teacher confirmation required."
     )
     return "\n".join(lines)

@@ -233,7 +233,11 @@ def _submission_tree_roots(submission_paths: Optional[List[str]]) -> set[Path]:
     for fp in _existing_paths(submission_paths):
         roots.add(fp.parent)
         for parent in fp.parents:
-            if parent.name.lower() in ("assets", "scripts", "script", "src") or parent.parent == parent:
+            if parent.parent == parent:
+                # Reached the filesystem root (e.g. C:\ or /) — never scan the
+                # whole disk; this previously made grading hang for minutes.
+                break
+            if parent.name.lower() in ("assets", "scripts", "script", "src"):
                 roots.add(parent)
                 break
     if not roots and submission_paths:

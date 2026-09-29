@@ -114,3 +114,7 @@ htmlcov/
 
 # Generated skill-pack archives (source: AI-Grader-SkillPack/ + build script)
 AI-Grader-SkillPack*.zip
+
+# Local graphify knowledge graph / AST cache (regenerable)
+graphify-out/
+

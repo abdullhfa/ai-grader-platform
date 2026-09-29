@@ -28,7 +28,6 @@ def verify_mechanics(
         gv.get("jump_detected")
         or trace.get("jump_detected")
         or "player_jump" in static_ids
-        or movement_ok
     )
     score_ok = bool(
         gv.get("score_change_detected")

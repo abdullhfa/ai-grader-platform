@@ -91,11 +91,16 @@ class UnityRuntimeEngine(RuntimeEngine):
             unity_bin = resolve_unity_binary()
             if unity_bin:
                 session.events.record("unity_build_started", source="unity_engine")
+                from app.game_verification_policy import register_temporary_build_dir
+
+                register_temporary_build_dir(
+                    session.signals, session.artifact_store.session_root / "_tmp_build"
+                )
                 build_result = run_unity_build(
                     UnityBuildConfig(
                         project_path=project_root,
                         unity_path=unity_bin,
-                        output_exe=session.artifact_store.session_root / "build" / "game.exe",
+                        output_exe=session.artifact_store.session_root / "_tmp_build" / "game.exe",
                         log_path=session.artifact_store.logs / "unity_build.log",
                         timeout_seconds=min(timeout_seconds * 10, 900),
                     )

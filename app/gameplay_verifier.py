@@ -1917,15 +1917,21 @@ def format_agent_play_summary_ar(level: str, verification: Optional[Dict[str, An
     if gv.get("gameplay_entered") is False:
         menu = gv.get("menu_navigation") or {}
         reason = str(menu.get("status") or menu.get("visual_state") or "unknown")
-        return f"لا — لم يدخل gameplay (إطلاق فقط)\nسبب: {reason}"
-    if gv.get("gameplay_entered") is not True:
-        l4 = str(gv.get("l4_level") or gv.get("automated_l4_level") or "")
-        if l4 in ("L4_full", "L4_partial"):
-            return f"لا — {l4} غير مؤكد (gameplay_entered غير مثبت)"
+        return f"لا — L3: لم يدخل gameplay (إطلاق فقط)\nسبب: {reason}"
     l4 = str(gv.get("l4_level") or gv.get("automated_l4_level") or "")
-    if gv.get("gameplay_entered") is True and l4 == "L4_full":
+    # calculate_l4_level() only yields L4_* when gameplay was entered, so a
+    # missing flag is not a contradiction; an explicit False is handled above.
+    if "gameplay_entered" in gv and gv.get("gameplay_entered") is not True and l4 in (
+        "L4_full",
+        "L4_partial",
+    ):
+        return f"لا — {l4} غير مؤكد (gameplay_entered غير مثبت)"
+    entered = gv.get("gameplay_entered") is True or (
+        "gameplay_entered" not in gv and l4 in ("L4_full", "L4_partial")
+    )
+    if entered and l4 == "L4_full":
         return "نعم — L4 كامل (حركة + قفز/نقاط — Gate مفتوح)"
-    if gv.get("gameplay_entered") is True and l4 == "L4_partial":
+    if entered and l4 == "L4_partial":
         return "نعم — L4 جزئي (ميكانيكا أساسية — Gate مفتوح لـ C.P5)"
     if (level == "L3" or l4 == "L3") and gv.get("gameplay_entered") is not True:
         return (

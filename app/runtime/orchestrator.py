@@ -215,6 +215,12 @@ def run_runtime_session(
             engine.cleanup(session)
         except Exception:
             pass
+        try:
+            from app.game_verification_policy import cleanup_session_temporary_builds
+
+            cleanup_session_temporary_builds(session)
+        except Exception:
+            logger.exception("Temporary build cleanup failed for %s", submission_key)
 
 
 def run_runtime_observation(

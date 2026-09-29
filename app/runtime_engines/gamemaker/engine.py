@@ -115,6 +115,9 @@ class GameMakerRuntimeEngine(RuntimeEngine):
             on_status=_on_status,
         )
         session.signals["gamemaker_ide_build"] = build
+        from app.game_verification_policy import register_temporary_build_dir
+
+        register_temporary_build_dir(session.signals, session.workspace / "gm_ide_build")
         print(
             f"🎮 [GAMEMAKER-BUILD-RESULT] submission={session.submission_key} "
             f"success={build.get('success')} reason={build.get('reason')!r} "
