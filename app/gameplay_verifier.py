@@ -2410,13 +2410,11 @@ def assess_automated_l4_gate(
     test_document_present: bool = False,
     test_doc_entries: int = 0,
     functional_smoke_pass: bool = False,
-    teacher_confirmed: Optional[Dict[str, bool]] = None,
     grading_mode: str | None = None,
     criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
     engine_id: str | None = None,
     student_text: str = "",
     code_diff: Optional[Dict[str, Any]] = None,
-    l5_playtest_completed: bool = False,
 ) -> Dict[str, Any]:
     """Criterion-level automated L4 gate decisions (Option C policy)."""
     from app.runtime_evidence_gate import BTECCriterionMapper
@@ -2428,13 +2426,11 @@ def assess_automated_l4_gate(
     return mapper.evaluate(
         gv,
         test_doc_entries=test_doc_entries,
-        teacher_confirmed=teacher_confirmed,
         functional_smoke_pass=functional_smoke_pass,
         criteria_results=criteria_results,
         engine_id=engine_id,
         student_text=student_text,
         code_diff=code_diff,
-        l5_playtest_completed=l5_playtest_completed,
     )
 
 

@@ -61,12 +61,11 @@ def _academic_row(level: str) -> dict:
     }
 
 
-def _evaluate(engine: str, *, confirmed=None, code_diff=None, **kw):
+def _evaluate(engine: str, *, code_diff=None, **kw):
     return BTECCriterionMapper().evaluate(
         dict(FULL_L4),
         test_doc_entries=2,
         functional_smoke_pass=True,
-        teacher_confirmed=confirmed,
         criteria_results=[_academic_row("C.M3"), _academic_row("C.D3")],
         engine_id=engine,
         student_text="قمت بتحسين سرعة الفأر وإضافة حماية مؤقتة بعد الاختبار. " * 20,
@@ -75,39 +74,52 @@ def _evaluate(engine: str, *, confirmed=None, code_diff=None, **kw):
     )
 
 
-# ── 1. GameMaker exception removed ───────────────────────────────────────────
+def _by(result):
+    return {d["criterion"]: d for d in result["decisions"]}
+
+
+# ── 1. GameMaker exception removed: same automated policy on every engine ─────
 @pytest.mark.parametrize("engine", ENGINES)
-def test_m3_and_d3_never_open_automatically_on_any_engine(engine):
+def test_m3_and_d3_are_closed_without_verifiable_evidence_on_any_engine(engine):
+    # L4_full runtime + strong academic text is NOT enough without a provable code diff.
     result = _evaluate(engine)
     assert result["criterion_pass"]["M3"] is False
     assert result["criterion_pass"]["D3"] is False
-    by = {d["criterion"]: d for d in result["decisions"]}
-    for key in ("M3", "D3"):
-        assert by[key]["automatic"] is False
-        assert by[key]["teacher_confirmation_required"] is True
-        assert by[key]["reason"] == "teacher_confirmation_required"
+    by = _by(result)
+    assert by["M3"]["reason"] == "m3_code_diff_not_evaluated"
+    assert by["D3"]["reason"] == "prerequisite_m3_not_met"
 
 
-def test_gamemaker_m3_does_not_pass_automatically():
-    result = _evaluate("gamemaker", code_diff=SUPPORTED_DIFF)
+def test_gamemaker_m3_does_not_pass_from_regex_and_l4_alone():
+    result = _evaluate("gamemaker")
     assert result["criterion_pass"]["M3"] is False
     assert result["higher_band_verification"] == "policy_default"
+    # the academic check stays visible as advice, but never opens the gate
+    assert _by(result)["M3"]["ai_academic_verified"] is True
 
 
-def test_gamemaker_d3_does_not_pass_automatically():
-    result = _evaluate("gamemaker", code_diff=SUPPORTED_DIFF)
-    assert result["criterion_pass"]["D3"] is False
+def test_gamemaker_d3_does_not_pass_without_m3():
+    assert _evaluate("gamemaker")["criterion_pass"]["D3"] is False
+
+
+def test_decisions_carry_no_human_confirmation_fields():
+    by = _by(_evaluate("gamemaker", code_diff=SUPPORTED_DIFF))
+    for decision in by.values():
+        assert "teacher_confirmation_required" not in decision
+        assert "teacher_confirmed" not in decision
+        assert decision["automatic"] is True
 
 
 def test_gamemaker_decisions_are_identical_to_other_engines():
     def shape(engine):
-        result = _evaluate(engine, confirmed={"M3": True, "D3": True}, code_diff=SUPPORTED_DIFF)
+        result = _evaluate(engine, code_diff=SUPPORTED_DIFF)
         return (
             result["criterion_pass"],
-            [(d["criterion"], d["open"], d["automatic"], d["teacher_confirmation_required"]) for d in result["decisions"]],
+            [(d["criterion"], d["open"], d["automatic"], d["reason"]) for d in result["decisions"]],
         )
 
     baseline = shape("unity")
+    assert baseline[0]["M3"] is True and baseline[0]["D3"] is True
     for engine in ("gamemaker", "godot", "scratch"):
         assert shape(engine) == baseline
 
@@ -118,7 +130,6 @@ def test_gamemaker_m3_needs_full_l4_like_other_engines():
         partial,
         test_doc_entries=2,
         functional_smoke_pass=True,
-        teacher_confirmed={"M3": True},
         criteria_results=[_academic_row("C.M3")],
         engine_id="gamemaker",
         code_diff=SUPPORTED_DIFF,
@@ -137,9 +148,9 @@ def test_gamemaker_m3_needs_full_l4_like_other_engines():
     ],
 )
 def test_m3_is_blocked_without_v1_v2_code_evidence(diff):
-    result = _evaluate("gamemaker", confirmed={"M3": True, "D3": True}, code_diff=diff)
+    result = _evaluate("gamemaker", code_diff=diff)
     assert result["criterion_pass"]["M3"] is False
-    m3 = next(d for d in result["decisions"] if d["criterion"] == "M3")
+    m3 = _by(result)["M3"]
     assert m3["reason"].startswith("m3_code_diff_")
     assert any(c.startswith("m3_code_diff=") for c in m3["evidence_chain"])
     # Distinction can never outrun a blocked Merit.
@@ -147,19 +158,19 @@ def test_m3_is_blocked_without_v1_v2_code_evidence(diff):
 
 
 @pytest.mark.parametrize("engine", ENGINES)
-def test_m3_with_documented_code_diff_and_runtime_passes_to_assessment(engine):
-    result = _evaluate(engine, confirmed={"M3": True}, code_diff=SUPPORTED_DIFF)
+def test_m3_with_documented_code_diff_and_runtime_passes_automatically(engine):
+    result = _evaluate(engine, code_diff=SUPPORTED_DIFF)
     assert result["criterion_pass"]["M3"] is True
-    m3 = next(d for d in result["decisions"] if d["criterion"] == "M3")
-    assert m3["reason"] == "teacher_confirmation_required"  # human confirmation still recorded
+    m3 = _by(result)["M3"]
+    assert m3["automatic"] is True
     assert "m3_code_diff=supported" in m3["evidence_chain"]
+    assert "prerequisite_p5_p6=True" in m3["evidence_chain"]
 
 
 def test_m3_with_code_diff_but_without_runtime_stays_closed():
     result = BTECCriterionMapper().evaluate(
         {"gameplay_entered": False, "l4_level": "L3"},
         test_doc_entries=2,
-        teacher_confirmed={"M3": True},
         criteria_results=[_academic_row("C.M3")],
         engine_id="gamemaker",
         code_diff=SUPPORTED_DIFF,
@@ -167,10 +178,30 @@ def test_m3_with_code_diff_but_without_runtime_stays_closed():
     assert result["criterion_pass"]["M3"] is False
 
 
-def test_d3_needs_m3_even_when_confirmed():
-    blocked = _evaluate("unity", confirmed={"D3": True}, code_diff=None)
+def test_m3_needs_p5_and_p6_to_have_passed():
+    from app.runtime_evidence_gate import DEFAULT_GATE_RULES
+
+    only_higher = tuple(r for r in DEFAULT_GATE_RULES if r.criterion in {"M3", "D3"})
+    result = BTECCriterionMapper(rules=only_higher).evaluate(
+        dict(FULL_L4), test_doc_entries=2, functional_smoke_pass=True,
+        criteria_results=[_academic_row("C.M3")], engine_id="unity", code_diff=SUPPORTED_DIFF,
+    )
+    assert result["criterion_pass"]["M3"] is False
+    assert _by(result)["M3"]["reason"] == "prerequisite_p5_p6_not_met"
+
+
+def test_m3_needs_test_documentation():
+    result = BTECCriterionMapper().evaluate(
+        dict(FULL_L4), test_doc_entries=0, functional_smoke_pass=True,
+        criteria_results=[_academic_row("C.M3")], engine_id="unity", code_diff=SUPPORTED_DIFF,
+    )
+    assert result["criterion_pass"]["M3"] is False
+
+
+def test_d3_needs_m3():
+    blocked = _evaluate("unity", code_diff=None)
     assert blocked["criterion_pass"]["D3"] is False
-    opened = _evaluate("unity", confirmed={"M3": True, "D3": True}, code_diff=SUPPORTED_DIFF)
+    opened = _evaluate("unity", code_diff=SUPPORTED_DIFF)
     assert opened["criterion_pass"]["M3"] is True
     assert opened["criterion_pass"]["D3"] is True
 
@@ -302,7 +333,7 @@ def test_single_version_or_ambiguous_layout_never_opens_m3(tmp_path):
 
 
 # ── integration through the terminal gate ────────────────────────────────────
-def _gate_result(tmp_path: Path, monkeypatch, student_text: str, root: Path, teacher=None):
+def _gate_result(tmp_path: Path, monkeypatch, student_text: str, root: Path):
     rows = [
         {**_academic_row("C.P5"), "achieved": True, "score": 75},
         {**_academic_row("C.P6"), "achieved": True, "score": 75},
@@ -315,7 +346,6 @@ def _gate_result(tmp_path: Path, monkeypatch, student_text: str, root: Path, tea
         "gameplay_verification": dict(FULL_L4),
         "testing_evidence": {"status": "present", "entries": [{"t": 1}, {"t": 2}]},
         "assets_detected": {"word_pdf": True},
-        "l5_human_playtest": {"status": "complete_visual"},
     }
     grading = {
         "grading_mode": "deep",
@@ -325,11 +355,6 @@ def _gate_result(tmp_path: Path, monkeypatch, student_text: str, root: Path, tea
         "submission_paths": [str(doc)],
         "intake_relative_paths": ["Aim C.docx"],
     }
-    if teacher:
-        from app.runtime_evidence_gate import record_teacher_confirmation
-
-        for key in teacher:
-            record_teacher_confirmation(grading, key, confirmed_by="reviewer", note="checked V1→V2")
     monkeypatch.setattr(
         "app.runtime_evidence_gate.evaluate_runtime_evidence",
         lambda *_a, **_k: {
@@ -353,22 +378,17 @@ def test_terminal_gate_blocks_m3_when_improvements_are_unsupported(tmp_path, mon
     assert report["m3_code_diff"]["status"] == "improvements_mostly_unsupported"
 
 
-def test_terminal_gate_opens_m3_only_with_supported_code_diff_and_explicit_teacher_confirmation(
-    tmp_path, monkeypatch
-):
-    from app.runtime_evidence_gate import record_teacher_confirmation
-
+def test_terminal_gate_opens_m3_automatically_with_supported_code_diff(tmp_path, monkeypatch):
     root = _gamemaker_versions(tmp_path, v2_step="spd = 6;\nif (place_meeting(x, y, obj_wall)) { x -= spd; }\n")
     grading, report, by = _gate_result(
         tmp_path, monkeypatch, "بعد الاختبار قمت بزيادة سرعة الفأر spd في كود التحكم.", root,
-        teacher={"M3": True},
     )
     assert report["m3_code_diff"]["ok"] is True
     assert by["C.M3"]["achieved"] is True
-    assert by["C.M3"]["achievement_authority"] == "HUMAN_CONFIRMED_RUNTIME_GATE"
-    assert by["C.M3"]["ai_verification"]["automatic"] is False
-    assert grading["teacher_confirmations"]["M3"]["confirmed_by"] == "reviewer"
-    assert callable(record_teacher_confirmation)
+    assert by["C.M3"]["achievement_authority"] == "AUTOMATED_RUNTIME_GATE"
+    assert by["C.M3"]["ai_verification"]["automatic"] is True
+    assert by["C.M3"]["ai_verification"]["human_review_required"] is False
+    assert "teacher_confirmations" not in grading
 
 
 # ── 3. Executable discovery ──────────────────────────────────────────────────

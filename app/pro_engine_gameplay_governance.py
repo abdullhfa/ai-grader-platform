@@ -287,8 +287,8 @@ def assess_playtest_evidence(
       * ``gameplay_video_documented`` means a video was detected/analysed — it is
         documented evidence, not a validated run (``runtime_gameplay_validated``).
       * Awarding C.P5 / C.P6 / C.M3 still needs the per-criterion automated L4
-        verdict in ``runtime_evidence_gate.BTECCriterionMapper``; C.M3 also needs a
-        V1→V2 code diff and an explicit teacher confirmation.  A video-only or
+        verdict in ``runtime_evidence_gate.BTECCriterionMapper``; C.M3 also needs P5+P6
+        and a provable V1→V2 code diff (fully automated — no human confirmation).  A video-only or
         L5-only submission satisfies this function yet is not awardable.
     """
     inv = artifact_inventory or {}

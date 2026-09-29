@@ -539,8 +539,30 @@ def _resolve_root(paths: Sequence[str]) -> Optional[Path]:
     return None
 
 
-_CACHE: Dict[Tuple[str, str], Dict[str, Any]] = {}
+_CACHE: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
 _CACHE_MAX = 32
+
+
+def tree_signature(base: Path) -> str:
+    """Cheap fingerprint of the diff-relevant files (count + newest mtime + total size).
+
+    Part of the cache key so that new/changed evidence (e.g. a V2 uploaded later)
+    is never answered from a stale result.
+    """
+    count = 0
+    newest = 0
+    total = 0
+    for f in _iter_files(base):
+        if not _is_candidate(f):
+            continue
+        try:
+            st = f.stat()
+        except OSError:
+            continue
+        count += 1
+        newest = max(newest, int(st.st_mtime_ns))
+        total += st.st_size
+    return f"{count}:{newest}:{total}"
 
 
 def evaluate_m3_code_diff(
@@ -551,17 +573,23 @@ def evaluate_m3_code_diff(
 ) -> Dict[str, Any]:
     """Locate V1/V2, diff them, and link improvement claims to real changes.
 
-    The gate runs on every result/report read path, so identical inputs are cached.
+    The gate runs on every result/report read path, so identical inputs are cached;
+    the key includes a file-tree signature, so changed evidence is always re-read.
     """
     base = Path(root) if root else _resolve_root(paths)
-    key = (str(base), hashlib.sha1((student_text or "").encode("utf-8", "ignore")).hexdigest())
-    if base is not None and key in _CACHE:
+    if base is None or not Path(base).is_dir():
+        return _evaluate_m3_code_diff_uncached(None, student_text)
+    key = (
+        str(base),
+        hashlib.sha1((student_text or "").encode("utf-8", "ignore")).hexdigest(),
+        tree_signature(Path(base)),
+    )
+    if key in _CACHE:
         return _CACHE[key]
-    report = _evaluate_m3_code_diff_uncached(base, student_text)
-    if base is not None:
-        if len(_CACHE) >= _CACHE_MAX:
-            _CACHE.pop(next(iter(_CACHE)))
-        _CACHE[key] = report
+    report = _evaluate_m3_code_diff_uncached(Path(base), student_text)
+    if len(_CACHE) >= _CACHE_MAX:
+        _CACHE.pop(next(iter(_CACHE)))
+    _CACHE[key] = report
     return report
 
 

@@ -590,18 +590,19 @@ def test_gamemaker_l4_full_and_academic_evidence_do_not_open_cm3_or_cd3():
         engine_id="gamemaker",
     )
 
-    # Uniform governance: GameMaker gets no automatic AI/regex path to Merit or
-    # Distinction.  Runtime + academic text alone never open M3/D3 — a human L5
-    # confirmation (and, for M3, a provable V1→V2 code diff) is required.
+    # Uniform governance: GameMaker gets no AI/regex shortcut to Merit or Distinction.
+    # L4_full runtime + academic text alone never open M3/D3 — M3 also needs a provable
+    # V1→V2 code diff (none was supplied here), and D3 needs M3.  Fully automated:
+    # nothing waits on a human, the gate is simply closed (NOT_VERIFIED).
     assert result["criterion_pass"]["M3"] is False
     assert result["criterion_pass"]["D3"] is False
     decisions = {row["criterion"]: row for row in result["decisions"]}
-    assert decisions["M3"]["automatic"] is False
-    assert decisions["D3"]["automatic"] is False
-    assert decisions["M3"]["teacher_confirmation_required"] is True
-    assert decisions["D3"]["teacher_confirmation_required"] is True
-    assert decisions["M3"]["reason"] == "teacher_confirmation_required"
-    # The academic assessment stays visible to the teacher, but only as advice.
+    assert decisions["M3"]["automatic"] is True
+    assert decisions["D3"]["automatic"] is True
+    assert "teacher_confirmation_required" not in decisions["M3"]
+    assert decisions["M3"]["reason"] == "m3_code_diff_not_evaluated"
+    assert decisions["D3"]["reason"] == "prerequisite_m3_not_met"
+    # The academic assessment stays visible in the report, but only as advice.
     assert decisions["M3"]["ai_academic_verified"] is True
     assert result["higher_band_verification"] == "policy_default"
 

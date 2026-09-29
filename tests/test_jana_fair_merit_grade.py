@@ -154,10 +154,11 @@ def test_gamemaker_d3_never_opens_from_documents_plus_l4_alone():
     assert result["criterion_pass"]["M3"] is False
     assert result["criterion_pass"]["D3"] is False
     d3 = next(d for d in result["decisions"] if d["criterion"] == "D3")
-    assert d3["automatic"] is False
-    assert d3["teacher_confirmation_required"] is True
-    # Advisory only: a strong documentary corpus is shown to the teacher but
-    # cannot open Distinction by itself.
+    assert d3["automatic"] is True
+    assert "teacher_confirmation_required" not in d3
+    assert d3["reason"] == "prerequisite_m3_not_met"
+    # Advisory only: a strong documentary corpus is reported but cannot open
+    # Distinction by itself — D3 needs a passed M3 (which needs a V1→V2 code diff).
     assert d3["ai_academic_verified"] is True
 
 

@@ -14,13 +14,15 @@ Evidence PATHS vs criterion AWARDABILITY (three distinct things — do not confl
        blanket "runtime not verified" block:
          1. Runtime PASS         — real launch + gameplay validation (engine sandbox)
          2. Gameplay video       — documented gameplay footage (detected/documented)
-         3. Human review (L5)    — teacher-verified / visually-corroborated playtest
-         4. Human review recorded
+         3. L5 playtest         — visually-corroborated playtest record (an evidence path)
+         4. Playtest review recorded
     b. Runtime gameplay *validated* — the engine sandbox actually launched and played
        the build.  A gameplay video is NOT this: it is documented evidence only.
     c. Criterion *awardability* (``BTECCriterionMapper.evaluate`` → ``criterion_pass``).
        C.P5 / C.P6 / C.M3 additionally need the per-criterion automated L4 verdict
-       (and C.P6 test documentation, C.M3 code-diff + explicit teacher confirmation).
+       (and C.P6 test documentation; C.M3 also P5+P6 and a provable V1→V2 code diff).
+       The whole gate is fully automated — no criterion waits on a human decision;
+       missing evidence simply means NOT_VERIFIED.
        A video-only or L5-only submission therefore satisfies (a) but is NOT awardable
        under (c).
 
@@ -141,32 +143,23 @@ class GateRule:
 
     criterion: str
     automatic: bool
-    teacher_confirmation_required: bool
     min_l4_level: str = "L4_partial"
     min_test_doc_entries: int = 0
 
 
+# Fully automated policy — no human confirmation anywhere.  Every criterion opens
+# only from verifiable automated evidence; missing evidence means NOT_VERIFIED.
+#   P5  L4_partial runtime + required gameplay features
+#   P6  L4_partial runtime + test documentation + required gameplay features
+#   M3  L4_full runtime + test documentation + required features + P5 & P6 passed
+#       + a provable V1→V2 code diff (see app/version_code_diff.py)
+#   D3  M3 passed + L4_full runtime (the documentary standard is judged by the
+#       academic layer; the gate only enforces the dependency and the runtime floor)
 DEFAULT_GATE_RULES: tuple[GateRule, ...] = (
-    GateRule("P5", automatic=True, teacher_confirmation_required=False, min_l4_level="L4_partial"),
-    GateRule(
-        "P6",
-        automatic=True,
-        teacher_confirmation_required=False,
-        min_l4_level="L4_partial",
-        min_test_doc_entries=2,
-    ),
-    GateRule(
-        "M3",
-        automatic=False,
-        teacher_confirmation_required=True,
-        min_l4_level="L4_full",
-    ),
-    GateRule(
-        "D3",
-        automatic=False,
-        teacher_confirmation_required=True,
-        min_l4_level="L4_full",
-    ),
+    GateRule("P5", automatic=True, min_l4_level="L4_partial"),
+    GateRule("P6", automatic=True, min_l4_level="L4_partial", min_test_doc_entries=2),
+    GateRule("M3", automatic=True, min_l4_level="L4_full", min_test_doc_entries=1),
+    GateRule("D3", automatic=True, min_l4_level="L4_full"),
 )
 
 
@@ -189,7 +182,6 @@ def build_gate_rules(grading_mode: str | None = None) -> tuple[GateRule, ...]:
                 GateRule(
                     rule.criterion,
                     automatic=rule.automatic,
-                    teacher_confirmation_required=rule.teacher_confirmation_required,
                     min_l4_level=rule.min_l4_level,
                     min_test_doc_entries=cp6_min,
                 )
@@ -204,8 +196,6 @@ class GateDecision:
     criterion: str
     open: bool
     automatic: bool
-    teacher_confirmation_required: bool
-    teacher_confirmed: bool = False
     reason: str = ""
     reason_ar: str = ""
     evidence_chain: List[str] = field(default_factory=list)
@@ -217,8 +207,6 @@ class GateDecision:
             "criterion": self.criterion,
             "open": self.open,
             "automatic": self.automatic,
-            "teacher_confirmation_required": self.teacher_confirmation_required,
-            "teacher_confirmed": self.teacher_confirmed,
             "reason": self.reason,
             "reason_ar": self.reason_ar,
             "evidence_chain": list(self.evidence_chain),
@@ -392,63 +380,6 @@ def _code_diff_gate_view(code_diff: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-TEACHER_CONFIRMABLE = frozenset({"M3", "D3"})
-
-
-def read_teacher_confirmations(*sources: Optional[Dict[str, Any]]) -> Dict[str, bool]:
-    """Explicit human confirmations for higher bands, read from ``teacher_confirmations``.
-
-    A confirmation only counts when it is an *event record* written by the human
-    review path (``record_teacher_confirmation``): ``confirmed is True`` and a
-    non-empty ``confirmed_by``.  A bare ``True`` and — importantly — a completed L5
-    playtest are never treated as a confirmation: L5 says the game was played,
-    not that the improvement/self-management standard was judged by a teacher.
-    """
-    out: Dict[str, bool] = {}
-    for src in sources:
-        records = (src or {}).get("teacher_confirmations")
-        if not isinstance(records, dict):
-            continue
-        for key, entry in records.items():
-            short = _short_level(str(key))
-            if (
-                short in TEACHER_CONFIRMABLE
-                and isinstance(entry, dict)
-                and entry.get("confirmed") is True
-                and str(entry.get("confirmed_by") or "").strip()
-            ):
-                out[short] = True
-    return out
-
-
-def record_teacher_confirmation(
-    grading_result: Dict[str, Any],
-    criterion: str,
-    *,
-    confirmed_by: str,
-    note: str = "",
-    confirmed_at: Optional[str] = None,
-) -> Dict[str, Any]:
-    """Write the explicit teacher-confirmation event for M3/D3 (human review path only)."""
-    from datetime import datetime, timezone
-
-    short = _short_level(str(criterion))
-    if short not in TEACHER_CONFIRMABLE:
-        raise ValueError(f"teacher confirmation applies to {sorted(TEACHER_CONFIRMABLE)}, not {criterion!r}")
-    who = str(confirmed_by or "").strip()
-    if not who:
-        raise ValueError("confirmed_by (the reviewing teacher) is required")
-    record = {
-        "confirmed": True,
-        "confirmed_by": who,
-        "confirmed_at": confirmed_at
-        or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
-        "note": str(note or "")[:500],
-    }
-    grading_result.setdefault("teacher_confirmations", {})[short] = record
-    return record
-
-
 class BTECCriterionMapper:
     """Map EvidencePackage / gameplay verification to per-criterion gate decisions."""
 
@@ -468,13 +399,11 @@ class BTECCriterionMapper:
         verification: Optional[Dict[str, Any]],
         *,
         test_doc_entries: int = 0,
-        teacher_confirmed: Optional[Dict[str, bool]] = None,
         functional_smoke_pass: bool = False,
         criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
         engine_id: Optional[str] = None,
         student_text: str = "",
         code_diff: Optional[Dict[str, Any]] = None,
-        l5_playtest_completed: bool = False,
     ) -> Dict[str, Any]:
         from app.gameplay_verifier import calculate_l4_level
 
@@ -491,7 +420,6 @@ class BTECCriterionMapper:
         )
         movement = bool(gv.get("player_movement_verified"))
         shots = int(gv.get("gameplay_window_screenshots") or 0)
-        teacher_confirmed = teacher_confirmed or {}
         evidence_pkg = gv.get("evidence_package") or {}
         req_results = evidence_pkg.get("results") or []
         required_features = _required_feature_verification(gv)
@@ -531,16 +459,10 @@ class BTECCriterionMapper:
                 for req_id in required_features.get("missing") or []:
                     chain.append(f"required:{req_id}=unverified")
 
-            confirmed = bool(teacher_confirmed.get(rule.criterion))
             l4_ok = self._l4_satisfies(l4, rule.min_l4_level)
             test_ok = test_doc_entries >= rule.min_test_doc_entries
             runtime_ok = functional_smoke_pass or gameplay_entered or movement
-            # Uniform governance: every engine (GameMaker included) follows the same
-            # policy.  Higher bands are never opened by an automatic AI/regex
-            # composite; M3/D3 need explicit human confirmation on top of runtime.
-            effective_automatic = rule.automatic
-            effective_teacher_required = rule.teacher_confirmation_required
-            # Advisory only: shown to the teacher, never opens a gate by itself.
+            # Advisory only: shown in the report, never opens a gate by itself.
             academic = (
                 _assess_ai_academic_evidence(
                     criteria_by_short.get(rule.criterion),
@@ -550,63 +472,55 @@ class BTECCriterionMapper:
                 if rule.criterion in {"M3", "D3"}
                 else {"verified": False, "confidence": 0.0, "checks": {}, "marker_hits": []}
             )
-            reason = ""
-            reason_ar = ""
 
-            if rule.criterion in TEACHER_CONFIRMABLE:
-                # Two independent facts — never inferred from one another.
-                chain.append(f"l5_playtest_completed={bool(l5_playtest_completed)}")
-                chain.append(f"teacher_confirmation={'recorded' if confirmed else 'missing'}")
+            open_gate = l4_ok and runtime_ok and test_ok
+            reason = "automatic_l4" if open_gate else "evidence_insufficient"
+            reason_ar = (
+                f"بوابة تلقائية — L4 {l4}" if open_gate else "أدلة L4 غير كافية لفتح البوابة"
+            )
+            if rule.criterion == "P5":
+                open_gate = open_gate and (movement or mechanics >= 1) and required_features_ok
+            elif rule.criterion in {"P6", "M3"}:
+                open_gate = open_gate and required_features_ok
+
             if rule.criterion == "M3":
                 m3_diff = _code_diff_gate_view(code_diff)
                 chain.extend(m3_diff["chain"])
+                prerequisite_ok = bool(criterion_pass.get("P5") and criterion_pass.get("P6"))
+                chain.append(f"prerequisite_p5_p6={prerequisite_ok}")
+                open_gate = open_gate and prerequisite_ok and m3_diff["ok"]
+            elif rule.criterion == "D3":
+                m3_ok = bool(criterion_pass.get("M3"))
+                chain.append(f"prerequisite_m3={m3_ok}")
+                open_gate = open_gate and m3_ok
 
-            if rule.teacher_confirmation_required:
-                open_gate = confirmed and l4_ok and runtime_ok
-                reason = "teacher_confirmation_required"
-                if confirmed:
-                    reason_ar = "تأكيد المعلم الصريح مسجّل"
-                elif l5_playtest_completed:
-                    reason = "l5_completed_teacher_confirmation_missing"
-                    reason_ar = (
-                        "اكتمل اختبار اللعب L5 لكن لا يوجد تأكيد صريح من المعلم — "
-                        "اكتمال L5 لا يُعدّ تأكيداً (لا يُفتح تلقائياً)"
-                    )
-                else:
-                    reason_ar = "يتطلب تأكيد المعلم الصريح — لا يُفتح تلقائياً في PRO"
-                if open_gate and rule.criterion == "M3" and not m3_diff["ok"]:
-                    # Improvement must be provable in V1→V2 code, not just claimed.
-                    open_gate = False
-                    reason = m3_diff["reason"]
-                    reason_ar = m3_diff["reason_ar"]
-                if open_gate and rule.criterion == "D3" and not criterion_pass.get("M3"):
-                    open_gate = False
-                    reason = "prerequisite_m3_not_met"
-                    reason_ar = "لم يتحقق C.M3 (تحسين مثبت بالكود والتشغيل)، لذلك لا يُفتح C.D3"
-            else:
-                open_gate = l4_ok and runtime_ok and test_ok
-                if rule.criterion == "P5":
-                    open_gate = open_gate and (movement or mechanics >= 1) and required_features_ok
-                elif rule.criterion == "P6":
-                    open_gate = open_gate and required_features_ok
-                reason = "automatic_l4" if open_gate else "evidence_insufficient"
-                reason_ar = (
-                    f"بوابة تلقائية — L4 {l4}"
-                    if open_gate
-                    else "أدلة L4 غير كافية لفتح البوابة"
-                )
-                if rule.min_test_doc_entries and not test_ok:
+            if not open_gate:
+                # Every closed gate is NOT_VERIFIED with its first concrete missing piece.
+                if not l4_ok or not runtime_ok:
+                    reason = "evidence_insufficient"
+                    reason_ar = "أدلة L4 غير كافية لفتح البوابة"
+                elif rule.min_test_doc_entries and not test_ok:
+                    reason = "test_documentation_insufficient"
                     reason_ar = (
                         f"يتطلب ≥{rule.min_test_doc_entries} مدخلات وثائق اختبار "
                         f"(موجود: {test_doc_entries})"
                     )
-                elif not required_features_ok:
+                elif rule.criterion in {"P5", "P6", "M3"} and not required_features_ok:
                     missing_labels = ", ".join(required_features.get("missing") or [])
                     reason = "required_gameplay_features_unverified"
                     reason_ar = (
                         "لم تثبت كل ميزات اللعبة المطلوبة بالتشغيل أو بتحقق الكود "
                         f"المقترن بالتشغيل: {missing_labels}"
                     )
+                elif rule.criterion == "M3" and not prerequisite_ok:
+                    reason = "prerequisite_p5_p6_not_met"
+                    reason_ar = "لم يتحقق C.P5/C.P6 آلياً، لذلك لا يُفتح C.M3"
+                elif rule.criterion == "M3":
+                    reason = m3_diff["reason"]
+                    reason_ar = m3_diff["reason_ar"]
+                elif rule.criterion == "D3":
+                    reason = "prerequisite_m3_not_met"
+                    reason_ar = "لم يتحقق C.M3 (تحسين مثبت بالكود والتشغيل)، لذلك لا يُفتح C.D3"
 
             if shots >= 1:
                 chain.append(f"gameplay_window_screenshots={shots}")
@@ -614,9 +528,7 @@ class BTECCriterionMapper:
             decision = GateDecision(
                 criterion=rule.criterion,
                 open=open_gate,
-                automatic=effective_automatic,
-                teacher_confirmation_required=effective_teacher_required,
-                teacher_confirmed=confirmed,
+                automatic=rule.automatic,
                 reason=reason,
                 reason_ar=reason_ar,
                 evidence_chain=chain,
@@ -760,22 +672,23 @@ def _promote_l4_gate_row(
         if short in {"P5", "P6"}:
             row["achievement_authority"] = "RUNTIME_VALIDATION"
     if short in {"M3", "D3"}:
-        # Higher bands open only after human L5 confirmation + runtime (+ for M3
-        # a provable V1→V2 code diff).  They are never an AI/regex composite.
-        row["achievement_authority"] = "HUMAN_CONFIRMED_RUNTIME_GATE"
+        # Higher bands open only from verifiable automated evidence (L4_full runtime,
+        # P5+P6, test documentation and — for M3 — a provable V1→V2 code diff).
+        # Never an AI/regex composite and never waiting on a human decision.
+        row["achievement_authority"] = "AUTOMATED_RUNTIME_GATE"
         row["ai_verification"] = {
             "status": "advisory_only",
-            "automatic": False,
+            "automatic": True,
             "human_review_required": False,
             "confidence": float((decision or {}).get("ai_verification_confidence") or 0.0),
-            "method": "human_l5_confirmation_plus_l4_runtime",
+            "method": "l4_full_runtime_plus_code_diff",
         }
         academic_snapshot = row.get("academic_snapshot")
         if isinstance(academic_snapshot, dict):
             academic_snapshot["human_review_required"] = {
                 "required": False,
                 "severity": "none",
-                "reasons": ["resolved_by_human_l5_confirmation_plus_runtime"],
+                "reasons": ["resolved_by_automated_runtime_gate"],
             }
     # Engine governance runs before the terminal runtime seal.  Once the
     # criterion's L4 + document requirements pass, its earlier temporary hold
@@ -792,13 +705,12 @@ def _promote_l4_gate_row(
         )
     elif short == "M3":
         row["feedback"] = (
-            "تحقق C.M3 بعد تأكيد المعلم/الاختبار البشري L5: أُثبت تشغيل اللعبة بمستوى "
-            "L4_full وتحسين موثّق قابل للإثبات بفرق الكود بين V1 وV2."
+            "تحقق C.M3 آلياً: أُثبت تشغيل اللعبة بمستوى L4_full مع تحقق C.P5/C.P6 "
+            "وسجل اختبار، وتحسين موثّق قابل للإثبات بفرق الكود بين V1 وV2."
         )
     elif short == "D3":
         row["feedback"] = (
-            "تحقق C.D3 بعد تأكيد المعلم/الاختبار البشري L5 وتحقق C.M3، مع إثبات "
-            "تشغيل اللعبة بمستوى L4_full."
+            "تحقق شرط C.D3 آلياً: تحقق C.M3 وثبت التشغيل بمستوى L4_full."
         )
     else:
         row["feedback"] = (
@@ -863,15 +775,23 @@ def _compute_m3_code_diff(
     )
     if not has_m3:
         return None
-    cached = grading_result.get("m3_code_diff")
-    if isinstance(cached, dict) and cached.get("evaluated"):
-        return cached
+    previous = grading_result.get("m3_code_diff")
     try:
         from app.version_code_diff import evaluate_m3_code_diff
 
         diff = evaluate_m3_code_diff(
             submission_paths, str(grading_result.get("student_text") or "")
         )
+        # Files gone for good (cleaned up after grading): keep the verdict that was
+        # already computed from them.  Any *present* evidence is always re-read, so
+        # new or changed files (a later V2, RESUME) are never answered from a stale copy.
+        if (
+            diff.get("status") == "no_submission_root"
+            and isinstance(previous, dict)
+            and previous.get("evaluated")
+            and previous.get("status") != "no_submission_root"
+        ):
+            diff = previous
     except Exception as err:  # pragma: no cover - defensive
         diff = {"evaluated": True, "ok": False, "status": "error", "error": str(err)}
     grading_result["m3_code_diff"] = diff
@@ -893,7 +813,7 @@ _GATE_ERROR_AUTHORITY = "RUNTIME_GATE_ERROR"
 _FAIL_CLOSED_SHORT = RUNTIME_GATED_SHORT | {"D3"}
 _GATE_ERROR_REASON_AR = (
     "تعذّر تنفيذ بوابة التحقق من التشغيل بسبب خطأ داخلي، لذلك لا يُمنح هذا المعيار "
-    "(NOT VERIFIED) إلى أن تُعاد البوابة بنجاح أو تُراجع يدوياً."
+    "(NOT VERIFIED): التحقق الآلي غير مكتمل، ويُعاد تقييمه تلقائياً عند نجاح البوابة."
 )
 _PRE_GATE_KEYS = ("achieved", "score", "verdict_status")
 
@@ -903,14 +823,14 @@ def _row_state(row: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _clear_runtime_gate_error(grading_result: Dict[str, Any]) -> None:
-    """The gate ran again and succeeded: drop a stale error marker and its HOLD flags."""
+    """The gate ran again and succeeded: drop a stale error marker and its NOT_VERIFIED flags."""
     err = grading_result.pop("runtime_gate_error", None)
     if not isinstance(err, dict):
         return
     prior = err.get("prior") or {}
-    if grading_result.get("grade_decision_status") == "HOLD":
-        for key in ("grade_decision_status", "official_grade_provisional", "human_review_required",
-                    "grade_level_provisional"):
+    if grading_result.get("grade_decision_status") == "NOT_VERIFIED":
+        for key in ("grade_decision_status", "official_grade_provisional",
+                    "evidence_required", "grade_level_provisional"):
             if prior.get(key) is None:
                 grading_result.pop(key, None)
             else:
@@ -938,8 +858,9 @@ def apply_runtime_gate_fail_closed(
 
     Called by the finalizer instead of swallowing the exception.  It never raises:
     P5/P6/M3/D3 are demoted (they cannot be trusted from an earlier layer),
-    ``runtime_gate_error`` records why, the decision is put on HOLD/provisional for
-    human review, and the grade is recomputed from the demoted rows.  A later
+    ``runtime_gate_error`` records why, the decision becomes NOT_VERIFIED /
+    provisional ("automated verification incomplete — evidence required"; no human
+    review is requested), and the grade is recomputed from the demoted rows.  A later
     successful gate run clears the marker and re-evaluates normally.
     """
     err: Dict[str, Any] = {
@@ -982,13 +903,13 @@ def apply_runtime_gate_fail_closed(
         err["prior"] = {
             key: grading_result.get(key)
             for key in ("grade_decision_status", "official_grade_provisional",
-                        "human_review_required", "grade_level_provisional")
+                        "evidence_required", "grade_level_provisional")
         }
         _recompute_grade(grading_result)
         grading_result["grade_level_provisional"] = grading_result.get("grade_level")
-        grading_result["grade_decision_status"] = "HOLD"
+        grading_result["grade_decision_status"] = "NOT_VERIFIED"
         grading_result["official_grade_provisional"] = True
-        grading_result["human_review_required"] = True
+        grading_result["evidence_required"] = "AUTOMATED_VERIFICATION_INCOMPLETE"
         for stale_key in ("institutional_resolution", "grade_display_metrics",
                           "btec_institutional_award", "expected_runtime_grade",
                           "institutional_grade_display", "btec_grade_level"):
@@ -1205,12 +1126,6 @@ def apply_runtime_evidence_gate(
             or inv.get("intake_relative_paths")
             or [],
         }
-        # L5 playtest completion and teacher confirmation are SEPARATE facts.  Only an
-        # explicit ``teacher_confirmations`` record (written by the human review path)
-        # confirms M3/D3; a completed playtest never does.
-        l5 = inv.get("l5_human_playtest") or grading_result.get("l5_human_playtest") or {}
-        l5_playtest_completed = l5.get("status") == "complete_visual"
-        teacher_confirmed = read_teacher_confirmations(grading_result, inv)
         # The gameplay verifier owns direct and source+runtime proof; the
         # checklist owns applicability.  Pass both to the final criterion gate
         # so it evaluates every required feature instead of a mechanic count.
@@ -1230,13 +1145,11 @@ def apply_runtime_evidence_gate(
             test_document_present=_test_document_present(inv_for_docs),
             test_doc_entries=count_test_document_entries(inv_for_docs),
             functional_smoke_pass=smoke.get("functional_smoke_pass") is True,
-            teacher_confirmed=teacher_confirmed,
             grading_mode=grading_result.get("grading_mode") or inv.get("grading_mode"),
             criteria_results=criteria,
             engine_id=verdict.get("engine_id"),
             student_text=str(grading_result.get("student_text") or ""),
             code_diff=code_diff,
-            l5_playtest_completed=l5_playtest_completed,
         )
     except Exception as gate_err:
         # Fail closed: an empty verdict means no criterion passes (rows are demoted
