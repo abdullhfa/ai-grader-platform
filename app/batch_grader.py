@@ -3878,9 +3878,9 @@ async def grade_batch_async(
 
             if not _mode_flags.get("skip_production_layers"):
                 try:
-                    from app.secondary_ai_review import run_secondary_review
+                    from app.independent_review import run_governed_secondary_review
 
-                    _review = run_secondary_review(
+                    _review = run_governed_secondary_review(
                         grading_result,
                         student_text=student_text or "",
                         grading_criteria=grading_criteria,
