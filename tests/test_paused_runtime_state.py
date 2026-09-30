@@ -33,6 +33,12 @@ def _uploads_in_tmp(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
 
 
+@pytest.fixture(autouse=True)
+def _launcher_available(monkeypatch):
+    """Default: the host can launch Windows exes; launcher tests override this."""
+    monkeypatch.setattr(deps, "can_launch_windows_exe", lambda: True)
+
+
 def _session(engine: str, root: Path) -> RuntimeSession:
     return RuntimeSession.create(engine, "stu", root)
 
@@ -347,3 +353,76 @@ def test_orchestrator_deletes_generated_build_even_when_play_fails(tmp_path, mon
     generated = result["signals"]["executable"]
     assert result["temp_artifacts"]
     assert not Path(generated).exists()
+
+
+# ── launcher preflight: exe present but host cannot launch it ────────────────
+def test_godot_exe_present_but_host_cannot_launch_pauses(tmp_path, monkeypatch):
+    root = tmp_path / "game"
+    root.mkdir()
+    (root / "project.godot").write_text("config_version=5\n")
+    (root / "P_03.exe").write_bytes(b"MZ" + b"\0" * 200)
+    (root / "P_03.pck").write_bytes(b"GDPC")
+    monkeypatch.setattr(deps, "can_launch_windows_exe", lambda: False)
+    monkeypatch.setattr(godot_engine, "resolve_godot_binary", lambda: tmp_path / "godot")
+    monkeypatch.setattr(
+        "app.runtime_observation_sandbox.smoke_test_windows_exe",
+        lambda *a, **k: pytest.fail("the exe must not be launched"),
+    )
+    s = _session("godot", root)
+    eng = godot_engine.GodotRuntimeEngine()
+    eng.prepare(s)
+    eng.execute(s, timeout_seconds=5)
+    assert s.status is SessionStatus.PAUSED
+    assert _blocker_codes(s) == [deps.WINDOWS_LAUNCHER_MISSING]
+
+
+def test_unity_exe_present_but_host_cannot_launch_pauses(tmp_path, monkeypatch):
+    proj = _unity_project(tmp_path / "CatRunner")
+    monkeypatch.setattr(deps, "can_launch_windows_exe", lambda: False)
+    s = _session("unity", proj)
+    s.signals["executable"] = str(tmp_path / "Game.exe")
+    s.signals["project_root"] = str(proj)
+    monkeypatch.setattr(
+        unity_engine, "run_unity_play_session", lambda *a, **k: pytest.fail("must not launch")
+    )
+    unity_engine.UnityRuntimeEngine().execute(s, timeout_seconds=5)
+    assert s.status is SessionStatus.PAUSED
+    assert _blocker_codes(s) == [deps.WINDOWS_LAUNCHER_MISSING]
+
+
+def test_unity_source_does_not_build_an_exe_the_host_cannot_run(tmp_path, monkeypatch):
+    proj = _unity_project(tmp_path / "CatRunner")
+    monkeypatch.setattr(deps, "can_launch_windows_exe", lambda: False)
+    monkeypatch.setattr(unity_engine, "resolve_unity_binary", lambda: tmp_path / "Unity")
+    monkeypatch.setattr(
+        unity_engine, "run_unity_build", lambda cfg: pytest.fail("must not build")
+    )
+    s = _session("unity", proj)
+    eng = unity_engine.UnityRuntimeEngine()
+    eng.prepare(s)
+    eng.execute(s, timeout_seconds=5)
+    assert _blocker_codes(s) == [deps.WINDOWS_LAUNCHER_MISSING]
+
+
+def test_launcher_pause_is_blocked_never_not_achieved():
+    rows = [_row("8/C.P5", block=True), _row("8/C.M3", block=True)]
+    blocker = {
+        "code": deps.WINDOWS_LAUNCHER_MISSING, "kind": "MISSING_DEPENDENCY",
+        "detail": "cannot launch", "resolvable_by": "install",
+    }
+    st = compute_assessment_state(_result(rows, blockers=[blocker], status="paused"))
+    assert st["state"] == "PAUSED" and not st["final_grade_allowed"]
+    assert set(st["decided"].values()) == {NOT_VERIFIED_BLOCKED}
+
+
+# ── gated: not a dependency, but never a final grade or a student failure ────
+@pytest.mark.parametrize("status", ["gated", "skipped"])
+def test_gated_or_skipped_run_is_never_final_or_not_achieved(status):
+    rows = [{**_row("8/C.P5", block=True), "score": 0}, {**_row("8/C.M3", block=True), "score": 0}]
+    grading = _result(rows, status=status)
+    finalize_grading_criteria_results(grading, artifact_inventory=grading["artifact_inventory"])
+    st = grading["assessment_state"]
+    assert st["state"] in ("PAUSED", "PROVISIONAL")
+    assert st["final_grade_allowed"] is False
+    assert NOT_ACHIEVED_BY_RUNTIME not in st["decided"].values()
+    assert grading["official_grade_provisional"] is True

@@ -122,6 +122,9 @@ class GodotRuntimeEngine(RuntimeEngine):
             deps.pause_for(session, deps.EXECUTABLE_MISSING)
             return
 
+        if has_runnable_exe and deps.pause_if_cannot_launch(session):
+            return
+
         if pck_path:
             pck = Path(pck_path)
             pck_smoke = run_godot_main_pack_smoke(
@@ -167,6 +170,8 @@ class GodotRuntimeEngine(RuntimeEngine):
             return
 
         if not executable and not pck_path:
+            if deps.pause_if_cannot_launch(session):
+                return  # do not export an exe this host cannot run
             build_dir_preexisted = (project_root / "build").exists()
             export_result = run_godot_export(
                 project_root,

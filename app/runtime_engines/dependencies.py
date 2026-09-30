@@ -15,6 +15,7 @@ UNITY_LICENSE_FAULT = "unity_license_or_activation_fault"
 GODOT_BINARY_MISSING = "godot_binary_missing"
 NODE_MISSING = "node_runtime_missing"
 EXECUTABLE_MISSING = "executable_not_found"
+WINDOWS_LAUNCHER_MISSING = "windows_exe_launcher_unavailable"
 
 # code -> (English detail for logs/UI, blocker kind, resolvable_by)
 BLOCKER_CATALOG: Dict[str, Tuple[str, str, str]] = {
@@ -44,12 +45,37 @@ BLOCKER_CATALOG: Dict[str, Tuple[str, str, str]] = {
         "MISSING_DEPENDENCY",
         "install",
     ),
+    WINDOWS_LAUNCHER_MISSING: (
+        "A Windows executable exists but this host cannot launch it "
+        "(Windows launcher unavailable); the game was not run.",
+        "MISSING_DEPENDENCY",
+        "install",
+    ),
     EXECUTABLE_MISSING: (
         "No executable or buildable project was submitted.",
         "MISSING_ARTIFACT",
         "upload",
     ),
 }
+
+
+def can_launch_windows_exe() -> bool:
+    """Launcher preflight: can THIS host actually start a Windows .exe?
+
+    The platform's launcher/input driver is Windows-only (Wine driving is a later
+    batch), so any other host cannot run the game.  "Cannot launch" must never be
+    read as "the game failed".
+    """
+    import sys
+
+    return sys.platform == "win32"
+
+
+def pause_if_cannot_launch(session) -> bool:
+    if can_launch_windows_exe():
+        return False
+    pause_for(session, WINDOWS_LAUNCHER_MISSING)
+    return True
 
 
 def pause_for(session, code: str) -> None:

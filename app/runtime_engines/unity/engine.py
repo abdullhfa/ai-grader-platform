@@ -98,6 +98,9 @@ class UnityRuntimeEngine(RuntimeEngine):
                 scene_count=scene_report.get("scene_count"),
             )
 
+        if executable and deps.pause_if_cannot_launch(session):
+            return
+
         if not executable and project_root:
             # Source only: the game must be built and RUN.  Missing toolchain is a
             # PAUSE (no verdict), never a silent fall back to static analysis.
@@ -108,6 +111,8 @@ class UnityRuntimeEngine(RuntimeEngine):
             if not unity_bin:
                 deps.pause_for(session, deps.UNITY_EDITOR_MISSING)
                 return
+            if deps.pause_if_cannot_launch(session):
+                return  # do not build an exe this host cannot run
             build_dir = session.artifact_store.session_root / "build"
             session.register_temp(build_dir)  # generated exe is deleted after grading
             session.events.record("unity_build_started", source="unity_engine")
