@@ -191,6 +191,8 @@ class UnityRuntimeEngine(RuntimeEngine):
             return
 
         observation = play_result.observation
+        if deps.pause_if_environment_fault(session, observation):
+            return
         session.signals["legacy_observation"] = observation
         session.signals["runtime_method"] = "unity_play_session_v2"
         session.signals["unity_observation"] = observation.get("unity_observation") or {}

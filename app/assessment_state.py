@@ -151,6 +151,20 @@ def _fingerprint(blockers: List[Dict[str, str]], decided: Dict[str, str], gradin
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:16]
 
 
+def submission_signature(paths: Any) -> str:
+    """Cheap fingerprint of the submitted files (size+mtime) — detects a new upload."""
+    from pathlib import Path
+
+    h = hashlib.sha256()
+    for raw in sorted(str(p) for p in (paths or [])):
+        try:
+            st = Path(raw).stat()
+            h.update(f"{raw}|{st.st_size}|{int(st.st_mtime)}".encode())
+        except OSError:
+            h.update(f"{raw}|missing".encode())
+    return h.hexdigest()[:16]
+
+
 def _parse_ts(value: Any) -> Optional[datetime]:
     try:
         ts = datetime.fromisoformat(str(value))
@@ -207,6 +221,7 @@ def compute_assessment_state(
         "final_grade_allowed": state == STATE_FINAL,
         "evidence_fingerprint": _fingerprint(blockers, decided, grading_result),
         "paused_since": paused_since,
+        "submission_signature": submission_signature(grading_result.get("submission_paths")),
         "grace_days": evidence_grace_days(),
     }
 

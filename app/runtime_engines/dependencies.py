@@ -16,6 +16,7 @@ GODOT_BINARY_MISSING = "godot_binary_missing"
 NODE_MISSING = "node_runtime_missing"
 EXECUTABLE_MISSING = "executable_not_found"
 WINDOWS_LAUNCHER_MISSING = "windows_exe_launcher_unavailable"
+EMULATOR_RUN_FAULT = "windows_emulator_run_fault"
 
 # code -> (English detail for logs/UI, blocker kind, resolvable_by)
 BLOCKER_CATALOG: Dict[str, Tuple[str, str, str]] = {
@@ -51,6 +52,13 @@ BLOCKER_CATALOG: Dict[str, Tuple[str, str, str]] = {
         "MISSING_DEPENDENCY",
         "install",
     ),
+    EMULATOR_RUN_FAULT: (
+        "The game could not be run reliably on this host's Windows emulator "
+        "(Wine); a crash inside the emulator is not a verdict on the student's game. "
+        "A native Windows or fully compatible host is required.",
+        "ENV_FAULT",
+        "install",
+    ),
     EXECUTABLE_MISSING: (
         "No executable or buildable project was submitted.",
         "MISSING_ARTIFACT",
@@ -59,25 +67,56 @@ BLOCKER_CATALOG: Dict[str, Tuple[str, str, str]] = {
 }
 
 
-def can_launch_windows_exe() -> bool:
-    """Launcher preflight: can THIS host actually start a Windows .exe?
+def launcher_status() -> dict:
+    """Can THIS host actually start a Windows .exe? ``{"ok": bool, "reason": str}``.
 
-    The platform's launcher/input driver is Windows-only (Wine driving is a later
-    batch), so any other host cannot run the game.  "Cannot launch" must never be
-    read as "the game failed".
+    Windows hosts launch natively.  Elsewhere the host must pass a *real* Wine
+    probe (a Windows process really starts on a virtual display) — Wine merely
+    being installed is not enough.  "Cannot launch" is never "the game failed".
     """
     import sys
 
-    return sys.platform == "win32"
+    if sys.platform == "win32":
+        return {"ok": True, "reason": "native windows host"}
+    from app.runtime_wine import probe_wine_launcher
+
+    return probe_wine_launcher()
+
+
+def can_launch_windows_exe() -> bool:
+    return bool(launcher_status().get("ok"))
 
 
 def pause_if_cannot_launch(session) -> bool:
     if can_launch_windows_exe():
         return False
-    pause_for(session, WINDOWS_LAUNCHER_MISSING)
+    reason = str(launcher_status().get("reason") or "")
+    detail, kind, resolvable_by = BLOCKER_CATALOG[WINDOWS_LAUNCHER_MISSING]
+    session.pause(
+        WINDOWS_LAUNCHER_MISSING,
+        f"{detail} [{reason}]" if reason else detail,
+        kind=kind,
+        resolvable_by=resolvable_by,
+    )
     return True
 
 
 def pause_for(session, code: str) -> None:
     detail, kind, resolvable_by = BLOCKER_CATALOG[code]
     session.pause(code, detail, kind=kind, resolvable_by=resolvable_by)
+
+
+def pause_if_environment_fault(session, observation) -> bool:
+    """A launcher/emulator fault means the game was not really run: PAUSE."""
+    fault = (observation or {}).get("environment_fault")
+    if not fault:
+        return False
+    detail, kind, resolvable_by = BLOCKER_CATALOG[EMULATOR_RUN_FAULT]
+    tail = str((observation or {}).get("wine_stderr_tail") or "").strip()[-200:]
+    session.pause(
+        EMULATOR_RUN_FAULT,
+        f"{detail} [{fault}{': ' + tail if tail else ''}]",
+        kind=kind,
+        resolvable_by=resolvable_by,
+    )
+    return True

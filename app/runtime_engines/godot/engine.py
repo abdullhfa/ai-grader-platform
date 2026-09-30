@@ -157,6 +157,8 @@ class GodotRuntimeEngine(RuntimeEngine):
                 },
                 grading_mode=_gm,
             )
+            if deps.pause_if_environment_fault(session, smoke):
+                return
             observation = build_godot_smoke_observation(
                 smoke,
                 pairing_meta=pairing_meta,
@@ -211,6 +213,8 @@ class GodotRuntimeEngine(RuntimeEngine):
                     },
                     grading_mode=_gm,
                 )
+                if deps.pause_if_environment_fault(session, smoke):
+                    return
                 observation = build_godot_smoke_observation(smoke, pairing_meta=pairing_meta)
                 _merge_observation(session, observation, "godot_exe_smoke")
                 return

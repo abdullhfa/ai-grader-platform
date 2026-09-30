@@ -346,9 +346,13 @@ async def _app_lifespan(_app: FastAPI):
             print(f"⚠️ [BATCH-RESUME] startup resume failed: {exc}")
 
     asyncio.create_task(_resume_batches_after_bind())
+    from app.auto_resume import run_auto_resume_loop
+
+    _auto_resume_task = asyncio.create_task(run_auto_resume_loop(_app.state.batch_progress))
     try:
         yield
     finally:
+        _auto_resume_task.cancel()
         stop_whatsapp_service()
 
 

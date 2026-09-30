@@ -1406,16 +1406,13 @@
                         <h4><i class="fa-solid fa-pause"></i> التصحيح متوقف مؤقتاً عند GameMaker</h4>
                         <p id="gameMakerPauseMessage">
                             لم يتم العثور على مشغل GameMaker الجاهز. ثبّت GameMaker، افتحه وسجّل الدخول،
-                            وثبّت Windows Runtime، ثم اضغط «إكمال» لاستكمال نفس التصحيح.
+                            وثبّت Windows Runtime. سيتحقق النظام تلقائياً ويستأنف نفس التصحيح فور توفره.
                         </p>
                         <div class="gamemaker-pause-actions">
                             <a id="gameMakerDownloadLink" class="gamemaker-download-btn"
                                href="https://gamemaker.io/en/download" target="_blank" rel="noopener">
                                 تنزيل GameMaker
                             </a>
-                            <button type="button" id="gameMakerCompleteBtn" class="gamemaker-complete-btn">
-                                إكمال — اكتمل التثبيت
-                            </button>
                             <button type="button" id="gameMakerCancelBtn" class="gamemaker-cancel-btn">
                                 إلغاء التصحيح
                             </button>
@@ -2054,7 +2051,7 @@
         saving: 'حفظ النتائج...',
         starting: 'بدء التصحيح...',
         queued: 'في قائمة انتظار التصحيح على الخادم...',
-        paused_gamemaker: 'تم إيقاف التصحيح مؤقتاً — يلزم تثبيت GameMaker ثم الضغط على Complete.',
+        paused_gamemaker: 'تم إيقاف التصحيح مؤقتاً — يلزم تثبيت GameMaker؛ سيُستأنف التصحيح تلقائياً عند توفره.',
     };
 
     let _lastHintPhase = '';
@@ -3646,7 +3643,7 @@
         const message = document.getElementById('gameMakerPauseMessage');
         if (message) {
             message.textContent = toolchain.message_ar || dependency.message_ar ||
-                'ثبّت GameMaker، افتحه وسجّل الدخول، وثبّت Windows Runtime، ثم اضغط «إكمال».';
+                'ثبّت GameMaker، افتحه وسجّل الدخول، وثبّت Windows Runtime؛ سيُستأنف التصحيح تلقائياً.';
         }
         const link = document.getElementById('gameMakerDownloadLink');
         if (link) {
@@ -3692,47 +3689,6 @@
         }
     }
 
-    async function completeGameMakerInstallation() {
-        const btn = document.getElementById('gameMakerCompleteBtn');
-        if (!btn || btn.disabled) return;
-        btn.disabled = true;
-        const original = btn.textContent;
-        btn.textContent = 'جاري التحقق...';
-        try {
-            const res = await fetch(`/api/batch-grade-complete-gamemaker/${assignmentId}`, {
-                method: 'POST',
-                credentials: 'same-origin',
-            });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                const detail = data.detail || {};
-                const message = typeof detail === 'string'
-                    ? detail
-                    : (detail.message || 'لم يكتمل إعداد GameMaker بعد.');
-                showToast(message, 'warning');
-                const panelMessage = document.getElementById('gameMakerPauseMessage');
-                if (panelMessage) panelMessage.textContent = message;
-                return;
-            }
-            document.getElementById('gameMakerPausePanel')?.classList.add('hidden');
-            setGradingActionRowVisible(true);
-            setCancelGradingEnabled(true);
-            setBackgroundGradingEnabled(true);
-            document.getElementById('loadingText').textContent =
-                'تم العثور على GameMaker — جاري استكمال التصحيح...';
-            setProgressHint(data.message || 'تم استئناف التصحيح...', { includeStayOpen: false });
-            showToast(data.message || 'تم استئناف التصحيح', 'success');
-        } catch (err) {
-            showToast('تعذّر التحقق من GameMaker: ' + err.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = original;
-        }
-    }
-
-    document.getElementById('gameMakerCompleteBtn')?.addEventListener(
-        'click', completeGameMakerInstallation
-    );
     document.getElementById('gameMakerCancelBtn')?.addEventListener('click', cancelGameMakerGrading);
 
     function syncProgressOverlayFromServer(info) {
