@@ -319,7 +319,31 @@ def run_runtime_observation(
         "confidence_tier": session_result.get("confidence_tier"),
         "failsafe": session_result.get("failsafe"),
         "runtime_blockers": session_result.get("blockers") or [],
+        "provenance": session_result.get("provenance"),
     }
+
+    # V1/V2: each version is run as its own session and kept separate (never merged).
+    try:
+        from app.runtime_version_comparison import (
+            comparison_enabled,
+            run_version_runtime_comparison,
+        )
+
+        if comparison_enabled():
+            comparison = run_version_runtime_comparison(
+                root,
+                submission_key,
+                grading_mode=grading_mode,
+                timeout_seconds=smoke_timeout,
+                enable_web_browser_automation=enable_web_browser_automation,
+                enable_android_emulator_automation=enable_android_emulator_automation,
+                enable_gamemaker_runtime_verification=enable_gamemaker_runtime_verification,
+                enable_scratch_runtime_verification=enable_scratch_runtime_verification,
+            )
+            if comparison:
+                observation["version_runtime_comparison"] = comparison
+    except Exception as exc:  # comparison is extra evidence; it must not break the run
+        observation["version_runtime_comparison_error"] = f"{type(exc).__name__}: {str(exc)[:160]}"
 
     legacy_obs = (session_result.get("signals") or {}).get("legacy_observation")
     godot_obs = (session_result.get("signals") or {}).get("godot_observation")

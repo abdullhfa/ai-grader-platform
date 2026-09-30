@@ -1,6 +1,7 @@
 """Runtime engine base types — production foundation with telemetry and artifacts."""
 from __future__ import annotations
 
+import time
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -81,6 +82,7 @@ class RuntimeSession:
     signals: Dict[str, Any] = field(default_factory=dict)
     errors: List[str] = field(default_factory=list)
     blockers: List[RuntimeBlocker] = field(default_factory=list)
+    started_at: float = field(default_factory=time.time)
     # Everything the platform itself generated (temporary builds/exports).
     # Deleted after the session; evidence and results are kept.
     temp_artifacts: List[Path] = field(default_factory=list)
@@ -171,6 +173,12 @@ class RuntimeEngine(ABC):
             "temp_artifacts": [str(p) for p in session.temp_artifacts],
             "artifacts": session.artifact_store.list_artifacts(),
         }
+        try:
+            from app.runtime_provenance import build_runtime_provenance
+
+            manifest["provenance"] = build_runtime_provenance(session)
+        except Exception as exc:  # provenance must never break evidence collection
+            manifest["provenance"] = {"schema": "runtime_provenance_v1", "error": str(exc)[:200]}
         session.artifact_store.write_manifest(manifest)
         session.events.write_jsonl(session.artifact_store.runtime_events / "events.jsonl")
         return manifest

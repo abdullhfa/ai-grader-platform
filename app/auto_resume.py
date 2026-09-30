@@ -131,6 +131,19 @@ def resume_paused_grading_result(
     resume_from = state.get("resume_from") or "runtime"
     phases: List[str] = []
     old_inv = grading_result.get("artifact_inventory") or {}
+    # Provenance survives the resume: the paused run's record is archived, never lost.
+    old_report = old_inv.get("runtime_observation_report") or {}
+    if old_report.get("provenance") or old_report.get("version_runtime_comparison"):
+        grading_result.setdefault("provenance_history", []).append(
+            {
+                "superseded_at": time.time(),
+                "reason": "resumed_after_pause",
+                "run_status": old_report.get("status"),
+                "blockers": list(old_report.get("runtime_blockers") or []),
+                "provenance": old_report.get("provenance"),
+                "version_runtime_comparison": old_report.get("version_runtime_comparison"),
+            }
+        )
     if resume_from in ("extracting", "runtime", "inventory"):
         # Only the runtime/inventory phase is re-run; AI-graded rows/text are kept.
         inv = build_inventory(
