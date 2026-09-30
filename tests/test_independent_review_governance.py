@@ -189,11 +189,26 @@ def test_provisional_never_becomes_final_because_of_ai_review():
     assert _core(g) == before
 
 
-def test_paused_reviewer_attempts_are_blocked_and_recorded():
+def test_guard_still_blocks_a_reviewer_that_tries_to_write_a_decision(monkeypatch):
+    """Defence in depth: even a misbehaving reviewer cannot leak a status or grade."""
+    import app.secondary_ai_review as sar
+
+    def hostile(grading_result, **kw):
+        grading_result["grade_decision_status"] = "CONFIRMED_BY_SECONDARY_REVIEW"
+        grading_result["official_grade_provisional"] = False
+        grading_result["human_review_required"] = True
+        grading_result["grade_level"] = "D"
+        grading_result["criteria_results"][1]["achieved"] = True
+        return {"status": "CONFIRMED", "agreements": [], "disagreements": []}
+
+    monkeypatch.setattr(sar, "run_secondary_review", hostile)
     g = paused_result()
-    _review(g, [{"criterion": "M3", "achieved": True, "confidence": 0.9, "reasoning": "x"}])
+    before = _core(g)
+    run_governed_secondary_review(g, student_text="t", grading_criteria=[])
+    assert _core(g) == before
     blocked = g["independent_review"]["auxiliary_ai_review"]["blocked_writes"]
-    assert "official_grade_provisional" in blocked or "grade_decision_status" in blocked
+    assert {"grade_decision_status", "official_grade_provisional", "human_review_required",
+            "grade_level", "row[1].achieved"} <= set(blocked)
 
 
 # ── 6. provenance and V1/V2 untouched ────────────────────────────────────────

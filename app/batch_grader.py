@@ -3582,7 +3582,7 @@ async def grade_batch_async(
                 if _gr.get("blocked_count", 0) > 0:
                     print(
                         f"⏸ [AUTH-GUARDRAIL] {student_info['name']}: "
-                        f"{_gr['blocked_count']} escalation(s) blocked — HUMAN_REVIEW_REQUIRED"
+                        f"{_gr['blocked_count']} escalation(s) blocked — automated verification incomplete"
                     )
             except Exception as _ag_err:
                 print(f"⚠️ [AUTH-GUARDRAIL] skipped: {_ag_err}")

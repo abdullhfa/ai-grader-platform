@@ -465,7 +465,7 @@ def generate_student_report_pdf(
             status_icon = ""
             # Keep the long bilingual label out of the fixed 3-inch status
             # cell; the authority details remain in the criterion feedback.
-            status_text = "مراجعة بشرية مطلوبة"
+            status_text = "التحقق الآلي غير مكتمل"
         elif achieved:
             bg_color = colors.HexColor('#d1fae5')
             border_color = colors.HexColor('#10b981')

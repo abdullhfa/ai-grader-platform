@@ -429,7 +429,7 @@ def _decision_node(
         if "governance:smoke_only" in governance_ids:
             reasons.append("smoke_only_hold")
         if not reasons:
-            reasons.append("human_review_required")
+            reasons.append("automated_verification_incomplete")
     else:
         reasons.append("insufficient_verified_evidence")
 
@@ -444,7 +444,7 @@ def _decision_node(
         "aggregate_evidence_confidence": _aggregate_confidence(evidence_ids, shared),
         "label_ar": {
             "ACHIEVED": "محقق — أدلة كافية",
-            "HOLD": "HOLD — أدلة غير كافية أو محكومة",
+            "HOLD": "غير مُتحقَّق — أدلة غير كافية أو محكومة (تحقق آلي)",
             "NOT_ACHIEVED": "غير محقق — أدلة غير كافية",
         }.get(status, status),
     }

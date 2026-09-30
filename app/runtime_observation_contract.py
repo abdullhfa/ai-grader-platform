@@ -57,8 +57,8 @@ L4_FORBIDDEN_PATTERNS: List[Tuple[str, str]] = [
     (r"\bgame\s+completed\b", "runtime observations collected"),
     (r"\bcriteria\s+verified\b", "operational evidence advisory"),
     (r"\bgameplay\s+confirmed\b", "interaction traces detected"),
-    (r"\bverified\s+achievement\b", "human review required"),
-    (r"تم\s+التحقق\s+من\s+المعيار", "مراجعة بشرية مطلوبة"),
+    (r"\bverified\s+achievement\b", "automated verification required"),
+    (r"تم\s+التحقق\s+من\s+المعيار", "التحقق الآلي مطلوب"),
     (r"اللعبة\s+مكتملة", "observations collected under controlled conditions"),
 ]
 

@@ -1101,9 +1101,7 @@
                                 {% if btec_short not in ['D', 'M', 'P', 'U'] %}{% set btec_short = 'U' %}{% endif %}
                                 <div class="grade-stack"{% if btec_short == 'U' and has_gate %} title="U — لم تتحقق C.P5/C.P6 بسبب عدم وجود أدلة Gameplay (Runtime PASS / فيديو لعب / L5 Playtest)."{% elif btec_short == 'U' and is_hcu %} title="U — تغطية أدلة عالية من الملفات لكن المعايير التنفيذية لم تُمنح."{% endif %}>
                                     {{ render_grade_badge(btec_short) }}
-                                    {% if result.grade_decision_status == 'HOLD' %}
-                                    <div class="grade-u-reason" title="اختلف Gemini وDeepSeek على معيار حساس؛ لا تُعتمد النتيجة قبل المراجعة البشرية.">HOLD — مراجعة بشرية</div>
-                                    {% elif result.grade_decision_status == 'NOT_VERIFIED' %}
+                                    {% if result.grade_decision_status == 'NOT_VERIFIED' %}
                                     <div class="grade-u-reason" title="تعذّر إكمال التحقق الآلي (خطأ داخلي في بوابة التشغيل)؛ الأدلة المطلوبة غير مكتملة ويُعاد التقييم تلقائياً.">NOT VERIFIED — التحقق الآلي غير مكتمل</div>
                                     {% elif result.grade_decision_status in ['PAUSED', 'PROVISIONAL_BLOCKED'] %}
                                     <div class="grade-u-reason" title="لم تُشغَّل اللعبة (تبعية/دليل ناقص) — لا درجة نهائية؛ يُستأنف التصحيح تلقائياً عند توفر المتطلب.">PAUSED — لا درجة نهائية (لم تُشغَّل اللعبة)</div>
@@ -1227,7 +1225,8 @@
                             <p class="diag-coverage-note">
                                 الحالة: <strong>{{ result.secondary_ai_review.status }}</strong> —
                                 تمت مراجعة {{ result.secondary_ai_review.reviewed_count or 0 }} معيار،
-                                والاختلافات {{ (result.secondary_ai_review.disagreements or [])|length }}.
+                                والاختلافات {{ (result.secondary_ai_review.disagreements or [])|length }}
+                                (مسجّلة للاطلاع فقط — لا تغيّر القرار الآلي).
                             </p>
                             {% if result.secondary_ai_review.disagreements %}
                             <table class="diag-table">

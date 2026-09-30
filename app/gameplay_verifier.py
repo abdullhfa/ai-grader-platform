@@ -2590,7 +2590,7 @@ def format_agent_play_summary_ar(level: str, verification: Optional[Dict[str, An
     if (level == "L3" or l4 == "L3") and gv.get("gameplay_entered") is not True:
         return (
             "تم تشغيل ملف اللعبة (L3)، لكن لم يتم إثبات اللعب الفعلي (gameplay) في هذا التقرير. "
-            "يمكن اعتماد فيديو تشغيل أو مراجعة بشرية (L5) لإثبات C.P5/C.P6."
+            "يُثبت C.P5/C.P6 بتحقق تشغيلي آلي (L4) أو بفيديو تشغيل موثّق كمسار دليل."
         )
     labels = {
         "L5": "نعم — L5 (Gameplay مؤكد / playtest بشري)",

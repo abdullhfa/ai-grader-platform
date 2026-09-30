@@ -1814,7 +1814,7 @@ def format_observation_for_grading(observation: Dict[str, Any]) -> str:
                     "— does NOT verify gameplay"
                 )
     lines.append(
-        "⛔ presence/launch/logs/screenshots ≠ achievement — استخدم هذه الملاحظات لـ C.P5/C.P6 مع مراجعة بشرية."
+        "⛔ presence/launch/logs/screenshots ≠ achievement — تُستخدم هذه الملاحظات كدليل مساعد فقط ولا تثبت المعيار دون تحقق آلي بالتشغيل."
     )
     lines.append(
         "⛔ runtime screenshots prove only a captured visual surface/output; they do not prove mechanics, scoring, physics, win/loss, or user experience."

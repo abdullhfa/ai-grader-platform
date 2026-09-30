@@ -9521,9 +9521,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         from app.criterion_authority_guardrails import merge_export_policy_with_guardrails
         _export_policy = merge_export_policy_with_guardrails(_drift_export, _guardrails)
         if _export_policy.get("gate") == "block_until_review":
-            raise HTTPException(
-                status_code=403,
-                detail=_export_policy.get("message_ar") or "تصدير التقرير موقوف — مراجعة governance مطلوبة.",
+            # Legacy governance signal: recorded for analytics only. No human
+            # moderation step exists, so it can never block a report export.
+            print(
+                f"ℹ️ [EXPORT] legacy governance gate '{_export_policy.get('gate')}' is advisory; "
+                "export proceeds."
             )
 
     summary = (
@@ -10158,7 +10160,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 f"بشكل مستقل؛ عدد الاختلافات: {len(_sr_disagreements)}."
             )
             if _sr_disagreements:
-                _sr_text += " النتيجة HOLD ولا تُعتمد قبل المراجعة البشرية."
+                _sr_text += " الاختلافات مسجّلة للاطلاع فقط ولا تغيّر القرار الآلي."
             _srr = _srp.add_run(_sr_text)
             _srr.font.size = Pt(11)
             _srr.font.color.rgb = BODY_TEXT

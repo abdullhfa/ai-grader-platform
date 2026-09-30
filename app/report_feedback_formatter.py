@@ -16,8 +16,8 @@ _RUNTIME_HEADER_RE = re.compile(
 _VERDICT_AR = {
     "operational support strong": "قوي — أدلة تشغيل كافية ضمن sandbox (L4)",
     "operational_support_strong": "قوي — أدلة تشغيل كافية ضمن sandbox (L4)",
-    "operational support partial": "جزئي — يحتاج مراجعة بشرية",
-    "operational_support_partial": "جزئي — يحتاج مراجعة بشرية",
+    "operational support partial": "جزئي — التحقق الآلي غير مكتمل",
+    "operational_support_partial": "جزئي — التحقق الآلي غير مكتمل",
     "insufficient": "غير كافٍ — لا يكفي لإثبات التشغيل",
 }
 
@@ -281,7 +281,7 @@ def criterion_report_display(
     awardable = criteria.get("awardable", achieved)
 
     if human_review:
-        return "⏸", "مراجعة بشرية مطلوبة (Human Review Required)", "FEF3C7", "F59E0B"
+        return "⏸", "التحقق الآلي غير مكتمل (Automated Verification Incomplete)", "FEF3C7", "F59E0B"
     if achieved and awardable:
         return "✅", "تحقق المعيار (Achieved)", "D1FAE5", "10B981"
     if achieved and not awardable:

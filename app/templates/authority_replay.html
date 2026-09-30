@@ -33,7 +33,7 @@
             <p class="font-bold text-sm mb-1">
                 Governance Response — {{ drift.governance_responses.max_severity }}
                 {% if drift.governance_responses.human_review_required %}
-                <span class="text-red-700">(مراجعة بشرية مطلوبة)</span>
+                <span class="text-red-700">(تنبيه governance — للاطلاع فقط)</span>
                 {% endif %}
             </p>
             <p class="text-sm">{{ drift.governance_responses.summary_ar }}</p>
