@@ -635,6 +635,14 @@ def finalize_grading_criteria_results(
             except Exception:
                 pass
 
+    # Assessment state — "Cannot Run != Not Achieved": blocked/missing evidence
+    # yields PAUSED/PROVISIONAL (no final grade), never a Not Achieved verdict.
+    from app.assessment_state import apply_assessment_state
+
+    state_result = apply_assessment_state(grading_result)
+    if state_result.get("state") in ("PAUSED", "PROVISIONAL"):
+        changes.append(f"assessment_state:{state_result['state']}")
+
     grading_result["criteria_finalizer"] = {
         "version": "criteria_finalizer_v3",
         "changes": changes,

@@ -1105,6 +1105,8 @@
                                     <div class="grade-u-reason" title="اختلف Gemini وDeepSeek على معيار حساس؛ لا تُعتمد النتيجة قبل المراجعة البشرية.">HOLD — مراجعة بشرية</div>
                                     {% elif result.grade_decision_status == 'NOT_VERIFIED' %}
                                     <div class="grade-u-reason" title="تعذّر إكمال التحقق الآلي (خطأ داخلي في بوابة التشغيل)؛ الأدلة المطلوبة غير مكتملة ويُعاد التقييم تلقائياً.">NOT VERIFIED — التحقق الآلي غير مكتمل</div>
+                                    {% elif result.grade_decision_status in ['PAUSED', 'PROVISIONAL_BLOCKED'] %}
+                                    <div class="grade-u-reason" title="لم تُشغَّل اللعبة (تبعية/دليل ناقص) — لا درجة نهائية؛ يُستأنف التصحيح تلقائياً عند توفر المتطلب.">PAUSED — لا درجة نهائية (لم تُشغَّل اللعبة)</div>
                                     {% elif btec_short == 'U' and has_gate %}
                                     <div class="grade-u-reason">U بسبب Gate على C.P5/C.P6</div>
                                     {% elif btec_short == 'U' and is_hcu %}

@@ -24,6 +24,33 @@ class SessionStatus(str, Enum):
     GATED = "gated"
     SKIPPED = "skipped"
     FAILED = "failed"
+    # Cannot run because the platform/dependency/artifact is missing.  This is
+    # NOT a verdict on the student's work: no criterion may be decided from it.
+    PAUSED = "paused"
+
+
+# Blocker kinds — who can resolve the pause.
+BLOCKER_MISSING_DEPENDENCY = "MISSING_DEPENDENCY"  # engine/toolchain not installed on grader
+BLOCKER_MISSING_ARTIFACT = "MISSING_ARTIFACT"  # required student file not submitted
+BLOCKER_ENV_FAULT = "ENV_FAULT"  # display/capture/sandbox fault of the platform
+
+
+@dataclass
+class RuntimeBlocker:
+    """Why a session could not be completed (machine-readable, resumable)."""
+
+    code: str
+    kind: str
+    detail: str
+    resolvable_by: str = "install"  # install | upload | retry
+
+    def to_dict(self) -> Dict[str, str]:
+        return {
+            "code": self.code,
+            "kind": self.kind,
+            "detail": self.detail,
+            "resolvable_by": self.resolvable_by,
+        }
 
 
 @dataclass
@@ -53,6 +80,26 @@ class RuntimeSession:
     events: RuntimeEventLog = field(default_factory=RuntimeEventLog)
     signals: Dict[str, Any] = field(default_factory=dict)
     errors: List[str] = field(default_factory=list)
+    blockers: List[RuntimeBlocker] = field(default_factory=list)
+    # Everything the platform itself generated (temporary builds/exports).
+    # Deleted after the session; evidence and results are kept.
+    temp_artifacts: List[Path] = field(default_factory=list)
+
+    def pause(
+        self,
+        code: str,
+        detail: str,
+        *,
+        kind: str = BLOCKER_MISSING_DEPENDENCY,
+        resolvable_by: str = "install",
+    ) -> None:
+        """Stop without a verdict: the game was not run, so nothing is graded."""
+        self.blockers.append(RuntimeBlocker(code, kind, detail, resolvable_by))
+        self.status = SessionStatus.PAUSED
+        self.events.record("session_paused", source="runtime", code=code, kind=kind)
+
+    def register_temp(self, path: Path) -> None:
+        self.temp_artifacts.append(Path(path))
 
     @classmethod
     def create(
@@ -120,6 +167,8 @@ class RuntimeEngine(ABC):
             "screenshots": [str(p) for p in session.screenshot_paths],
             "logs": [str(p) for p in session.log_paths],
             "errors": session.errors,
+            "blockers": [b.to_dict() for b in session.blockers],
+            "temp_artifacts": [str(p) for p in session.temp_artifacts],
             "artifacts": session.artifact_store.list_artifacts(),
         }
         session.artifact_store.write_manifest(manifest)
@@ -128,3 +177,29 @@ class RuntimeEngine(ABC):
 
     def cleanup(self, session: RuntimeSession) -> None:
         """Best-effort teardown hook for subclasses."""
+
+
+def cleanup_temp_artifacts(session: RuntimeSession) -> List[str]:
+    """Delete every temporary build/export the platform generated for this session.
+
+    Runs from the orchestrator's ``finally`` regardless of engine overrides, so no
+    engine can leak a generated executable.  Returns the removed paths.
+    """
+    import shutil
+
+    removed: List[str] = []
+    for path in list(session.temp_artifacts):
+        try:
+            if path.is_dir():
+                shutil.rmtree(path, ignore_errors=True)
+            elif path.exists():
+                path.unlink()
+            else:
+                continue
+            removed.append(str(path))
+        except OSError:
+            continue
+    if removed:
+        session.events.record("temp_artifacts_removed", source="runtime", count=len(removed))
+    session.temp_artifacts.clear()
+    return removed

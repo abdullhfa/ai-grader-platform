@@ -91,7 +91,7 @@ class TestGodotRuntimeEngine(unittest.TestCase):
             (root / "player.gd").write_text("extends CharacterBody2D\n", encoding="utf-8")
             result = run_runtime_session("godot_demo", root, timeout_seconds=5)
             self.assertEqual(result.get("engine"), "godot")
-            self.assertIn(result.get("status"), ("completed", "failed", "skipped", "gated"))
+            self.assertIn(result.get("status"), ("completed", "failed", "skipped", "gated", "paused"))
             if result.get("status") == "completed":
                 self.assertIn(
                     result.get("signals", {}).get("runtime_method"),

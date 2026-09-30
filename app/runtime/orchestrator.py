@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Sequence
 from app.core.logging_setup import log_structured
 from app.core.production_config import get_production_config
 from app.governance_freeze_registry import is_l4_sandbox_permitted
-from app.runtime_engines.base import RuntimeSession, SessionStatus
+from app.runtime_engines.base import RuntimeSession, SessionStatus, cleanup_temp_artifacts
 from app.runtime_engines.registry import get_engine_registry, resolve_engine
 from app.runtime_engines.normalization import normalize_runtime_manifest
 from app.submission.failsafe import wrap_failsafe_observation, wrap_failsafe_session_result
@@ -184,7 +184,11 @@ def run_runtime_session(
     try:
         session.status = SessionStatus.PREPARING
         engine.prepare(session)
-        if session.status not in (SessionStatus.SKIPPED, SessionStatus.FAILED):
+        if session.status not in (
+            SessionStatus.SKIPPED,
+            SessionStatus.FAILED,
+            SessionStatus.PAUSED,
+        ):
             session.status = SessionStatus.RUNNING
             engine.execute(session, timeout_seconds=effective_timeout)
         evidence = engine.collect_evidence(session)
@@ -213,6 +217,10 @@ def run_runtime_session(
     finally:
         try:
             engine.cleanup(session)
+        except Exception:
+            pass
+        try:
+            cleanup_temp_artifacts(session)
         except Exception:
             pass
 
@@ -310,6 +318,7 @@ def run_runtime_observation(
         "submission_validity": session_result.get("submission_validity"),
         "confidence_tier": session_result.get("confidence_tier"),
         "failsafe": session_result.get("failsafe"),
+        "runtime_blockers": session_result.get("blockers") or [],
     }
 
     legacy_obs = (session_result.get("signals") or {}).get("legacy_observation")
