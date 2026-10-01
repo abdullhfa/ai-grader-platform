@@ -272,16 +272,64 @@ def run_runtime_observation(
     from app.core.production_config import resolve_sandbox_timeout_seconds
 
     smoke_timeout = resolve_sandbox_timeout_seconds(grading_mode) if enable_smoke_test else 5
-    session_result = run_runtime_session(
-        submission_key,
-        root,
-        timeout_seconds=smoke_timeout,
+    session_flags = dict(
         enable_web_browser_automation=enable_web_browser_automation,
         enable_android_emulator_automation=enable_android_emulator_automation,
         enable_gamemaker_runtime_verification=enable_gamemaker_runtime_verification,
         enable_scratch_runtime_verification=enable_scratch_runtime_verification,
-        grading_mode=grading_mode,
     )
+
+    # V1/V2: each version is its own session.  The runtime evidence the criteria are
+    # gated on is the V2 run itself (bound to V2's source and build) — never an
+    # arbitrary exe picked from the whole root, and never a merge of the two.
+    version_comparison: Optional[Dict[str, Any]] = None
+    session_result: Optional[Dict[str, Any]] = None
+    try:
+        from app.runtime_version_comparison import (
+            comparison_enabled,
+            run_version_runtime_comparison,
+        )
+        from app.version_code_diff import discover_version_groups
+
+        if comparison_enabled():
+            groups = discover_version_groups(root)
+            if groups.get("status") == "ok":
+                raw_runs: Dict[str, Dict[str, Any]] = {}
+
+                def _capturing_runner(key: str, group_root: Path, **kw: Any) -> Dict[str, Any]:
+                    result = run_runtime_session(key, group_root, **kw)
+                    raw_runs[key.rsplit("__", 1)[-1]] = result
+                    return result
+
+                version_comparison = run_version_runtime_comparison(
+                    root,
+                    submission_key,
+                    grading_mode=grading_mode,
+                    timeout_seconds=smoke_timeout,
+                    runner=_capturing_runner,
+                    groups=groups,
+                    **session_flags,
+                )
+                if raw_runs.get("V2") is not None:
+                    session_result = raw_runs["V2"]
+                    prov = dict(session_result.get("provenance") or {})
+                    prov["version_label"] = "V2"
+                    session_result["provenance"] = prov
+    except Exception as exc:  # comparison is extra evidence; it must not break the run
+        version_comparison = None
+        session_result = None
+        comparison_error = f"{type(exc).__name__}: {str(exc)[:160]}"
+    else:
+        comparison_error = None
+
+    if session_result is None:
+        session_result = run_runtime_session(
+            submission_key,
+            root,
+            timeout_seconds=smoke_timeout,
+            grading_mode=grading_mode,
+            **session_flags,
+        )
 
     from app.runtime_observation_sandbox import FAST_OBSERVATION_MODE, is_fast_runtime_smoke
 
@@ -322,28 +370,10 @@ def run_runtime_observation(
         "provenance": session_result.get("provenance"),
     }
 
-    # V1/V2: each version is run as its own session and kept separate (never merged).
-    try:
-        from app.runtime_version_comparison import (
-            comparison_enabled,
-            run_version_runtime_comparison,
-        )
-
-        if comparison_enabled():
-            comparison = run_version_runtime_comparison(
-                root,
-                submission_key,
-                grading_mode=grading_mode,
-                timeout_seconds=smoke_timeout,
-                enable_web_browser_automation=enable_web_browser_automation,
-                enable_android_emulator_automation=enable_android_emulator_automation,
-                enable_gamemaker_runtime_verification=enable_gamemaker_runtime_verification,
-                enable_scratch_runtime_verification=enable_scratch_runtime_verification,
-            )
-            if comparison:
-                observation["version_runtime_comparison"] = comparison
-    except Exception as exc:  # comparison is extra evidence; it must not break the run
-        observation["version_runtime_comparison_error"] = f"{type(exc).__name__}: {str(exc)[:160]}"
+    if version_comparison:
+        observation["version_runtime_comparison"] = version_comparison
+    if comparison_error:
+        observation["version_runtime_comparison_error"] = comparison_error
 
     legacy_obs = (session_result.get("signals") or {}).get("legacy_observation")
     godot_obs = (session_result.get("signals") or {}).get("godot_observation")

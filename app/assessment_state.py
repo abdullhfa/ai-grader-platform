@@ -71,6 +71,16 @@ def collect_blockers(grading_result: Dict[str, Any]) -> List[Dict[str, str]]:
         if isinstance(raw, dict) and raw.get("code") and raw["code"] not in seen:
             seen.add(raw["code"])
             blockers.append({k: str(raw.get(k) or "") for k in ("code", "kind", "detail", "resolvable_by")})
+    from app.runtime_provenance_gate import evaluate_provenance_binding
+
+    seen_prov = set()
+    for short, info in (evaluate_provenance_binding(grading_result)["blocked"]).items():
+        if info["code"] in seen_prov:
+            continue
+        seen_prov.add(info["code"])
+        blockers.append(
+            {"code": info["code"], "kind": "PROVENANCE", "detail": info["detail"], "resolvable_by": "upload"}
+        )
     err = grading_result.get("runtime_gate_error")
     if isinstance(err, dict) and "runtime_gate_error" not in seen:
         blockers.append(
@@ -84,10 +94,87 @@ def collect_blockers(grading_result: Dict[str, Any]) -> List[Dict[str, str]]:
     return blockers
 
 
-def _run_was_attempted(grading_result: Dict[str, Any]) -> bool:
+_LAUNCH_KEYS = ("game_launch_attempted", "runtime_launch_attempted", "runtime_observed", "runtime_verified")
+_NOT_RUN_STATUSES = {"gated", "skipped", "paused", ""}
+
+
+def _positive_launch_evidence(obj: Any, depth: int = 0) -> bool:
+    """True only for a positive sign that the game was really launched."""
+    if depth > 7:
+        return False
+    if isinstance(obj, dict):
+        if any(obj.get(k) is True for k in _LAUNCH_KEYS):
+            return True
+        if obj.get("environment_fault"):
+            return False
+        for value in obj.values():
+            if isinstance(value, (dict, list)) and _positive_launch_evidence(value, depth + 1):
+                return True
+    elif isinstance(obj, list):
+        return any(_positive_launch_evidence(v, depth + 1) for v in obj[:24])
+    return False
+
+
+_TRUTH_KEYS = (
+    "status", "runtime_blockers", "provenance", "version_runtime_comparison",
+    "game_launch_attempted", "runtime_observed", "runtime_verified",
+    "runtime_method", "observation_mode", "runtime_session_id", "engine",
+)
+
+
+def runtime_truth_essentials(report: Any) -> Dict[str, Any]:
+    """The part of a runtime report that assessment_state needs to be recomputed.
+
+    Slimmed/compacted storage must keep exactly this, so a stored PAUSED +
+    blockers result cannot degrade to PROVISIONAL + no blockers on re-finalization.
+    """
+    if not isinstance(report, dict):
+        return {}
+    keep = {k: report[k] for k in _TRUTH_KEYS if k in report}
+    keep["launch_evidence"] = bool(report.get("launch_evidence")) or _has_launch_signs(report)
+    gv = report.get("gameplay_verification")
+    if isinstance(gv, dict) and gv.get("l4_level"):
+        keep["gameplay_verification"] = {
+            k: gv.get(k) for k in ("l4_level", "gameplay_entered", "mechanics_verified_count")
+        }
+    return keep
+
+
+def _has_launch_signs(report: Dict[str, Any]) -> bool:
+    if _positive_launch_evidence(report):
+        return True
+    for analysis in report.get("artifact_analyses") or []:
+        if isinstance(analysis, dict) and analysis.get("attempted") is True and not analysis.get("environment_fault"):
+            return True
+    return any(
+        isinstance(s, dict) and s.get("status") == "captured"
+        for s in report.get("runtime_screenshots") or []
+    )
+
+
+def run_launch_evidence(grading_result: Dict[str, Any]) -> bool:
+    """Runtime truth: a real launch attempt was evidenced (never inferred from a status).
+
+    ``completed`` / ``partial`` / ``failed`` / ``crashed`` / ``timeout`` describe how the
+    observation ended, not that a game ran: static analyses report them too.  Only
+    positive evidence counts — ``game_launch_attempted``, ``runtime_observed``/
+    ``runtime_verified``, a smoke ``attempted`` on an artifact analysis, a captured
+    runtime screenshot, or a gameplay verification result.
+    """
     report = _runtime_report(grading_result)
-    status = str(report.get("status") or "").lower()
-    return status in _RUN_ATTEMPTED and not report.get("runtime_blockers")
+    if report.get("runtime_blockers"):
+        return False
+    if str(report.get("status") or "").lower() in _NOT_RUN_STATUSES:
+        return False
+    if report.get("launch_evidence") is True or _has_launch_signs(report):
+        return True
+    inv = grading_result.get("artifact_inventory") or {}
+    gv = report.get("gameplay_verification") or inv.get("gameplay_verification") or {}
+    return isinstance(gv, dict) and bool(gv.get("l4_level"))
+
+
+def _run_was_attempted(grading_result: Dict[str, Any]) -> bool:
+    return run_launch_evidence(grading_result)
 
 
 def _test_docs_missing(grading_result: Dict[str, Any]) -> bool:
@@ -120,9 +207,14 @@ def classify_criteria(
     missing_artifact = any(b["kind"] == "MISSING_ARTIFACT" for b in blockers)
     ran = _run_was_attempted(grading_result)
     docs_missing = _test_docs_missing(grading_result)
+    from app.runtime_provenance_gate import evaluate_provenance_binding
+
+    binding = evaluate_provenance_binding(grading_result)["blocked"]
     for short, row in rows.items():
         achieved = bool(row.get("achieved")) and row.get("awardable") is not False
-        if achieved and row.get("runtime_l4_verified"):
+        if short in binding:
+            out[short] = NOT_VERIFIED_BLOCKED  # unattributable evidence is never verified
+        elif achieved and row.get("runtime_l4_verified"):
             out[short] = VERIFIED_BY_RUNTIME
         elif achieved and not row.get("runtime_gate_block"):
             out[short] = VERIFIED_BY_CODE

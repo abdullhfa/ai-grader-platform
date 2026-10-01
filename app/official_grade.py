@@ -28,6 +28,9 @@ class OfficialGradeResult:
   is_stale: bool = False
   grade_display_metrics: Dict[str, Any] = field(default_factory=dict)
   reapply_change_count: int = 0
+  # False while PAUSED/PROVISIONAL: ``grade`` stays the internal provisional letter,
+  # but ``grade_label`` (what outputs print) is the withheld marker.
+  final: bool = True
 
   def to_dict(self) -> Dict[str, Any]:
     return asdict(self)
@@ -198,9 +201,13 @@ def resolve_official_grade(
 
   downgrades = _collect_downgrades(working)
 
+  from app.final_output_gate import final_grade_allowed, output_grade_label
+
+  is_final = final_grade_allowed(working)
   return OfficialGradeResult(
     grade=grade,
-    grade_label=f"BTEC {grade}",
+    grade_label=output_grade_label(working, f"BTEC {grade}"),
+    final=is_final,
     source=source,
     gate_applied=gate_applied,
     gate_satisfied=gate_satisfied,

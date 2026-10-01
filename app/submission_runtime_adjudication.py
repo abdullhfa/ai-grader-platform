@@ -152,7 +152,9 @@ def sync_runtime_adjudication_to_db(
     summary_updates: Dict[str, Any] = {}
     if summary:
         if working.get("grade_level"):
-            summary.grade_level = str(working["grade_level"])  # type: ignore
+            from app.final_output_gate import summary_grade
+
+            summary.grade_level = str(summary_grade(working, working["grade_level"]))  # type: ignore
             summary_updates["grade_level"] = summary.grade_level
         if working.get("percentage") is not None:
             summary.percentage = float(working["percentage"])  # type: ignore

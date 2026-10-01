@@ -236,6 +236,8 @@ def _row(level, *, achieved=False, runtime=False, block=False):
 
 def _result(rows, *, blockers=None, status="completed", paths=("game.exe", "Test plan.docx"), **extra):
     report = {"status": status}
+    if status in ("completed", "partial", "failed", "crashed", "timeout"):
+        report["runtime_observed"] = True  # a real launch happened (static reports carry no such evidence)
     if blockers:
         report["runtime_blockers"] = blockers
     return {
@@ -326,7 +328,7 @@ def test_finalizer_marks_paused_then_clears_on_resume():
         assert r["award_block_reason"] == "runtime_blocked"
 
     # resume: the blocker is gone and the run produced a verdict
-    grading["artifact_inventory"]["runtime_observation_report"] = {"status": "completed"}
+    grading["artifact_inventory"]["runtime_observation_report"] = {"status": "completed", "runtime_observed": True}
     finalize_grading_criteria_results(grading, artifact_inventory=grading["artifact_inventory"])
     assert grading["assessment_state"]["state"] == "FINAL"
     assert "final_grade_allowed" not in grading

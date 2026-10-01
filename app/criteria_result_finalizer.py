@@ -707,7 +707,9 @@ def sync_criteria_results_to_db(
     )
     if summary:
         if grading_result.get("grade_level"):
-            summary.grade_level = str(grading_result["grade_level"])
+            from app.final_output_gate import summary_grade
+
+            summary.grade_level = str(summary_grade(grading_result, grading_result["grade_level"]))
         if grading_result.get("percentage") is not None:
             summary.percentage = float(grading_result["percentage"])
         if grading_result.get("total_score") is not None:

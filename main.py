@@ -10819,6 +10819,9 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                         percentage = _gdm.get("criteria_completion_pct", percentage)
                         highest_crit = _gdm.get("highest_criterion_achieved") or "—"
                         exec_mode = _gdm.get("execution_mode") or exec_mode
+                    from app.final_output_gate import output_grade_label
+
+                    grade_level = output_grade_label(_gdm_snap, grade_level)
                     from app.rule_bundle import format_rule_bundle_label, provenance_from_payload
 
                     _prov = provenance_from_payload(_gdm_snap)

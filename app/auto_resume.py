@@ -78,7 +78,7 @@ _CHECKS: Dict[str, Callable[[], bool]] = {
 
 def blocker_cleared(blocker: Dict[str, Any], *, submission_changed: bool = False) -> bool:
     code = str(blocker.get("code") or "")
-    if blocker.get("kind") == "MISSING_ARTIFACT" or blocker.get("resolvable_by") == "upload":
+    if blocker.get("kind") in ("MISSING_ARTIFACT", "PROVENANCE") or blocker.get("resolvable_by") == "upload":
         return submission_changed
     check = _CHECKS.get(code)
     if check is None:
@@ -111,11 +111,15 @@ def resume_paused_grading_result(
     submission_paths: Optional[Sequence[str]] = None,
     build_inventory: Optional[Callable[..., Dict[str, Any]]] = None,
     finalize: Optional[Callable[..., Any]] = None,
+    require_existing_files: bool = False,
 ) -> Dict[str, Any]:
     """Resume ONE paused result from its checkpointed phase, or leave it paused."""
     state = grading_result.get("assessment_state") or {}
     if state.get("state") not in ("PAUSED", "PROVISIONAL"):
         return {"resumed": False, "reason": "not_paused", "state": state.get("state")}
+    if not (state.get("blockers") or []):
+        # Nothing was waiting on anything: re-running would only repeat the same run.
+        return {"resumed": False, "reason": "no_blockers_to_clear", "state": state.get("state")}
 
     paths = list(submission_paths or grading_result.get("submission_paths") or [])
     changed = _submission_changed(grading_result, paths)
@@ -123,6 +127,12 @@ def resume_paused_grading_result(
     if left:
         return {"resumed": False, "reason": "still_blocked", "blockers": left, "state": state["state"]}
 
+    if require_existing_files:
+        from pathlib import Path as _P
+
+        paths = [p for p in paths if _P(str(p)).exists()]
+        if not paths:
+            return {"resumed": False, "reason": "submission_files_missing", "state": state["state"]}
     if build_inventory is None:
         from app.artifact_inventory import build_artifact_inventory as build_inventory
     if finalize is None:
@@ -251,6 +261,74 @@ async def auto_resume_paused_batches(batch_progress: dict) -> List[int]:
     return resumed
 
 
+def resume_cooldown_seconds() -> int:
+    try:
+        return max(0, int(os.environ.get("AI_GRADER_AUTO_RESUME_COOLDOWN_SECONDS", "300")))
+    except ValueError:
+        return 300
+
+
+def sweep_paused_results(*, limit: int = 50, now: Optional[float] = None) -> List[int]:
+    """Production sweep (sync): resume every stored PAUSED result whose blocker is gone.
+
+    Cheap first: a result whose blocker is still present is skipped without touching
+    the runtime, the files or the snapshot.  A resumable one re-runs only its saved
+    phase (see ``resume_paused_grading_result``) and is persisted back.
+    """
+    import json as _json
+
+    from app.criteria_result_finalizer import sync_criteria_results_to_db
+    from app.database import SessionLocal
+    from app.grading_mode_policy import compact_snapshot_for_storage
+    from app.models import Submission
+
+    now = now if now is not None else time.time()
+    resumed: List[int] = []
+    db = SessionLocal()
+    try:
+        rows = (
+            db.query(Submission)
+            .filter(Submission.grading_snapshot_json.like('%"PAUSED"%'))
+            .limit(limit)
+            .all()
+        )
+        for sub in rows:
+            try:
+                snap = _json.loads(str(sub.grading_snapshot_json))
+            except (TypeError, ValueError):
+                continue
+            state = snap.get("assessment_state") or {}
+            if state.get("state") != "PAUSED":
+                continue
+            if remaining_blockers(state.get("blockers") or [], submission_changed=False):
+                continue  # still blocked: stay PAUSED, run nothing
+            last = float(snap.get("auto_resume_attempt_ts") or 0)
+            if now - last < resume_cooldown_seconds():
+                continue
+            snap["auto_resume_attempt_ts"] = now
+            try:
+                outcome = resume_paused_grading_result(snap, require_existing_files=True)
+            except Exception:  # noqa: BLE001 - a failed attempt keeps the pause
+                logger.exception("auto-resume of submission %s failed", sub.id)
+                outcome = {"resumed": False, "reason": "resume_error"}
+            if outcome.get("resumed") or outcome.get("reason") == "resume_error":
+                sub.grading_snapshot_json = _json.dumps(
+                    compact_snapshot_for_storage(snap, snap.get("grading_mode")),
+                    ensure_ascii=False, default=str,
+                )
+                if outcome.get("resumed"):
+                    sync_criteria_results_to_db(db, int(sub.id), snap)
+                    resumed.append(int(sub.id))
+                db.commit()
+    finally:
+        db.close()
+    return resumed
+
+
+async def auto_resume_paused_results() -> List[int]:
+    return await asyncio.to_thread(sweep_paused_results)
+
+
 def auto_resume_interval_seconds() -> int:
     try:
         return max(5, int(os.environ.get("AI_GRADER_AUTO_RESUME_INTERVAL_SECONDS", "30")))
@@ -266,6 +344,9 @@ async def run_auto_resume_loop(batch_progress: dict) -> None:
             resumed = await auto_resume_paused_batches(batch_progress)
             if resumed:
                 logger.info("auto-resumed batches: %s", resumed)
+            resumed_results = await auto_resume_paused_results()
+            if resumed_results:
+                logger.info("auto-resumed paused results: %s", resumed_results)
         except asyncio.CancelledError:
             raise
         except Exception:  # noqa: BLE001 - the loop must survive any sweep error

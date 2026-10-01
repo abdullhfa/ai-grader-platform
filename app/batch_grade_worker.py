@@ -1022,7 +1022,9 @@ async def run_batch_grading_job(
                 )
                 db.add(db_result)
 
-            grade_level_db = str(result.get("grade_level") or "")
+            from app.final_output_gate import summary_grade
+
+            grade_level_db = str(summary_grade(result, str(result.get("grade_level") or "")))
             inst_disp = result.get("institutional_grade_display") or (
                 (result.get("institutional_resolution") or {}).get("display_grade_ar")
             )

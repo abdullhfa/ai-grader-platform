@@ -1155,7 +1155,14 @@ def apply_runtime_evidence_gate(
         # Fail closed: an empty verdict means no criterion passes (rows are demoted
         # below).  Keep the reason visible instead of swallowing it.
         automated_gate = {"error": f"{type(gate_err).__name__}: {str(gate_err)[:200]}"}
-    criterion_pass = automated_gate.get("criterion_pass") or {}
+    criterion_pass = dict(automated_gate.get("criterion_pass") or {})
+    # Runtime evidence must be tied to an identifiable version/build/source: an
+    # unattributable run never opens P5/P6/M3 (NOT VERIFIED, not a failure).
+    from app.runtime_provenance_gate import evaluate_provenance_binding
+
+    provenance_binding = evaluate_provenance_binding(grading_result)
+    for _short in provenance_binding["blocked"]:
+        criterion_pass[_short] = False
 
     changes: List[str] = []
     if not verdict["satisfied"]:
@@ -1225,6 +1232,20 @@ def apply_runtime_evidence_gate(
                 row.pop("engine_governance_engine", None)
                 if was_awarding:
                     changes.append(f"{row.get('criteria_level')}:required_feature_gate_block")
+
+    for row in criteria:
+        if not isinstance(row, dict):
+            continue
+        info = provenance_binding["blocked"].get(_short_level(str(row.get("criteria_level") or "")))
+        if info:
+            row["runtime_gate_block"] = True
+            row["awardable"] = False
+            row["award_block_reason"] = "provenance_unverified"
+            row["award_block_reason_ar"] = (
+                "لا يمكن ربط دليل التشغيل بنسخة/بناء محدّدين "
+                f"({info['code']}) — غير مُتحقَّق منه وليس فشلاً للطالب."
+            )
+            row["provenance_binding"] = info
 
     changes.extend(_enforce_d3_dependency(criteria))
 

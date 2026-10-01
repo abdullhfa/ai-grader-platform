@@ -17,12 +17,16 @@ from app.independent_review import (
 ROOT = Path(__file__).resolve().parent.parent
 DEP = {"code": "unity_editor_missing", "kind": "MISSING_DEPENDENCY",
        "detail": "Unity Editor", "resolvable_by": "install"}
-PROVENANCE = {"schema": "runtime_provenance_v1",
+PROVENANCE = {"schema": "runtime_provenance_v1", "version_label": "V2",
               "source_provenance": {"available": True, "tree_hash": "abc"},
-              "build_provenance": {"kind": "student_supplied", "executable": {"sha256": "f00d"}},
+              "build_provenance": {"kind": "student_supplied", "executable": {"sha256": "f00d", "exists": True}},
               "mismatches": []}
 COMPARISON = {"schema": "runtime_version_comparison_v1", "status": "COMPARABLE",
-              "v1": {"version": "V1"}, "v2": {"version": "V2"}, "evidence_merge_allowed": False}
+              "v1": {"version": "V1", "run_state": "RAN", "provenance": {
+                  "build_provenance": {"executable": {"sha256": "beef"}}}},
+              "v2": {"version": "V2", "run_state": "RAN", "provenance": {
+                  "build_provenance": {"executable": {"sha256": "f00d"}}}},
+              "evidence_merge_allowed": False}
 
 
 class FakeReviewer:
@@ -56,7 +60,8 @@ def _base(rows, *, report, paths=("game.exe", "Test plan.docx")):
 
 def final_result():
     """Runtime really ran: P5 verified by runtime, M3 really not achieved."""
-    rep = {"status": "completed", "provenance": PROVENANCE, "version_runtime_comparison": COMPARISON}
+    rep = {"status": "completed", "game_launch_attempted": True, "runtime_observed": True,
+           "provenance": PROVENANCE, "version_runtime_comparison": COMPARISON}
     g = _base([_row("8/C.P5", achieved=True, runtime=True), _row("8/C.M3", block=True),
                _row("8/B.M2", achieved=True)], report=rep)
     assert g["assessment_state"]["state"] == "FINAL"

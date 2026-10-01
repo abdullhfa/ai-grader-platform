@@ -249,7 +249,9 @@ def test_observation_carries_the_comparison_and_main_provenance(tmp_path, monkey
     obs = orch.run_runtime_observation([str(root / "V1" / "game.exe")], student_name="stu")
     assert obs["version_runtime_comparison"]["status"] == CMP_BLOCKED
     assert obs["provenance"]["source_provenance"]["tree_hash"] == "abc"
-    assert seen[0] == "stu" and set(seen[1:]) == {"stu__V1", "stu__V2"}
+    # the gating run IS the V2 session (no extra whole-root session, no merging)
+    assert seen == ["stu__V1", "stu__V2"]
+    assert obs["provenance"]["version_label"] == "V2"
 
 
 # ── provenance survives resume ──────────────────────────────────────────────
