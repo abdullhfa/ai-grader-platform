@@ -782,6 +782,9 @@ def _attach_terminal_godot_classify_if_missing(
         out["gameplay_verification"] = classified
 
 
+_WINE_MIN_RUN_SECONDS = 8.0  # a real run that ends sooner is an emulator fault
+
+
 def _smoke_test_via_wine(
     path: Path,
     out: Dict[str, Any],
@@ -926,10 +929,15 @@ def _smoke_test_via_wine(
         still_running = proc.poll() is None
         exit_code = proc.poll()
         fault = early_fault or classify_wine_failure(rt.stderr_text())
+        ran_seconds = time.time() - launch_started
         if not fault and not still_running and exit_code not in (0, None):
             # A non-zero exit inside an emulator cannot be told apart from an
             # emulation problem: never read it as the student's failure.
             fault = f"exit_code_{exit_code}_under_wine"
+        elif not fault and not still_running and ran_seconds < _WINE_MIN_RUN_SECONDS:
+            # Exiting almost immediately (even with code 0) is what a killed or
+            # failed emulator session looks like: the game was not really run.
+            fault = f"exited_after_{ran_seconds:.1f}s_under_wine"
         if fault:
             # Wine itself failed / the game died inside the emulator: the game was
             # not verifiably run → not a student verdict.

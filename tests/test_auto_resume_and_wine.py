@@ -366,3 +366,84 @@ def test_real_xtest_input_and_screenshot_on_virtual_display():
         assert img.size == (1280, 720)
         assert rw.active_runtime() is rt
     assert rw.active_runtime() is None
+
+
+# ── Wine hardening: isolation and short exits ───────────────────────────────
+def test_exit_zero_almost_immediately_is_an_emulator_fault(tmp_path, monkeypatch):
+    out = _smoke(tmp_path, monkeypatch, exit_code=0)  # exits at once, code 0
+    assert out["environment_fault"] == "wine_platform_fault"
+    assert "exited_after" in str(out["errors"]) and out["attempted"] is False
+
+
+def test_exit_zero_after_a_real_run_is_a_normal_launch_ok(tmp_path, monkeypatch):
+    import app.runtime_observation_sandbox as sb
+
+    monkeypatch.setattr(sb, "_WINE_MIN_RUN_SECONDS", 0.0)
+    out = _smoke(tmp_path, monkeypatch, exit_code=0)
+    assert out.get("environment_fault") is None and out["smoke_result"] == "launch_ok"
+
+
+def test_every_run_gets_its_own_wine_prefix_copied_from_the_template(tmp_path, monkeypatch):
+    template = tmp_path / "template"
+    (template / "drive_c").mkdir(parents=True)
+    (template / "system.reg").write_text("warm")
+    monkeypatch.setattr(rw, "template_prefix_dir", lambda: template)
+    a, b = rw.WineRuntime(), rw.WineRuntime()
+    pa, pb = a._private_prefix(), b._private_prefix()
+    assert pa != pb and pa != template and pb != template
+    assert (pa / "system.reg").read_text() == "warm"
+    a.prefix = pa
+    a.close()
+    assert not pa.exists() and pb.exists() and template.exists()  # one run never touches another
+    rw.shutil.rmtree(pb, ignore_errors=True)
+
+
+def test_probe_leaves_a_warm_template_only_on_success(tmp_path, monkeypatch):
+    template = tmp_path / "template"
+    monkeypatch.setattr(rw, "template_prefix_dir", lambda: template)
+    real_runtime = rw.WineRuntime
+
+    class _Rt(_FakeRT):
+        def __enter__(self):
+            self.prefix = tmp_path / "run"
+            self.prefix.mkdir(exist_ok=True)
+            (self.prefix / "system.reg").write_text("x")
+            self.promote_prefix = False
+            return self
+        def __exit__(self, *a):
+            if self.promote_prefix:
+                real_runtime._promote_to_template(self)
+            return None
+
+    rw.reset_probe_cache()
+    monkeypatch.setattr(rw, "wine_binary", lambda: "/usr/bin/wine")
+    monkeypatch.setattr(rw, "WineRuntime", _Rt)
+    real_run = rw.subprocess.run
+
+    def fake_run(code):
+        def run(cmd, *a, **k):
+            if cmd[0] == "cp":  # the prefix clone is real; only wine itself is faked
+                return real_run(cmd, *a, **k)
+            return types.SimpleNamespace(returncode=code, stderr=b"boom" if code else b"")
+        return run
+
+    monkeypatch.setattr(rw.subprocess, "run", fake_run(1))
+    assert rw.probe_wine_launcher(force=True)["ok"] is False and not template.exists()
+    monkeypatch.setattr(rw.subprocess, "run", fake_run(0))
+    assert rw.probe_wine_launcher(force=True)["ok"] is True
+    assert (template / "system.reg").is_file()
+    rw.reset_probe_cache()
+
+
+@pytest.mark.skipif(
+    not (shutil.which("Xvfb") and Path("/usr/lib/x86_64-linux-gnu/libXtst.so.6").exists()),
+    reason="needs Xvfb + libXtst",
+)
+def test_closing_one_real_run_does_not_disturb_a_concurrent_one():
+    with rw.WineRuntime() as first:
+        assert first.ok, first.start_error
+        with rw.WineRuntime() as second:
+            assert second.ok, second.start_error
+            assert first.display != second.display and first.prefix != second.prefix
+        assert first.prefix and first.prefix.exists()
+        assert first.key_hold("D", 0.05) is True and first.grab().size == (1280, 720)

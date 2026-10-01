@@ -57,6 +57,25 @@ _KEYSYMS = {
 }
 
 
+def _clone_tree(src: Path, dst: Path) -> None:
+    """Fast copy-on-write clone when the filesystem supports it, plain copy otherwise."""
+    try:
+        done = subprocess.run(
+            ["cp", "-a", "--reflink=auto", f"{src}/.", str(dst)],
+            timeout=120, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+        if done.returncode == 0:
+            return
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    shutil.copytree(src, dst, dirs_exist_ok=True, symlinks=True)
+
+
+def template_prefix_dir() -> Path:
+    """Warm Wine prefix used only as a read-only template (never run in directly)."""
+    return shared_prefix_dir()
+
+
 def shared_prefix_dir() -> Path:
     raw = os.environ.get("AI_GRADER_WINE_PREFIX")
     return Path(raw) if raw else Path(tempfile.gettempdir()) / "ai_grader_wine_prefix"
@@ -102,14 +121,16 @@ class WineRuntime:
         self._xtst = None
         self._dpy = None
         self.start_error: Optional[str] = None
+        self.promote_prefix = False
 
     # ── lifecycle ────────────────────────────────────────────────────────────
     def __enter__(self) -> "WineRuntime":
         global _ACTIVE
         try:
             self._start_display()
-            self.prefix = shared_prefix_dir()
-            self.prefix.mkdir(parents=True, exist_ok=True)
+            # One private prefix (and therefore one wineserver) per run: another
+            # run's ``wineserver -k`` can never kill this game.
+            self.prefix = self._private_prefix()
             self._open_x()
         except Exception as exc:  # noqa: BLE001 - reported as a platform fault
             self.start_error = f"{type(exc).__name__}: {exc}"
@@ -121,6 +142,24 @@ class WineRuntime:
 
     def __exit__(self, *_exc: Any) -> None:
         self.close()
+
+    def _private_prefix(self) -> Path:
+        base = Path(tempfile.mkdtemp(prefix="ai_grader_wine_run_"))
+        template = template_prefix_dir()
+        if (template / "system.reg").is_file():
+            _clone_tree(template, base)
+        return base
+
+    def _promote_to_template(self) -> None:
+        """Keep a warm prefix after a successful probe so later runs skip initialisation."""
+        template = template_prefix_dir()
+        if (template / "system.reg").is_file() or not self.prefix:
+            return
+        try:
+            template.mkdir(parents=True, exist_ok=True)
+            _clone_tree(self.prefix, template)
+        except OSError:
+            shutil.rmtree(template, ignore_errors=True)
 
     @property
     def ok(self) -> bool:
@@ -219,8 +258,10 @@ class WineRuntime:
                 self._xvfb.wait(5)
             except subprocess.TimeoutExpired:
                 self._xvfb.kill()
-        # The prefix is a reusable runtime environment (not a generated build):
-        # it is kept so later runs skip the slow first-run initialisation.
+        if self.prefix:
+            if getattr(self, "promote_prefix", False):
+                self._promote_to_template()
+            shutil.rmtree(self.prefix, ignore_errors=True)  # this run's private prefix only
         self.prefix = None
 
     # ── eyes ────────────────────────────────────────────────────────────────
@@ -334,6 +375,7 @@ def probe_wine_launcher(*, force: bool = False, timeout: int = 90) -> Dict[str, 
         if proc.returncode != 0 or marker:
             tail = " ".join(stderr.strip().splitlines()[-2:])[:200]
             return done(False, f"wine cannot start a Windows process ({marker or 'exit %d' % proc.returncode}): {tail}")
+        rt.promote_prefix = True  # a successful probe leaves a warm template behind
     return done(True, "wine launched a Windows process")
 
 
