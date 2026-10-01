@@ -346,9 +346,13 @@ async def _app_lifespan(_app: FastAPI):
             print(f"⚠️ [BATCH-RESUME] startup resume failed: {exc}")
 
     asyncio.create_task(_resume_batches_after_bind())
+    from app.auto_resume import run_auto_resume_loop
+
+    _auto_resume_task = asyncio.create_task(run_auto_resume_loop(_app.state.batch_progress))
     try:
         yield
     finally:
+        _auto_resume_task.cancel()
         stop_whatsapp_service()
 
 
@@ -7813,9 +7817,23 @@ async def batch_grade(
         _INTAKE_EXTENSIONS = _ALL_EXTENSIONS
 
         def _is_in_skip_dir(filepath: str) -> bool:
-            """Check if file is inside a build/system directory."""
+            """Check if file is inside a build/system directory.
+
+            A game executable inside a build-output folder (bin/, obj/, Release/…)
+            is submission evidence and is never skipped on the folder name alone.
+            """
             parts = Path(filepath).parts
-            return any(p.lower() in _SKIP_DIRS for p in parts)
+            hits = [p.lower() for p in parts if p.lower() in _SKIP_DIRS]
+            if not hits:
+                return False
+            from app.project_intelligence.submission_intake import (
+                BUILD_OUTPUT_DIR_NAMES,
+                is_build_executable_path,
+            )
+
+            if all(h in BUILD_OUTPUT_DIR_NAMES for h in hits) and is_build_executable_path(filepath):
+                return False
+            return True
 
         def _merge_intake_videos_from_display(
             all_arc: list,
@@ -9503,9 +9521,11 @@ async def download_report_word(submission_id: int, request: Request, db: Session
         from app.criterion_authority_guardrails import merge_export_policy_with_guardrails
         _export_policy = merge_export_policy_with_guardrails(_drift_export, _guardrails)
         if _export_policy.get("gate") == "block_until_review":
-            raise HTTPException(
-                status_code=403,
-                detail=_export_policy.get("message_ar") or "تصدير التقرير موقوف — مراجعة governance مطلوبة.",
+            # Legacy governance signal: recorded for analytics only. No human
+            # moderation step exists, so it can never block a report export.
+            print(
+                f"ℹ️ [EXPORT] legacy governance gate '{_export_policy.get('gate')}' is advisory; "
+                "export proceeds."
             )
 
     summary = (
@@ -10140,7 +10160,7 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                 f"بشكل مستقل؛ عدد الاختلافات: {len(_sr_disagreements)}."
             )
             if _sr_disagreements:
-                _sr_text += " النتيجة HOLD ولا تُعتمد قبل المراجعة البشرية."
+                _sr_text += " الاختلافات مسجّلة للاطلاع فقط ولا تغيّر القرار الآلي."
             _srr = _srp.add_run(_sr_text)
             _srr.font.size = Pt(11)
             _srr.font.color.rgb = BODY_TEXT
@@ -10799,6 +10819,9 @@ async def download_report_word(submission_id: int, request: Request, db: Session
                         percentage = _gdm.get("criteria_completion_pct", percentage)
                         highest_crit = _gdm.get("highest_criterion_achieved") or "—"
                         exec_mode = _gdm.get("execution_mode") or exec_mode
+                    from app.final_output_gate import output_grade_label
+
+                    grade_level = output_grade_label(_gdm_snap, grade_level)
                     from app.rule_bundle import format_rule_bundle_label, provenance_from_payload
 
                     _prov = provenance_from_payload(_gdm_snap)

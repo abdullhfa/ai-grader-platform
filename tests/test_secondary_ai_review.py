@@ -60,7 +60,8 @@ def test_agreement_confirms_without_changing_authoritative_grade():
         force_enabled=True,
     )
     assert audit["status"] == "CONFIRMED"
-    assert result["grade_decision_status"] == "CONFIRMED_BY_SECONDARY_REVIEW"
+    # auxiliary only: no decision status is ever written by the reviewer
+    assert "grade_decision_status" not in result
     assert result["grade_level"] == "M"
     assert result["criteria_results"][2]["achieved"] is False
     # The independent reviewer is not anchored with Gemini's verdict or reasoning.
@@ -69,8 +70,7 @@ def test_agreement_confirms_without_changing_authoritative_grade():
     assert "authoritative_achieved" not in prompt
 
 
-def test_disagreement_auto_resolves_to_primary_without_human_review(monkeypatch):
-    monkeypatch.setenv("SECONDARY_REVIEW_DISAGREEMENT_POLICY", "primary")
+def test_disagreement_is_recorded_only_without_human_review():
     result = _result()
     fake = FakeReviewer(
         [
@@ -85,12 +85,12 @@ def test_disagreement_auto_resolves_to_primary_without_human_review(monkeypatch)
         reviewer_provider=fake,
         force_enabled=True,
     )
-    assert audit["status"] == "AUTO_RESOLVED_PRIMARY"
+    assert audit["status"] == "DISAGREEMENT_RECORDED"
     assert audit["hold_required"] is False
-    assert result["grade_decision_status"] == "AUTO_RESOLVED_PRIMARY"
-    assert result["human_review_required"] is False
+    assert "grade_decision_status" not in result
+    assert "human_review_required" not in result
     assert result["criteria_results"][2]["achieved"] is False
-    assert result["criteria_results"][2]["secondary_review_auto_resolved"] == "primary"
+    assert "secondary_review_auto_resolved" not in result["criteria_results"][2]
 
 
 def test_models_are_compared_to_each_other_not_to_later_rule_override():
@@ -124,6 +124,6 @@ def test_reviewer_failure_is_transparent_and_keeps_primary_result():
         force_enabled=True,
     )
     assert audit["status"] == "REVIEW_UNAVAILABLE"
-    assert result["grade_decision_status"] == "PRIMARY_ONLY_REVIEW_UNAVAILABLE"
+    assert "grade_decision_status" not in result
     assert result["grade_level"] == "M"
     assert result.get("human_review_required") is not True

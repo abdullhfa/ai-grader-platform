@@ -82,9 +82,45 @@ def _norm_rel(path: str) -> str:
     return (path or "").replace("\\", "/").strip()
 
 
+# Folders that hold *build output*.  A student's shipped game frequently lives
+# there (``bin/Release/game.exe``, ``Builds/Windows/game.exe``), so the folder
+# name alone must not hide an executable.  Engine caches / VCS / temp trees stay
+# ignored regardless (Library, .godot, node_modules, .git, temp, ...).
+BUILD_OUTPUT_DIR_NAMES: frozenset[str] = frozenset(
+    {"bin", "obj", "debug", "release", "build", "_build", "builds"}
+)
+_BUILD_EXECUTABLE_SUFFIXES = (".exe", ".pck", ".x86_64", ".apk", ".aab")
+_BUILD_SIDECAR_NAMES = frozenset({"data.win"})  # GameMaker runner payload
+
+
+def is_build_executable_path(rel_posix: str) -> bool:
+    """True for a game executable (or its runner payload) — decided by the file, not the folder.
+
+    Uses the shared ``is_primary_game_executable`` filter, so installers, drivers,
+    crash handlers and engine editors inside a build folder are still ignored.
+    """
+    norm = _norm_rel(rel_posix)
+    name = Path(norm).name.lower()
+    if name in _BUILD_SIDECAR_NAMES:
+        return True
+    if not name.endswith(_BUILD_EXECUTABLE_SUFFIXES):
+        return False
+    try:
+        from app.archive_extraction_utils import is_primary_game_executable
+
+        return is_primary_game_executable(norm)
+    except Exception:
+        return False
+
+
 def path_matches_intake_ignore(rel_posix: str) -> bool:
     parts = [p.lower() for p in Path(_norm_rel(rel_posix)).parts if p not in (".", "")]
-    return any(p in INTAKE_IGNORE_DIR_NAMES for p in parts)
+    hits = [p for p in parts if p in INTAKE_IGNORE_DIR_NAMES]
+    if not hits:
+        return False
+    if all(h in BUILD_OUTPUT_DIR_NAMES for h in hits) and is_build_executable_path(rel_posix):
+        return False
+    return True
 
 
 def _per_path_noise_flags(rel_posix: str) -> List[Dict[str, str]]:

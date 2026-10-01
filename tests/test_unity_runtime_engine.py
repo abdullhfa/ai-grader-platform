@@ -135,7 +135,7 @@ class TestUnityRuntimeEngine(unittest.TestCase):
             )
             result = run_runtime_session("unity_student", root, timeout_seconds=5)
             self.assertEqual(result.get("engine"), "unity")
-            self.assertIn(result.get("status"), ("skipped", "completed", "failed"))
+            self.assertIn(result.get("status"), ("skipped", "completed", "failed", "paused"))
 
 
 if __name__ == "__main__":

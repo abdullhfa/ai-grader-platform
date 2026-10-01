@@ -43,6 +43,17 @@ def run_scratch_runtime_verification(
         max_steps=1200,
     )
 
+    if vm_result.get("error") == "scratch_vm_unavailable":
+        # The game cannot be RUN on this grader: pause (no verdict).  The graph is
+        # kept as auxiliary evidence only, never as a substitute for the run.
+        from app.runtime_engines import dependencies as deps
+
+        session.signals["execution_graph"] = graph
+        session.signals["scratch_vm"] = vm_result
+        session.signals["runtime_method"] = "scratch_vm_unavailable"
+        deps.pause_for(session, deps.NODE_MISSING)
+        return {"success": False, "error": "scratch_vm_unavailable", "paused": True}
+
     graph_ok = bool(graph.get("graph_ok"))
     vm_ran = bool(vm_result.get("success") or vm_result.get("ran"))
     has_control = bool(analysis.get("has_control_flow"))

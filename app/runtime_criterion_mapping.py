@@ -274,7 +274,7 @@ def evaluate_operational_support(
         "gameplay_semantic": gameplay_sem,
         "l5_verified_support": l5_verified_support,
         "note_ar": (
-            "mapped evidence ≠ automatic achievement — smoke-only أو automated interaction يبقى HOLD/مراجعة بشرية."
+            "mapped evidence ≠ automatic achievement — smoke-only أو automated interaction يبقى غير مُتحقَّق آلياً."
         ),
     }
 
@@ -295,7 +295,7 @@ def _build_runtime_note_ar(level: str, sup: Dict[str, Any], *, outcome: str) -> 
             + "; ".join(reasons)
         )
     elif outcome == "human_review":
-        fake_block = f"⏸ [Runtime partial] {level}: corroboration partial — verifier review."
+        fake_block = f"⏸ [Runtime partial] {level}: corroboration partial — automated verification incomplete."
     from app.report_feedback_formatter import format_runtime_section
     return format_runtime_section(fake_block)
 
@@ -437,7 +437,7 @@ def apply_runtime_criterion_adjudication(
                 continue
             cr["achieved"] = False
             cr["achievement_authority"] = (
-                "RUNTIME_INSUFFICIENT" if verdict == "insufficient" else "HUMAN_REVIEW_REQUIRED"
+                "RUNTIME_INSUFFICIENT"
             )
             cr["runtime_observation_note_ar"] = _build_runtime_note_ar(
                 level, sup, outcome="not_achieved"
@@ -456,9 +456,9 @@ def apply_runtime_criterion_adjudication(
                 "action": "achieved_l5_human" if human_playtest else "achieved_l4_support",
             })
         else:
-            # partial — human review
+            # partial corroboration — automated verification incomplete
             cr["achieved"] = False
-            cr["achievement_authority"] = "HUMAN_REVIEW_REQUIRED"
+            cr["achievement_authority"] = "RUNTIME_INSUFFICIENT"
             cr["runtime_observation_note_ar"] = _build_runtime_note_ar(
                 level, sup, outcome="human_review"
             )

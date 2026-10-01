@@ -1413,7 +1413,7 @@ def build_evidence_coverage_matrix(inventory: Dict[str, Any]) -> List[Dict[str, 
             "authority_ar": (
                 "اختبارات متطلبات آلية متعددة الأدلة"
                 if gameplay_verified
-                else "ملاحظة تشغيل استشارية — مراجعة بشرية مطلوبة"
+                else "ملاحظة تشغيل استشارية — التحقق الآلي غير مكتمل"
                 if (inventory.get("runtime_verification") or {}).get("status") == "observed_advisory"
                 else "غير متاح"
             ),

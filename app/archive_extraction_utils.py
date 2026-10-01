@@ -929,7 +929,19 @@ def strip_archive_wrapper_prefix(path: str, wrapper: str | None) -> str:
 
 def path_has_ignored_segment(rel: str, ignore: frozenset[str]) -> bool:
     parts = [p.lower() for p in PurePosixPath(rel.replace("\\", "/")).parts]
-    return any(p in ignore for p in parts)
+    hits = [p for p in parts if p in ignore]
+    if not hits:
+        return False
+    # A game executable inside a build-output folder (bin/, obj/, Release/, Builds/…)
+    # is evidence — the folder name alone must not hide it.
+    from app.project_intelligence.submission_intake import (
+        BUILD_OUTPUT_DIR_NAMES,
+        is_build_executable_path,
+    )
+
+    if all(h in BUILD_OUTPUT_DIR_NAMES for h in hits) and is_build_executable_path(rel):
+        return False
+    return True
 
 
 def _archive_member_visible(rel: str) -> bool:

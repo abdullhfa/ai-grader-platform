@@ -38,6 +38,11 @@ def build_lms_export_rows(
             final_grade = final_decision.official_grade
         else:
             final_grade = None
+        from app.final_output_gate import final_grade_allowed, WITHHELD_GRADE
+
+        grade_final = final_grade_allowed(rec) and final_grade_allowed(rec.get("snapshot"))
+        if not grade_final:
+            final_grade = None  # a PAUSED/PROVISIONAL result is never exported as final
         key = str(rec.get("submission_key") or rec.get("student_name") or "")
         session_id = str(rec.get("session_id") or "")
         signoff = _load_signoff(key, session_id) if session_id else None
@@ -46,8 +51,13 @@ def build_lms_export_rows(
             "student_name": rec.get("student_name") or key,
             "submission_key": key,
             "session_id": session_id,
-            "grade_level": final_grade or (signoff or {}).get("final_grade") or rec.get("grade_level") or "",
-            "percentage": rec.get("percentage") or "",
+            "grade_level": (
+                (final_grade or (signoff or {}).get("final_grade") or rec.get("grade_level") or "")
+                if grade_final
+                else ""
+            ),
+            "grade_status": "FINAL" if grade_final else WITHHELD_GRADE,
+            "percentage": (rec.get("percentage") or "") if grade_final else "",
             "replay_hash": rec.get("replay_hash") or (signoff or {}).get("replay_hash") or "",
             "signed_evaluation_hash": (signoff or {}).get("signed_evaluation_hash") or "",
             "signoff_timestamp": (signoff or {}).get("timestamp") or "",

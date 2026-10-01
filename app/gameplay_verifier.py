@@ -558,7 +558,31 @@ def _center_band_shift(before_path: str, after_path: str) -> Tuple[float, float]
         return 0.0, 0.0
 
 
+# ── Linux/Wine input (XTEST on the virtual display) ─────────────────────────
+_WINE_VK_LABELS = {0x0D: "ENTER", 0x20: "SPACE", 0x57: "W", 0x41: "A", 0x53: "S", 0x44: "D"}
+
+
+def _wine_runtime():
+    """The active Wine run when this is not a Windows host, else None."""
+    if sys.platform == "win32":
+        return None
+    from app.runtime_wine import active_runtime
+
+    return active_runtime()
+
+
+def _wine_tap_vk(vk: int, hold_ms: int) -> Optional[bool]:
+    rt = _wine_runtime()
+    if rt is None:
+        return None
+    label = _WINE_VK_LABELS.get(vk)
+    return rt.key_hold(label, max(hold_ms, 20) / 1000.0) if label else False
+
+
 def _send_key_win(vk: int, *, hold_ms: int = 80) -> bool:
+    wine = _wine_tap_vk(vk, hold_ms)
+    if wine is not None:
+        return wine
     if sys.platform != "win32":
         return False
     try:
@@ -600,6 +624,9 @@ def _send_key_win(vk: int, *, hold_ms: int = 80) -> bool:
 
 def _send_key_win_legacy(vk: int, *, hold_ms: int = 80) -> bool:
     """GameMaker-compatible Windows key event path."""
+    wine = _wine_tap_vk(vk, hold_ms)
+    if wine is not None:
+        return wine
     if sys.platform != "win32":
         return False
     try:
@@ -619,6 +646,9 @@ def _key_hold(label: str, seconds: float) -> bool:
     vk = vk_map.get(label.upper())
     if vk is None:
         return False
+    _wine = _wine_runtime()
+    if _wine is not None:
+        return _wine.key_hold(label, max(seconds, 0.1))
     if sys.platform != "win32":
         return False
     try:
@@ -659,6 +689,9 @@ def _key_hold(label: str, seconds: float) -> bool:
 def _key_hold_legacy(label: str, seconds: float) -> bool:
     vk_map = {"W": 0x57, "A": 0x41, "S": 0x53, "D": 0x44, "SPACE": 0x20, "ENTER": 0x0D}
     vk = vk_map.get(label.upper())
+    _wine = _wine_runtime()
+    if vk is not None and _wine is not None:
+        return _wine.key_hold(label, max(seconds, 0.1))
     if vk is None or sys.platform != "win32":
         return False
     try:
@@ -674,6 +707,10 @@ def _key_hold_legacy(label: str, seconds: float) -> bool:
 
 
 def _click_game_window_center(*, process_pid: Optional[int], artifact_path: Path) -> bool:
+    _wine = _wine_runtime()
+    if _wine is not None:
+        w, h = _wine.screen_size()
+        return _wine.click(w // 2, int(h * 0.62))
     if sys.platform != "win32":
         return False
     try:
@@ -744,6 +781,15 @@ def _click_at_image_position(
     process_pid: Optional[int],
     artifact_path: Path,
 ) -> bool:
+    _wine = _wine_runtime()
+    if _wine is not None:
+        w, h = _wine.screen_size()
+        img_w = int(shot.get("image_width") or shot.get("width") or w)
+        img_h = int(shot.get("image_height") or shot.get("height") or h)
+        return _wine.click(
+            int(w * max(0.0, min(1.0, image_xy[0] / max(img_w, 1)))),
+            int(h * max(0.0, min(1.0, image_xy[1] / max(img_h, 1)))),
+        )
     if sys.platform != "win32":
         return False
     try:
@@ -2410,11 +2456,11 @@ def assess_automated_l4_gate(
     test_document_present: bool = False,
     test_doc_entries: int = 0,
     functional_smoke_pass: bool = False,
-    teacher_confirmed: Optional[Dict[str, bool]] = None,
     grading_mode: str | None = None,
     criteria_results: Optional[Sequence[Dict[str, Any]]] = None,
     engine_id: str | None = None,
     student_text: str = "",
+    code_diff: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Criterion-level automated L4 gate decisions (Option C policy)."""
     from app.runtime_evidence_gate import BTECCriterionMapper
@@ -2426,11 +2472,11 @@ def assess_automated_l4_gate(
     return mapper.evaluate(
         gv,
         test_doc_entries=test_doc_entries,
-        teacher_confirmed=teacher_confirmed,
         functional_smoke_pass=functional_smoke_pass,
         criteria_results=criteria_results,
         engine_id=engine_id,
         student_text=student_text,
+        code_diff=code_diff,
     )
 
 
@@ -2544,7 +2590,7 @@ def format_agent_play_summary_ar(level: str, verification: Optional[Dict[str, An
     if (level == "L3" or l4 == "L3") and gv.get("gameplay_entered") is not True:
         return (
             "تم تشغيل ملف اللعبة (L3)، لكن لم يتم إثبات اللعب الفعلي (gameplay) في هذا التقرير. "
-            "يمكن اعتماد فيديو تشغيل أو مراجعة بشرية (L5) لإثبات C.P5/C.P6."
+            "يُثبت C.P5/C.P6 بتحقق تشغيلي آلي (L4) أو بفيديو تشغيل موثّق كمسار دليل."
         )
     labels = {
         "L5": "نعم — L5 (Gameplay مؤكد / playtest بشري)",

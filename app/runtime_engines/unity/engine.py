@@ -4,6 +4,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from app.runtime_engines import dependencies as deps
 from app.runtime_engines.base import RuntimeEngine, RuntimeSession, SessionStatus
 from app.runtime_engines.capabilities import RuntimeCapabilities
 from app.runtime_engines.registry import register_engine
@@ -17,7 +18,17 @@ from app.runtime_engines.unity.scene_parser import validate_unity_scenes
 
 
 def _auto_build_enabled() -> bool:
-    return os.environ.get("AI_GRADER_UNITY_AUTO_BUILD", "0").lower() in ("1", "true", "yes", "on")
+    # Default ON: a source-only submission is built into a temporary executable,
+    # run, and the build deleted afterwards.  Set to 0 to forbid builds (the
+    # session then PAUSES instead of grading from code).
+    return os.environ.get("AI_GRADER_UNITY_AUTO_BUILD", "1").lower() in ("1", "true", "yes", "on")
+
+
+def _is_license_fault(build_result: dict) -> bool:
+    blob = " ".join(
+        str(build_result.get(k) or "") for k in ("error", "stderr_tail", "stdout_tail")
+    ).lower()
+    return any(t in blob for t in ("license", "activation", "no valid unity"))
 
 
 def _playmode_enabled() -> bool:
@@ -87,28 +98,46 @@ class UnityRuntimeEngine(RuntimeEngine):
                 scene_count=scene_report.get("scene_count"),
             )
 
-        if not executable and project_root and _auto_build_enabled():
+        if executable and deps.pause_if_cannot_launch(session):
+            return
+
+        if not executable and project_root:
+            # Source only: the game must be built and RUN.  Missing toolchain is a
+            # PAUSE (no verdict), never a silent fall back to static analysis.
+            if not _auto_build_enabled():
+                deps.pause_for(session, deps.UNITY_AUTO_BUILD_DISABLED)
+                return
             unity_bin = resolve_unity_binary()
-            if unity_bin:
-                session.events.record("unity_build_started", source="unity_engine")
-                build_result = run_unity_build(
-                    UnityBuildConfig(
-                        project_path=project_root,
-                        unity_path=unity_bin,
-                        output_exe=session.artifact_store.session_root / "build" / "game.exe",
-                        log_path=session.artifact_store.logs / "unity_build.log",
-                        timeout_seconds=min(timeout_seconds * 10, 900),
-                    )
+            if not unity_bin:
+                deps.pause_for(session, deps.UNITY_EDITOR_MISSING)
+                return
+            if deps.pause_if_cannot_launch(session):
+                return  # do not build an exe this host cannot run
+            build_dir = session.artifact_store.session_root / "build"
+            session.register_temp(build_dir)  # generated exe is deleted after grading
+            session.events.record("unity_build_started", source="unity_engine")
+            build_result = run_unity_build(
+                UnityBuildConfig(
+                    project_path=project_root,
+                    unity_path=unity_bin,
+                    output_exe=build_dir / "game.exe",
+                    log_path=session.artifact_store.logs / "unity_build.log",
+                    timeout_seconds=min(timeout_seconds * 10, 900),
                 )
-                session.signals["build_attempt"] = build_result
-                session.events.record(
-                    "unity_build_finished",
-                    source="unity_engine",
-                    success=bool(build_result.get("success")),
-                )
-                if build_result.get("artifact"):
-                    executable = Path(str(build_result["artifact"]))
-                    session.signals["executable"] = str(executable)
+            )
+            session.signals["build_attempt"] = build_result
+            session.signals["built_from_source"] = True
+            session.events.record(
+                "unity_build_finished",
+                source="unity_engine",
+                success=bool(build_result.get("success")),
+            )
+            if build_result.get("artifact"):
+                executable = Path(str(build_result["artifact"]))
+                session.signals["executable"] = str(executable)
+            elif _is_license_fault(build_result):
+                deps.pause_for(session, deps.UNITY_LICENSE_FAULT)
+                return
 
         if project_root and _playmode_enabled():
             playmode_result = maybe_run_playmode_tests(
@@ -124,7 +153,13 @@ class UnityRuntimeEngine(RuntimeEngine):
                 success=bool(playmode_result.get("success")),
             )
 
+        if not executable and not project_root:
+            deps.pause_for(session, deps.EXECUTABLE_MISSING)
+            return
+
         if not executable:
+            # Build ran but produced no executable (student's project does not
+            # build): negative runtime evidence; code analysis is auxiliary only.
             static = analyze_unity_static_project(project_root) if project_root else {}
             session.signals["unity_static_analysis"] = static
             session.signals["runtime_method"] = "unity_static_only"
@@ -156,6 +191,8 @@ class UnityRuntimeEngine(RuntimeEngine):
             return
 
         observation = play_result.observation
+        if deps.pause_if_environment_fault(session, observation):
+            return
         session.signals["legacy_observation"] = observation
         session.signals["runtime_method"] = "unity_play_session_v2"
         session.signals["unity_observation"] = observation.get("unity_observation") or {}

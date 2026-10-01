@@ -1267,7 +1267,9 @@ def backfill_submission_record(
                     .first()
                 )
                 if summary and str(summary.grade_level or "").strip().upper().startswith("U"):
-                    summary.grade_level = str(inst_disp)  # type: ignore[assignment]
+                    from app.final_output_gate import summary_grade
+
+                    summary.grade_level = str(summary_grade(snapshot, inst_disp))  # type: ignore[assignment]
             except Exception:
                 pass
 

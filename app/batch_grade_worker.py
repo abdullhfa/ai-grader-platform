@@ -55,7 +55,7 @@ PHASE_LABELS_AR = {
     "extracting": "استخراج محتوى ملف الطالب...",
     "vision": "تحليل الصور واللقطات...",
     "runtime": "تشغيل اللعبة والتحقق التشغيلي (GameMaker/EXE)...",
-    "paused_gamemaker": "تم إيقاف التصحيح مؤقتاً — يلزم تثبيت GameMaker ثم الضغط على Complete.",
+    "paused_gamemaker": "تم إيقاف التصحيح مؤقتاً — يلزم تثبيت GameMaker؛ سيُستأنف التصحيح تلقائياً عند توفره.",
     "inventory": "فحص المشروع والأدلة التقنية...",
     "grading": "المقيم الذكي يصحّح المعايير...",
     "finalizing": "التحقق المؤسسي وحوكمة BTEC (Pearson)...",
@@ -1022,7 +1022,9 @@ async def run_batch_grading_job(
                 )
                 db.add(db_result)
 
-            grade_level_db = str(result.get("grade_level") or "")
+            from app.final_output_gate import summary_grade
+
+            grade_level_db = str(summary_grade(result, str(result.get("grade_level") or "")))
             inst_disp = result.get("institutional_grade_display") or (
                 (result.get("institutional_resolution") or {}).get("display_grade_ar")
             )

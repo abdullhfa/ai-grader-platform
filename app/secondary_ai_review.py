@@ -170,15 +170,18 @@ def run_secondary_review(
     reviewer_provider: Optional[Any] = None,
     force_enabled: bool = False,
 ) -> Dict[str, Any]:
-    """Attach an independent DeepSeek review; disagreement creates HOLD, never an override."""
+    """Attach an independent DeepSeek review as AUXILIARY evidence (record only).
+
+    The review annotates ``grading_result["secondary_ai_review"]`` and each row's
+    ``secondary_ai_review`` diagnostic.  It never writes a grade, an achievement, a
+    grade/decision status, a provisional flag, a HOLD or a human-review requirement:
+    the deterministic governance (assessment_state + gates) alone decides.
+    """
     enabled = force_enabled or _env_bool("SECONDARY_REVIEW_ENABLED", False)
     primary = grading_result.get("primary_ai_grader") or {
         "provider": os.getenv("AI_PROVIDER", "gemini"),
         "model": os.getenv("GEMINI_MODEL", "gemini-2.5-pro"),
     }
-    resolution_policy = (os.getenv("SECONDARY_REVIEW_DISAGREEMENT_POLICY") or "primary").strip().lower()
-    if resolution_policy not in {"primary", "authoritative", "hold"}:
-        resolution_policy = "primary"
     audit: Dict[str, Any] = {
         "version": SECONDARY_REVIEW_VERSION,
         "enabled": enabled,
@@ -189,7 +192,9 @@ def run_secondary_review(
         "agreements": [],
         "disagreements": [],
         "deterministic_overrides": [],
-        "resolution_policy": resolution_policy,
+        "authority": "AUXILIARY",
+        "effect_on_grade": "none",
+        # legacy field kept for stored results; a review never requires a hold
         "hold_required": False,
     }
     grading_result["secondary_ai_review"] = audit
@@ -207,7 +212,6 @@ def run_secondary_review(
     audit["selected_criteria"] = selected
     if not selected:
         audit["status"] = "NO_SENSITIVE_CRITERIA"
-        grading_result["grade_decision_status"] = "PRIMARY_ONLY_NO_SENSITIVE_CRITERIA"
         return audit
 
     provider = reviewer_provider or AIProvider(
@@ -232,7 +236,6 @@ def run_secondary_review(
     except Exception as exc:
         audit["status"] = "REVIEW_UNAVAILABLE"
         audit["error"] = str(exc)[:500]
-        grading_result["grade_decision_status"] = "PRIMARY_ONLY_REVIEW_UNAVAILABLE"
         return audit
 
     reviews = parsed.get("criteria_reviews") or []
@@ -284,45 +287,19 @@ def run_secondary_review(
                     or "deterministic_rule_override",
                 }
             )
-        if not agreement and resolution_policy == "hold":
-            row["secondary_review_hold"] = True
-        elif not agreement:
-            row["secondary_review_auto_resolved"] = resolution_policy
 
     reviewed = len(audit["agreements"]) + len(audit["disagreements"])
     audit["reviewed_count"] = reviewed
     audit["unreviewed_criteria"] = [
         level for level in selected if _short_level(level) not in by_short
     ]
-    if audit["disagreements"] and resolution_policy == "hold":
-        audit["status"] = "HOLD"
-        audit["hold_required"] = True
-        grading_result["grade_decision_status"] = "HOLD"
-        grading_result["grade_level_provisional"] = grading_result.get("grade_level")
-        grading_result["official_grade_provisional"] = True
-        grading_result["human_review_required"] = True
-    elif audit["disagreements"]:
-        audit["status"] = (
-            "AUTO_RESOLVED_PRIMARY"
-            if resolution_policy == "primary"
-            else "AUTO_RESOLVED_AUTHORITATIVE"
-        )
-        grading_result["grade_decision_status"] = audit["status"]
-        grading_result["official_grade_provisional"] = False
-        grading_result["human_review_required"] = False
-        for row in grading_result.get("criteria_results") or []:
-            if isinstance(row, dict):
-                row.pop("secondary_review_hold", None)
+    # Record-only outcome: nothing below touches the grade or any decision status.
+    if audit["disagreements"]:
+        audit["status"] = "DISAGREEMENT_RECORDED"
     elif audit["unreviewed_criteria"]:
         audit["status"] = "PARTIAL_REVIEW"
-        grading_result["grade_decision_status"] = "PRIMARY_ONLY_PARTIAL_REVIEW"
     elif audit["deterministic_overrides"]:
         audit["status"] = "CONFIRMED_MODELS_WITH_RULE_OVERRIDE"
-        grading_result["grade_decision_status"] = audit["status"]
-        grading_result["official_grade_provisional"] = False
-        grading_result["human_review_required"] = False
     else:
         audit["status"] = "CONFIRMED"
-        grading_result["grade_decision_status"] = "CONFIRMED_BY_SECONDARY_REVIEW"
-        grading_result["official_grade_provisional"] = False
     return audit

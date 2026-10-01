@@ -60,7 +60,7 @@
         <div class="rounded-xl border p-4 mb-6 bg-amber-50 border-amber-300 text-amber-950">
             <p class="font-bold text-sm mb-1">
                 <i class="fa-solid fa-triangle-exclamation ml-1"></i>
-                Guardrail — مراجعة بشرية مطلوبة
+                Guardrail — التحقق الآلي غير مكتمل
             </p>
             <p class="text-sm">{{ replay.guardrail_note_ar }}</p>
             {% if replay.observation_summary_ar %}
@@ -291,7 +291,7 @@
                 status: {{ playtest.active_pass.playtest_status | default('pending') }}
                 · pass_id: {{ playtest.active_pass.pass_id }}
                 {% else %}
-                لا يوجد playtest pass — ابدأ مراجعة بشرية بعد مشاهدة Runtime Replay.
+                لا يوجد playtest pass — التحقق الآلي بالتشغيل غير مكتمل؛ يُستأنف تلقائياً عند توفر الدليل.
                 {% endif %}
             </div>
 

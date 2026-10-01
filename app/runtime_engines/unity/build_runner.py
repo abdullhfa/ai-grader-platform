@@ -28,6 +28,18 @@ def resolve_unity_binary() -> Optional[Path]:
             return candidate
 
     if os.name != "nt":
+        import shutil
+
+        found = shutil.which("unity-editor") or shutil.which("Unity")
+        if found:
+            return Path(found)
+        home = Path(os.environ.get("HOME", "~")).expanduser()
+        for base in (home / "Unity" / "Hub" / "Editor", Path("/opt/unity/Hub/Editor")):
+            if base.is_dir():
+                for version_dir in sorted((p for p in base.iterdir() if p.is_dir()), reverse=True):
+                    editor = version_dir / "Editor" / "Unity"
+                    if editor.is_file():
+                        return editor
         return None
 
     hub_root = Path(os.environ.get("ProgramFiles", "C:/Program Files")) / "Unity" / "Hub" / "Editor"

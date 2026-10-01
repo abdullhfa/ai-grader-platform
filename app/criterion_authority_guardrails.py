@@ -145,7 +145,7 @@ def _should_block_escalation(
         f"لا يكفي L{evidence.get('runtime_evidence_level', 0)} + "
         f"{'exe مُرصد' if evidence.get('has_executable_detected') else 'بدون exe'} "
         f"لتصعيد {floor['label_ar']} إلى Achieved تلقائياً — "
-        f"مراجعة بشرية مطلوبة (L4 runtime أو L5 human)."
+        f"يلزم تحقق L4 آلي بالتشغيل."
     )
 
 
@@ -178,7 +178,7 @@ def apply_criterion_authority_guardrails(
 
         cr["ai_proposed_achieved"] = True
         cr["achieved"] = False
-        cr["achievement_authority"] = "HUMAN_REVIEW_REQUIRED"
+        cr["achievement_authority"] = "RUNTIME_INSUFFICIENT"
         cr["authority_guardrail"] = {
             "guardrails_id": GUARDRAILS_ID,
             "gate": "block_autonomous_escalation",
@@ -189,7 +189,7 @@ def apply_criterion_authority_guardrails(
             "failure_mode_id": "GFM_AUTHORITY_INFLATION",
         }
         prefix = (
-            "⏸ [مراجعة بشرية مطلوبة — لم يُمنح Achieved مؤسسياً] "
+            "⏸ [تحقق آلي غير مكتمل — لم يُمنح Achieved مؤسسياً] "
             "النظام منع التصعيد التلقائي: presence ≠ achievement. "
         )
         cr["feedback"] = prefix + reason_ar + "\n\n" + str(cr.get("feedback") or "")
@@ -198,7 +198,7 @@ def apply_criterion_authority_guardrails(
             "criteria_level": level,
             "criterion_type": gtype,
             "ai_proposed_achieved": True,
-            "achievement_authority": "HUMAN_REVIEW_REQUIRED",
+            "achievement_authority": "RUNTIME_INSUFFICIENT",
             "reason_ar": reason_ar,
         })
 
@@ -207,9 +207,9 @@ def apply_criterion_authority_guardrails(
         "evidence_floor": evidence,
         "blocked_escalations": blocked,
         "blocked_count": len(blocked),
-        "human_review_required": len(blocked) > 0,
+        "human_review_required": False,  # legacy field; no human step exists
         "summary_ar": (
-            f"تم منع {len(blocked)} تصعيد(ات) Achieved تلقائية — مراجعة بشرية مطلوبة."
+            f"تم منع {len(blocked)} تصعيد(ات) Achieved تلقائية — التحقق الآلي بالتشغيل غير مكتمل."
             if blocked
             else "لا تصعيد Achieved محظور — authority floor محترم."
         ),
@@ -235,7 +235,7 @@ def apply_criterion_authority_guardrails(
             f"تم منع تصعيد Achieved تلقائي لـ {len(blocked)} معيار(ات) تشغيل/اختبار "
             f"({', '.join(b['criteria_level'] for b in blocked)}) — "
             f"الدرجة المؤسسية: {original_grade} → {new_grade}. "
-            f"مراجعة verifier مطلوبة قبل اعتبار المعيار متحققاً."
+            f"لا يُعتبر المعيار متحققاً قبل اكتمال التحقق الآلي بالتشغيل."
         )
         grading_result["overall_feedback"] = (grading_result.get("overall_feedback") or "") + note
 
@@ -243,11 +243,11 @@ def apply_criterion_authority_guardrails(
         report["original_grade_level"] = original_grade
         report["institutional_grade_level"] = new_grade
         report["export_policy"] = {
-            "gate": "block_until_review",
-            "allow_export": False,
+            "gate": "advisory_warning",
+            "allow_export": True,
             "message_ar": (
-                "تصدير التقرير موقوف — معيار(ات) تشغيل/اختبار تتطلب مراجعة بشرية "
-                "قبل اعتبار Achieved مؤسسياً."
+                "التصدير مسموح — معيار(ات) تشغيل/اختبار لم يكتمل التحقق الآلي منها "
+                "فلا تُعتبر Achieved مؤسسياً."
             ),
             "source": GUARDRAILS_ID,
         }

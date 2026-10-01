@@ -295,7 +295,7 @@ def build_authenticity_summary(grading_result: Dict[str, Any]) -> Dict[str, Any]
     if plagiarism_confirmed:
         warning = "high"
         warning_ar = "تحذير: تشابه مرتفع أو مطابقات انتحال — مراجعة IV/EV إلزامية."
-        action_ar = "مراجعة بشرية للانتحال — لا إلغاء تلقائي للمعايير."
+        action_ar = "تنبيه انتحال للاطلاع — لا إلغاء تلقائي للمعايير."
     elif score >= 70:
         warning = "medium"
         warning_ar = "تحذير: احتمال مساعدة ذكاء اصطناعي مرتفع — لا يكفي وحده لرفض المعيار."

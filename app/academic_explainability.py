@@ -383,7 +383,7 @@ def build_governance_intent_explanation(inventory: Dict[str, Any]) -> Dict[str, 
         runtime_execution_ar = "ملاحظة تشغيل L4 — جزئية/استشارية (ليست فشل النظام)"
         reason = "L4_observation_completed"
         reason_ar = "تمت ملاحظة runtime محكومة — ليست verification مؤسسية"
-        academic_ar = "معايير التشغيل تحتاج مراجعة بشرية (L5) قبل أي ترقية سلطة"
+        academic_ar = "معايير التشغيل تحتاج تحققاً آلياً بالتشغيل (L4) قبل أي ترقية سلطة"
         automatic_achievement = False
     elif status in ("failed", "crashed", "timeout") and (runtime_observed or partial_promo):
         runtime_execution = "Partial L4 observation"

@@ -148,7 +148,7 @@ def get_engine_policy(engine_id: str) -> Dict[str, Any]:
             {
                 "support_tier_ar": "غير محدد",
                 "implementation_ease_ar": "—",
-                "human_review_required": True,
+                "human_review_required": False,  # legacy field; never required
                 "gameplay_validation_required": True,
             }
         )
@@ -276,11 +276,20 @@ def assess_playtest_evidence(
     gameplay_checks: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
-    Pearson PRO playtest paths (any one satisfies C.P6 / M3 / D2 / D3 gates):
+    Pearson PRO playtest *evidence paths* (any one makes ``any_path_satisfied`` true):
       1. L5 human playtest
       2. Documented gameplay video inference
       3. Runtime + gameplay validation (engine-specific floor)
       4. Human review authority already recorded
+
+    ``any_path_satisfied`` answers only "does SOME runtime-related evidence exist?".
+    It is NOT criterion awardability:
+      * ``gameplay_video_documented`` means a video was detected/analysed — it is
+        documented evidence, not a validated run (``runtime_gameplay_validated``).
+      * Awarding C.P5 / C.P6 / C.M3 still needs the per-criterion automated L4
+        verdict in ``runtime_evidence_gate.BTECCriterionMapper``; C.M3 also needs P5+P6
+        and a provable V1→V2 code diff (fully automated — no human confirmation).  A video-only or
+        L5-only submission satisfies this function yet is not awardable.
     """
     inv = artifact_inventory or {}
     engine_id = detect_primary_game_engine(inv, submission_paths=submission_paths)
@@ -356,12 +365,9 @@ def assess_playtest_evidence(
         and telemetry.get("functional_smoke_pass") is True
     )
     gameplay_floor = mechanics_n >= min_mech
-    if engine_id == "gamemaker" and policy.get("human_review_required") and not gameplay_floor:
-        runtime_gameplay_validated = False
-    else:
-        runtime_gameplay_validated = runtime_ok and (
-            gameplay_floor or (engine_id == "unity" and bool(obs.get("unity_observation_summary")))
-        )
+    runtime_gameplay_validated = runtime_ok and (
+        gameplay_floor or (engine_id == "unity" and bool(obs.get("unity_observation_summary")))
+    )
 
     human_review_recorded = human_playtest or str(
         (inv.get("manual_playtest") or {}).get("status") or ""
@@ -382,7 +388,9 @@ def assess_playtest_evidence(
         paths["runtime_gameplay_validated"] = True
     # L4_partial is tracked for per-criterion gate decisions (P5 only) in
     # apply_runtime_evidence_gate — it must NOT satisfy the overall gate alone.
-    # For source-only GameMaker projects with documented WebM gameplay video, ensure any_path is satisfied
+    # A documented gameplay video counts as an evidence PATH (any_path), e.g. for
+    # source-only GameMaker projects with WebM footage.  That lifts only the blanket
+    # "runtime not verified" block; it does not make any criterion awardable.
     any_path = any(
         (
             paths["human_playtest"],
@@ -439,13 +447,8 @@ def _summary_ar(
             f"{eng_label}: فحص هيكلي/ملفات فقط (exe/pck/apk) — "
             "لا يكفي لـ C.P6/M/D في PRO."
         )
-    if policy.get("human_review_required"):
-        return (
-            f"{eng_label}: يُفضّل مراجعة بشرية (L5) — "
-            "أدوات التحليل الآلي محدودة."
-        )
     return (
-        f"{eng_label}: لا playtest موثّق — مطلوب تشغيل حقيقي أو L5 "
+        f"{eng_label}: لا playtest موثّق — مطلوب تشغيل حقيقي مُتحقَّق منه آليًا "
         f"({mechanics_n}/{min_mech} آليات)."
     )
 
@@ -484,23 +487,17 @@ def apply_pro_engine_gameplay_governance(
         if criterion_pass.get(short):
             continue
 
-        if engine_id == "gamemaker" and policy.get("human_review_required"):
-            reason = (
-                "GameMaker PRO: لا يُمنح المعيار دون playtest بشري (L5) أو gameplay موثّق — "
-                "التشغيل الآلي لا يكتشف حلقة اللعب بموثوقية كافية."
-            )
-            authority = "HUMAN_REVIEW_REQUIRED"
-        elif short == "P6":
+        if short == "P6":
             reason = (
                 "Pearson PRO: C.P6 يتطلب أحد: playtest حقيقي، فيديو gameplay، "
-                "تحقق Runtime+Gameplay ناجح، أو مراجعة بشرية (L5). "
+                "أو تحقق Runtime+Gameplay آلي ناجح. "
                 "وجود exe/pck/apk/لقطات وحده لا يكفي."
             )
-            authority = "HUMAN_REVIEW_REQUIRED"
+            authority = "RUNTIME_INSUFFICIENT"
         else:
             reason = (
                 f"Pearson PRO: {row.get('criteria_level')} لا يُمنح دون إثبات اختبار/لعب "
-                "(نفس بوابة C.P6 — playtest أو runtime+gameplay أو L5)."
+                "(نفس بوابة C.P6 — playtest أو تحقق runtime+gameplay آلي)."
             )
             authority = "RUNTIME_INSUFFICIENT"
 

@@ -414,7 +414,11 @@ def restore_summary_from_snapshot(db: Any, submission: Any) -> bool:
     summary.total_score = int(snap.get("total_score") or summary.total_score or 0)
     summary.max_score = int(snap.get("max_score") or summary.max_score or 100)
     summary.percentage = float(snap.get("percentage") or summary.percentage or 0)
-    summary.grade_level = str(snap.get("grade_level") or summary.grade_level or "U")
+    from app.final_output_gate import summary_grade
+
+    summary.grade_level = str(
+        summary_grade(snap, str(snap.get("grade_level") or summary.grade_level or "U"))
+    )
     if snap.get("overall_feedback"):
         summary.overall_feedback = snap.get("overall_feedback")
     if snap.get("strengths"):

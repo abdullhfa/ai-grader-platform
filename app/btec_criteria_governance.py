@@ -318,7 +318,7 @@ def _institutional_not_achieved_reason_ar(row: Dict[str, Any]) -> str:
     auth = str(row.get("achievement_authority") or "")
     if auth in ("RUNTIME_INSUFFICIENT", "HUMAN_REVIEW_REQUIRED") and row.get("runtime_observation_note_ar"):
         parts.append(
-            "أدلة التشغيل الآلية (L4) لا تكفي لإثبات تحقق معيار الإنتاج/الاختبار — مطلوب مراجعة بشرية (L5) أو playtest موثّق."
+            "أدلة التشغيل الآلية (L4) لا تكفي لإثبات تحقق معيار الإنتاج/الاختبار — يلزم تحقق آلي بالتشغيل أو playtest موثّق كدليل."
         )
     if not parts:
         parts.append("لم تستوفِ شروط الأدلة أو التشغيل المؤسسية لهذا المعيار.")

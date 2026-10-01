@@ -527,7 +527,7 @@ def test_runtime_capture_reuses_known_game_window_bbox():
     assert sandbox._cached_game_window_bbox(99999) is None
 
 
-def test_gamemaker_l4_full_ai_certifies_cm3_and_cd3_without_human_review():
+def test_gamemaker_l4_full_and_academic_evidence_do_not_open_cm3_or_cd3():
     from app.runtime_evidence_gate import BTECCriterionMapper
 
     def academic_row(level: str, reasoning: str) -> dict:
@@ -590,18 +590,24 @@ def test_gamemaker_l4_full_ai_certifies_cm3_and_cd3_without_human_review():
         engine_id="gamemaker",
     )
 
-    assert result["criterion_pass"]["M3"] is True
-    assert result["criterion_pass"]["D3"] is True
+    # Uniform governance: GameMaker gets no AI/regex shortcut to Merit or Distinction.
+    # L4_full runtime + academic text alone never open M3/D3 — M3 also needs a provable
+    # V1→V2 code diff (none was supplied here), and D3 needs M3.  Fully automated:
+    # nothing waits on a human, the gate is simply closed (NOT_VERIFIED).
+    assert result["criterion_pass"]["M3"] is False
+    assert result["criterion_pass"]["D3"] is False
     decisions = {row["criterion"]: row for row in result["decisions"]}
     assert decisions["M3"]["automatic"] is True
     assert decisions["D3"]["automatic"] is True
-    assert decisions["M3"]["teacher_confirmation_required"] is False
-    assert decisions["D3"]["teacher_confirmation_required"] is False
+    assert "teacher_confirmation_required" not in decisions["M3"]
+    assert decisions["M3"]["reason"] == "m3_code_diff_not_evaluated"
+    assert decisions["D3"]["reason"] == "prerequisite_m3_not_met"
+    # The academic assessment stays visible in the report, but only as advice.
     assert decisions["M3"]["ai_academic_verified"] is True
-    assert decisions["D3"]["ai_verification_confidence"] == 1.0
+    assert result["higher_band_verification"] == "policy_default"
 
 
-def test_terminal_runtime_gate_promotes_gamemaker_higher_bands_with_ai(monkeypatch):
+def test_terminal_runtime_gate_does_not_promote_gamemaker_higher_bands_with_ai(monkeypatch):
     from app.runtime_evidence_gate import apply_runtime_evidence_gate
 
     def row(level: str, reasoning: str = "") -> dict:
@@ -672,13 +678,12 @@ def test_terminal_runtime_gate_promotes_gamemaker_higher_bands_with_ai(monkeypat
     report = apply_runtime_evidence_gate(grading, artifact_inventory=inventory)
 
     by_level = {item["criteria_level"]: item for item in grading["criteria_results"]}
-    assert by_level["C.M3"]["achieved"] is True
-    assert by_level["C.M3"]["achievement_authority"] == "AI_RUNTIME_COMPOSITE"
-    assert by_level["C.M3"]["ai_verification"]["human_review_required"] is False
-    # D3 is an academic/professional judgement criterion, not a gameplay
-    # mechanic. Runtime evidence must neither promote nor demote its AI verdict.
+    # Same policy as every other engine: no AI composite promotion to Merit.
+    assert by_level["C.M3"]["achieved"] is False
+    assert by_level["C.M3"].get("achievement_authority") != "AI_RUNTIME_COMPOSITE"
     assert by_level["C.D3"]["achieved"] is False
-    assert report["automated_l4_gate"]["criterion_pass"]["M3"] is True
+    assert report["automated_l4_gate"]["criterion_pass"]["M3"] is False
+    assert report["automated_l4_gate"]["criterion_pass"]["D3"] is False
 
 
 def test_probe_ignores_stale_generated_runtime_as_student_exe(tmp_path: Path):

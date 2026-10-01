@@ -893,10 +893,20 @@ def compact_snapshot_for_storage(
     out.pop("mitigation_records", None)
     out.pop("evidence_trace_graph", None)
     if "artifact_inventory" in out:
-        inv = slim_artifact_inventory_for_snapshot(
-            out.get("artifact_inventory") if isinstance(out.get("artifact_inventory"), dict) else {}
-        )
+        _orig_inv = out.get("artifact_inventory") if isinstance(out.get("artifact_inventory"), dict) else {}
+        inv = slim_artifact_inventory_for_snapshot(_orig_inv)
         inv = enrich_artifact_inventory_from_snapshot_meta(inv, out)
+        # Runtime truth (blockers, provenance, launch evidence) must survive compaction:
+        # assessment_state is recomputed from it on every read/re-finalization.
+        try:
+            from app.assessment_state import runtime_truth_essentials
+
+            _truth = runtime_truth_essentials(_orig_inv.get("runtime_observation_report"))
+            if _truth:
+                _rep = inv.get("runtime_observation_report")
+                inv["runtime_observation_report"] = {**(_rep if isinstance(_rep, dict) else {}), **_truth}
+        except Exception:
+            pass
         inv["criteria_results"] = out.get("criteria_results") or []
         if not inv.get("criterion_authority"):
             inv["criterion_authority"] = out.get("criterion_authority") or []

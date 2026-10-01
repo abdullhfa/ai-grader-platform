@@ -249,9 +249,17 @@ def capture_runtime_screenshot(
         "window_visible": False,
     }
     if sys.platform != "win32":
-        record["errors"].append("screenshot_windows_only")
-        return _attach_pro_capture_metadata(
-            record, requirement_id=requirement_id, phase=phase
+        from app.runtime_wine import active_runtime
+
+        wine_rt = active_runtime()
+        if wine_rt is None:
+            record["errors"].append("screenshot_windows_only")
+            return _attach_pro_capture_metadata(
+                record, requirement_id=requirement_id, phase=phase
+            )
+        return _capture_wine_screenshot(
+            record, wine_rt, path, label=label, session_ctx=session_ctx,
+            process_pid=process_pid, requirement_id=requirement_id, phase=phase,
         )
     try:
         from PIL import ImageGrab  # type: ignore
@@ -345,6 +353,55 @@ def capture_runtime_screenshot(
     return _attach_pro_capture_metadata(
         record, requirement_id=requirement_id, phase=phase
     )
+
+
+def _capture_wine_screenshot(
+    record: Dict[str, Any],
+    wine_rt: Any,
+    path: Path,
+    *,
+    label: str,
+    session_ctx: Optional[Dict[str, Any]],
+    process_pid: Optional[int],
+    requirement_id: Optional[str],
+    phase: Optional[str],
+) -> Dict[str, Any]:
+    """Capture the Wine virtual display (the game is the only window on it)."""
+    try:
+        out_dir = _runtime_screenshot_dir(path, session_ctx=session_ctx)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / f"{label}_{int(time.time() * 1000)}.png"
+        image = wine_rt.grab()
+        image.save(out_path)
+        classified = classify_visual_state_from_image(image)
+        stats = classified.get("visual_stats") or compute_extended_visual_stats(image)
+        bbox = (0, 0, image.width, image.height)
+        record.update({
+            "status": "captured",
+            "path": str(out_path),
+            "size_bytes": out_path.stat().st_size,
+            "width": stats.get("width", image.width),
+            "height": stats.get("height", image.height),
+            "resolution": stats.get("resolution"),
+            "window_visible": bool(stats.get("window_visible")),
+            "visual_stats": stats,
+            "visual_state": classified.get("visual_state", "unknown"),
+            "visual_state_confidence": classified.get("visual_state_confidence", 0.0),
+            "classification_mode": classified.get("classification_mode"),
+            "classification_reasons": classified.get("classification_reasons", []),
+            "capture_bbox": list(bbox),
+            "game_window_bbox": list(bbox),
+            "game_window_detected": True,
+            "capture_scope": "game_window",
+            "capture_method": "wine_xvfb_root",
+            "process_pid": process_pid,
+        })
+        from app.runtime_screenshot_validation import validate_runtime_screenshot_record
+
+        record = validate_runtime_screenshot_record(record)
+    except Exception as exc:
+        record["errors"].append(str(exc))
+    return _attach_pro_capture_metadata(record, requirement_id=requirement_id, phase=phase)
 
 
 def summarize_runtime_screenshots(screenshots: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -725,6 +782,196 @@ def _attach_terminal_godot_classify_if_missing(
         out["gameplay_verification"] = classified
 
 
+_WINE_MIN_RUN_SECONDS = 8.0  # a real run that ends sooner is an emulator fault
+
+
+def _smoke_test_via_wine(
+    path: Path,
+    out: Dict[str, Any],
+    *,
+    timeout: int,
+    capture_screenshots: bool,
+    enable_interaction_trace: bool,
+    session_ctx: Optional[Dict[str, Any]],
+    cwd: Optional[Path],
+    screenshot_offsets: Optional[tuple],
+    grading_mode: str | None,
+) -> Dict[str, Any]:
+    """Run a Windows exe on Linux through Wine + Xvfb (same result shape as native).
+
+    A Wine/display failure is reported as ``environment_fault`` (the game was NOT
+    run); only a game that really started and then died is ``early_exit``.
+    """
+    from app.runtime_wine import WineRuntime, classify_wine_failure
+
+    launch_cwd = cwd or path.parent
+    out["launch_cwd"] = str(launch_cwd)
+    out["launcher"] = "wine_xvfb"
+    with WineRuntime() as rt:
+        if not rt.ok:
+            out["environment_fault"] = "wine_display_unavailable"
+            out["errors"].append(f"wine_runtime_start_failed:{rt.start_error}")
+            out["signals"] = {"runtime_launch_attempted": False, "crash": "unknown"}
+            return out
+        out["attempted"] = True
+        try:
+            proc = rt.launch(path, cwd=launch_cwd)
+        except Exception as exc:
+            out["environment_fault"] = "wine_launch_failed"
+            out["errors"].append(str(exc))
+            out["attempted"] = False
+            out["signals"] = {"runtime_launch_attempted": False, "crash": "unknown"}
+            return out
+        launch_started = time.time()
+        offsets = screenshot_offsets
+        if offsets is None and grading_mode is not None:
+            offsets = resolve_runtime_screenshot_offsets(grading_mode)
+        if offsets is None:
+            offsets = RUNTIME_SCREENSHOT_OFFSETS
+        targets: List[Tuple[str, float]] = []
+        if capture_screenshots:
+            for label, raw in offsets:
+                offset = (timeout + raw) if raw < 0 else raw
+                if 0.5 <= offset < timeout:
+                    targets.append((label, offset))
+        captured: set = set()
+        pre_shot: Optional[Dict[str, Any]] = None
+        interaction_done = False
+        deadline = time.time() + timeout
+        exit_code = None
+        elapsed = 0.0
+        early_fault: Optional[str] = None
+        while time.time() < deadline:
+            exit_code = proc.poll()
+            if exit_code is not None:
+                break
+            elapsed = time.time() - launch_started
+            early_fault = classify_wine_failure(rt.stderr_text())
+            if early_fault:
+                break  # crashed inside the emulator: stop, do not "play" a dead game
+            for label, target in targets:
+                if label not in captured and elapsed >= target:
+                    shot = capture_runtime_screenshot(
+                        path, label=label, elapsed_seconds=elapsed,
+                        session_ctx=session_ctx, process_pid=proc.pid,
+                    )
+                    out["runtime_screenshots"].append(shot)
+                    captured.add(label)
+                    if label == "launch" and shot.get("status") == "captured":
+                        pre_shot = shot
+            if enable_interaction_trace and not interaction_done and elapsed >= INTERACTION_AT_SECONDS:
+                if pre_shot is None:
+                    pre_shot = capture_runtime_screenshot(
+                        path, label="pre_interaction", elapsed_seconds=elapsed,
+                        session_ctx=session_ctx, process_pid=proc.pid,
+                    )
+                    out["runtime_screenshots"].append(pre_shot)
+
+                def _shot(*_a: Any, **kw: Any) -> Dict[str, Any]:
+                    kw.pop("process_pid", None)
+                    return capture_runtime_screenshot(
+                        path, session_ctx=session_ctx, process_pid=proc.pid, **kw
+                    )
+
+                try:
+                    from app.gameplay_verifier import run_automated_gameplay_verification
+                    from app.requirement_extractor import RequirementExtractor
+
+                    engine = str((session_ctx or {}).get("engine") or "godot")
+                    plan = RequirementExtractor().default_plan(
+                        submission_id=str((session_ctx or {}).get("submission_id") or ""),
+                        engine=engine,
+                    )
+                    gv = run_automated_gameplay_verification(
+                        artifact_path=path,
+                        process_pid=proc.pid,
+                        capture_screenshot=_shot,
+                        elapsed_seconds=elapsed,
+                        requirement_plan=plan,
+                        pro_mode=not is_fast_runtime_smoke(grading_mode),
+                        engine_id=engine,
+                        process_crashed=proc.poll() is not None,
+                    )
+                    out["gameplay_verification"] = gv
+                    for shot in gv.get("extra_screenshots") or []:
+                        if isinstance(shot, dict) and shot not in out["runtime_screenshots"]:
+                            out["runtime_screenshots"].append(shot)
+                    trace = build_interaction_trace_report(
+                        {
+                            "mode": gv.get("mode"), "authority": gv.get("authority"),
+                            "platform": "linux_wine", "status": gv.get("status"),
+                            "inputs_sent": [{"type": "automated_l4_xtest", "sent": True}],
+                            "input_count": 1, "errors": [],
+                            "does_not_verify_gameplay": gv.get("does_not_verify_gameplay"),
+                            "human_playtest_required": False,
+                        },
+                        pre_screenshot=pre_shot, post_screenshot=pre_shot,
+                    )
+                    trace.update({
+                        "l4_level": gv.get("l4_level"),
+                        "automated_l4_level": gv.get("automated_l4_level"),
+                        "gameplay_entered": gv.get("gameplay_entered"),
+                        "player_movement_verified": gv.get("player_movement_verified"),
+                        "mechanics_verified_count": gv.get("mechanics_verified_count"),
+                        "menu_navigation": gv.get("menu_navigation"),
+                        "movement_verification": gv.get("movement_verification"),
+                    })
+                except Exception as exc:
+                    trace = build_interaction_trace_report(
+                        {"status": "error", "inputs_sent": [], "input_count": 0, "errors": [str(exc)]},
+                        pre_screenshot=pre_shot, post_screenshot=pre_shot,
+                    )
+                out["interaction_trace"] = trace
+                apply_interaction_signals(out.setdefault("signals", {}), trace)
+                interaction_done = True
+                break
+            time.sleep(0.4)
+        still_running = proc.poll() is None
+        exit_code = proc.poll()
+        fault = early_fault or classify_wine_failure(rt.stderr_text())
+        ran_seconds = time.time() - launch_started
+        if not fault and not still_running and exit_code not in (0, None):
+            # A non-zero exit inside an emulator cannot be told apart from an
+            # emulation problem: never read it as the student's failure.
+            fault = f"exit_code_{exit_code}_under_wine"
+        elif not fault and not still_running and ran_seconds < _WINE_MIN_RUN_SECONDS:
+            # Exiting almost immediately (even with code 0) is what a killed or
+            # failed emulator session looks like: the game was not really run.
+            fault = f"exited_after_{ran_seconds:.1f}s_under_wine"
+        if fault:
+            # Wine itself failed / the game died inside the emulator: the game was
+            # not verifiably run → not a student verdict.
+            out["environment_fault"] = "wine_platform_fault"
+            out["errors"].append(f"wine_platform_fault:{fault}")
+            out["wine_stderr_tail"] = rt.stderr_text()[-600:]
+            out["attempted"] = False
+            out["signals"] = {"runtime_launch_attempted": False, "crash": "unknown"}
+            out["smoke_result"] = "environment_fault"
+            return out
+        if still_running:
+            out["signals"].update({
+                "runtime_launch_attempted": True, "runtime_stable": True,
+                "scene_loaded": "partial", "player_moved": "unknown",
+                "crash": "none", "process_ran_seconds": round(time.time() - launch_started, 1),
+            })
+            out["smoke_result"] = "stable_window"
+        elif exit_code == 0:
+            out["signals"].update({
+                "runtime_launch_attempted": True, "runtime_stable": "partial",
+                "scene_loaded": "partial", "crash": "none", "exit_code": exit_code,
+            })
+            out["smoke_result"] = "launch_ok"
+        else:
+            out["signals"].update({
+                "runtime_launch_attempted": True, "runtime_stable": False,
+                "crash": "observed", "exit_code": exit_code,
+            })
+            out["smoke_result"] = "early_exit"
+    if capture_screenshots:
+        out["visual_observation"] = summarize_runtime_screenshots(out.get("runtime_screenshots") or [])
+    return out
+
+
 def smoke_test_windows_exe(
     path: Path,
     *,
@@ -758,7 +1005,21 @@ def smoke_test_windows_exe(
         out["errors"].append("skipped_console_wrapper")
         return out
     if sys.platform != "win32":
+        from app.runtime_wine import probe_wine_launcher
+
+        if probe_wine_launcher().get("ok"):
+            return _smoke_test_via_wine(
+                path, out,
+                timeout=timeout,
+                capture_screenshots=capture_screenshots,
+                enable_interaction_trace=enable_interaction_trace,
+                session_ctx=session_ctx,
+                cwd=cwd,
+                screenshot_offsets=screenshot_offsets,
+                grading_mode=grading_mode,
+            )
         out["errors"].append("smoke_test_windows_only")
+        out["environment_fault"] = "windows_launcher_unavailable"
         out["signals"] = {"runtime_launch_attempted": False, "crash": "unknown"}
         return out
 
@@ -1561,7 +1822,7 @@ def format_observation_for_grading(observation: Dict[str, Any]) -> str:
                     "— does NOT verify gameplay"
                 )
     lines.append(
-        "⛔ presence/launch/logs/screenshots ≠ achievement — استخدم هذه الملاحظات لـ C.P5/C.P6 مع مراجعة بشرية."
+        "⛔ presence/launch/logs/screenshots ≠ achievement — تُستخدم هذه الملاحظات كدليل مساعد فقط ولا تثبت المعيار دون تحقق آلي بالتشغيل."
     )
     lines.append(
         "⛔ runtime screenshots prove only a captured visual surface/output; they do not prove mechanics, scoring, physics, win/loss, or user experience."

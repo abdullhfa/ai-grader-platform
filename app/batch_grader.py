@@ -3582,7 +3582,7 @@ async def grade_batch_async(
                 if _gr.get("blocked_count", 0) > 0:
                     print(
                         f"⏸ [AUTH-GUARDRAIL] {student_info['name']}: "
-                        f"{_gr['blocked_count']} escalation(s) blocked — HUMAN_REVIEW_REQUIRED"
+                        f"{_gr['blocked_count']} escalation(s) blocked — automated verification incomplete"
                     )
             except Exception as _ag_err:
                 print(f"⚠️ [AUTH-GUARDRAIL] skipped: {_ag_err}")
@@ -3878,9 +3878,9 @@ async def grade_batch_async(
 
             if not _mode_flags.get("skip_production_layers"):
                 try:
-                    from app.secondary_ai_review import run_secondary_review
+                    from app.independent_review import run_governed_secondary_review
 
-                    _review = run_secondary_review(
+                    _review = run_governed_secondary_review(
                         grading_result,
                         student_text=student_text or "",
                         grading_criteria=grading_criteria,

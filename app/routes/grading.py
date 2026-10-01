@@ -141,8 +141,8 @@ async def get_batch_progress(
                             "current_student": "",
                             "current_phase": "paused_gamemaker",
                             "phase_label": (
-                                "تم إيقاف التصحيح مؤقتاً — ثبّت GameMaker وافتحه "
-                                "وسجّل الدخول، ثم اضغط Complete."
+                                "تم إيقاف التصحيح مؤقتاً — يلزم تثبيت GameMaker؛ "
+                                "سيُستأنف التصحيح تلقائياً عند توفره."
                             ),
                             "student_progress": 0.0,
                             "percent": 8,
@@ -337,112 +337,6 @@ async def get_batch_progress(
             or ((info.get("required_dependency") or {}).get("download_url")
                 if isinstance(info.get("required_dependency"), dict) else None)
         ),
-    }
-
-
-@router.post("/api/batch-grade-complete-gamemaker/{assignment_id}")
-async def complete_gamemaker_installation(
-    assignment_id: int,
-    request: Request,
-    db: Session = Depends(get_db),
-):
-    """Recheck GameMaker/Igor, then resume the exact paused checkpoint."""
-    from app.batch_checkpoint import (
-        load_batch_checkpoint,
-        resume_batch_from_checkpoint,
-        save_batch_checkpoint,
-    )
-    from app.batch_progress_store import load_assignment_progress, persist_assignment_progress
-    from app.runtime_engines.gamemaker.toolchain import (
-        preflight_gamemaker_runtime_dependency,
-    )
-
-    batch_progress = get_batch_progress_dict(request)
-    info = batch_progress.get(assignment_id) or load_assignment_progress(assignment_id) or {}
-    batch_id = int(info.get("batch_id") or 0)
-    if not batch_id:
-        latest = (
-            db.query(BatchGrading)
-            .filter(BatchGrading.assignment_id == assignment_id)
-            .order_by(BatchGrading.id.desc())
-            .first()
-        )
-        batch_id = int(latest.id) if latest else 0
-    checkpoint = load_batch_checkpoint(batch_id) if batch_id else None
-    if not checkpoint or not checkpoint.get("paused"):
-        raise HTTPException(status_code=404, detail="لا يوجد تصحيح GameMaker متوقف للاستكمال.")
-
-    preflight = await asyncio.to_thread(
-        preflight_gamemaker_runtime_dependency,
-        list(checkpoint.get("student_files") or []),
-    )
-    if preflight.get("pause_required"):
-        checkpoint["gamemaker_preflight"] = preflight
-        save_batch_checkpoint(batch_id, checkpoint)
-        info.update(
-            {
-                "found": True,
-                "batch_id": batch_id,
-                "paused": True,
-                "pause_kind": "gamemaker_dependency",
-                "current_phase": "paused_gamemaker",
-                "required_dependency": preflight,
-                "phase_label": (
-                    "لم يكتمل إعداد GameMaker بعد. افتح GameMaker وسجّل الدخول "
-                    "وتأكد من تثبيت Windows Runtime، ثم اضغط Complete مرة أخرى."
-                ),
-                "finished": False,
-                "failed": False,
-            }
-        )
-        batch_progress[assignment_id] = info
-        persist_assignment_progress(assignment_id, info)
-        raise HTTPException(
-            status_code=409,
-            detail={
-                "message": info["phase_label"],
-                "preflight": preflight,
-                "download_url": preflight.get("download_url"),
-            },
-        )
-
-    for key in ("paused", "pause_kind", "pause_started_at"):
-        checkpoint.pop(key, None)
-    checkpoint["gamemaker_preflight"] = preflight
-    save_batch_checkpoint(batch_id, checkpoint)
-
-    batch = db.query(BatchGrading).filter(BatchGrading.id == batch_id).first()
-    if batch:
-        batch.status = BatchStatus.PROCESSING  # type: ignore[assignment]
-        batch.failure_message = None  # type: ignore[assignment]
-        db.commit()
-
-    for key in ("paused", "pause_kind", "required_dependency"):
-        info.pop(key, None)
-    info.update(
-        {
-            "batch_id": batch_id,
-            "current_phase": "queued",
-            "phase_label": "تم العثور على GameMaker — جاري استكمال التصحيح...",
-            "resuming": True,
-            "finished": False,
-            "failed": False,
-        }
-    )
-    batch_progress[assignment_id] = info
-    persist_assignment_progress(assignment_id, info)
-    triggered = getattr(request.app.state, "_resume_triggered_batch_ids", None)
-    if isinstance(triggered, set):
-        triggered.discard(batch_id)
-    resumed = await resume_batch_from_checkpoint(checkpoint, batch_progress)
-    if not resumed:
-        raise HTTPException(status_code=500, detail="تعذّر استئناف نقطة التصحيح المحفوظة.")
-    return {
-        "success": True,
-        "resumed": True,
-        "batch_id": batch_id,
-        "message": "تم العثور على GameMaker واستؤنف التصحيح.",
-        "preflight": preflight,
     }
 
 
